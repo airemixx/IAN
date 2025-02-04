@@ -178,7 +178,36 @@
     .copyright span {
       color: #000
     }
-
+    .modal-title{
+      font-family: Inter;
+      font-size: 35px;
+      font-weight: 600;
+    }
+    .modal-body{
+      width: 99%;
+      border-radius: 20px;
+      border: 1px solid rgba(20, 49, 70, 0.24);
+      background: rgba(201, 201, 201, 0.00);
+    }
+    .modelButton button{
+      width: 350px;
+      height: 50px;
+      align-items: center;
+      border-radius: 50px;
+      background: #003150;
+      color: #FFF;
+    }
+    .modelButton button{
+      border: none;
+      background: #003150;
+      &:hover,&:active{
+        background-color: #003150;
+        color: #FFF;
+      }
+    }
+    .btn-close{
+      left: 590px
+    }
     /* @media(max-width:390px){
       .container{
         display: flex;
@@ -426,17 +455,34 @@
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content d-flex flex-column align-items-center">
+      <div class="d-flex justify-content-center position-relative mt-2">
+        <h5 class="modal-title publicFont" id="staticBackdropLabel" >請選擇優惠券</h5>
+        <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        ...
+      <div class="modal-body mt-3 mb-3">
+        <div class="d-flex flex-wrap justify-content-center">
+          <div class="d-flex flex-column align-items-center ">
+            <img src="../images/95off1.png" alt="" class="mb-2">
+            <p>課程95折優惠券</p>
+          </div>
+          <div class="d-flex flex-column align-items-center">
+            <img src="../images/95off1.png" alt="" class="mb-2">
+            <p>課程95折優惠券</p>
+          </div>
+          <div class="d-flex flex-column align-items-center cp1500">
+            <img src="../images/2002.png" alt="" class="mb-2">
+            <p>相機1500折價券</p>
+          </div>
+          <div class="d-flex flex-column align-items-center cp1500">
+            <img src="../images/2002.png" alt="" class="mb-2">
+            <p>相機1500折價券</p>
+          </div>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+      <div class="modelButton d-flex justify-content-center mb-3">
+        <button type="button" class=" me-2" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="">選擇</button>
       </div>
     </div>
   </div>
