@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- bootstrap v5.3.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- font-awesome v6.7.2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- 字體 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK&display=swap" rel="stylesheet">
+  <!-- 本地 -->
+  <link rel="stylesheet" href="../css/header.css">
+  <link rel="stylesheet" href="../css/footer.css">
+  <title>shoppingCartStep2-1</title>
+  <style>
+    body{
+      height: 100vh;
+    }
+    body>footer {
+      position: sticky;
+      top: 100vh;
+    }
+    .publicFont {
+      font-family: "Noto Sans HK";
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+    hr {
+      color: #aBaBaB;
+    }
+    .shoppingItemsBox{
+      width: 80%;
+      height: 650px;
+      overflow: auto;
+      
+    }
+
+    .cartItemBox {
+      width: 733px;
+      border-radius: 20px;
+      background-color: #f6f6f6;
+    }
+
+    .cartItem {
+      border-radius: 20px;
+      background-color: #f6f6f6;
+      gap: 10px;
+    }
+
+    .cartItem .cameraImg {
+      width: 109px;
+      height: 89px;
+    }
+
+    .lessonImg img{
+      width: 715px; 
+    }
+
+    .rentImg img{
+      width: 185px;
+      height: 199px;
+    }
+
+    .rentCameraBrand{
+      font-family: "Noto Sans HK";
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    .rentDeadLine{
+      color: red;
+    }
+    
+    .content {
+      height: 108px;
+      gap: 44px;
+    }
+
+    .content .itemDetail {
+      gap: 15px;
+    }
+
+    .content .itemDetail .brand {
+      color: #8F8F8F;
+      font-size: 12px;
+    }
+
+    .content .itemDetail .model {
+      color: #000;
+      font-size: 14px;
+    }
+
+    .content .itemDetail .detail {
+      color: #000;
+      font-size: 14px;
+    }
+
+    .detialTypeContent {
+      width: 200px;
+      font-size: 14px;
+      color: #8F8F8F;
+    }
+
+    .amount-text {
+      width: 40px;
+    }
+
+    .payStep {
+      width: 620px;
+      padding: 22px;
+      gap: 35px;
+      border-radius: 20px;
+      background-color: #f6f6f6;
+    }
+
+    .payStep .pTitle {
+      font-size: 24px;
+    }
+    .payTitle{
+      color: #003150;
+      font-family: Inter;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+    .buyerInput input{
+      border-radius: 20px;
+    }
+
+    .Checkout {
+      height: 50px;
+      border-radius: 50px;
+      background: #003150;
+    }
+
+    .Checkout .btn {
+      color: #FFF;
+      font-size: 14px;
+    }
+
+    .ifCouponUse {
+      font-size: 16px;
+    }
+    
+    .copyright {
+      background-color: #fff;
+      padding-right: 5%;
+      padding-left: 5%;
+    }
+
+    .copyright a,
+    .copyright span {
+      color: #000
+    }
+  </style>
+</head>
+
+<body>
+  <!-- header -->
+  <div id="header"></div>
+  <!-- 內容 -->
+   <div class="container">
+    <div class="shoppingCartBox d-flex justify-content-center mt-5 pt-3">
+      <!-- 商品項目 -->
+      <div class="shoppingItemsBox d-flex flex-column me-5">
+        <div class="cartItemBox me-3 pe-5 mb-2">
+          <div class="cartItem d-flex">
+            <div class="cameraImg m-2 ">
+              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+            </div>
+            <div class="content d-flex justify-content-between align-items-center flex-grow-1">
+              <div class="itemDetail d-flex flex-column">
+                <div class=""><span class="brand publicFont">FUJIFILM</span><br>
+                  <span class="model publicFont">X-T5 16-50mm</span>
+                </div>
+                <div class="detail publicFont">+詳細資訊</div>
+              </div>
+              <div class="amount d-flex flex-row align-items-start">
+                <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                <p class="amount-text mb-0 publicFont ">數量</p>
+                <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+              </div>
+              <p class="price">NT$67000</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="cartItemBox me-3 pe-5 mb-2">
+          <div class="cartItem d-flex ">
+            <div class="cameraImg m-2 ">
+              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+            </div>
+            <div class="d-flex flex-column flex-grow-1">
+              <div class="content d-flex justify-content-between align-items-center ">
+                <div class="itemDetail d-flex flex-column">
+                  <div class=""><span class="brand publicFont">FUJIFILM</span><br>
+                    <span class="model publicFont">X-T5 16-50mm</span>
+                  </div>
+                  <div class="detail publicFont">-詳細資訊</div>
+                </div>
+                <div class="amount d-flex flex-row align-items-start">
+                  <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                  <p class="amount-text mb-0 publicFont ">數量</p>
+                  <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+                </div>
+                <p class="price">NT$67000</p>
+              </div>
+              <div class="imageSpecifications d-flex flex-column">
+                <div class="detialType d-flex justify-content-between">
+                  <p class="mb-0">影像規格 IMAGE SPECIFICATIONS</p>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none">
+                    <path d="M1 5.58344L6.00081 1L11 5.58344" stroke="#143146" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </svg>
+                </div>
+                <hr>
+                <div class="detialTypeContent d-flex flex-column publicFont">
+                  <div class="d-flex justify-content-between">
+                    <p class="effectivePixels mb-1">有效像素</p>
+                    <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p class="pSensitivePixels mb-1">感光元件像素</p>
+                    <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p class="sensorFormat mb-1">感光元件格式</p>
+                    <p class="sensorFormatValue mb-1">APS-C</p>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p class="pSensitiveSize mb-1">感光元件大小</p>
+                    <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                  </div>
+                </div>
+              </div>
+              <div class="viewFinder d-flex flex-column">
+                <div class="detialType d-flex justify-content-between">
+                  <p>觀景器 VIEWFINDER</p>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                      stroke="#143146" />
+                  </svg>
+                </div>
+              </div>
+              <div class="dataTransfer d-flex flex-column">
+                <div class="detialType d-flex justify-content-between">
+                  <p>資料存取 DATA TRANSFER</p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                  <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                    stroke="#143146" />
+                </svg>
+                </div>
+              </div>
+              <div class="physicalSpecifications d-flex flex-column">
+                <div class="detialType d-flex justify-content-between">
+                  <p>機身資料 PHYSICAL SPECIFICATIONS</p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                  <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                    stroke="#143146" />
+                </svg>
+                </div>
+              </div>
+              <div class="OTHERS d-flex flex-column">
+                <div class="detialType d-flex justify-content-between">
+                  <p>其它資料 OTHERS</p>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                      stroke="#143146" />
+                  </svg>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cartItemBox me-3 pe-5 mb-2">
+          <div class="shoppingLesson d-flex flex-column">
+            <div class="lessonImg m-2 ">
+              <img src="../images/lesson1.png" alt="" class="object-fit-contain">
+            </div>
+            <div class="d-flex flex-column align-items-center">
+              <div class="">
+                <p>旅行攝影：按下快門，用攝影書寫故事</p>
+              </div>
+              <div class="">
+                <p>食癮，拾影</p>
+              </div>
+              <div class="d-flex">
+                <div class="">
+                  <p>4.2</p>
+                </div>
+                <div class="">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z" fill="#E68E41" stroke="#E68E41" stroke-linejoin="round"/>
+                    </svg>(1566)
+                </div>
+                <div class="">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
+                    <path d="M13.6002 10.1934C14.4979 10.8641 15.3002 12.5528 15.3002 13.5933C15.3002 13.9175 15.0637 14.1803 14.7719 14.1803H14.4502M11.0502 7.44415C11.6309 7.10822 12.0216 6.48035 12.0216 5.76122C12.0216 5.04209 11.6309 4.41421 11.0502 4.07828M2.22845 14.1803H11.5338C11.8256 14.1803 12.0621 13.9175 12.0621 13.5933C12.0621 11.5557 10.3598 9.90392 6.88115 9.90392C3.40251 9.90392 1.7002 11.5557 1.7002 13.5933C1.7002 13.9175 1.9367 14.1803 2.22845 14.1803ZM8.824 5.76122C8.824 6.83423 7.95416 7.70407 6.88115 7.70407C5.80814 7.70407 4.93829 6.83423 4.93829 5.76122C4.93829 4.68821 5.80814 3.81836 6.88115 3.81836C7.95416 3.81836 8.824 4.68821 8.824 5.76122Z" stroke="#807871" stroke-linecap="round"/>
+                    </svg>2,183
+                </div>
+              </div>
+              <div class="">
+                <p>NT$ 2,180</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cartItemBox me-3 pe-5 mb-2">
+          <div class="shoppingRent d-flex flex-column">
+            <div class="rentImg m-2 d-flex justify-content-center">
+              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+            </div>
+            <div class="rentCameraBrand d-flex flex-column align-items-center mb-3">
+              <span>FUJIFILM 富士</span>
+              <span>X-T5 16-50mm</span>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+              <span class="mb-2">租賃日期: 2024-01-01</span>
+              <span class="rentDeadLine">到期日: 2024-01-14</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="payStep d-flex flex-column">
+        <div class="payTitle">
+          結帳
+        </div>
+        <div class="buyerData">訂購人資料</div>
+        <div class="buyerInput d-flex flex-wrap">
+          <div class="d-flex flex-column flex-grow-1">
+            <p>稱謂*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>姓氏*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>姓名*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>地址欄*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>城市*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>地區*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>郵遞區號*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>電話號碼</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>本地電話*</p>
+            <input type="text" class="form-control">
+          </div>
+        </div>
+        <div class="Checkout d-flex justify-content-center align-items-center align-self-stretch">
+          <button class="btn text-alig-center">繼續</button>
+        </div>
+      </div>
+    </div>
+   </div>
+    
+  </div>
+  <!-- copyright -->
+   <footer>
+    <div class="copyright">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- 左側連結 -->
+          <div class="col-md-6 left-links">
+            <a href="#">聯絡我們</a>
+            <span>|</span>
+            <a href="#">購物說明</a>
+            <span>|</span>
+            <a href="#">最新消息</a>
+          </div>
+          <!-- 右側連結 -->
+          <div class="col-md-6 right-links text-end">
+            <div class="d-inline-block text-nowrap">
+              <a href="#">網站使用條款</a>
+              <span>|</span>
+              <a href="#">隱私權政策</a>
+              <span>|</span>
+              <a href="#">免責聲明</a>
+              <span>|</span>
+              <span>© Copyright 2024. Lenstudio Co. Ltd. All rights reserved</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   </footer>
+  
+
+
+  <!-- fetch header -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+  crossorigin="anonymous"></script>
+  <script>
+    fetch('../header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header').innerHTML = data);
+  </script>
+</body>
+
+</html>
