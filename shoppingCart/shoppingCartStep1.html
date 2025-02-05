@@ -56,12 +56,10 @@
 
     .shoppingItemsBox {
       overflow: auto;
-      width: 80%;
       height: 529px;
     }
 
     .cartItemBox {
-      width: 733px;
       border-radius: 20px;
       background-color: #f6f6f6;
     }
@@ -75,11 +73,6 @@
     .cartItem .cameraImg {
       width: 109px;
       height: 89px;
-    }
-
-
-    .lessonImg img {
-      width: 715px;
     }
 
     .rentImg img {
@@ -130,9 +123,7 @@
     }
 
     .payStep {
-      width: 473px;
       padding: 60px;
-      gap: 35px;
       border-radius: 20px;
       background-color: #f6f6f6;
     }
@@ -235,13 +226,13 @@
   <div class="container">
     <div class="shoppingCartTitleBox d-flex align-items-end mt-5 pt-3">
       <h1 class="shoppingCartTitle m-0">我的購物車</h1>
-      <small>(2)</small>
+      <small>(4)</small>
     </div>
 
-    <div class="shoppingCartBox d-flex justify-content-between align-items-start mt-4 ">
+    <div class="shoppingCartBox justify-content-between mt-4 row">
       <!-- 商品項目 -->
-      <div class="shoppingItemsBox d-flex flex-column me-5">
-        <div class="cartItemBox me-3 pe-5 mb-2">
+      <div class="shoppingItemsBox col-auto">
+        <div class="cartItemBox me-3 mb-2">
           <div class="cartItem d-flex">
             <div class="cameraImg m-2 ">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
@@ -258,12 +249,12 @@
                 <p class="amount-text mb-0 publicFont ">數量</p>
                 <button class="decrease btn pb-0 ps-2 pt-0">-</button>
               </div>
-              <p class="price">NT$67000</p>
+              <p class="price me-3">NT$67000</p>
             </div>
           </div>
         </div>
 
-        <div class="cartItemBox me-3 pe-5 mb-2">
+        <div class="cartItemBox me-3 mb-2">
           <div class="cartItem d-flex ">
             <div class="cameraImg m-2 ">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
@@ -281,16 +272,17 @@
                   <p class="amount-text mb-0 publicFont ">數量</p>
                   <button class="decrease btn pb-0 ps-2 pt-0">-</button>
                 </div>
-                <p class="price">NT$67000</p>
+                <p class="price me-3">NT$67000</p>
               </div>
               <div class="imageSpecifications d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p class="mb-0">影像規格 IMAGE SPECIFICATIONS</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none">
-                    <path d="M1 5.58344L6.00081 1L11 5.58344" stroke="#143146" stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
-                  </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none">
+                      <path d="M1 5.58344L6.00081 1L11 5.58344" stroke="#143146" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </div>
                 </div>
                 <hr>
                 <div class="detialTypeContent d-flex flex-column publicFont">
@@ -315,37 +307,45 @@
               <div class="viewFinder d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>觀景器 VIEWFINDER</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                      stroke="#143146" />
-                  </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
               </div>
               <div class="dataTransfer d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>資料存取 DATA TRANSFER</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                      stroke="#143146" />
-                  </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
               </div>
               <div class="physicalSpecifications d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>機身資料 PHYSICAL SPECIFICATIONS</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                      stroke="#143146" />
-                  </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
               </div>
               <div class="OTHERS d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>其它資料 OTHERS</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                      stroke="#143146" />
-                  </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
 
               </div>
@@ -353,7 +353,7 @@
           </div>
         </div>
 
-        <div class="cartItemBox me-3 pe-5 mb-2">
+        <div class="cartItemBox me-3 mb-2">
           <div class="shoppingLesson d-flex flex-column">
             <div class="lessonImg m-2 ">
               <img src="../images/lesson1.png" alt="" class="object-fit-contain">
@@ -369,7 +369,27 @@
                 <div class="">
                   <p>4.2</p>
                 </div>
-                <div class="">
+                <div class="me-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
                     <path
                       d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
@@ -409,7 +429,7 @@
 
       </div>
       <!-- 價格摘要 -->
-      <div class="payStep d-flex flex-column align-items-start flex-shrink-0 justify-content-around">
+      <div class="payStep col-auto">
         <div class="pCount border-bottom mb-3 d-flex flex-column gap-2">
           <div class="pTitle publicFont">摘要</div>
           <div class="ifCouponUse publicFont">
@@ -448,7 +468,7 @@
     </div>
   </div>
   <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+<button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
   Launch static backdrop modal
 </button>
 

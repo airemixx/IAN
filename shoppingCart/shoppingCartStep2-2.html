@@ -36,13 +36,10 @@
     }
 
     .shoppingItemsBox{
-      overflow: auto;
-      width: 80%;
       height: 650px;
     }
 
     .cartItemBox {
-      width: 733px;
       border-radius: 20px;
       background-color: #f6f6f6;
     }
@@ -59,7 +56,7 @@
     }
 
     .lessonImg img{
-      width: 715px; 
+      width: 650px; 
     }
 
     .rentImg img{
@@ -169,10 +166,10 @@
   <div id="header"></div>
   <!-- 內容 -->
    <div class="container">
-    <div class="shoppingCartBox d-flex justify-content-center align-items-start mt-5 pt-3">
+    <div class="shoppingCartBox mt-5 pt-3 row">
       <!-- 商品項目 -->
-      <div class="shoppingItemsBox d-flex flex-column me-5">
-        <div class="cartItemBox me-3 pe-5 mb-2">
+      <div class="shoppingItemsBox me-3 col-auto overflow-auto">
+        <div class="cartItemBox me-3 mb-2">
           <div class="cartItem d-flex">
             <div class="cameraImg m-2 ">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
@@ -189,12 +186,12 @@
                 <p class="amount-text mb-0 publicFont ">數量</p>
                 <button class="decrease btn pb-0 ps-2 pt-0">-</button>
               </div>
-              <p class="price">NT$67000</p>
+              <p class="price me-3">NT$67000</p>
             </div>
           </div>
         </div>
 
-        <div class="cartItemBox me-3 pe-5 mb-2">
+        <div class="cartItemBox me-3 mb-2">
           <div class="cartItem d-flex ">
             <div class="cameraImg m-2 ">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
@@ -212,15 +209,17 @@
                   <p class="amount-text mb-0 publicFont ">數量</p>
                   <button class="decrease btn pb-0 ps-2 pt-0">-</button>
                 </div>
-                <p class="price">NT$67000</p>
+                <p class="price me-3">NT$67000</p>
               </div>
               <div class="imageSpecifications d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p class="mb-0">影像規格 IMAGE SPECIFICATIONS</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none">
-                    <path d="M1 5.58344L6.00081 1L11 5.58344" stroke="#143146" stroke-linecap="round" stroke-linejoin="round"/>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none">
+                      <path d="M1 5.58344L6.00081 1L11 5.58344" stroke="#143146" stroke-linecap="round"
+                        stroke-linejoin="round" />
                     </svg>
-                  </svg>
+                  </div>
                 </div>
                 <hr>
                 <div class="detialTypeContent d-flex flex-column publicFont">
@@ -245,45 +244,53 @@
               <div class="viewFinder d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>觀景器 VIEWFINDER</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                      stroke="#143146" />
-                  </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
               </div>
               <div class="dataTransfer d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>資料存取 DATA TRANSFER</p>
-                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                  <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                    stroke="#143146" />
-                </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
               </div>
               <div class="physicalSpecifications d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>機身資料 PHYSICAL SPECIFICATIONS</p>
-                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                  <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                    stroke="#143146" />
-                </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
               </div>
               <div class="OTHERS d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p>其它資料 OTHERS</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                    <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                      stroke="#143146" />
-                  </svg>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
+                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
+                        stroke="#143146" />
+                    </svg>
+                  </div>
                 </div>
-                
+
               </div>
             </div>
           </div>
         </div>
 
-        <div class="cartItemBox me-3 pe-5 mb-2">
+        <div class="cartItemBox me-3 mb-2">
           <div class="shoppingLesson d-flex flex-column">
             <div class="lessonImg m-2 ">
               <img src="../images/lesson1.png" alt="" class="object-fit-contain">
@@ -299,15 +306,39 @@
                 <div class="">
                   <p>4.2</p>
                 </div>
-                <div class="">
+                <div class="me-3">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
-                    <path d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z" fill="#E68E41" stroke="#E68E41" stroke-linejoin="round"/>
-                    </svg>(1566)
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>(1566)
                 </div>
                 <div class="">
                   <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
-                    <path d="M13.6002 10.1934C14.4979 10.8641 15.3002 12.5528 15.3002 13.5933C15.3002 13.9175 15.0637 14.1803 14.7719 14.1803H14.4502M11.0502 7.44415C11.6309 7.10822 12.0216 6.48035 12.0216 5.76122C12.0216 5.04209 11.6309 4.41421 11.0502 4.07828M2.22845 14.1803H11.5338C11.8256 14.1803 12.0621 13.9175 12.0621 13.5933C12.0621 11.5557 10.3598 9.90392 6.88115 9.90392C3.40251 9.90392 1.7002 11.5557 1.7002 13.5933C1.7002 13.9175 1.9367 14.1803 2.22845 14.1803ZM8.824 5.76122C8.824 6.83423 7.95416 7.70407 6.88115 7.70407C5.80814 7.70407 4.93829 6.83423 4.93829 5.76122C4.93829 4.68821 5.80814 3.81836 6.88115 3.81836C7.95416 3.81836 8.824 4.68821 8.824 5.76122Z" stroke="#807871" stroke-linecap="round"/>
-                    </svg>2,183
+                    <path
+                      d="M13.6002 10.1934C14.4979 10.8641 15.3002 12.5528 15.3002 13.5933C15.3002 13.9175 15.0637 14.1803 14.7719 14.1803H14.4502M11.0502 7.44415C11.6309 7.10822 12.0216 6.48035 12.0216 5.76122C12.0216 5.04209 11.6309 4.41421 11.0502 4.07828M2.22845 14.1803H11.5338C11.8256 14.1803 12.0621 13.9175 12.0621 13.5933C12.0621 11.5557 10.3598 9.90392 6.88115 9.90392C3.40251 9.90392 1.7002 11.5557 1.7002 13.5933C1.7002 13.9175 1.9367 14.1803 2.22845 14.1803ZM8.824 5.76122C8.824 6.83423 7.95416 7.70407 6.88115 7.70407C5.80814 7.70407 4.93829 6.83423 4.93829 5.76122C4.93829 4.68821 5.80814 3.81836 6.88115 3.81836C7.95416 3.81836 8.824 4.68821 8.824 5.76122Z"
+                      stroke="#807871" stroke-linecap="round" />
+                  </svg>2,183
                 </div>
               </div>
               <div class="">
@@ -334,41 +365,46 @@
         </div>
 
       </div>
-      <div class="payStep d-flex flex-column">
+      <div class="payStep col">
         <div class="payTitle">
-          寄送方式  
+          結帳
         </div>
         <div class="buyerData">訂購人資料</div>
         <div class="buyerInput d-flex flex-wrap">
           <div class="d-flex flex-column flex-grow-1">
+            <p>稱謂*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>姓氏*</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
             <p>姓名*</p>
             <input type="text" class="form-control">
           </div>
           <div class="d-flex flex-column flex-grow-1">
-            <p>電話號碼*</p>
-            <input type="text" class="form-control">
-          </div>
-        </div>
-        <div class="getProductData">收貨人資料</div>
-        <div class="getProductInput d-flex flex-wrap">
-          <div class="d-flex flex-column flex-grow-1">
-            <p>姓名*</p>
+            <p>地址欄*</p>
             <input type="text" class="form-control">
           </div>
           <div class="d-flex flex-column flex-grow-1">
-            <p>電話號碼*</p>
+            <p>城市*</p>
             <input type="text" class="form-control">
           </div>
           <div class="d-flex flex-column flex-grow-1">
-            <p>縣市*</p>
+            <p>地區*</p>
             <input type="text" class="form-control">
           </div>
           <div class="d-flex flex-column flex-grow-1">
-            <p>區域*</p>
+            <p>郵遞區號*</p>
             <input type="text" class="form-control">
           </div>
           <div class="d-flex flex-column flex-grow-1">
-            <p>地址*</p>
+            <p>電話號碼</p>
+            <input type="text" class="form-control">
+          </div>
+          <div class="d-flex flex-column flex-grow-1">
+            <p>本地電話*</p>
             <input type="text" class="form-control">
           </div>
         </div>
