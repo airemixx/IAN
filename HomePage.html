@@ -56,7 +56,6 @@
   </head>
   <body>
     <!-- header -->
-    <header>
 
                 </a>
                 <ul class="camera-brands">
@@ -188,6 +187,7 @@
         </ul>
       </nav>
     </header>
+
     <!-- News-slider -->
     <div class="splide">
 
@@ -394,100 +394,144 @@
     <!-- gallery -->
 
     <!-- footer -->
-    <div class="footer">
+    <footer>
       <div class="container">
-        <div class="row">
-          <!-- About Us -->
-          <div class="col-md-2">
-            <h5>About Us</h5>
-            <ul class="list-unstyled">
-              <li><a href="#">關於我們</a></li>
-              <li><a href="#">品牌故事</a></li>
-              <li><a href="#">新聞與公告</a></li>
-              <li><a href="#">媒體報導</a></li>
-              <li><a href="#">服務條款</a></li>
-            </ul>
-          </div>
+        <div class="row footer-block">
+          <!-- Left side (About Us, Account Center, FAQ) -->
+          <div class="col-sm-7 col-12 col-md">
+            <div class="row">
+              <!-- About Us -->
+              <div class="col-12 col-md mb-3">
+                <div
+                  class="title-plus d-flex justify-content-between"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#about-us"
+                >
+                  <h5 class="footer-title">About Us</h5>
+                  <div class="plus d-md-none mx-0 mx-sm-5">+</div>
+                </div>
 
-          <!-- Account Center -->
-          <div class="col-md-3">
-            <h5>Account Center</h5>
-            <ul class="list-unstyled">
-              <li><a href="#">會員中心</a></li>
-              <li><a href="#">我的最愛</a></li>
-              <li><a href="#">訂單資訊查詢</a></li>
-              <li><a href="#">租賃訂單查詢</a></li>
-              <li><a href="#">課程查詢</a></li>
-              <li><a href="#">優惠專區</a></li>
-            </ul>
-          </div>
+                <ul id="about-us" class="list-unstyled collapse d-md-block">
+                  <li><a href="#">關於我們</a></li>
+                  <li><a href="#">品牌故事</a></li>
+                  <li><a href="#">新聞與公告</a></li>
+                  <li><a href="#">媒體報導</a></li>
+                  <li><a href="#">服務條款</a></li>
+                </ul>
+              </div>
 
-          <!-- FAQ -->
-          <div class="col-md-2">
-            <h5>FAQ</h5>
-            <ul class="list-unstyled">
-              <li><a href="#">購物須知</a></li>
-              <li><a href="#">產品諮詢</a></li>
-              <li><a href="#">維修保固</a></li>
-              <li><a href="#">帳戶問題</a></li>
-              <li><a href="#">訂單問題</a></li>
-            </ul>
-          </div>
+              <!-- Account Center -->
+              <div class="col-12 col-md mb-3">
+                <div
+                  class="title-plus d-flex justify-content-between"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#account-center"
+                >
+                  <h5 class="footer-title">Account Center</h5>
+                  <div class="plus d-md-none mx-0 mx-sm-5">+</div>
+                </div>
+                <ul
+                  id="account-center"
+                  class="list-unstyled collapse d-md-block"
+                >
+                  <li><a href="#">會員中心</a></li>
+                  <li><a href="#">我的最愛</a></li>
+                  <li><a href="#">訂單資訊查詢</a></li>
+                  <li><a href="#">租賃訂單查詢</a></li>
+                  <li><a href="#">課程查詢</a></li>
+                  <li><a href="#">優惠專區</a></li>
+                </ul>
+              </div>
 
-          <!-- LENSTUDIO -->
-          <div class="col-md-3">
-            <h5>LENSTUDIO</h5>
-            <p>桃園市中壢區新生路二段421號</p>
-            <p>03-3583-2748</p>
-            <p>客服信箱：LENSTUDIO@gamil.com</p>
-            <div class="social-icons">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-line"></i></a>
+              <!-- FAQ -->
+              <div class="col-12 col-md mb-3">
+                <div
+                  class="title-plus d-flex justify-content-between"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#faq"
+                >
+                  <h5 class="footer-title">FAQ</h5>
+                  <div class="plus d-md-none mx-0 mx-sm-5">+</div>
+                </div>
+                <ul id="faq" class="list-unstyled collapse d-md-block">
+                  <li><a href="#">購物須知</a></li>
+                  <li><a href="#">產品諮詢</a></li>
+                  <li><a href="#">維修保固</a></li>
+                  <li><a href="#">帳戶問題</a></li>
+                  <li><a href="#">訂單問題</a></li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          <!-- Open Hours -->
-          <div class="col-md-2">
-            <h5>OPEN HOURS</h5>
-            <ul class="list-unstyled">
-              <li>週二至週五 13:00-18:30</li>
-              <li>週六及週日 11:00-18:30</li>
-            </ul>
+          <!-- Right side (LENSTUDIO, Open Hours) -->
+          <div class="col-sm-5 col-12 col-md">
+            <div class="row">
+              <!-- LENSTUDIO -->
+              <div class="col mb-md-0 mb-4">
+                <h5 footer-title>LENSTUDIO</h5>
+                <p>桃園市中壢區新生路二段421號</p>
+                <p>03-3583-2748</p>
+                <p>客服信箱：LENSTUDIO@gamil.com</p>
+                <div class="social-icons">
+                  <a href="#"><i class="fab fa-facebook"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-line"></i></a>
+                </div>
+              </div>
+
+              <!-- Open Hours -->
+              <div class="col">
+                <h5 class="footer-title">OPEN HOURS</h5>
+                <ul class="list-unstyled">
+                  <li>週二至週五 13:00-18:30</li>
+                  <li>週六及週日 11:00-18:30</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </footer>
 
     <!-- copyright -->
-    <div class="copyright">
-      <div class="container">
-        <div class="row">
-          <!-- 左側連結 -->
-          <div class="col-md-6 left-links">
-            <a href="#">聯絡我們</a>
-            <span>|</span>
-            <a href="#">購物說明</a>
-            <span>|</span>
-            <a href="#">最新消息</a>
-          </div>
-          <!-- 右側連結 -->
-          <div class="col-md-6 right-links text-end">
-            <div class="d-inline-block text-nowrap">
+    <div class="copyright justify-content-between">
+      <div class="row">
+        <!-- 左側連結 -->
+        <div
+          class="col-lg-4 col-md-6 col-12 copyright-left d-flex justify-content-md-start justify-content-center"
+        >
+          <a href="#">聯絡我們</a>
+          <span>|</span>
+          <a href="#">購物說明</a>
+          <span>|</span>
+          <a href="#">最新消息</a>
+        </div>
+        <!-- 右側連結 -->
+        <div
+          class="col-lg-8 col-md-6 col-12 copyright-right d-flex justify-content-md-end justify-content-center mt-md-0 mt-1 p-0"
+        >
+          <div class="copyright-right-div">
+            <div class="mobile-none">
               <a href="#">網站使用條款</a>
               <span>|</span>
               <a href="#">隱私權政策</a>
               <span>|</span>
               <a href="#">免責聲明</a>
               <span>|</span>
-              <span
-                >© Copyright 2024. Lenstudio Co. Ltd. All rights reserved</span
-              >
+            </div>
+            <div class="copyright-text">
+              © Copyright 2025. Lenstudio Co. Ltd. All rights reserved
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script type="module">
       /* slider.js 滑動照片*/
