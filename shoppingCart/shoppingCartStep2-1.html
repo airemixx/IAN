@@ -54,7 +54,15 @@
       height: 89px;
     }
 
-    .accordion-button:not(.collapsed){
+    .j-detailcollapse{
+      padding: 0;
+      font-size: 14px;
+      border: none;
+      background-color: #f6f6f6;
+      text-align: left;
+    }
+
+    .accBtn:not(.collapsed){
       box-shadow:none;
       background: #f6f6f6;
     }
@@ -63,26 +71,26 @@
       border: none;
     }
 
-    .accordion-button{
+    .accBtn{
       background-color: #f6f6f6;
     }
 
-    .accordion-button:active{
+    .accBtn:active{
       background-color: #f6f6f6;
     }
 
-    .accordion-button:focus{
+    .accBtn:focus{
       background-color: #f6f6f6;
     }
     
-    .accordion-button:visited{
+    .accBtn:visited{
       background-color: #f6f6f6;
     }
     
-    .accordion-button:link{
+    .accBtn:link{
       background-color: #f6f6f6;
     }
-    .accordion-body{
+    .j-accBody{
       background-color: #f6f6f6;
     }
 
@@ -137,6 +145,14 @@
       color: #8F8F8F;
     }
 
+    .j-decrease:active{
+      border: none;
+    }
+
+    .j-increase:active{
+      border: none;
+    }
+    
     .j-amount-text {
       width: 40px;
     }
@@ -190,7 +206,7 @@
         display: flex;
         flex-direction: column;
       }
-      
+
       .container .j-shoppingCartBox {
         display: flex;
         flex-direction: column;
@@ -242,19 +258,100 @@
             <div class="j-cameraImg m-2 ">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
             </div>
-            <div class="j-content d-flex justify-content-between align-items-center flex-grow-1">
-              <div class="itemDetail d-flex flex-column">
-                <div class=""><span class="brand j-publicFont">FUJIFILM</span><br>
-                  <span class="model j-publicFont">X-T5 16-50mm</span>
+            <div class="d-flex flex-column flex-grow-1">
+              <div class="j-content d-flex justify-content-between align-items-center ">
+                <div class="itemDetail d-flex flex-column">
+                  <div class=""><span class="brand j-publicFont">FUJIFILM</span><br>
+                    <span class="model j-publicFont">X-T5 16-50mm</span>
+                  </div>
+                  <button class="j-detailcollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
+                    +詳細資訊
+                  </button>
                 </div>
-                <div class="detail j-publicFont">+詳細資訊</div>
+                <div class="amount d-flex flex-row align-items-start">
+                  <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
+                  <p class="j-amount-text mb-0 j-publicFont ">數量</p>
+                  <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
+                </div>
+                <p class="price me-3">NT$67000</p>
               </div>
-              <div class="amount d-flex flex-row align-items-start">
-                <button class="increase btn pb-0 ps-0 pt-0">+</button>
-                <p class="j-amount-text mb-0 j-publicFont ">數量</p>
-                <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+              <div class="collapse" id="collapseExample1">
+                  <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                          影像規格 IMAGE SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body j-accBody">
+                          <div class="j-detialTypeContent d-flex flex-column j-publicFont">
+                            <div class="d-flex justify-content-between">
+                              <p class="effectivePixels mb-1">有效像素</p>
+                              <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitivePixels mb-1">感光元件像素</p>
+                              <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="sensorFormat mb-1">感光元件格式</p>
+                              <p class="sensorFormatValue mb-1">APS-C</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitiveSize mb-1">感光元件大小</p>
+                              <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                          觀景器 VIEWFINDER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                        <div class="accordion-body j-accBody">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                          資料存取 DATA TRANSFER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                        <div class="accordion-body j-accBody">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                          機身資料 PHYSICAL SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                        <div class="accordion-body j-accBody">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                          其它資料 OTHERS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                        <div class="accordion-body j-accBody">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
               </div>
-              <p class="price me-3">NT$67000</p>
             </div>
           </div>
         </div>
@@ -264,95 +361,100 @@
             <div class="j-cameraImg m-2 ">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
             </div>
-            <div class="d-flex flex-column flex-grow-1">
+           <div class="d-flex flex-column flex-grow-1">
               <div class="j-content d-flex justify-content-between align-items-center ">
                 <div class="itemDetail d-flex flex-column">
                   <div class=""><span class="brand j-publicFont">FUJIFILM</span><br>
                     <span class="model j-publicFont">X-T5 16-50mm</span>
                   </div>
-                  <div class="detail j-publicFont">-詳細資訊</div>
+                  <!-- <div class="detail j-publicFont">-詳細資訊</div> -->
+                  <button class="j-detailcollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                    +詳細資訊
+                  </button>
                 </div>
                 <div class="amount d-flex flex-row align-items-start">
-                  <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                  <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
                   <p class="j-amount-text mb-0 j-publicFont ">數量</p>
-                  <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+                  <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
                 </div>
                 <p class="price me-3">NT$67000</p>
               </div>
-              <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
-                      影像規格 IMAGE SPECIFICATIONS
-                    </button>
-                  </h2>
-                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
-                    <div class="accordion-body">
-                      <div class="j-detialTypeContent d-flex flex-column j-publicFont">
-                        <div class="d-flex justify-content-between">
-                          <p class="effectivePixels mb-1">有效像素</p>
-                          <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+              <div class="collapse" id="collapseExample2">
+                  <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                          影像規格 IMAGE SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body j-accBody">
+                          <div class="j-detialTypeContent d-flex flex-column j-publicFont">
+                            <div class="d-flex justify-content-between">
+                              <p class="effectivePixels mb-1">有效像素</p>
+                              <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitivePixels mb-1">感光元件像素</p>
+                              <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="sensorFormat mb-1">感光元件格式</p>
+                              <p class="sensorFormatValue mb-1">APS-C</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitiveSize mb-1">感光元件大小</p>
+                              <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                            </div>
+                          </div>
                         </div>
-                        <div class="d-flex justify-content-between">
-                          <p class="pSensitivePixels mb-1">感光元件像素</p>
-                          <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                          觀景器 VIEWFINDER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                        <div class="accordion-body j-accBody">
                         </div>
-                        <div class="d-flex justify-content-between">
-                          <p class="sensorFormat mb-1">感光元件格式</p>
-                          <p class="sensorFormatValue mb-1">APS-C</p>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                          資料存取 DATA TRANSFER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                        <div class="accordion-body j-accBody">
                         </div>
-                        <div class="d-flex justify-content-between">
-                          <p class="pSensitiveSize mb-1">感光元件大小</p>
-                          <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                          機身資料 PHYSICAL SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                        <div class="accordion-body j-accBody">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                        <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                          其它資料 OTHERS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                        <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                      觀景器 VIEWFINDER
-                    </button>
-                  </h2>
-                  <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-                    <div class="accordion-body">
-                    </div>
-                  </div>
-                </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-                      資料存取 DATA TRANSFER
-                    </button>
-                  </h2>
-                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
-                    <div class="accordion-body">
-                    </div>
-                  </div>
-                </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="panelsStayOpen-headingFour">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
-                      機身資料 PHYSICAL SPECIFICATIONS
-                    </button>
-                  </h2>
-                  <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
-                    <div class="accordion-body">
-                    </div>
-                  </div>
-                </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="panelsStayOpen-headingFive">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
-                      其它資料 OTHERS
-                    </button>
-                  </h2>
-                  <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
-                    <div class="accordion-body">
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -451,9 +553,9 @@
             </div>
             <div class="amount d-flex flex-row align-items-start justify-content-around">
               <div class="d-flex justify-content-center">
-                <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
                 <p class="j-amount-text mb-0 j-publicFont ">數量</p>
-                <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+                <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
               </div>
               <div class="">
                 <p class="price">NT$67000</p>
@@ -481,12 +583,12 @@
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                    <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
                       影像規格 IMAGE SPECIFICATIONS
                     </button>
                   </h2>
                   <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
-                    <div class="accordion-body">
+                    <div class="accordion-body j-accBody">
                       <div class="j-detialTypeContent d-flex flex-column j-publicFont">
                         <div class="d-flex justify-content-between">
                           <p class="effectivePixels mb-1">有效像素</p>
@@ -510,54 +612,54 @@
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                    <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
                       觀景器 VIEWFINDER
                     </button>
                   </h2>
                   <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-                    <div class="accordion-body">
+                    <div class="accordion-body j-accBody">
                     </div>
                   </div>
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                    <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
                       資料存取 DATA TRANSFER
                     </button>
                   </h2>
                   <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
-                    <div class="accordion-body">
+                    <div class="accordion-body j-accBody">
                     </div>
                   </div>
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="panelsStayOpen-headingFour">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                    <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
                       機身資料 PHYSICAL SPECIFICATIONS
                     </button>
                   </h2>
                   <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
-                    <div class="accordion-body">
+                    <div class="accordion-body j-accBody">
                     </div>
                   </div>
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="panelsStayOpen-headingFive">
-                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                    <button class="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
                       其它資料 OTHERS
                     </button>
                   </h2>
                   <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
-                    <div class="accordion-body">
+                    <div class="accordion-body j-accBody">
                     </div>
                   </div>
                 </div>
               </div>
               <div class="amount d-flex flex-row align-items-start justify-content-around">
                 <div class="d-flex justify-content-center">
-                  <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                  <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
                   <p class="j-amount-text mb-0 j-publicFont ">數量</p>
-                  <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+                  <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
                 </div>
                 <div class="">
                   <p class="price">NT$67000</p>
