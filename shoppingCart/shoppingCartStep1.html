@@ -18,7 +18,6 @@
   <link rel="stylesheet" href="../css/footer.css">
   <title>shoppingCartStep1</title>
   <style>
-    
     body {
       height: 100vh;
     }
@@ -76,42 +75,44 @@
       height: 89px;
     }
 
-    .j-detailcollapse{
+    .j-detailcollapse {
       padding: 0;
       font-size: 14px;
       border: none;
       background-color: #f6f6f6;
       text-align: left;
     }
-    .j-accBtn:not(.collapsed){
-      box-shadow:none;
+
+    .j-accBtn:not(.collapsed) {
+      box-shadow: none;
       background: #f6f6f6;
     }
 
-    .j-accitem{
+    .j-accitem {
       border: none;
     }
 
-    .j-accBtn{
+    .j-accBtn {
       background-color: #f6f6f6;
     }
 
-    .j-accBtn:active{
+    .j-accBtn:active {
       background-color: #f6f6f6;
     }
 
-    .j-accBtn:focus{
+    .j-accBtn:focus {
       background-color: #f6f6f6;
     }
-    
-    .j-accBtn:visited{
+
+    .j-accBtn:visited {
       background-color: #f6f6f6;
     }
-    
-    .j-accBtn:link{
+
+    .j-accBtn:link {
       background-color: #f6f6f6;
     }
-    .j-accBody{
+
+    .j-accBody {
       background-color: #f6f6f6;
     }
 
@@ -242,11 +243,12 @@
         color: #FFF;
       }
     }
-    .j-decrease:active{
+
+    .j-decrease:active {
       border: none;
     }
 
-    .j-increase:active{
+    .j-increase:active {
       border: none;
     }
 
@@ -285,12 +287,12 @@
       .j-lessonImg img {
         width: 375px;
       }
-      
+
       .footer {
         display: block;
       }
 
-      .copyright{
+      .copyright {
         text-align: center;
       }
 
@@ -301,7 +303,7 @@
       .copyright .right-links .copyRight {
         display: block;
       }
-      
+
     }
   </style>
 </head>
@@ -320,37 +322,43 @@
     <div class="j-shoppingCartBox justify-content-between mt-4 row">
       <!-- 商品項目 -->
       <div class="j-shoppingItemsBox col-md-auto d-none d-sm-block p-0">
-        <div class="j-cartItemBox me-3 mb-2">
-          <div class="j-cartItem d-flex ">
-            <div class="j-cameraImg m-2 ">
-              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
-            </div>
-            <div class="d-flex flex-column flex-grow-1">
-              <div class="j-content d-flex justify-content-between align-items-center ">
-                <div class="j-itemDetail d-flex flex-column">
-                  <div class=""><span class="j-brand j-publicFont">FUJIFILM</span><br>
-                    <span class="j-model j-publicFont">X-T5 16-50mm</span>
-                  </div>
-                  <button class="j-detailcollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
-                    +詳細資訊
-                  </button>
-                </div>
-                <div class="j-amount d-flex flex-row align-items-start">
-                  <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
-                  <p class="j-amount-text mb-0 j-publicFont ">數量</p>
-                  <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
-                </div>
-                <p class="price me-3">NT$67000</p>
+        <div class="d-flex ">
+          <input type="checkbox" class="form-check">
+          <div class="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
+            <div class="j-cartItem d-flex flex-grow-1">
+              <div class="j-cameraImg m-2 ">
+                <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
               </div>
-              <div class="collapse" id="collapseExample1">
+              <div class="d-flex flex-column flex-grow-1">
+                <div class="j-content d-flex justify-content-between align-items-center ">
+                  <div class="j-itemDetail d-flex flex-column">
+                    <div class=""><span class="j-brand j-publicFont">FUJIFILM</span><br>
+                      <span class="j-model j-publicFont">X-T5 16-50mm</span>
+                    </div>
+                    <button class="j-detailcollapse" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
+                      +詳細資訊
+                    </button>
+                  </div>
+                  <div class="j-amount d-flex flex-row align-items-start">
+                    <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
+                    <p class="j-amount-text mb-0 j-publicFont ">數量</p>
+                    <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
+                  </div>
+                  <p class="price me-3">NT$67000</p>
+                </div>
+                <div class="collapse" id="collapseExample1">
                   <div class="accordion" id="accordionExample">
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseOne">
                           影像規格 IMAGE SPECIFICATIONS
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingOne">
                         <div class="accordion-body j-accBody">
                           <div class="j-detialTypeContent d-flex flex-column j-publicFont">
                             <div class="d-flex justify-content-between">
@@ -375,86 +383,105 @@
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseTwo">
                           觀景器 VIEWFINDER
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingTwo">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseThree">
                           資料存取 DATA TRANSFER
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingThree">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingFour">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseFour">
                           機身資料 PHYSICAL SPECIFICATIONS
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingFour">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingFive">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseFive">
                           其它資料 OTHERS
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingFive">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="j-cartItemBox me-3 mb-2">
-          <div class="j-cartItem d-flex ">
-            <div class="j-cameraImg m-2 ">
-              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
-            </div>
-            <div class="d-flex flex-column flex-grow-1">
-              <div class="j-content d-flex justify-content-between align-items-center ">
-                <div class="j-itemDetail d-flex flex-column">
-                  <div class=""><span class="j-brand j-publicFont">FUJIFILM</span><br>
-                    <span class="j-model j-publicFont">X-T5 16-50mm</span>
-                  </div>
-                  <!-- <div class="j-detail j-publicFont">-詳細資訊</div> -->
-                  <button class="j-detailcollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
-                    +詳細資訊
-                  </button>
-                </div>
-                <div class="j-amount d-flex flex-row align-items-start">
-                  <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
-                  <p class="j-amount-text mb-0 j-publicFont ">數量</p>
-                  <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
-                </div>
-                <p class="price me-3">NT$67000</p>
+        <div class="d-flex">
+          <input type="checkbox" class="form-check">
+          <div class="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
+            <div class="j-cartItem d-flex flex-grow-1">
+              <div class="j-cameraImg m-2 ">
+                <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
               </div>
-              <div class="collapse" id="collapseExample2">
+              <div class="d-flex flex-column flex-grow-1">
+                <div class="j-content d-flex justify-content-between align-items-center ">
+                  <div class="j-itemDetail d-flex flex-column">
+                    <div class=""><span class="j-brand j-publicFont">FUJIFILM</span><br>
+                      <span class="j-model j-publicFont">X-T5 16-50mm</span>
+                    </div>
+                    <!-- <div class="j-detail j-publicFont">-詳細資訊</div> -->
+                    <button class="j-detailcollapse" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                      +詳細資訊
+                    </button>
+                  </div>
+                  <div class="j-amount d-flex flex-row align-items-start">
+                    <button class="j-increase btn pb-0 ps-0 pt-0">+</button>
+                    <p class="j-amount-text mb-0 j-publicFont ">數量</p>
+                    <button class="j-decrease btn pb-0 ps-2 pt-0">-</button>
+                  </div>
+                  <p class="price me-3">NT$67000</p>
+                </div>
+                <div class="collapse" id="collapseExample2">
                   <div class="accordion" id="accordionExample">
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseOne">
                           影像規格 IMAGE SPECIFICATIONS
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingOne">
                         <div class="accordion-body j-accBody">
                           <div class="j-detialTypeContent d-flex flex-column j-publicFont">
                             <div class="d-flex justify-content-between">
@@ -479,127 +506,147 @@
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseTwo">
                           觀景器 VIEWFINDER
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingTwo">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseThree">
                           資料存取 DATA TRANSFER
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingThree">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingFour">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseFour">
                           機身資料 PHYSICAL SPECIFICATIONS
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingFour">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item j-accitem">
                       <h2 class="accordion-header" id="panelsStayOpen-headingFive">
-                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                        <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false"
+                          aria-controls="panelsStayOpen-collapseFive">
                           其它資料 OTHERS
                         </button>
                       </h2>
-                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingFive">
                         <div class="accordion-body j-accBody">
                         </div>
                       </div>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="j-cartItemBox me-3 mb-2">
-          <div class="shoppingLesson d-flex flex-column">
-            <div class="j-lessonImg m-2 ">
-              <img src="../images/lesson1.png" alt="" class="object-fit-contain">
-            </div>
-            <div class="d-flex flex-column align-items-center">
-              <div class="">
-                <p>旅行攝影：按下快門，用攝影書寫故事</p>
+        
+        <div class="d-flex">
+          <input type="checkbox" class="form-check">
+          <div class="j-cartItemBox me-3 mb-2 d-flex">
+            <div class="shoppingLesson d-flex flex-column">
+              <div class="j-lessonImg m-2 ">
+                <img src="../images/lesson1.png" alt="" class="object-fit-contain">
               </div>
-              <div class="">
-                <p>食癮，拾影</p>
-              </div>
-              <div class="d-flex">
+              <div class="d-flex flex-column align-items-center">
                 <div class="">
-                  <p>4.2</p>
-                </div>
-                <div class="me-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
-                    <path
-                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
-                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
-                    <path
-                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
-                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
-                    <path
-                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
-                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
-                    <path
-                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
-                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
-                    <path
-                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
-                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
-                  </svg>(1566)
+                  <p>旅行攝影：按下快門，用攝影書寫故事</p>
                 </div>
                 <div class="">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
-                    <path
-                      d="M13.6002 10.1934C14.4979 10.8641 15.3002 12.5528 15.3002 13.5933C15.3002 13.9175 15.0637 14.1803 14.7719 14.1803H14.4502M11.0502 7.44415C11.6309 7.10822 12.0216 6.48035 12.0216 5.76122C12.0216 5.04209 11.6309 4.41421 11.0502 4.07828M2.22845 14.1803H11.5338C11.8256 14.1803 12.0621 13.9175 12.0621 13.5933C12.0621 11.5557 10.3598 9.90392 6.88115 9.90392C3.40251 9.90392 1.7002 11.5557 1.7002 13.5933C1.7002 13.9175 1.9367 14.1803 2.22845 14.1803ZM8.824 5.76122C8.824 6.83423 7.95416 7.70407 6.88115 7.70407C5.80814 7.70407 4.93829 6.83423 4.93829 5.76122C4.93829 4.68821 5.80814 3.81836 6.88115 3.81836C7.95416 3.81836 8.824 4.68821 8.824 5.76122Z"
-                      stroke="#807871" stroke-linecap="round" />
-                  </svg>2,183
+                  <p>食癮，拾影</p>
+                </div>
+                <div class="d-flex">
+                  <div class="">
+                    <p>4.2</p>
+                  </div>
+                  <div class="me-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                      <path
+                        d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                        fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                      <path
+                        d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                        fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                      <path
+                        d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                        fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                      <path
+                        d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                        fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                      <path
+                        d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                        fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                    </svg>(1566)
+                  </div>
+                  <div class="">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
+                      <path
+                        d="M13.6002 10.1934C14.4979 10.8641 15.3002 12.5528 15.3002 13.5933C15.3002 13.9175 15.0637 14.1803 14.7719 14.1803H14.4502M11.0502 7.44415C11.6309 7.10822 12.0216 6.48035 12.0216 5.76122C12.0216 5.04209 11.6309 4.41421 11.0502 4.07828M2.22845 14.1803H11.5338C11.8256 14.1803 12.0621 13.9175 12.0621 13.5933C12.0621 11.5557 10.3598 9.90392 6.88115 9.90392C3.40251 9.90392 1.7002 11.5557 1.7002 13.5933C1.7002 13.9175 1.9367 14.1803 2.22845 14.1803ZM8.824 5.76122C8.824 6.83423 7.95416 7.70407 6.88115 7.70407C5.80814 7.70407 4.93829 6.83423 4.93829 5.76122C4.93829 4.68821 5.80814 3.81836 6.88115 3.81836C7.95416 3.81836 8.824 4.68821 8.824 5.76122Z"
+                        stroke="#807871" stroke-linecap="round" />
+                    </svg>2,183
+                  </div>
+                </div>
+                <div class="">
+                  <p>NT$ 2,180</p>
                 </div>
               </div>
-              <div class="">
-                <p>NT$ 2,180</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-flex">
+          <input type="checkbox" class="form-check">
+          <div class="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
+            <div class="shoppingRent d-flex flex-column flex-grow-1">
+              <div class="j-rentImg m-2 d-flex justify-content-center">
+                <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+              </div>
+              <div class="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
+                <span>FUJIFILM 富士</span>
+                <span>X-T5 16-50mm</span>
+              </div>
+              <div class="d-flex flex-column align-items-center">
+                <span class="mb-2">租賃日期: 2024-01-01</span>
+                <span class="j-rentDeadLine">到期日: 2024-01-14</span>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="j-cartItemBox me-3 mb-2">
-          <div class="shoppingRent d-flex flex-column">
-            <div class="j-rentImg m-2 d-flex justify-content-center">
-              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
-            </div>
-            <div class="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
-              <span>FUJIFILM 富士</span>
-              <span>X-T5 16-50mm</span>
-            </div>
-            <div class="d-flex flex-column align-items-center">
-              <span class="mb-2">租賃日期: 2024-01-01</span>
-              <span class="j-rentDeadLine">到期日: 2024-01-14</span>
-            </div>
-          </div>
-        </div>
+        
 
       </div>
 
@@ -650,11 +697,14 @@
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item j-accitem">
                   <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseOne">
                       影像規格 IMAGE SPECIFICATIONS
                     </button>
                   </h2>
-                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-headingOne">
                     <div class="accordion-body j-accBody">
                       <div class="j-detialTypeContent d-flex flex-column j-publicFont">
                         <div class="d-flex justify-content-between">
@@ -679,44 +729,56 @@
                 </div>
                 <div class="accordion-item j-accitem">
                   <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseTwo">
                       觀景器 VIEWFINDER
                     </button>
                   </h2>
-                  <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                  <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-headingTwo">
                     <div class="accordion-body j-accBody">
                     </div>
                   </div>
                 </div>
                 <div class="accordion-item j-accitem">
                   <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseThree">
                       資料存取 DATA TRANSFER
                     </button>
                   </h2>
-                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-headingThree">
                     <div class="accordion-body j-accBody">
                     </div>
                   </div>
                 </div>
                 <div class="accordion-item j-accitem">
                   <h2 class="accordion-header" id="panelsStayOpen-headingFour">
-                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseFour">
                       機身資料 PHYSICAL SPECIFICATIONS
                     </button>
                   </h2>
-                  <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                  <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-headingFour">
                     <div class="accordion-body j-accBody">
                     </div>
                   </div>
                 </div>
                 <div class="accordion-item j-accitem">
                   <h2 class="accordion-header" id="panelsStayOpen-headingFive">
-                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                    <button class="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false"
+                      aria-controls="panelsStayOpen-collapseFive">
                       其它資料 OTHERS
                     </button>
                   </h2>
-                  <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                  <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-headingFive">
                     <div class="accordion-body j-accBody">
                     </div>
                   </div>
