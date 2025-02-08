@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="../css/footer.css">
   <title>shoppingCartStep1</title>
   <style>
+    
     body {
       height: 100vh;
     }
@@ -27,7 +28,7 @@
       top: 100vh;
     }
 
-    .publicFont {
+    .j-publicFont {
       font-family: "Noto Sans HK";
       font-style: normal;
       font-weight: 400;
@@ -38,15 +39,15 @@
       color: #aBaBaB;
     }
 
-    .shoppingCartTitleBox .shoppingCartTitle {
+    .j-shoppingCartTitleBox .j-shoppingCartTitle {
       font-family: Inter;
-      font-size: 90px;
+      font-size: 64px;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
     }
 
-    .shoppingCartTitleBox small {
+    .j-shoppingCartTitleBox small {
       font-family: Inter;
       font-size: 35px;
       font-style: normal;
@@ -54,33 +55,71 @@
       line-height: normal;
     }
 
-    .shoppingItemsBox {
+    .j-shoppingItemsBox {
       overflow: auto;
       height: 529px;
     }
 
-    .cartItemBox {
+    .j-cartItemBox {
       border-radius: 20px;
       background-color: #f6f6f6;
     }
 
-    .cartItem {
+    .j-cartItem {
       border-radius: 20px;
       background-color: #f6f6f6;
       gap: 10px;
     }
 
-    .cartItem .cameraImg {
+    .j-cartItem .j-cameraImg {
       width: 109px;
       height: 89px;
     }
+    .j-detailcollapse{
+      padding: 0;
+      font-size: 14px;
+      border: none;
+      background-color: #f6f6f6;
+      text-align: left;
+    }
+    .accordion-button:not(.collapsed){
+      box-shadow:none;
+      background: #f6f6f6;
+    }
 
-    .rentImg img {
+    .accordion-item{
+      border: none;
+    }
+
+    .accordion-button{
+      background-color: #f6f6f6;
+    }
+
+    .accordion-button:active{
+      background-color: #f6f6f6;
+    }
+
+    .accordion-button:focus{
+      background-color: #f6f6f6;
+    }
+    
+    .accordion-button:visited{
+      background-color: #f6f6f6;
+    }
+    
+    .accordion-button:link{
+      background-color: #f6f6f6;
+    }
+    .accordion-body{
+      background-color: #f6f6f6;
+    }
+
+    .j-rentImg img {
       width: 185px;
       height: 199px;
     }
 
-    .rentCameraBrand {
+    .j-rentCameraBrand {
       font-family: "Noto Sans HK";
       font-size: 12px;
       font-style: normal;
@@ -88,74 +127,74 @@
       line-height: normal;
     }
 
-    .rentDeadLine {
+    .j-rentDeadLine {
       color: red;
     }
 
-    .content {
+    .j-content {
       height: 108px;
       gap: 44px;
     }
 
-    .content .itemDetail {
+    .j-content .itemDetail {
       gap: 15px;
     }
 
-    .content .itemDetail .brand {
+    .j-content .itemDetail .brand {
       color: #8F8F8F;
       font-size: 12px;
     }
 
-    .content .itemDetail .model {
+    .j-content .itemDetail .model {
       color: #000;
       font-size: 14px;
     }
 
-    .content .itemDetail .detail {
+    .j-content .itemDetail .detail {
       color: #000;
       font-size: 14px;
     }
 
-    .detialTypeContent {
+    .j-detialTypeContent {
       width: 200px;
       font-size: 14px;
       color: #8F8F8F;
     }
 
-    .payStep {
+    .j-payStep {
       padding: 60px;
       border-radius: 20px;
       background-color: #f6f6f6;
     }
 
-    .pCount {
+    .j-pCount {
       width: 323px;
     }
 
-    .amount-text {
+    .j-amount-text {
       width: 40px;
     }
 
-    .Checkout {
+    .j-Checkout {
       height: 50px;
       border-radius: 50px;
       background: #003150;
     }
 
-    .Checkout .btn {
+    .j-Checkout .btn {
       color: #FFF;
       font-size: 14px;
     }
 
-    .payStep .pTitle {
+    .j-payStep .j-pTitle {
       font-size: 24px;
     }
 
-    .ifCouponUse {
+    .j-ifCouponUse {
       font-size: 16px;
     }
 
-    .ifCouponUse input {
+    .j-ifCouponUse input {
       display: none;
     }
 
@@ -169,18 +208,21 @@
     .copyright span {
       color: #000
     }
-    .modal-title{
+
+    .j-modal-title {
       font-family: Inter;
       font-size: 35px;
       font-weight: 600;
     }
-    .modal-body{
+
+    .j-modal-body {
       width: 99%;
       border-radius: 20px;
       border: 1px solid rgba(20, 49, 70, 0.24);
       background: rgba(201, 201, 201, 0.00);
     }
-    .modelButton button{
+
+    .j-modelButton button {
       width: 350px;
       height: 50px;
       align-items: center;
@@ -188,33 +230,71 @@
       background: #003150;
       color: #FFF;
     }
-    .modelButton button{
+
+    .j-modelButton button {
       border: none;
       background: #003150;
-      &:hover,&:active{
+
+      &:hover,
+      &:active {
         background-color: #003150;
         color: #FFF;
       }
     }
-    .btn-close{
+
+    .btn-close {
       left: 590px
     }
-    /* @media(max-width:390px){
-      .container{
+
+    .footer {
+      display: none;
+    }
+
+    @media(max-width:390px) {
+      .container {
         display: flex;
         flex-direction: column;
       }
-      .container .shoppingCartBox{
+
+      .container .j-shoppingCartTitle {
+        font-size: 65px;
+      }
+
+      .container .j-shoppingCartBox {
         display: flex;
         flex-direction: column;
       }
-      .shoppingItemBox{
+
+      .j-shoppingItemsMoblieBox {
         width: 390px;
       }
-      .shoppingItem{
+
+      .j-cartItemBox {
         width: 390px;
+        height: auto;
       }
-    } */
+
+      .j-lessonImg img {
+        width: 375px;
+      }
+      
+      .footer {
+        display: block;
+      }
+
+      .copyright{
+        text-align: center;
+      }
+
+      .copyright .right-links {
+        display: none;
+      }
+
+      .copyright .right-links .copyRight {
+        display: block;
+      }
+      
+    }
   </style>
 </head>
 
@@ -224,138 +304,224 @@
   <!-- 內容 -->
 
   <div class="container">
-    <div class="shoppingCartTitleBox d-flex align-items-end mt-5 pt-3">
-      <h1 class="shoppingCartTitle m-0">我的購物車</h1>
-      <small>(4)</small>
+    <div class="j-shoppingCartTitleBox d-flex align-items-end mt-5 pt-3">
+      <h1 class="j-shoppingCartTitle m-0">我的購物車</h1>
+      <small class="">(4)</small>
     </div>
 
-    <div class="shoppingCartBox justify-content-between mt-4 row">
+    <div class="j-shoppingCartBox justify-content-between mt-4 row">
       <!-- 商品項目 -->
-      <div class="shoppingItemsBox col-auto">
-        <div class="cartItemBox me-3 mb-2">
-          <div class="cartItem d-flex">
-            <div class="cameraImg m-2 ">
-              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
-            </div>
-            <div class="content d-flex justify-content-between align-items-center flex-grow-1">
-              <div class="itemDetail d-flex flex-column">
-                <div class=""><span class="brand publicFont">FUJIFILM</span><br>
-                  <span class="model publicFont">X-T5 16-50mm</span>
-                </div>
-                <div class="detail publicFont">+詳細資訊</div>
-              </div>
-              <div class="amount d-flex flex-row align-items-start">
-                <button class="increase btn pb-0 ps-0 pt-0">+</button>
-                <p class="amount-text mb-0 publicFont ">數量</p>
-                <button class="decrease btn pb-0 ps-2 pt-0">-</button>
-              </div>
-              <p class="price me-3">NT$67000</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="cartItemBox me-3 mb-2">
-          <div class="cartItem d-flex ">
-            <div class="cameraImg m-2 ">
+      <div class="j-shoppingItemsBox col-md-auto d-none d-sm-block p-0">
+        <div class="j-cartItemBox me-3 mb-2">
+          <div class="j-cartItem d-flex ">
+            <div class="j-cameraImg m-2 ">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
             </div>
             <div class="d-flex flex-column flex-grow-1">
-              <div class="content d-flex justify-content-between align-items-center ">
+              <div class="j-content d-flex justify-content-between align-items-center ">
                 <div class="itemDetail d-flex flex-column">
-                  <div class=""><span class="brand publicFont">FUJIFILM</span><br>
-                    <span class="model publicFont">X-T5 16-50mm</span>
+                  <div class=""><span class="brand j-publicFont">FUJIFILM</span><br>
+                    <span class="model j-publicFont">X-T5 16-50mm</span>
                   </div>
-                  <div class="detail publicFont">-詳細資訊</div>
+                  <button class="j-detailcollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
+                    +詳細資訊
+                  </button>
                 </div>
                 <div class="amount d-flex flex-row align-items-start">
                   <button class="increase btn pb-0 ps-0 pt-0">+</button>
-                  <p class="amount-text mb-0 publicFont ">數量</p>
+                  <p class="j-amount-text mb-0 j-publicFont ">數量</p>
                   <button class="decrease btn pb-0 ps-2 pt-0">-</button>
                 </div>
                 <p class="price me-3">NT$67000</p>
               </div>
-              <div class="imageSpecifications d-flex flex-column">
-                <div class="detialType d-flex justify-content-between">
-                  <p class="mb-0">影像規格 IMAGE SPECIFICATIONS</p>
-                  <div class="me-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none">
-                      <path d="M1 5.58344L6.00081 1L11 5.58344" stroke="#143146" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    </svg>
+              <div class="collapse" id="collapseExample1">
+                  <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                          影像規格 IMAGE SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body">
+                          <div class="j-detialTypeContent d-flex flex-column j-publicFont">
+                            <div class="d-flex justify-content-between">
+                              <p class="effectivePixels mb-1">有效像素</p>
+                              <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitivePixels mb-1">感光元件像素</p>
+                              <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="sensorFormat mb-1">感光元件格式</p>
+                              <p class="sensorFormatValue mb-1">APS-C</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitiveSize mb-1">感光元件大小</p>
+                              <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                          觀景器 VIEWFINDER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                          資料存取 DATA TRANSFER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                          機身資料 PHYSICAL SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                          其它資料 OTHERS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <hr>
-                <div class="detialTypeContent d-flex flex-column publicFont">
-                  <div class="d-flex justify-content-between">
-                    <p class="effectivePixels mb-1">有效像素</p>
-                    <p class="effectivePixelsValue mb-1">2550 萬像素</p>
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <p class="pSensitivePixels mb-1">感光元件像素</p>
-                    <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <p class="sensorFormat mb-1">感光元件格式</p>
-                    <p class="sensorFormatValue mb-1">APS-C</p>
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <p class="pSensitiveSize mb-1">感光元件大小</p>
-                    <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
-                  </div>
-                </div>
-              </div>
-              <div class="viewFinder d-flex flex-column">
-                <div class="detialType d-flex justify-content-between">
-                  <p>觀景器 VIEWFINDER</p>
-                  <div class="me-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                        stroke="#143146" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="dataTransfer d-flex flex-column">
-                <div class="detialType d-flex justify-content-between">
-                  <p>資料存取 DATA TRANSFER</p>
-                  <div class="me-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                        stroke="#143146" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="physicalSpecifications d-flex flex-column">
-                <div class="detialType d-flex justify-content-between">
-                  <p>機身資料 PHYSICAL SPECIFICATIONS</p>
-                  <div class="me-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                        stroke="#143146" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="OTHERS d-flex flex-column">
-                <div class="detialType d-flex justify-content-between">
-                  <p>其它資料 OTHERS</p>
-                  <div class="me-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none">
-                      <path d="M10 1L6.16436 4.40945C5.78548 4.74624 5.21452 4.74624 4.83564 4.40945L1 1"
-                        stroke="#143146" />
-                    </svg>
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>
         </div>
 
-        <div class="cartItemBox me-3 mb-2">
+        <div class="j-cartItemBox me-3 mb-2">
+          <div class="j-cartItem d-flex ">
+            <div class="j-cameraImg m-2 ">
+              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+            </div>
+            <div class="d-flex flex-column flex-grow-1">
+              <div class="j-content d-flex justify-content-between align-items-center ">
+                <div class="itemDetail d-flex flex-column">
+                  <div class=""><span class="brand j-publicFont">FUJIFILM</span><br>
+                    <span class="model j-publicFont">X-T5 16-50mm</span>
+                  </div>
+                  <!-- <div class="detail j-publicFont">-詳細資訊</div> -->
+                  <button class="j-detailcollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                    +詳細資訊
+                  </button>
+                </div>
+                <div class="amount d-flex flex-row align-items-start">
+                  <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                  <p class="j-amount-text mb-0 j-publicFont ">數量</p>
+                  <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+                </div>
+                <p class="price me-3">NT$67000</p>
+              </div>
+              <div class="collapse" id="collapseExample2">
+                  <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                          影像規格 IMAGE SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body">
+                          <div class="j-detialTypeContent d-flex flex-column j-publicFont">
+                            <div class="d-flex justify-content-between">
+                              <p class="effectivePixels mb-1">有效像素</p>
+                              <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitivePixels mb-1">感光元件像素</p>
+                              <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="sensorFormat mb-1">感光元件格式</p>
+                              <p class="sensorFormatValue mb-1">APS-C</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                              <p class="pSensitiveSize mb-1">感光元件大小</p>
+                              <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                          觀景器 VIEWFINDER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                          資料存取 DATA TRANSFER
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                          機身資料 PHYSICAL SPECIFICATIONS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                        <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                          其它資料 OTHERS
+                        </button>
+                      </h2>
+                      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                        <div class="accordion-body">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-cartItemBox me-3 mb-2">
           <div class="shoppingLesson d-flex flex-column">
-            <div class="lessonImg m-2 ">
+            <div class="j-lessonImg m-2 ">
               <img src="../images/lesson1.png" alt="" class="object-fit-contain">
             </div>
             <div class="d-flex flex-column align-items-center">
@@ -411,28 +577,237 @@
           </div>
         </div>
 
-        <div class="cartItemBox me-3 pe-5 mb-2">
+        <div class="j-cartItemBox me-3 mb-2">
           <div class="shoppingRent d-flex flex-column">
-            <div class="rentImg m-2 d-flex justify-content-center">
+            <div class="j-rentImg m-2 d-flex justify-content-center">
               <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
             </div>
-            <div class="rentCameraBrand d-flex flex-column align-items-center mb-3">
+            <div class="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
               <span>FUJIFILM 富士</span>
               <span>X-T5 16-50mm</span>
             </div>
             <div class="d-flex flex-column align-items-center">
               <span class="mb-2">租賃日期: 2024-01-01</span>
-              <span class="rentDeadLine">到期日: 2024-01-14</span>
+              <span class="j-rentDeadLine">到期日: 2024-01-14</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="j-shoppingItemsMoblieBox col-md-auto d-sm-none d-block p-0">
+        <div class="j-cartItemBox  mb-2">
+          <div class="j-cartItem d-flex flex-column">
+            <div class="j-content d-flex align-items-center justify-content-evenly flex-grow-1">
+              <div class="j-cameraImg m-2 ">
+                <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+              </div>
+              <div class="itemDetail d-flex flex-column">
+                <div class="">
+                  <span class="brand j-publicFont">FUJIFILM</span><br>
+                  <span class="model j-publicFont">X-T5 16-50mm</span>
+                </div>
+                <div class="detail j-publicFont">+詳細資訊</div>
+              </div>
+            </div>
+            <div class="amount d-flex flex-row align-items-start justify-content-around">
+              <div class="d-flex justify-content-center">
+                <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                <p class="j-amount-text mb-0 j-publicFont ">數量</p>
+                <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+              </div>
+              <div class="">
+                <p class="price">NT$67000</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-cartItemBox mb-2">
+          <div class="j-cartItem d-flex">
+            <div class="d-flex flex-column flex-grow-1">
+              <div class="j-content d-flex align-items-center justify-content-evenly flex-grow-1">
+                <div class="j-cameraImg m-2 ">
+                  <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+                </div>
+                <div class="itemDetail d-flex flex-column">
+                  <div class="">
+                    <span class="brand j-publicFont">FUJIFILM</span><br>
+                    <span class="model j-publicFont">X-T5 16-50mm</span>
+                  </div>
+                  <div class="detail j-publicFont">-詳細資訊</div>
+                </div>
+              </div>
+
+              <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                      影像規格 IMAGE SPECIFICATIONS
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                      <div class="j-detialTypeContent d-flex flex-column j-publicFont">
+                        <div class="d-flex justify-content-between">
+                          <p class="effectivePixels mb-1">有效像素</p>
+                          <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <p class="pSensitivePixels mb-1">感光元件像素</p>
+                          <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <p class="sensorFormat mb-1">感光元件格式</p>
+                          <p class="sensorFormatValue mb-1">APS-C</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <p class="pSensitiveSize mb-1">感光元件大小</p>
+                          <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      觀景器 VIEWFINDER
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                      資料存取 DATA TRANSFER
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                      機身資料 PHYSICAL SPECIFICATIONS
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                      其它資料 OTHERS
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="amount d-flex flex-row align-items-start justify-content-around">
+                <div class="d-flex justify-content-center">
+                  <button class="increase btn pb-0 ps-0 pt-0">+</button>
+                  <p class="j-amount-text mb-0 j-publicFont ">數量</p>
+                  <button class="decrease btn pb-0 ps-2 pt-0">-</button>
+                </div>
+                <div class="">
+                  <p class="price">NT$67000</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-cartItemBox mb-2">
+          <div class="shoppingLesson d-flex flex-column">
+            <div class="j-lessonImg m-2 ">
+              <img src="../images/lesson1.png" alt="" class="object-fit-contain">
+            </div>
+            <div class="d-flex flex-column align-items-center">
+              <div class="">
+                <p>旅行攝影：按下快門，用攝影書寫故事</p>
+              </div>
+              <div class="">
+                <p>食癮，拾影</p>
+              </div>
+              <div class="d-flex">
+                <div class="">
+                  <p>4.2</p>
+                </div>
+                <div class="me-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                    <path
+                      d="M6.70559 2.0835C6.82609 1.83935 7.17424 1.83935 7.29474 2.0835L8.85457 5.24408C8.90242 5.34103 8.99492 5.40823 9.10191 5.42378L12.5898 5.9306C12.8592 5.96975 12.9668 6.30086 12.7719 6.49091L10.248 8.95107C10.1706 9.02654 10.1352 9.13527 10.1535 9.24183L10.7493 12.7156C10.7954 12.984 10.5137 13.1886 10.2727 13.0619L7.15303 11.4218C7.05733 11.3715 6.943 11.3715 6.8473 11.4218L3.72763 13.0619C3.48664 13.1886 3.20498 12.984 3.251 12.7156L3.84681 9.24183C3.86508 9.13527 3.82976 9.02654 3.75233 8.95107L1.22847 6.49091C1.0335 6.30086 1.14108 5.96975 1.41052 5.9306L4.89842 5.42378C5.00542 5.40823 5.09791 5.34103 5.14576 5.24408L6.70559 2.0835Z"
+                      fill="#E68E41" stroke="#E68E41" stroke-linejoin="round" />
+                  </svg>(1566)
+                </div>
+                <div class="">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18" fill="none">
+                    <path
+                      d="M13.6002 10.1934C14.4979 10.8641 15.3002 12.5528 15.3002 13.5933C15.3002 13.9175 15.0637 14.1803 14.7719 14.1803H14.4502M11.0502 7.44415C11.6309 7.10822 12.0216 6.48035 12.0216 5.76122C12.0216 5.04209 11.6309 4.41421 11.0502 4.07828M2.22845 14.1803H11.5338C11.8256 14.1803 12.0621 13.9175 12.0621 13.5933C12.0621 11.5557 10.3598 9.90392 6.88115 9.90392C3.40251 9.90392 1.7002 11.5557 1.7002 13.5933C1.7002 13.9175 1.9367 14.1803 2.22845 14.1803ZM8.824 5.76122C8.824 6.83423 7.95416 7.70407 6.88115 7.70407C5.80814 7.70407 4.93829 6.83423 4.93829 5.76122C4.93829 4.68821 5.80814 3.81836 6.88115 3.81836C7.95416 3.81836 8.824 4.68821 8.824 5.76122Z"
+                      stroke="#807871" stroke-linecap="round" />
+                  </svg>2,183
+                </div>
+              </div>
+              <div class="">
+                <p>NT$ 2,180</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-cartItemBox mb-2">
+          <div class="shoppingRent d-flex flex-column">
+            <div class="j-rentImg m-2 d-flex justify-content-center">
+              <img src="../images/shoppingCartItemPhoto.png" alt="" class="object-fit-contain">
+            </div>
+            <div class="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
+              <span>FUJIFILM 富士</span>
+              <span>X-T5 16-50mm</span>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+              <span class="mb-2">租賃日期: 2024-01-01</span>
+              <span class="j-rentDeadLine">到期日: 2024-01-14</span>
             </div>
           </div>
         </div>
 
       </div>
       <!-- 價格摘要 -->
-      <div class="payStep col-auto">
-        <div class="pCount border-bottom mb-3 d-flex flex-column gap-2">
-          <div class="pTitle publicFont">摘要</div>
-          <div class="ifCouponUse publicFont">
+      <div class="j-payStep col-md-auto mb-5">
+        <div class="j-pCount border-bottom mb-3 d-flex flex-column gap-2">
+          <div class="j-pTitle j-publicFont">摘要</div>
+          <div class="j-ifCouponUse j-publicFont">
             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
             <label class="form-check-label" for="flexCheckDefault">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
@@ -444,97 +819,73 @@
 
             是否使用優惠券
           </div>
-          <div class="couponName d-flex flex-column publicFont">
+          <div class="couponName d-flex flex-column j-publicFont">
             <span>課程95折優惠券</span>
             <span>相機1500折價券</span>
           </div>
-          <div class="subTotalBox d-flex justify-content-between publicFont">
+          <div class="subTotalBox d-flex justify-content-between j-publicFont">
             <div class="subTotal">小計</div>
             <div class="subPrice">NT$8000</div>
           </div>
-          <div class="freightBox d-flex justify-content-between publicFont">
+          <div class="freightBox d-flex justify-content-between j-publicFont">
             <div class="freight">運費</div>
             <div class="freightPrice">NT$8000</div>
           </div>
-          <div class="totalPriceBox d-flex justify-content-between publicFont">
+          <div class="totalPriceBox d-flex justify-content-between j-publicFont">
             <div class="total ">總額</div>
             <div class="totalPrice">NT$8000</div>
           </div>
         </div>
-        <div class="Checkout d-flex justify-content-center align-items-center align-self-stretch">
+        <div class="j-Checkout d-flex justify-content-center align-items-center align-self-stretch">
           <button class="btn text-alig-center">結帳</button>
         </div>
       </div>
     </div>
   </div>
   <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Launch static backdrop modal
-</button>
+  <button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    Launch static backdrop modal
+  </button>
 
-<!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content d-flex flex-column align-items-center">
-      <div class="d-flex justify-content-center position-relative mt-2">
-        <h5 class="modal-title publicFont" id="staticBackdropLabel" >請選擇優惠券</h5>
-        <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body mt-3 mb-3">
-        <div class="d-flex flex-wrap justify-content-center">
-          <div class="d-flex flex-column align-items-center ">
-            <img src="../images/95off1.png" alt="" class="mb-2">
-            <p>課程95折優惠券</p>
-          </div>
-          <div class="d-flex flex-column align-items-center">
-            <img src="../images/95off1.png" alt="" class="mb-2">
-            <p>課程95折優惠券</p>
-          </div>
-          <div class="d-flex flex-column align-items-center cp1500">
-            <img src="../images/2002.png" alt="" class="mb-2">
-            <p>相機1500折價券</p>
-          </div>
-          <div class="d-flex flex-column align-items-center cp1500">
-            <img src="../images/2002.png" alt="" class="mb-2">
-            <p>相機1500折價券</p>
-          </div>
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content d-flex flex-column align-items-center">
+        <div class="d-flex justify-content-center position-relative mt-2">
+          <h5 class="j-j-modal-title j-publicFont" id="staticBackdropLabel">請選擇優惠券</h5>
+          <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-      </div>
-      <div class="modelButton d-flex justify-content-center mb-3">
-        <button type="button" class=" me-2" data-bs-dismiss="modal">取消</button>
-        <button type="button" class="">選擇</button>
-      </div>
-    </div>
-  </div>
-</div>
-  <!-- copyright -->
-  <footer>
-    <div class="copyright">
-      <div class="container-fluid">
-        <div class="row">
-          <!-- 左側連結 -->
-          <div class="col-md-6 left-links">
-            <a href="#">聯絡我們</a>
-            <span>|</span>
-            <a href="#">購物說明</a>
-            <span>|</span>
-            <a href="#">最新消息</a>
-          </div>
-          <!-- 右側連結 -->
-          <div class="col-md-6 right-links text-end">
-            <div class="d-inline-block text-nowrap">
-              <a href="#">網站使用條款</a>
-              <span>|</span>
-              <a href="#">隱私權政策</a>
-              <span>|</span>
-              <a href="#">免責聲明</a>
-              <span>|</span>
-              <span>© Copyright 2024. Lenstudio Co. Ltd. All rights reserved</span>
+        <div class="j-j-modal-body mt-3 mb-3">
+          <div class="d-flex flex-wrap justify-content-center">
+            <div class="d-flex flex-column align-items-center ">
+              <img src="../images/95off1.png" alt="" class="mb-2">
+              <p>課程95折優惠券</p>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+              <img src="../images/95off1.png" alt="" class="mb-2">
+              <p>課程95折優惠券</p>
+            </div>
+            <div class="d-flex flex-column align-items-center cp1500">
+              <img src="../images/2002.png" alt="" class="mb-2">
+              <p>相機1500折價券</p>
+            </div>
+            <div class="d-flex flex-column align-items-center cp1500">
+              <img src="../images/2002.png" alt="" class="mb-2">
+              <p>相機1500折價券</p>
             </div>
           </div>
         </div>
+        <div class="j-modelButton d-flex justify-content-center mb-3">
+          <button type="button" class=" me-2" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="">選擇</button>
+        </div>
       </div>
     </div>
+  </div>
+  <!-- copyright -->
+  <footer>
+    <div id="footer"></div>
   </footer>
 
 
@@ -547,6 +898,9 @@
     fetch('../header.html')
       .then(response => response.text())
       .then(data => document.getElementById('header').innerHTML = data);
+    fetch('./footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer').innerHTML = data);  
   </script>
 </body>
 

@@ -50,6 +50,38 @@
       gap: 10px;
     }
 
+    .accordion-button:not(.collapsed){
+      box-shadow:none;
+      background: #f6f6f6;
+    }
+
+    .accordion-item{
+      border: none;
+    }
+
+    .accordion-button{
+      background-color: #f6f6f6;
+    }
+
+    .accordion-button:active{
+      background-color: #f6f6f6;
+    }
+
+    .accordion-button:focus{
+      background-color: #f6f6f6;
+    }
+    
+    .accordion-button:visited{
+      background-color: #f6f6f6;
+    }
+    
+    .accordion-button:link{
+      background-color: #f6f6f6;
+    }
+    .accordion-body{
+      background-color: #f6f6f6;
+    }
+
     .cartItem .cameraImg {
       width: 109px;
       height: 89px;
@@ -211,7 +243,82 @@
                 </div>
                 <p class="price me-3">NT$67000</p>
               </div>
-              <div class="imageSpecifications d-flex flex-column">
+              <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                      影像規格 IMAGE SPECIFICATIONS
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                      <div class="detialTypeContent d-flex flex-column publicFont">
+                        <div class="d-flex justify-content-between">
+                          <p class="effectivePixels mb-1">有效像素</p>
+                          <p class="effectivePixelsValue mb-1">2550 萬像素</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <p class="pSensitivePixels mb-1">感光元件像素</p>
+                          <p class="pSensitivePixelsValue mb-1">2420 萬像素</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <p class="sensorFormat mb-1">感光元件格式</p>
+                          <p class="sensorFormatValue mb-1">APS-C</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <p class="pSensitiveSize mb-1">感光元件大小</p>
+                          <p class="pSensitiveSizeValue mb-1">22.3 x 14.9mm</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      觀景器 VIEWFINDER
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                      資料存取 DATA TRANSFER
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                      機身資料 PHYSICAL SPECIFICATIONS
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+                    <button class="accordion-button collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                      其它資料 OTHERS
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
+                    <div class="accordion-body">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="imageSpecifications d-flex flex-column">
                 <div class="detialType d-flex justify-content-between">
                   <p class="mb-0">影像規格 IMAGE SPECIFICATIONS</p>
                   <div class="me-3">
@@ -285,7 +392,7 @@
                   </div>
                 </div>
 
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
