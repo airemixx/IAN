@@ -3,7 +3,7 @@
 import styles from './course-category.module.scss';
 import React from 'react';
 
-export default function CourseCategoryPage() {
+export default function CoursesCategory() {
   return (
     <>
  <section className={`${styles["category-nav"]} ${styles["nav-fixed-2"]}`} data-type="nav-fixed-2">

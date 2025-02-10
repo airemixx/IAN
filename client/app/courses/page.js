@@ -1,14 +1,18 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import BannerPage from './course-banner/page'
-import CourseCategoryPage from './course-category/page'
+import CoursesBanner from './courses-banner/page'
+import CoursesCategory from './courses-category/page'
+import CoursesBreadcumb from './courses-breadcumb/page'
+import CoursesFilter from './courses-filter/page'
 
 export default function CoursesPage() {
   return (
     <>
-    <BannerPage/>
-    <CourseCategoryPage/>
-    </>
+    <CoursesBanner/>
+    <CoursesCategory/>
+    <CoursesBreadcumb/>
+    <CoursesFilter/>
+   </>
   )
 }

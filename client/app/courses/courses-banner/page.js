@@ -1,10 +1,10 @@
 'use client'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import styles from './course-banner.module.scss';
+import styles from './courses-banner.module.scss';
 import React from 'react';
 
-export default function BannerPage() {
+export default function CoursesBanner() {
 
   return (
     <>
@@ -13,7 +13,7 @@ export default function BannerPage() {
           <span className="icon"><img src="./images/icon/choice.svg" alt="Icon" /></span>
           <p>精選課程</p>
         </div>
-        <div class="swiper mySwiper">
+        <div className="swiper mySwiper">
           <Swiper
             spaceBetween={30}
             slidesPerView={3}

@@ -1,5 +1,3 @@
-@import '../../../styles/globals.css';
-
 /* ---section banner--- */
 
 .course-banner {
@@ -39,3 +37,32 @@
     object-fit: cover;
   }
 
+
+/* 響應式樣式 */
+@media screen and (max-width: 992px) {
+  .banner-title {
+    padding: 30px 60px;
+  }
+  .swiper-slide {
+    width: 400px !important; 
+    height: calc(400px * 9 / 16) !important;
+  }
+}
+
+
+@media screen and (max-width: 576px) {
+ .container {
+    margin: 0;
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+
+  .banner-title {
+    padding: 20px 32px;
+  }
+
+  .swiper-slide {
+    width: 300px !important;
+    height: calc(300px * 9 / 16) !important;
+  }
+}
