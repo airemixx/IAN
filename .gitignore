@@ -57,11 +57,7 @@ yarn.lock
 /.html
 .vercel
 
-.yue's html
-/add-article.html
-/article-list.html
-/article-detail.html
-=======
-# 這裡放不上傳到gitgub的東西
-.env
->>>>>>> 9335235bfe878c0326a857f0deac0007e82ea2d4
+# yue's html
+add-article.html
+article-list.html
+article-detail.html
