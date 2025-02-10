@@ -1,0 +1,19 @@
+.y-container{
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+/* 麵包屑導航 */
+.y-breadcrumb{
+  a{
+    color: #8F8F8F;
+  }
+  span{
+    color:#8F8F8F;
+  }
+  p{
+    color: #143146;
+  }
+  padding-top: 150px;
+  font-size: 16px;
+}

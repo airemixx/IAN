@@ -1,0 +1,9 @@
+/* 循環影片 */
+.y-loop-ad{
+  video{
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 16/5;
+    object-fit: cover;
+  }
+}
