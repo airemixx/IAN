@@ -1,8 +1,9 @@
 'use client'
 
+
 import { Noto_Sans_TC } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import '@/style/globals.css'
+import '@/styles/globals.css';
 import { useState } from 'react'
 import { Collapse } from 'react-bootstrap'
 
@@ -28,16 +29,16 @@ export default function RootLayout({ children }) {
           <header className="nav-fixed-1" data-type="nav-fixed-1">
             <div className="search-icon">
               <a href="#">
-                <img src="./images/search.svg" alt="search" />
+                <img src="./images/icon/search.svg" alt="search" />
               </a>
             </div>
             <div className="logo">
               <a href="#">
-                <img src="./images/lenstudio-logo.svg" alt="logo" />
+                <img src="./images/icon//lenstudio-logo.svg" alt="logo" />
               </a>
             </div>
             <div className="menu-icon">
-              <img src="./images/menu.svg" alt="menu" />
+              <img src="./images/icon//menu.svg" alt="menu" />
             </div>
             <nav>
               <ul className="nav-left">
@@ -53,7 +54,7 @@ export default function RootLayout({ children }) {
                       <a href="#">
                         機身
                         <span className="icon">
-                          <img src="./images/arrow-down.svg" alt="Icon" />
+                          <img src="./images/icon/arrow-down.svg" alt="Icon" />
                         </span>
                       </a>
                       <ul className="camera-brands">
@@ -96,7 +97,7 @@ export default function RootLayout({ children }) {
                       <a href="#">
                         鏡頭
                         <span className="icon">
-                          <img src="./images/arrow-down.svg" alt="Icon" />
+                          <img src="./images/icon//arrow-down.svg" alt="Icon" />
                         </span>
                       </a>
                       <ul className="lens-brands">
@@ -139,7 +140,7 @@ export default function RootLayout({ children }) {
                       <a href="#">
                         配件
                         <span className="icon">
-                          <img src="./images/arrow-down.svg" alt="Icon" />
+                          <img src="./images/icon/arrow-down.svg" alt="Icon" />
                         </span>
                       </a>
                       <ul className="other-brands">
@@ -197,16 +198,16 @@ export default function RootLayout({ children }) {
               <ul className="nav-right">
                 <li>
                   <a href="#">
-                    <img src="./images/search.svg" alt="" />
+                    <img src="./images/icon/search.svg" alt="" />
                   </a>
                   <a href="#">
-                    <img src="./images/user.svg" alt="" />
+                    <img src="./images/icon/user.svg" alt="" />
                   </a>
                   <a href="#">
-                    <img src="./images/compare.svg" alt="" />
+                    <img src="./images/icon/compare.svg" alt="" />
                   </a>
                   <a href="#">
-                    <img src="./images/cart.svg" alt="" />
+                    <img src="./images/icon/cart.svg" alt="" />
                   </a>
                 </li>
               </ul>
