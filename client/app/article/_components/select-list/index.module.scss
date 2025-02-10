@@ -1,0 +1,20 @@
+.y-collapse-area{
+  width: 90%;
+  select{
+    width: 15%;
+    border-radius: 25px;
+    border:none;
+    &:focus{
+      box-shadow: 0 0 15px #7E7267;
+      border: 2px solid #7E7267;
+    }
+  }
+}
+.y-clear-option{
+  button{
+    background-color: #ffffff00;
+    text-decoration: underline;
+    border: none;
+    color: #000;
+  }
+}
