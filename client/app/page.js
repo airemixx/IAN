@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+'use client'
+
+import React, { useState, useEffect } from 'react'
+
+export default function AppPage() {
+  return (
+    <>
+      <div>App Page</div>
+    </>
+=======
 import Image from 'next/image'
 import styles from './page.module.css'
 
@@ -91,5 +102,6 @@ export default function Home() {
         </a>
       </footer>
     </div>
+>>>>>>> 9335235bfe878c0326a857f0deac0007e82ea2d4
   )
 }

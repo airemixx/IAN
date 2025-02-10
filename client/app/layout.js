@@ -1,6 +1,10 @@
 'use client'
 
+<<<<<<< HEAD
+import { Noto_Sans_TC } from 'next/font/google'; 
+=======
 import { Noto_Sans_TC } from 'next/font/google'
+>>>>>>> 9335235bfe878c0326a857f0deac0007e82ea2d4
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/style/globals.css'
 import { useState } from 'react'
@@ -28,7 +32,11 @@ export default function RootLayout({ children }) {
           <header className="nav-fixed-1" data-type="nav-fixed-1">
             <div className="search-icon">
               <a href="#">
+<<<<<<< HEAD
+                <img src="../public/images/search.svg" alt="search" />
+=======
                 <img src="./images/search.svg" alt="search" />
+>>>>>>> 9335235bfe878c0326a857f0deac0007e82ea2d4
               </a>
             </div>
             <div className="logo">
