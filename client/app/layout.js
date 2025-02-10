@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
           <header className="nav-fixed-1" data-type="nav-fixed-1">
             <div className="search-icon">
               <a href="#">
-                <img src="./images/search.svg" alt="search" />
+                <img src="../public/images/search.svg" alt="search" />
               </a>
             </div>
             <div className="logo">
