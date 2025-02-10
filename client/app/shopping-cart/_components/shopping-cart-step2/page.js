@@ -3,7 +3,7 @@
 import "@/style/shopping-cart-step2.css"
 import "@/node_modules/bootstrap/dist/css/bootstrap.min.css"
 
-export default function shoppingCart2Page() {
+export default function shoppingCartTwoPage() {
     return (
         <div>
             <div className="container">
