@@ -1,6 +1,6 @@
 'use client'
 
-import { Noto_Sans_TC } from 'next/font/google'
+import { Noto_Sans_TC } from 'next/font/google'; 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/style/globals.css'
 import { useState } from 'react'
