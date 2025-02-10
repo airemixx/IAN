@@ -27,8 +27,8 @@
   }
   
   .swiper-slide {
-    width: 550px;
-    height: calc(550px * 9 / 16);
+    width: 550px !important;
+    height: calc(550px * 9 / 16) !important;
     border-radius: 10px;
     overflow: hidden;
   }
