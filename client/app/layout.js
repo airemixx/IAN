@@ -1,5 +1,7 @@
 'use client'
 
+
+
 import { Noto_Sans_TC } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/globals.css';
@@ -28,6 +30,7 @@ export default function RootLayout({ children }) {
           <header className="nav-fixed-1" data-type="nav-fixed-1">
             <div className="search-icon">
               <a href="#">
+
                 <img src="./images/icon/search.svg" alt="search" />
               </a>
             </div>
