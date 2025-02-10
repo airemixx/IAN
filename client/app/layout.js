@@ -1,7 +1,5 @@
 'use client'
 
-
-
 import { Noto_Sans_TC } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/globals.css';
