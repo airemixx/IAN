@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './four-info.module.scss'
-import StarRating from '../../star-rating/page'
+import StarRating from '../../../_components/star-rating/page'
 
 export default function FourInfo() {
   return (

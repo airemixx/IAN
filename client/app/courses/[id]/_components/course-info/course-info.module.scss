@@ -223,6 +223,16 @@
 }
 
 @media screen and (max-width: 768px) {
+  .course-detail-container {
+    padding: 2rem 0;
+    background-color: var(--white);
+  }
+
+  .course-detail h1 {
+    margin-top: 20px;
+    font-size: 1.5rem;
+  }
+
   /* 上方課程簡介 */
   .course-info {
     margin-bottom: 30px;
@@ -240,9 +250,14 @@
   }
   .original-price {
     position: absolute;
-    left: 140px;
+    left: 120px;
     bottom: 60px;
   }
+
+  .discount-price {
+    font-size: 1.7rem;
+  }
+
   .shopping-btns {
     display: block;
   }

@@ -49,8 +49,17 @@
   max-height: 3rem;
 }
 
-.course-comment .go-page-link a {
-  color: var(--secondary-color-med);
+.go-page-link {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: end;
+}
+
+.go-page-link a {
+  text-decoration: none;
+  color: var(--line-color-gray);
+  display: flex;
+  gap: 10px;
 }
 
 .all-comment-link a {

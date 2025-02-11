@@ -24,3 +24,8 @@
   margin: 15px 0;
 }
 
+@media screen and (max-width: 567px) {
+  .detail-nav-links {
+    display: none;
+  }
+}

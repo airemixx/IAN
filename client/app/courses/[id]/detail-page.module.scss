@@ -9,8 +9,6 @@
   margin: 1rem 0 1rem 0;
 }
 
-
-
 .title-block {
   width: 8px;
   height: 35px;
@@ -21,4 +19,36 @@
   color: var(--primary-color);
   font-size: 1.3rem;
   margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+  // body {
+  //   background-color: var(--bg-color-gray);
+  // }
+
+  .course-detail-container {
+    padding: 2rem 0;
+    background-color: var(--white);
+    margin-top: 0;
+  }
+
+  .course-detail h1 {
+    margin-top: 20px;
+    font-size: 1.5rem;
+  }
+  /* 上方課程簡介 */
+  .course-info {
+    margin-bottom: 30px;
+  }
+}
+
+@media screen and (max-width: 567px) {
+  .container {
+    margin: 0;
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+  .course-detail-title {
+    margin: 0;
+  }
 }
