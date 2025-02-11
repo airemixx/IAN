@@ -19,8 +19,9 @@ dotenv.config();
 
 const app = express();
 
-// 📌 讓 Express 提供 `public` 資料夾的靜態檔案
-app.use(express.static(path.join(process.cwd(), "public"))); 
+// 📌 讓 Express 提供 `public` 資料夾內的靜態資源
+app.use("/images", express.static(path.join(process.cwd(), "public/images")));
+
 
 app.use(cors()); // 允許跨域請求
 app.use(express.json()); // 解析 JSON 格式的請求

@@ -1,8 +1,6 @@
 import express from "express";
 import mysql from "mysql2/promise";
 
-
-
 const router = express.Router();
 
 const pool = mysql.createPool({
@@ -19,7 +17,6 @@ router.get("/", async (req, res) => {
   try {
     const connection = await pool.getConnection();
     
-    // 🔹 查詢 product 並只取得 `is_main = 1` 的主圖
     const [rows] = await connection.query(`
       SELECT 
         p.id, 
@@ -33,13 +30,11 @@ router.get("/", async (req, res) => {
 
     connection.release();
 
-    res.json(rows); // ✅ 直接回傳資料，因為每個商品只會對應到一張主圖
+    res.json(rows); 
   } catch (error) {
     console.error("獲取商品錯誤:", error);
     res.status(500).json({ error: "無法獲取商品", details: error.message });
   }
 });
-
-
 
 export default router; 
