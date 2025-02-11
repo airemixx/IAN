@@ -33,7 +33,8 @@ export default function RootLayout({ children }) {
             </div>
             <div className="logo">
               <a href="#">
-                <img src="/images/icon/lenstudio-logo.svg" alt="logo" />
+                <img src="./images/icon/lenstudio-logo.svg" alt="logo" />
+
               </a>
             </div>
             <div className="menu-icon">
@@ -96,7 +97,7 @@ export default function RootLayout({ children }) {
                       <a href="#">
                         鏡頭
                         <span className="icon">
-                          <img src="/images/icon//arrow-down.svg" alt="Icon" />
+                          <img src="./images/icon/arrow-down.svg" alt="Icon" />
                         </span>
                       </a>
                       <ul className="lens-brands">
