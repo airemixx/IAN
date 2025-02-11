@@ -7,7 +7,7 @@ import LoopAd from "./_components/loop-ad";
 import SelectList from "./_components/select-list";
 import ListCard from "./_components/list-card";
 import Pagination from "./_components/Pagination";
-import style from "../../styles/article.css";
+import '../../styles/article.css';
 import Link from "next/link";
 
 export default function NewsPage() {
