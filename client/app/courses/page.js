@@ -10,18 +10,21 @@ import Pagination from './pagination/page'
 import PopularTeacher from './popular-teacher/page'
 
 export default function CoursesPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = 5
   return (
     <>
-    <CoursesBanner/>
-    <CoursesCategory/>
-    <CoursesBreadcumb/>
-    <CoursesFilter/>
-    <CourseList/>
-    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-    <PopularTeacher/>
-   </>
+      <CoursesBanner />
+      <CoursesCategory />
+      <CoursesBreadcumb />
+      <CoursesFilter />
+      <CourseList />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+      <PopularTeacher />
+    </>
   )
 }
-

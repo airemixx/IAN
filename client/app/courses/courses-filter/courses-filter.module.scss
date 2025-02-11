@@ -34,9 +34,9 @@
   font-size: 1rem;
   cursor: pointer;
   width: auto; /* 自動適應內容 */
-  
+
   /* 自訂箭頭 */
-  background-image: url('/images/icon/arrow-down.svg'); 
+  background-image: url('/images/icon/arrow-down.svg');
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 12px;
@@ -48,9 +48,6 @@
   outline: none; /* 移除外框 */
   box-shadow: none; /* 移除 Bootstrap 預設陰影 */
 }
-
-
-
 
 /* 響應式樣式 */
 @media screen and (max-width: 1200px) {

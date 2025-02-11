@@ -4,7 +4,7 @@
   gap: 10px;
   list-style: none;
   margin-bottom: 1rem;
-  ul{
+  ul {
     padding-left: 0;
   }
 }
@@ -24,7 +24,7 @@
 }
 
 :global(.breadcrumb-item) + :global(.breadcrumb-item)::before {
-  content: "";
+  content: '';
   color: var(--line-color-gray);
   padding: 0 0.5rem;
 }

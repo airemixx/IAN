@@ -1,66 +1,61 @@
 /* ---section category--- */
 
 .category-nav {
-    background-color: var(--primary-color);
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .category-nav ul li a {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .category-nav ul {
-    display: flex;
-    gap: 100px;
-    padding: 0;
-  }
-  
-  .category-nav ul li {
-    list-style: none;
-  }
-  
-  .category-list {
-    transition: transform 0.3s ease;
-  }
-  
-  .category-list p {
-    color: var(--white);
-  }
-  
-  .category-list:hover p {
-    color: var(--secondary-color-med);
-  }
-  
-  .category-list:hover .circle-active {
-    border: 1px solid var(--secondary-color-med);
-  }
-  
-  .circle-active {
-    width: 10px; /* 圓點的直徑 */
-    height: 10px; /* 圓點的直徑 */
-    border: 1px solid var(--white);
-    border-radius: 50%; /* 讓它變成圓形 */
-  }
-  
-  .gradient {
-    display: none;
-  }
-  
-  
-    /* 響應式樣式 */
+  background-color: var(--primary-color);
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.category-nav ul {
+  display: flex;
+  gap: 100px;
+  padding: 0;
+}
+
+.category-nav ul li {
+  list-style: none;
+}
+
+.category-list {
+  transition: transform 0.3s ease;
+}
+
+.category-list p {
+  color: var(--white);
+}
+
+.category-list:hover p {
+  color: var(--secondary-color-med);
+}
+
+.category-list:hover .circle-active {
+  border: 1px solid var(--secondary-color-med);
+}
+
+.circle-active {
+  width: 10px; /* 圓點的直徑 */
+  height: 10px; /* 圓點的直徑 */
+  border: 1px solid var(--white);
+  border-radius: 50%; /* 讓它變成圓形 */
+}
+
+.gradient {
+  display: none;
+}
+
+/* 響應式樣式 */
 @media screen and (max-width: 992px) {
-
-
   .category-nav ul {
     gap: 10vw;
   }
-
-
 }
 
 @media screen and (max-width: 768px) {
@@ -78,7 +73,7 @@
   }
 
   .category-nav li::after {
-    content: "";
+    content: '';
     display: block;
     width: 100%;
     height: 1px;
