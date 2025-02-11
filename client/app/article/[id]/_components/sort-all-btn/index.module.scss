@@ -1,0 +1,23 @@
+.y-all-comment-btn button{
+  border: none;
+  background-color: #ffffff00;
+  color: #7E7267;
+  font-size: 16px;
+}
+.y-sort-dropdown{
+  select{
+    background-color: #ffffff00;
+    width: 15%;
+    border-radius: 25px;
+    border: none;
+  }
+  select:focus{
+    box-shadow: 0 0 15px #7E7267;
+    border: 2px solid #7E7267;
+  }
+}
+
+
+@media screen and (max-width: 390px){
+
+}
