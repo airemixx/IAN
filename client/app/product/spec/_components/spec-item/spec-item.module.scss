@@ -1,7 +1,8 @@
 // 📌 確保 SCSS 模組正確載入
 .compareTitle {
   text-align: center;
-  margin: 0 auto 20px auto; // ✅ 讓 `margin-top: 0`
+  margin: 0 auto;
+  padding-top: 5rem; // ✅ 讓標題不被 header 擋住
   font-size: 2rem;
   font-weight: bold;
 }
@@ -10,7 +11,8 @@
 .productContainer {
   padding-top: 5rem; 
   display: flex;
-  margin: 0 auto 30px auto;
+  padding-top: 0;
+  margin-top: 5rem;
   max-width: 1440px;
   justify-content: flex-end;
   margin-left: 241px;

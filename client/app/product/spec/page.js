@@ -7,6 +7,7 @@ import ComponentsCompareTable from './_components/spec-table'
 export default function ComparePage(props) {
   return (
     <>
+    
       <ComponentsCompareItem />
       <ComponentsCompareTable />
     </>

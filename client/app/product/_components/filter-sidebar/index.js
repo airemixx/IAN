@@ -1,145 +1,192 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import styles from "./filter-sidebar.module.scss"; // 正確引入 SCSS Module
+import { useState, useEffect } from "react";
+import styles from "./filter-sidebar.module.scss"; // 確保 Bootstrap 樣式
 
-export default function FilterSidebar() {
-  const [showFilter, setShowFilter] = useState(false);
-  const [hideButton, setHideButton] = useState(false);
-  const [isOpen, setIsOpen] = useState({
-    brand: false,
-    lens: false,
-    accessory: false,
-    price: false,
-    stock: false,
+export default function FilterSidebar({ onFilterChange }) {
+  const [filters, setFilters] = useState({ brand: [], category: [] });
+  const [expanded, setExpanded] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState({
+    brand_id: [],
+    category_id: [],
   });
 
-  // 🔹 切換篩選欄顯示/隱藏
-  const toggleFilter = () => {
-    setShowFilter((prev) => !prev);
-  };
+  // 取得篩選條件
+  useEffect(() => {
+    async function fetchFilters() {
+      try {
+        const response = await fetch("http://localhost:8000/api/product/filters");
+        if (!response.ok) throw new Error("HTTP 錯誤 " + response.status);
+        const data = await response.json();
 
-  // 🔹 點擊畫面其他地方時關閉篩選欄
-  const handleClickOutside = useCallback(
-    (event) => {
-      if (!event.target.closest(`.${styles.asideFilter}`) && !event.target.closest(`.${styles.filterToggleBtn}`)) {
-        setShowFilter(false);
+        console.log("取得篩選條件:", data);
+        if (!data.brand || !data.category) {
+          throw new Error("API 回應格式錯誤");
+        }
+
+        setFilters(data);
+      } catch (error) {
+        console.error("獲取篩選條件時發生錯誤:", error);
       }
-    },
-    []
-  );
-
-  // 🔹 監聽滾動事件，當滾動到底部時隱藏按鈕
-  const handleScroll = useCallback(() => {
-    const footer = document.getElementById("footer");
-    if (footer) {
-      const footerRect = footer.getBoundingClientRect();
-      setHideButton(footerRect.top < window.innerHeight);
     }
+    fetchFilters();
   }, []);
 
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScroll);
+  // 🔹 切換展開/收合
+  const toggleExpand = (section) => {
+    setExpanded(expanded === section ? null : section);
+  };
 
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleClickOutside, handleScroll]);
+  // 🔹 處理 Checkbox 變更
+  const handleCheckboxChange = (e) => {
+    const { name, value, checked } = e.target;
+    const updatedFilters = { ...selectedFilters };
 
-  // 🔹 手動切換下拉選單的開關
-  const toggleCollapse = (category) => {
-    setIsOpen((prevState) => ({
-      ...prevState,
-      [category]: !prevState[category],
-    }));
+    if (checked) {
+      updatedFilters[name] = [...updatedFilters[name], value];
+    } else {
+      updatedFilters[name] = updatedFilters[name].filter((item) => item !== value);
+    }
+
+    setSelectedFilters(updatedFilters);
+    console.log("🔍 選擇的篩選條件:", updatedFilters);
+    onFilterChange(updatedFilters);
   };
 
   return (
-    <>
-      {/* 🔹 按鈕在滾動到底部時會隱藏 */}
-      <button className={`${styles.filterToggleBtn} d-md-none ${hideButton ? styles.hidden : ""}`} onClick={toggleFilter}>
-        篩選條件
-      </button>
+    <aside className={styles.asideFilter}>
+      <div className="accordion" id="filterAccordion">
 
-      {/* 側邊篩選欄 */}
-      <div className={`${styles.asideFilter} ${showFilter ? styles.show : ""}`}>
-        <aside>
-          <div className="accordion" id="dropdown-container">
-            {/* 品牌篩選 */}
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button
-                  className={`accordion-button ${isOpen.category ? "" : "collapsed"}`}
-                  type="button"
-                  onClick={() => toggleCollapse("category")}
-                >
-                  種類
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${isOpen.category ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  <label><input type="checkbox" name="category" value="相機" /> 相機</label><br />
-                  <label><input type="checkbox" name="category" value="鏡頭" /> 鏡頭</label><br />
-                  <label><input type="checkbox" name="category" value="配件" /> 配件</label><br />
-                </div>
-              </div>
-            </div>
-
-            {/* 鏡頭篩選 */}
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button className={`accordion-button ${isOpen.lens ? "" : "collapsed"}`} type="button" onClick={() => toggleCollapse("lens")}>
-                  鏡頭種類
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${isOpen.lens ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  <label><input type="checkbox" name="lens" value="廣角" /> 廣角</label><br />
-                  <label><input type="checkbox" name="lens" value="標準" /> 標準</label><br />
-                  <label><input type="checkbox" name="lens" value="長焦" /> 長焦</label><br />
-                  <label><input type="checkbox" name="lens" value="微距" /> 微距</label><br />
-                </div>
-              </div>
-            </div>
-
-            {/* 配件篩選 */}
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button className={`accordion-button ${isOpen.accessory ? "" : "collapsed"}`} type="button" onClick={() => toggleCollapse("accessory")}>
-                  配件
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${isOpen.accessory ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  <label><input type="checkbox" name="accessory" value="電池" /> 電池</label><br />
-                  <label><input type="checkbox" name="accessory" value="記憶卡" /> 記憶卡</label><br />
-                  <label><input type="checkbox" name="accessory" value="背帶" /> 背帶</label><br />
-                </div>
-              </div>
-            </div>
-
-            {/* 價格篩選 */}
-            <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button className={`accordion-button ${isOpen.price ? "" : "collapsed"}`} type="button" onClick={() => toggleCollapse("price")}>
-                  價格
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${isOpen.price ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  <div className="d-flex align-items-center">
-                    <input type="number" className="form-control price-input me-2" placeholder="最低金額" min={0} />
-                    <span className="mx-2"> ~ </span>
-                    <input type="number" className="form-control price-input" placeholder="最高金額" min={0} />
+      <div className="accordion-item">
+          <h2 className="accordion-header">
+            <button
+              className={`accordion-button ${expanded === "lens" ? "" : "collapsed"}`}
+              type="button"
+              onClick={() => toggleExpand("lens")}
+            >
+              種類
+            </button>
+          </h2>
+          <div className={`accordion-collapse ${expanded === "lens" ? "show" : "collapse"}`}>
+            <div className="accordion-body">
+              {filters.category.length > 0 ? (
+                filters.category.map((category) => (
+                  <div key={category.id} className="form-check">
+                    <input
+                      type="checkbox"
+                      id={`category_${category.id}`}
+                      name="category_id"
+                      value={category.id}
+                      className="form-check-input"
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor={`category_${category.id}`} className="form-check-label">
+                      {category.name}
+                    </label>
                   </div>
-                </div>
-              </div>
+                ))
+              ) : (
+                <p>沒有種類資料</p>
+              )}
             </div>
           </div>
-        </aside>
+        </div>
+
+        {/* 機身 (品牌篩選) */}
+        <div className="accordion-item">
+          <h2 className="accordion-header">
+            <button
+              className={`accordion-button ${expanded === "brand" ? "" : "collapsed"}`}
+              type="button"
+              onClick={() => toggleExpand("brand")}
+            >
+              品牌
+            </button>
+          </h2>
+          <div className={`accordion-collapse ${expanded === "brand" ? "show" : "collapse"}`}>
+            <div className="accordion-body">
+              {filters.brand.length > 0 ? (
+                filters.brand.map((brand) => (
+                  <div key={brand.id} className="form-check">
+                    <input
+                      type="checkbox"
+                      id={`brand_${brand.id}`}
+                      name="brand_id"
+                      value={brand.id}
+                      className="form-check-input"
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor={`brand_${brand.id}`} className="form-check-label">
+                      {brand.name}
+                    </label>
+                  </div>
+                ))
+              ) : (
+                <p>沒有品牌資料</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/*鏡頭 (種類篩選) */}
+        
+
+        {/* 配件 */}
+        <div className="accordion-item">
+          <h2 className="accordion-header">
+            <button
+              className={`accordion-button ${expanded === "accessory" ? "" : "collapsed"}`}
+              type="button"
+              onClick={() => toggleExpand("accessory")}
+            >
+              配件
+            </button>
+          </h2>
+          <div className={`accordion-collapse ${expanded === "accessory" ? "show" : "collapse"}`}>
+            <div className="accordion-body">
+              <p>配件篩選 (可擴充)</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ✅ 價格篩選 */}
+        <div className="accordion-item">
+          <h2 className="accordion-header">
+            <button
+              className={`accordion-button ${expanded === "price" ? "" : "collapsed"}`}
+              type="button"
+              onClick={() => toggleExpand("price")}
+            >
+              價格
+            </button>
+          </h2>
+          <div className={`accordion-collapse ${expanded === "price" ? "show" : "collapse"}`}>
+            <div className="accordion-body">
+              <input type="number" className="form-control" placeholder="最低價格" />
+              <input type="number" className="form-control mt-2" placeholder="最高價格" />
+            </div>
+          </div>
+        </div>
+
+        {/* ✅ 庫存狀態 */}
+        <div className="accordion-item">
+          <h2 className="accordion-header">
+            <button
+              className={`accordion-button ${expanded === "stock" ? "" : "collapsed"}`}
+              type="button"
+              onClick={() => toggleExpand("stock")}
+            >
+              鏡頭種類
+            </button>
+          </h2>
+          <div className={`accordion-collapse ${expanded === "stock" ? "show" : "collapse"}`}>
+            <div className="accordion-body">
+              <p>庫存篩選 (可擴充)</p>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </>
+    </aside>
   );
 }
