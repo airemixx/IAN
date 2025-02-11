@@ -1,31 +1,41 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import ProductCard from "../product-card";
-import styles from "./product-list.module.scss"; // ✅ 正確引入 SCSS Module
+import styles from "./product-list.module.scss";
 
-export default function ProductList() {
-  const [products, setProducts] = useState([]);  // 🔹 狀態用來存 API 回應的商品數據
-  const [loading, setLoading] = useState(true); // 🔹 狀態用來顯示加載中
+export default function ProductList({ filters }) { // ✅ 接收 `filters`
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // 取得商品列表
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const response = await fetch("http://localhost:8000/api/product");
+        // 🔍 將 `filters` 轉換為 URL 參數
+        const queryString = new URLSearchParams({
+          brand_id: filters.brand_id.join(","), // ✅ 把多個品牌 ID 轉成 "1,2,3"
+          category_id: filters.category_id.join(","),
+        }).toString();
 
-        if (!response.ok) throw new Error("HTTP 錯誤 " + response.status); // 🔹 檢查請求是否成功
-        const data = await response.json(); // 🔹 解析 JSON
-        setProducts(data); // 🔹 更新狀態
+        const apiUrl = `http://localhost:8000/api/product?${queryString}`;
+
+        console.log("📌 請求 API:", apiUrl);
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("HTTP 錯誤 " + response.status);
+        const data = await response.json();
+        setProducts(data);
       } catch (error) {
-        console.error("獲取商品時發生錯誤:", error);
+        console.error("❌ 獲取商品時發生錯誤:", error);
       } finally {
         setLoading(false);
       }
     }
 
     fetchProducts();
-  }, []); // 🔹 `useEffect` 只在組件載入時執行一次
+  }, [filters]); // ✅ `filters` 變更時重新請求
 
-  if (loading) return <p className={styles.loadingText}>載入中...</p>; // ✅ 確保 `SCSS` 影響 `載入中...` 文字
+  if (loading) return <p className={styles.loadingText}>載入中...</p>;
 
   return (
     <div className={`row ${styles.productList}`}>

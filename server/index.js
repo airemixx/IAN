@@ -20,7 +20,7 @@ dotenv.config();
 const app = express();
 
 // 📌 讓 Express 提供 `public` 資料夾內的靜態資源
-app.use("/images", express.static(path.join(process.cwd(), "public/images")));
+app.use("/images/product", express.static(path.join(process.cwd(), "public/images/product")));
 
 
 app.use(cors()); // 允許跨域請求

@@ -7,7 +7,7 @@ export default function ComponentsCompareItem() {
   return (
     <>
       <>
-        <h1 className={`styles.compareTitle`}>比較相機機型</h1>
+        <h1 className={`styles.compareTitle`}>比較相機機型</h1> 
         <div className={styles.productContainer}>
           {/* 商品 1 */}
           <div className={styles.productBox}>
