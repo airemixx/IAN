@@ -1,4 +1,4 @@
-body {
+  body {
     height: 100vh;
   }
 
@@ -59,13 +59,13 @@ body {
     padding: 0;
     font-size: 14px;
     border: none;
-    background-color: #f6f6f6;
+    background-color: #fff;
     text-align: left;
   }
 
   .j-accBtn:not(.collapsed) {
     box-shadow: none;
-    background: #f6f6f6;
+    background: #fff;
   }
 
   .j-accitem {
@@ -73,27 +73,27 @@ body {
   }
 
   .j-accBtn {
-    background-color: #f6f6f6;
+    background-color: #fff;
   }
 
   .j-accBtn:active {
-    background-color: #f6f6f6;
+    background-color: #fff;
   }
 
   .j-accBtn:focus {
-    background-color: #f6f6f6;
+    background-color: #fff;
   }
 
   .j-accBtn:visited {
-    background-color: #f6f6f6;
+    background-color: #fff;
   }
 
   .j-accBtn:link {
-    background-color: #f6f6f6;
+    background-color: #fff;
   }
 
   .j-accBody {
-    background-color: #f6f6f6;
+    background-color: #fff;
   }
   .j-lessonImg img{
     width: 600px;
