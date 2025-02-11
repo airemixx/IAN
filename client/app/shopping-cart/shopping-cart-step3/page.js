@@ -1,19 +1,19 @@
 "use client"
-import "@/style/shopping-cart-step3.css"
-import "@/node_modules/bootstrap/dist/css/bootstrap.min.css"
+import  "./shopping-cart-step3.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
 export default function shoppingCartThreePage() {
 
     return (
         <div>
-            <div className="container">
-                <div className="shoppingCartBox mt-5 pt-3 row">
+            <div className="container mb-5 pt-5">
+                <div className="shoppingCartBox justify-content-between pt-5 row">
                     {/* 商品項目 */}
-                    <div className="j-shoppingItemsBox col-md-6 d-none d-sm-block p-0">
+                    <div className="j-shoppingItemsBox col-md-6 d-none d-sm-block mt-5 pt-5">
                         <div className="d-flex ">
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="j-cartItem d-flex flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column flex-grow-1">
                                         <div className="j-content d-flex justify-content-between align-items-center ">
@@ -117,7 +117,7 @@ export default function shoppingCartThreePage() {
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="j-cartItem d-flex flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column flex-grow-1">
                                         <div className="j-content d-flex justify-content-between align-items-center ">
@@ -222,7 +222,7 @@ export default function shoppingCartThreePage() {
                             <div className="j-cartItemBox me-3 mb-2 d-flex">
                                 <div className="shoppingLesson d-flex flex-column">
                                     <div className="j-lessonImg m-2 ">
-                                        <img src="./images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column align-items-center">
                                         <div>
@@ -269,7 +269,7 @@ export default function shoppingCartThreePage() {
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="shoppingRent d-flex flex-column flex-grow-1">
                                     <div className="j-rentImg m-2 d-flex justify-content-center">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
                                         <span>FUJIFILM 富士</span>
@@ -283,12 +283,12 @@ export default function shoppingCartThreePage() {
                             </div>
                         </div>
                     </div>
-                    <div className="shoppingItemsMoblieBox col-md-auto d-sm-none d-block p-0">
+                    <div className="j-shoppingItemsMoblieBox col-md-auto d-sm-none d-block p-0">
                         <div className="j-cartItemBox mb-2">
                             <div className="j-cartItem d-flex flex-column">
                                 <div className="content d-flex align-items-center justify-content-evenly flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="itemDetail d-flex flex-column">
                                         <div>
@@ -315,7 +315,7 @@ export default function shoppingCartThreePage() {
                                 <div className="d-flex flex-column flex-grow-1">
                                     <div className="content d-flex align-items-center justify-content-evenly flex-grow-1">
                                         <div className="j-cameraImg m-2 ">
-                                            <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                            <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                         </div>
                                         <div className="itemDetail d-flex flex-column">
                                             <div>
@@ -334,7 +334,7 @@ export default function shoppingCartThreePage() {
                                             </h2>
                                             <div id="panelsStayOpen-collapseOne" className="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
                                                 <div className="accordion-body">
-                                                    <div className="detialTypeContent d-flex flex-column j-publicFont">
+                                                    <div className="j-detialTypeContent d-flex flex-column j-publicFont">
                                                         <div className="d-flex justify-content-between">
                                                             <p className="effectivePixels mb-1">有效像素</p>
                                                             <p className="effectivePixelsValue mb-1">2550 萬像素</p>
@@ -406,7 +406,7 @@ export default function shoppingCartThreePage() {
                         <div className="j-cartItemBox mb-2">
                             <div className="shoppingLesson d-flex flex-column">
                                 <div className="j-lessonImg m-2 ">
-                                    <img src="./images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
+                                    <img src="/images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
                                 </div>
                                 <div className="d-flex flex-column align-items-center">
                                     <div>
@@ -451,7 +451,7 @@ export default function shoppingCartThreePage() {
                         <div className="j-cartItemBox mb-2">
                             <div className="shoppingRent d-flex flex-column">
                                 <div className="j-rentImg m-2 d-flex justify-content-center">
-                                    <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                    <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                 </div>
                                 <div className="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
                                     <span>FUJIFILM 富士</span>
@@ -464,7 +464,7 @@ export default function shoppingCartThreePage() {
                             </div>
                         </div>
                     </div>
-                    <div className="j-pay col-md-6 ps-0">
+                    <div className="j-pay col-md-5 ps-0 mt-5 pt-5">
                         <p className="addressTitle text-start ps-3">結帳</p>
                         <div className="addressDetail d-flex flex-wrap mb-3 row ps-3">
                             <div className="d-flex flex-column me-4 col-5">
@@ -489,24 +489,24 @@ export default function shoppingCartThreePage() {
                                 </span>
                             </div>
                         </div>
-                        <div className="payStep d-flex flex-column">
-                            <div className="payTitle">
+                        <div className="j-payStep d-flex flex-column">
+                            <div className="j-payTitle">
                                 付款
                             </div>
                             <div className="payContent">
                                 <p className="mb-0">請選擇你的付款方式。之後，您將轉向相關服務頁面已完成你的訂單</p>
                             </div>
-                            <div className="useCredit d-flex ">
+                            <div className="j-useCredit d-flex ">
                                 <input className="form-check-input" type="checkbox" defaultValue id="flexCheckDefault" />
                                 <label className="form-check-label" htmlFor="flexCheckDefault">
-                                    <img src="./images/shopping-cart-image/radiobutton1.svg" alt="" />
+                                    <img src="/images/shopping-cart-image/radiobutton1.svg" alt="" />
                                 </label>
                                 <p className="ms-2 mb-0">信用卡付款</p>
                             </div>
                             <div>
                                 <p>除非另有標示，否則必須填寫所有欄位。</p>
                             </div>
-                            <div className="creditCardInput d-flex flex-wrap row">
+                            <div className="j-creditCardInput d-flex flex-wrap row">
                                 <div className="d-flex flex-column flex-grow-1 mb-3 col-12">
                                     <p className="mb-0">信用卡號碼</p>
                                     <input type="text" className="form-control" />
@@ -525,7 +525,7 @@ export default function shoppingCartThreePage() {
                                 </div>
                                 <div className="col-6" />
                             </div>
-                            <div className="needCheckBox d-flex flex-column">
+                            <div className="j-needCheckBox d-flex flex-column">
                                 <div>
                                     <input type="checkbox"/>
                                     <span>我已閱讀並同意映相坊</span>
@@ -533,11 +533,11 @@ export default function shoppingCartThreePage() {
                                     <span>並同意與了解</span>
                                     隱私權及cookie政策
                                 </div>
-                                <div className="mustWrite">
+                                <div className="j-mustWrite">
                                     <p>此為必填欄目</p>
                                 </div>
                             </div>
-                            <div className="Checkout d-flex justify-content-center align-items-center align-self-stretch">
+                            <div className="j-Checkout d-flex justify-content-center align-items-center align-self-stretch">
                                 <button className="btn text-align-center">付款</button>
                             </div>
                         </div>

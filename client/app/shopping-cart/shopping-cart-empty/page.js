@@ -1,10 +1,12 @@
 "use client"
-import "@/style/shopping-cart-empty.css"
+import  "./shopping-cart-empty.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 export default function shoppingCartEmptyPage(){
     return(
         <>
-             <div className="container d-xs-flex flex-sm-column">
-                <div className="j-shoppingCartTitleBox mb-5 row justify-content-center">
+             <div className="container d-xs-flex flex-sm-column pt-5">
+                <div className="j-shoppingCartTitleBox mb-5 row justify-content-center mt-5 pt-5">
                     <div className="col-12 text-center">
                         <h1 className="j-shoppingCartTitle m-0 ">我的購物車</h1>
                     </div>
@@ -14,7 +16,7 @@ export default function shoppingCartEmptyPage(){
                 </div>
                 <div className="j-emptyShoppingImgBox row justify-content-center position-relative mb-sm-5 pb-sm-4">
                     <div className="j-emptyShoppingImg me-5 d-none d-sm-block col-4">
-                        <img src="./images/shopping-cart-image/image2.jpg" alt="" />
+                        <img src="/images/shopping-cart-image/image2.jpg" alt="" />
                         <div className="d-flex flex-column j-emptyShoppingTitle position-absolute">
                             <span className="mb-2 j-AllcameraTitle j-publicFont">所有相機</span>
                             <span className="mb-4 j-publicFont">立即尋找所有作品</span>
@@ -22,7 +24,7 @@ export default function shoppingCartEmptyPage(){
                         </div>
                     </div>
                     <div className="j-emptyShoppingImg d-sm-none d-block col-6">
-                        <img src="./images/shopping-cart-image/image2.jpg" alt="" />
+                        <img src="/images/shopping-cart-image/image2.jpg" alt="" />
                         <div className="d-flex flex-column j-emptyShoppingTitle position-absolute">
                             <span className="mb-2 j-AllcameraTitle j-publicFont">所有相機</span>
                             <span className="mb-4 j-publicFont">立即尋找所有作品</span>
@@ -48,34 +50,34 @@ j-illustrateBox d-flex flex-column position-relative d-none d-sm-block col-4">
                     <p className="j-popularTitle j-publicFont">熱門產品</p>
                     <div className="j-popularProduct d-sm-flex justify-content-center d-none">
                         <div className="product1 d-flex flex-column me-5 pe-5">
-                            <img src="./images/shopping-cart-image/canon-1.png" alt="" />
+                            <img src="/images/shopping-cart-image/canon-1.png" alt="" />
                             <p className="p1">Canon EOS R10</p>
                             <p className="p2">NT$67,500</p>
                         </div>
                         <div className="product2 d-flex flex-column me-5 pe-5">
-                            <img src="./images/shopping-cart-image/canon-2.png" alt="" />
+                            <img src="/images/shopping-cart-image/canon-2.png" alt="" />
                             <p className="p1">Canon EOS R10</p>
                             <p className="p2">NT$67,500</p>
                         </div>
                         <div className="product3 d-flex flex-column me-5 pe-5">
-                            <img src="./images/shopping-cart-image/canon-3.png" alt="" />
+                            <img src="/images/shopping-cart-image/canon-3.png" alt="" />
                             <p className="p1">Canon EOS R10</p>
                             <p className="p2">NT$67,500</p>
                         </div>
                         <div className="product4 d-flex flex-column">
-                            <img src="./images/shopping-cart-image/canon-4.png" alt="" />
+                            <img src="/images/shopping-cart-image/canon-4.png" alt="" />
                             <p className="p1">Canon EOS R10</p>
                             <p className="p2">NT$67,500</p>
                         </div>
                     </div>
                     <div className="j-popularProduct d-flex justify-content-center d-sm-none">
                         <div className="product1 d-flex flex-column me-5">
-                            <img src="./images/shopping-cart-image/canon-1.png" alt="" />
+                            <img src="/images/shopping-cart-image/canon-1.png" alt="" />
                             <p className="p1">Canon EOS R10</p>
                             <p className="p2">NT$67,500</p>
                         </div>
                         <div className="product2 d-flex flex-column">
-                            <img src="./images/shopping-cart-image/canon-2.png" alt="" />
+                            <img src="/images/shopping-cart-image/canon-2.png" alt="" />
                             <p className="p1">Canon EOS R10</p>
                             <p className="p2">NT$67,500</p>
                         </div>
