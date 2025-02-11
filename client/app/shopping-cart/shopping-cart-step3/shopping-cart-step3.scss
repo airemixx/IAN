@@ -1,0 +1,259 @@
+body{
+    height: 100vh;
+  }
+  body>footer {
+    position: sticky;
+    top: 100vh;
+  }
+  .j-publicFont {
+    font-family: "Noto Sans HK";
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  hr {
+    color: #aBaBaB;
+  }
+
+  .j-shoppingItemsBox{
+    overflow: auto;
+    height: 785px;
+  }
+  .j-cartItemBox {
+    border-radius: 20px;
+    background-color: #f6f6f6;
+  }
+
+  .j-cartItem {
+    border-radius: 20px;
+    background-color: #f6f6f6;
+    gap: 10px;
+  }
+
+  .j-cartItem .j-cameraImg {
+    width: 109px;
+    height: 89px;
+  }
+
+  .j-detailcollapse{
+    padding: 0;
+    font-size: 14px;
+    border: none;
+    background-color: #f6f6f6;
+    text-align: left;
+  }
+
+  .accBtn:not(.collapsed){
+    box-shadow:none;
+    background: #f6f6f6;
+  }
+
+  .accordion-item{
+    border: none;
+  }
+
+  .accBtn{
+    background-color: #f6f6f6;
+  }
+
+  .accBtn:active{
+    background-color: #f6f6f6;
+  }
+
+  .accBtn:focus{
+    background-color: #f6f6f6;
+  }
+  
+  .accBtn:visited{
+    background-color: #f6f6f6;
+  }
+  
+  .accBtn:link{
+    background-color: #f6f6f6;
+  }
+  .accordion-body{
+    background-color: #f6f6f6;
+  }
+
+  .j-lessonImg img{
+    width: 610px;
+  }
+  
+  .j-rentImg img{
+    width: 185px;
+    height: 199px;
+  }
+
+  .j-rentCameraBrand{
+    font-family: "Noto Sans HK";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .j-rentDeadLine{
+    color: red;
+  }
+  .j-content {
+    height: 108px;
+    gap: 44px;
+  }
+
+  .j-content .itemDetail {
+    gap: 15px;
+  }
+
+  .j-content .itemDetail .brand {
+    color: #8F8F8F;
+    font-size: 12px;
+  }
+
+  .j-content .itemDetail .model {
+    color: #000;
+    font-size: 14px;
+  }
+
+  .j-content .itemDetail .detail {
+    color: #000;
+    font-size: 14px;
+  }
+
+  .detialTypeContent {
+    width: 200px;
+    font-size: 14px;
+    color: #8F8F8F;
+  }
+
+  .j-decrease:active{
+    border: none;
+  }
+
+  .j-increase:active{
+    border: none;
+  }
+
+  .amount-text {
+    width: 40px;
+  }
+
+  .addressTitle{
+    color: #000;
+    text-align: center;
+    font-family: "Noto Sans";
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  .addressDetailContent{
+    font-family: "Noto Sans";
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  .payStep {
+    width: 550px;
+    padding: 22px;
+    gap: 10px;
+    border-radius: 20px;
+    background-color: #f6f6f6;
+  }
+
+  .payTitle{
+    color: #003150;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  
+  .creditCardInput input{
+    border-radius: 20px;
+  }
+  .useCredit input{
+    display: none;
+  }
+  .needCheckBox span{
+    color: red;
+  }
+  .mustWrite{
+    color: red;
+  }
+
+  .Checkout {
+    height: 50px;
+    border-radius: 50px;
+    background: #003150;
+  }
+
+  .Checkout .btn {
+    color: #FFF;
+    font-size: 14px;
+  }
+
+  .ifCouponUse {
+    font-size: 16px;
+  }
+  
+  .copyright {
+    background-color: #fff;
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .copyright a,
+  .copyright span {
+    color: #000
+  }
+
+  @media(max-width:390px) {
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container .shoppingCartTitle {
+      font-size: 65px;
+    }
+
+    .container .shoppingCartBox {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .shoppingItemsMoblieBox {
+      width: 390px;
+    }
+
+    .j-cartItemBox {
+      width: 390px;
+      height: auto;
+    }
+
+    .j-lessonImg img {
+      width: 375px;
+    }
+
+    .payStep {
+      width: 390px;
+    }
+    .footer {
+      display: block;
+    }
+
+    .copyright{
+      text-align: center;
+    }
+    
+    .copyright .right-links {
+      display: none;
+    }
+
+    .copyright .right-links .copyRight {
+      display: block;
+    }
+    
+  }

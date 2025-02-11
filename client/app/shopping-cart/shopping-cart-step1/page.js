@@ -1,19 +1,26 @@
 "use client"
-import  "./shopping-cart-step3.scss";
+import  "./shopping-cart-step1.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-export default function shoppingCartThreePage() {
 
+import Script from "next/script"
+export default function shoppingCartOnePage() {
     return (
+       
         <div>
             <div className="container mb-5">
-                <div className="shoppingCartBox justify-content-between mt-5 pt-3 row">
+                <div className="j-shoppingCartTitleBox d-flex align-items-end pt-5">
+                    <h1 className="j-shoppingCartTitle mt-5">我的購物車</h1>
+                    <small className="mb-2 ms-1 ">(4)</small>
+                </div>
+                <div className="j-shoppingCartBox justify-content-between mt-4 row">
                     {/* 商品項目 */}
                     <div className="j-shoppingItemsBox col-md-6 d-none d-sm-block p-0">
-                        <div className="d-flex ">
+                        <div className="d-flex">
+                            <input type="checkbox" className="form-check me-2" id="item1"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="j-cartItem d-flex flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column flex-grow-1">
                                         <div className="j-content d-flex justify-content-between align-items-center ">
@@ -114,10 +121,11 @@ export default function shoppingCartThreePage() {
                             </div>
                         </div>
                         <div className="d-flex">
+                            <input type="checkbox" className="form-check me-2" id="item2"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="j-cartItem d-flex flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column flex-grow-1">
                                         <div className="j-content d-flex justify-content-between align-items-center ">
@@ -125,7 +133,6 @@ export default function shoppingCartThreePage() {
                                                 <div><span className="j-brand j-publicFont">FUJIFILM</span><br />
                                                     <span className="j-model j-publicFont">X-T5 16-50mm</span>
                                                 </div>
-                                                {/* <div class="j-detail j-publicFont">-詳細資訊</div> */}
                                                 <button className="j-detailcollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
                                                     +詳細資訊
                                                 </button>
@@ -219,20 +226,21 @@ export default function shoppingCartThreePage() {
                             </div>
                         </div>
                         <div className="d-flex">
+                            <input type="checkbox" className="form-check me-2" id="item3"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex">
                                 <div className="shoppingLesson d-flex flex-column">
                                     <div className="j-lessonImg m-2 ">
-                                        <img src="./images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column align-items-center">
-                                        <div>
+                                        <div >
                                             <p>旅行攝影：按下快門，用攝影書寫故事</p>
                                         </div>
                                         <div>
                                             <p>食癮，拾影</p>
                                         </div>
                                         <div className="d-flex">
-                                            <div>
+                                            <div >
                                                 <p>4.2</p>
                                             </div>
                                             <div className="me-3">
@@ -266,10 +274,11 @@ export default function shoppingCartThreePage() {
                             </div>
                         </div>
                         <div className="d-flex">
+                            <input type="checkbox" className="form-check me-2" id="item4"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="shoppingRent d-flex flex-column flex-grow-1">
                                     <div className="j-rentImg m-2 d-flex justify-content-center">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
                                         <span>FUJIFILM 富士</span>
@@ -286,22 +295,22 @@ export default function shoppingCartThreePage() {
                     <div className="j-shoppingItemsMoblieBox col-md-auto d-sm-none d-block p-0">
                         <div className="j-cartItemBox mb-2">
                             <div className="j-cartItem d-flex flex-column">
-                                <div className="content d-flex align-items-center justify-content-evenly flex-grow-1">
+                                <div className="j-content d-flex align-items-center justify-content-evenly flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
-                                    <div className="itemDetail d-flex flex-column">
+                                    <div className="j-itemDetail d-flex flex-column">
                                         <div>
-                                            <span className="brand j-publicFont">FUJIFILM</span><br />
-                                            <span className="model j-publicFont">X-T5 16-50mm</span>
+                                            <span className="j-brand j-publicFont">FUJIFILM</span><br />
+                                            <span className="j-model j-publicFont">X-T5 16-50mm</span>
                                         </div>
-                                        <div className="detail j-publicFont">+詳細資訊</div>
+                                        <div className="j-detail j-publicFont">+詳細資訊</div>
                                     </div>
                                 </div>
-                                <div className="amount d-flex flex-row align-items-start justify-content-around">
+                                <div className="j-amount d-flex flex-row align-items-start justify-content-around">
                                     <div className="d-flex justify-content-center">
                                         <button className="j-increase btn pb-0 ps-0 pt-0">+</button>
-                                        <p className="amount-text mb-0 j-publicFont ">數量</p>
+                                        <p className="j-amount-text mb-0 j-publicFont ">數量</p>
                                         <button className="j-decrease btn pb-0 ps-2 pt-0">-</button>
                                     </div>
                                     <div>
@@ -313,27 +322,27 @@ export default function shoppingCartThreePage() {
                         <div className="j-cartItemBox mb-2">
                             <div className="j-cartItem d-flex">
                                 <div className="d-flex flex-column flex-grow-1">
-                                    <div className="content d-flex align-items-center justify-content-evenly flex-grow-1">
+                                    <div className="j-content d-flex align-items-center justify-content-evenly flex-grow-1">
                                         <div className="j-cameraImg m-2 ">
-                                            <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                            <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                         </div>
-                                        <div className="itemDetail d-flex flex-column">
+                                        <div className="j-itemDetail d-flex flex-column">
                                             <div>
-                                                <span className="brand j-publicFont">FUJIFILM</span><br />
-                                                <span className="model j-publicFont">X-T5 16-50mm</span>
+                                                <span className="j-brand j-publicFont">FUJIFILM</span><br />
+                                                <span className="j-model j-publicFont">X-T5 16-50mm</span>
                                             </div>
-                                            <div className="detail j-publicFont">-詳細資訊</div>
+                                            <div className="j-detail j-publicFont">-詳細資訊</div>
                                         </div>
                                     </div>
                                     <div className="accordion" id="accordionExample">
-                                        <div className="accordion-item">
+                                        <div className="accordion-item j-accitem">
                                             <h2 className="accordion-header" id="panelsStayOpen-headingOne">
-                                                <button className="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                                                <button className="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
                                                     影像規格 IMAGE SPECIFICATIONS
                                                 </button>
                                             </h2>
                                             <div id="panelsStayOpen-collapseOne" className="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
-                                                <div className="accordion-body">
+                                                <div className="accordion-body j-accBody">
                                                     <div className="j-detialTypeContent d-flex flex-column j-publicFont">
                                                         <div className="d-flex justify-content-between">
                                                             <p className="effectivePixels mb-1">有效像素</p>
@@ -355,49 +364,59 @@ export default function shoppingCartThreePage() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="accordion-item">
+                                        <div className="accordion-item j-accitem">
                                             <h2 className="accordion-header" id="panelsStayOpen-headingTwo">
-                                                <button className="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                                <button className="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
                                                     觀景器 VIEWFINDER
                                                 </button>
                                             </h2>
                                             <div id="panelsStayOpen-collapseTwo" className="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-                                                <div className="accordion-body">
+                                                <div className="accordion-body j-accBody">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="accordion-item">
+                                        <div className="accordion-item j-accitem">
                                             <h2 className="accordion-header" id="panelsStayOpen-headingThree">
-                                                <button className="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                                <button className="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
                                                     資料存取 DATA TRANSFER
                                                 </button>
                                             </h2>
                                             <div id="panelsStayOpen-collapseThree" className="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
-                                                <div className="accordion-body">
+                                                <div className="accordion-body j-accBody">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="accordion-item">
+                                        <div className="accordion-item j-accitem">
                                             <h2 className="accordion-header" id="panelsStayOpen-headingFour">
-                                                <button className="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                                                <button className="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
                                                     機身資料 PHYSICAL SPECIFICATIONS
                                                 </button>
                                             </h2>
                                             <div id="panelsStayOpen-collapseFour" className="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
-                                                <div className="accordion-body">
+                                                <div className="accordion-body j-accBody">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="accordion-item">
+                                        <div className="accordion-item j-accitem">
                                             <h2 className="accordion-header" id="panelsStayOpen-headingFive">
-                                                <button className="accordion-button accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                                                <button className="accordion-button j-accBtn collapsed focus-ring focus-ring-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
                                                     其它資料 OTHERS
                                                 </button>
                                             </h2>
                                             <div id="panelsStayOpen-collapseFive" className="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
-                                                <div className="accordion-body">
+                                                <div className="accordion-body j-accBody">
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div className="j-amount d-flex flex-row align-items-start justify-content-around">
+                                        <div className="d-flex justify-content-center">
+                                            <button className="j-increase btn pb-0 ps-0 pt-0">+</button>
+                                            <p className="j-amount-text mb-0 j-publicFont ">數量</p>
+                                            <button className="j-decrease btn pb-0 ps-2 pt-0">-</button>
+                                        </div>
+                                        <div>
+                                            <p className="price">NT$67000</p>
                                         </div>
                                     </div>
                                 </div>
@@ -406,10 +425,10 @@ export default function shoppingCartThreePage() {
                         <div className="j-cartItemBox mb-2">
                             <div className="shoppingLesson d-flex flex-column">
                                 <div className="j-lessonImg m-2 ">
-                                    <img src="./images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
+                                    <img src="/images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
                                 </div>
                                 <div className="d-flex flex-column align-items-center">
-                                    <div>
+                                    <div >
                                         <p>旅行攝影：按下快門，用攝影書寫故事</p>
                                     </div>
                                     <div>
@@ -451,7 +470,7 @@ export default function shoppingCartThreePage() {
                         <div className="j-cartItemBox mb-2">
                             <div className="shoppingRent d-flex flex-column">
                                 <div className="j-rentImg m-2 d-flex justify-content-center">
-                                    <img src="./images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                    <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                 </div>
                                 <div className="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
                                     <span>FUJIFILM 富士</span>
@@ -464,88 +483,48 @@ export default function shoppingCartThreePage() {
                             </div>
                         </div>
                     </div>
-                    <div className="j-pay col-md-5 ps-0">
-                        <p className="addressTitle text-start ps-3">結帳</p>
-                        <div className="addressDetail d-flex flex-wrap mb-3 row ps-3">
-                            <div className="d-flex flex-column me-4 col-5">
-                                <span className="addressDetailContent">
-                                    您的送貨方式<br />
-                                    2-3個工作天 (若有選擇調整錶帶服務，將在3-5個工作天送達)<br />
-                                </span>
+                    {/* 價格摘要 */}
+                    <div className="j-payStep col-md-4 mb-5 d-flex flex-column align-items-center">
+                        <div className="j-pCount border-bottom mb-3 d-flex flex-column gap-2">
+                            <div className="j-pTitle j-publicFont">摘要</div>
+                            <div className="j-ifCouponUse j-publicFont">
+                                <input className="form-check me-2-input" type="checkbox" defaultValue id="flexCheckDefault" />
+                                <label className="form-check me-2-label" htmlFor="flexCheckDefault">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width={24} height={25} viewBox="0 0 24 25" fill="none">
+                                        <circle cx={12} cy="12.5" r={11} stroke="#003150" strokeWidth={2} />
+                                        <circle cx={12} cy="12.5" r="7.5" fill="#003150" />
+                                    </svg>
+                                </label>
+                                是否使用優惠券
                             </div>
-                            <div className="d-flex flex-column w-50 col-auto">
-                                <span className="addressDetailContent">
-                                    送貨地址：<br />
-                                    XX 黃 先生<br />
-                                    XX街XX號<br />
-                                    XX縣 XX鎮 Taiwan Sheng, 310<br />
-                                    台灣地區(0918556231)<br />
-                                </span>
+                            <div className="couponName d-flex flex-column j-publicFont">
+                                <span>課程95折優惠券</span>
+                                <span>相機1500折價券</span>
                             </div>
-                            <div className="d-flex flex-column col">
-                                <span className="addressDetailContent">
-                                    帳單地址 <br />
-                                    與送貨地址相同<br />
-                                </span>
+                            <div className="subTotalBox d-flex justify-content-between j-publicFont">
+                                <div className="subTotal">小計</div>
+                                <div className="subPrice">NT$8000</div>
+                            </div>
+                            <div className="freightBox d-flex justify-content-between j-publicFont">
+                                <div className="freight">運費</div>
+                                <div className="freightPrice">NT$8000</div>
+                            </div>
+                            <div className="totalPriceBox d-flex justify-content-between j-publicFont">
+                                <div className="total ">總額</div>
+                                <div className="totalPrice">NT$8000</div>
                             </div>
                         </div>
-                        <div className="j-payStep d-flex flex-column">
-                            <div className="j-payTitle">
-                                付款
-                            </div>
-                            <div className="payContent">
-                                <p className="mb-0">請選擇你的付款方式。之後，您將轉向相關服務頁面已完成你的訂單</p>
-                            </div>
-                            <div className="j-useCredit d-flex ">
-                                <input className="form-check-input" type="checkbox" defaultValue id="flexCheckDefault" />
-                                <label className="form-check-label" htmlFor="flexCheckDefault">
-                                    <img src="./images/shopping-cart-image/radiobutton1.svg" alt="" />
-                                </label>
-                                <p className="ms-2 mb-0">信用卡付款</p>
-                            </div>
-                            <div>
-                                <p>除非另有標示，否則必須填寫所有欄位。</p>
-                            </div>
-                            <div className="j-creditCardInput d-flex flex-wrap row">
-                                <div className="d-flex flex-column flex-grow-1 mb-3 col-12">
-                                    <p className="mb-0">信用卡號碼</p>
-                                    <input type="text" className="form-control" />
-                                </div>
-                                <div className="d-flex flex-column flex-grow-1 mb-3 col-6">
-                                    <p className="mb-0">到期日期</p>
-                                    <input type="text" className="form-control" />
-                                </div>
-                                <div className="d-flex flex-column flex-grow-1 mb-3 col-6">
-                                    <p className="mb-0">安全碼</p>
-                                    <input type="text" className="form-control" />
-                                </div>
-                                <div className="d-flex flex-column flex-grow-1 col-6">
-                                    <p className="mb-0">信用卡上的名字</p>
-                                    <input type="text" className="form-control" />
-                                </div>
-                                <div className="col-6" />
-                            </div>
-                            <div className="j-needCheckBox d-flex flex-column">
-                                <div>
-                                    <input type="checkbox"/>
-                                    <span>我已閱讀並同意映相坊</span>
-                                    銷售條款
-                                    <span>並同意與了解</span>
-                                    隱私權及cookie政策
-                                </div>
-                                <div className="j-mustWrite">
-                                    <p>此為必填欄目</p>
-                                </div>
-                            </div>
-                            <div className="j-Checkout d-flex justify-content-center align-items-center align-self-stretch">
-                                <button className="btn text-align-center">付款</button>
-                            </div>
+                        <div className="j-Checkout d-flex justify-content-center align-items-center align-self-stretch">
+                            <button className="btn text-alig-center">結帳</button>
                         </div>
                     </div>
                 </div>
             </div>
+            {/* Button trigger modal */}
+           
+            <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+                crossorigin="anonymous"></Script>
         </div>
-
-
     )
 }
