@@ -1,16 +1,18 @@
 'use client'
 
-import { Noto_Sans_TC } from 'next/font/google'
+import { Noto_Sans_TC, Inter } from 'next/font/google';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/globals.css';
 import { useState } from 'react'
 import { Collapse } from 'react-bootstrap'
 
+
 const notoSansTC = Noto_Sans_TC({
-  weight: ['100', '400', '700', '900'],
+  weight: ['100','200','300', '400','500','600', '700','800', '900'],
   subsets: ['latin', 'chinese-traditional'],
   display: 'swap',
 })
+const inter = Inter({ weight: ["400", "500", "600", "700"], subsets: ["latin"] });
 
 // export const metadata = {
 //   title: 'Lenstudio - 賣相機和攝影課程的平台',
@@ -24,7 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <>
       <html lang="en">
-        <body className={`${notoSansTC.variable}`}>
+      <body className={`${notoSansTC.variable} ${inter.variable}`}>
           <header className="nav-fixed-1" data-type="nav-fixed-1">
             <div className="search-icon">
               <a href="#">

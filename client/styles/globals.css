@@ -1,5 +1,6 @@
 @charset "UTF-8";
 
+
 /* 定義變數 */
 :root {
   --primary-color: #143146;
@@ -19,7 +20,7 @@
 
 /* 基本樣式 */
 body {
-  font-family: 'Noto Sans TC', sans-serif !important;
+  font-family:"Inter", 'Noto Sans TC', sans-serif !important;
   font-weight: 400;
   margin: 0;
   padding: 0;
@@ -263,6 +264,9 @@ nav {
   transform: scale(1.1);
 }
 
+
+
+
 /* ---footer--- */
 footer {
   max-width: 100vw;
@@ -270,7 +274,7 @@ footer {
   overflow: hidden;
 }
 
-footer-block {
+.footer-block {
   margin: 70px 0;
 }
 
