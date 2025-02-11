@@ -1,25 +1,20 @@
 "use client"
-import "@/style/shopping-cart-step1.css"
-import "@/node_modules/bootstrap/dist/css/bootstrap.min.css"
-import Script from "next/script"
-export default function shoppingCartOnePage() {
+
+import  "./shopping-cart-step2.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+export default function shoppingCartTwoPage() {
     return (
-       
-        <div >
-            <div className="container">
-                <div className="j-shoppingCartTitleBox d-flex align-items-end pt-5">
-                    <h1 className="j-shoppingCartTitle mt-5">我的購物車</h1>
-                    <small className="mb-2 ms-1 ">(4)</small>
-                </div>
-                <div className="j-shoppingCartBox justify-content-between mt-4 row">
+        <div>
+            <div className="container mb-5 pt-5">
+                <div className="j-shoppingCartBox justify-content-between pt-5 row">
                     {/* 商品項目 */}
-                    <div className="j-shoppingItemsBox col-md-6 d-none d-sm-block p-0">
+                    <div className="j-shoppingItemsBox col-md-6 d-none d-sm-block mt-5 pt-5">
                         <div className="d-flex">
-                            <input type="checkbox" className="form-check" id="item1"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="j-cartItem d-flex flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="../images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column flex-grow-1">
                                         <div className="j-content d-flex justify-content-between align-items-center ">
@@ -120,11 +115,10 @@ export default function shoppingCartOnePage() {
                             </div>
                         </div>
                         <div className="d-flex">
-                            <input type="checkbox" className="form-check" id="item2"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="j-cartItem d-flex flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="../images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column flex-grow-1">
                                         <div className="j-content d-flex justify-content-between align-items-center ">
@@ -225,11 +219,10 @@ export default function shoppingCartOnePage() {
                             </div>
                         </div>
                         <div className="d-flex">
-                            <input type="checkbox" className="form-check" id="item3"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex">
                                 <div className="shoppingLesson d-flex flex-column">
                                     <div className="j-lessonImg m-2 ">
-                                        <img src="../images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="d-flex flex-column align-items-center">
                                         <div >
@@ -273,11 +266,10 @@ export default function shoppingCartOnePage() {
                             </div>
                         </div>
                         <div className="d-flex">
-                            <input type="checkbox" className="form-check" id="item4"/>
                             <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
                                 <div className="shoppingRent d-flex flex-column flex-grow-1">
                                     <div className="j-rentImg m-2 d-flex justify-content-center">
-                                        <img src="../images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
                                         <span>FUJIFILM 富士</span>
@@ -291,12 +283,12 @@ export default function shoppingCartOnePage() {
                             </div>
                         </div>
                     </div>
-                    <div className="j-shoppingItemsMoblieBox col-md-auto d-sm-none d-block p-0">
+                    <div className="j-shoppingItemsMoblieBox col-md-auto d-sm-none d-block p-0 ">
                         <div className="j-cartItemBox mb-2">
                             <div className="j-cartItem d-flex flex-column">
                                 <div className="j-content d-flex align-items-center justify-content-evenly flex-grow-1">
                                     <div className="j-cameraImg m-2 ">
-                                        <img src="../images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                        <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                     </div>
                                     <div className="j-itemDetail d-flex flex-column">
                                         <div>
@@ -323,7 +315,7 @@ export default function shoppingCartOnePage() {
                                 <div className="d-flex flex-column flex-grow-1">
                                     <div className="j-content d-flex align-items-center justify-content-evenly flex-grow-1">
                                         <div className="j-cameraImg m-2 ">
-                                            <img src="../images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                            <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                         </div>
                                         <div className="j-itemDetail d-flex flex-column">
                                             <div>
@@ -424,7 +416,7 @@ export default function shoppingCartOnePage() {
                         <div className="j-cartItemBox mb-2">
                             <div className="shoppingLesson d-flex flex-column">
                                 <div className="j-lessonImg m-2 ">
-                                    <img src="../images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
+                                    <img src="/images/shopping-cart-image/lesson1.png" alt="" className="object-fit-contain" />
                                 </div>
                                 <div className="d-flex flex-column align-items-center">
                                     <div >
@@ -469,7 +461,7 @@ export default function shoppingCartOnePage() {
                         <div className="j-cartItemBox mb-2">
                             <div className="shoppingRent d-flex flex-column">
                                 <div className="j-rentImg m-2 d-flex justify-content-center">
-                                    <img src="../images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
+                                    <img src="/images/shopping-cart-image/shoppingCartItemPhoto.png" alt="" className="object-fit-contain" />
                                 </div>
                                 <div className="j-rentCameraBrand d-flex flex-column align-items-center mb-3">
                                     <span>FUJIFILM 富士</span>
@@ -482,48 +474,57 @@ export default function shoppingCartOnePage() {
                             </div>
                         </div>
                     </div>
-                    {/* 價格摘要 */}
-                    <div className="j-payStep col-md-4 mb-5 d-flex flex-column align-items-center">
-                        <div className="j-pCount border-bottom mb-3 d-flex flex-column gap-2">
-                            <div className="j-pTitle j-publicFont">摘要</div>
-                            <div className="j-ifCouponUse j-publicFont">
-                                <input className="form-check-input" type="checkbox" defaultValue id="flexCheckDefault" />
-                                <label className="form-check-label" htmlFor="flexCheckDefault">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width={24} height={25} viewBox="0 0 24 25" fill="none">
-                                        <circle cx={12} cy="12.5" r={11} stroke="#003150" strokeWidth={2} />
-                                        <circle cx={12} cy="12.5" r="7.5" fill="#003150" />
-                                    </svg>
-                                </label>
-                                是否使用優惠券
+                    <div className="j-payStep col-4 mt-5 pt-5">
+                        <div className="j-payTitle mb-3">
+                            結帳
+                        </div>
+                        <div className="buyerData mb-5">訂購人資料</div>
+                        <div className="j-buyerInput d-flex flex-wrap mb-5">
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>稱謂*</p>
+                                <input type="text" className="form-control" />
                             </div>
-                            <div className="couponName d-flex flex-column j-publicFont">
-                                <span>課程95折優惠券</span>
-                                <span>相機1500折價券</span>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>姓氏*</p>
+                                <input type="text" className="form-control" />
                             </div>
-                            <div className="subTotalBox d-flex justify-content-between j-publicFont">
-                                <div className="subTotal">小計</div>
-                                <div className="subPrice">NT$8000</div>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>姓名*</p>
+                                <input type="text" className="form-control" />
                             </div>
-                            <div className="freightBox d-flex justify-content-between j-publicFont">
-                                <div className="freight">運費</div>
-                                <div className="freightPrice">NT$8000</div>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>地址欄*</p>
+                                <input type="text" className="form-control" />
                             </div>
-                            <div className="totalPriceBox d-flex justify-content-between j-publicFont">
-                                <div className="total ">總額</div>
-                                <div className="totalPrice">NT$8000</div>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>城市*</p>
+                                <input type="text" className="form-control" />
+                            </div>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>地區*</p>
+                                <input type="text" className="form-control" />
+                            </div>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>郵遞區號*</p>
+                                <input type="text" className="form-control" />
+                            </div>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>電話號碼</p>
+                                <input type="text" className="form-control" />
+                            </div>
+                            <div className="d-flex flex-column flex-grow-1">
+                                <p>本地電話*</p>
+                                <input type="text" className="form-control" />
                             </div>
                         </div>
                         <div className="j-Checkout d-flex justify-content-center align-items-center align-self-stretch">
-                            <button className="btn text-alig-center">結帳</button>
+                            <button className="btn text-alig-center">繼續</button>
                         </div>
                     </div>
                 </div>
             </div>
-            {/* Button trigger modal */}
-           
-            <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-                crossorigin="anonymous"></Script>
         </div>
+        
+
     )
 }

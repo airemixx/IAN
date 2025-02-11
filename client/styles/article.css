@@ -1,5 +1,62 @@
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #7e726700;
+  border-radius: 50%;
+}
+
+
 .y-container{
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
+}
+
+.y-article-content {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    img{
+      aspect-ratio: 4/3;
+      object-fit: cover;
+    }
+  }
+}
+
+aside {
+  align-self: flex-start;
+  position: sticky;
+  top:0;
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto;
+  background-color: #ffffff00;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media screen and (max-width: 390px){
+  .y-container{
+    max-width: 390px;
+    width: 100%;
+    padding: 0 32px;
+  }
+
+  .y-article-content{
+    flex-direction: column;
+  }
+
+  aside{
+    display: none;
+  }
 }

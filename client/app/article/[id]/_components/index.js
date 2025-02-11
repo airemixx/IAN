@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 
-export default function ArticleDetail() {
+export default function ComponentsIndex(props) {
   return (
     <>
-      <div>ArticleDetail Page</div>
+      <div>Components Index</div>
     </>
   )
 }
