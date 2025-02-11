@@ -1,0 +1,36 @@
+.y-pagination-css {  
+  margin-top: 70px;  
+  text-align: center;  
+  text-decoration: none;  
+  list-style: none;  
+  display: flex;
+}  
+
+.y-pagination-css-ul {  
+  padding-left: 0;  
+  list-style: none;  
+  display: flex;  
+  justify-content: center; /* 確保分頁內容水平置中 */  
+}  
+
+.page-link {  
+  width: 50px;  
+  border: none !important;  
+  border-radius: 0 !important;  
+  color: #777676;  
+  border-bottom: 2px solid #777676 !important;  
+  text-align: center;
+  background-color: #00000000;
+}  
+
+.page-link:hover {  
+  background-color: #ffffff00;  
+  border-bottom: 2px solid #000000 !important;  
+  color: #000;  
+}  
+
+.page-link:focus {  
+  background-color: #ffffff00;  
+  border-bottom: 2px solid #000000 !important;  
+  color: #000;  
+}  
