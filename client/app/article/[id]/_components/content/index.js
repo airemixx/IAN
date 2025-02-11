@@ -105,7 +105,8 @@ export default function Content() {
             </p>  
           </div>  
         </section>  
-      </div>  
+      </div>
+      <div class={style['y-end-line']}></div>
     </>  
   );  
 }
