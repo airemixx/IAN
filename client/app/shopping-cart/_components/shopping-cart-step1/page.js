@@ -1,12 +1,13 @@
 "use client"
-import "@/style/shopping-cart-step1.css"
-import "@/node_modules/bootstrap/dist/css/bootstrap.min.css"
+import  "./shopping-cart-step1.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import Script from "next/script"
 export default function shoppingCartOnePage() {
     return (
        
         <div >
-            <div className="container">
+            <div className="container mb-5">
                 <div className="j-shoppingCartTitleBox d-flex align-items-end pt-5">
                     <h1 className="j-shoppingCartTitle mt-5">我的購物車</h1>
                     <small className="mb-2 ms-1 ">(4)</small>

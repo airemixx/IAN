@@ -1,9 +1,11 @@
 "use client"
-import "@/style/shopping-cart-empty.css"
+import  "./shopping-cart-empty.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 export default function shoppingCartEmptyPage(){
     return(
         <>
-             <div className="container d-xs-flex flex-sm-column">
+             <div className="container d-xs-flex flex-sm-column mt-5 pt-2">
                 <div className="j-shoppingCartTitleBox mb-5 row justify-content-center">
                     <div className="col-12 text-center">
                         <h1 className="j-shoppingCartTitle m-0 ">我的購物車</h1>

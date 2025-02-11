@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import ShoppingCartEmptyPage from './_components/shopping-cart-empty/page'
-import ShoppingCartOnePage from './_components/shopping-cart-step1/page'
-import ShoppingCartTwoPage from './_components/shopping-cart-step2/page'
-import ShoppingCartThreePage from './_components/shopping-cart-step3/page'
-
+import ShoppingCartEmptyPage from './_components/shopping-cart-empty/page';
+import ShoppingCartOnePage from './_components/shopping-cart-step1/page';
+import ShoppingCartTwoPage from './_components/shopping-cart-step2/page';
+import ShoppingCartThreePage from './_components/shopping-cart-step3/page';
+import "./shopping-cart.scss";
 export default function ShoppingCartPage(props) {
   return (
     <>
