@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>商品列表頁</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- bootstrap v5.3.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- font-awesome v6.7.2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- 字體 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK&display=swap" rel="stylesheet">
+  <!-- 本地 -->
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <style>
+    /* 📌 全域樣式 */
+    body,
+    html {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* 📌 主要容器 */
+    .container {
+      max-width: 1440px;
+    }
+
+    /* 📌 卡片樣式 */
+    .card {
+      border: none;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-img-top {
+      max-height: calc(100% - 100px);
+      object-fit: contain;
+      margin-top: 40px;
+    }
+
+    .card-text {
+      color: #d0b189;
+    }
+
+    .card a {
+      background-color: #e08534;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .card:hover a {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* 📌 按鈕樣式 */
+    .btn-outline-secondary {
+      border-radius: 30px;
+      padding: 6px 20px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .btn-outline-secondary.active,
+    .btn-outline-secondary:focus {
+      background-color: #1b3846;
+      color: white;
+    }
+
+    .btn-outline-secondary:not(.active):hover {
+      background-color: #1b3846;
+    }
+
+    .custom {
+      border: none;
+    }
+
+    /* 📌 篩選 & 排序樣式 */
+    .filter-toggle-btn {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #1b3846;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      z-index: 1050;
+    }
+
+    .filter-toggle-btn.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .sort-dropdown .form-select {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid #ddd;
+      border-radius: 0;
+      font-size: 1rem;
+      padding: 0.5rem 0;
+      padding: 10px;
+    }
+
+    /* 📌 圖示樣式 */
+    .icon-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .card:hover .icon-container {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .icon-circle {
+      width: 50px;
+      height: 50px;
+      background-color: #f8f9fa;
+      border: 2px solid #ddd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+    }
+
+    .icon-circle i {
+      font-size: 20px;
+      color: #333;
+    }
+
+    .icon-text {
+      font-size: 12px;
+      color: black;
+    }
+
+    /* 📌 麵包屑樣式 */
+    .breadcrumb li a {
+      text-decoration: none;
+      color: #8F8F8F;
+    }
+
+    .breadcrumb-item+.breadcrumb-item::before {
+      content: '>';
+      color: #8F8F8F;
+      margin-right: 5px;
+      margin-left: 5px;
+    }
+
+    /* 📌 分頁樣式 */
+    .pagination .page-link {
+      border: none;
+      color: #6c757d;
+      background-color: transparent;
+      font-size: 18px;
+      position: relative;
+    }
+
+    .pagination .page-link.active-link {
+      color: black;
+      font-weight: bold;
+    }
+
+    .pagination .page-link.active-link::after {
+      content: '';
+      display: block;
+      margin: 0 auto;
+      width: 30%;
+      height: 3px;
+      background-color: black;
+      position: absolute;
+      bottom: -2px;
+      left: 35%;
+    }
+
+    .pagination .page-item:not(.disabled) .page-link:hover {
+      color: black;
+      text-decoration: none;
+    }
+
+    /* 📌 輪播樣式 */
+    .carousel-item img {
+      object-fit: contain;
+      background-color: #1b3846;
+    }
+
+    .accordion-button {
+      background-color: #ffffff !important;
+      border: none;
+      box-shadow: none !important;
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: #f8f9fa !important;
+      /* 當選單展開時的背景顏色 */
+    }
+
+    .sort-dropdown .form-select {
+      box-shadow: none;
+    }
+
+
+
+    /* 📌 響應式設計 */
+    @media (max-width: 391px) {
+      .breadcrumb {
+        display: none;
+      }
+
+      .card a {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+
+      .card:hover {
+        box-shadow: none;
+      }
+
+      .card:hover .icon-container {
+        opacity: 0 !important;
+        visibility: hidden !important;
+      }
+
+      .icon-container {
+        display: none !important;
+      }
+
+      /* 隱藏篩選條件和排序選單 */
+      .aside-filter,
+      .sort-dropdown {
+        display: none;
+      }
+
+      /* 讓篩選條件展開時出現在按鈕上方 */
+      .aside-filter.show {
+        display: block;
+        position: fixed;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- header -->
+  <div id="header"></div>
+
+  <div class="container-fluid px-0">
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+      <!-- 輪播指示器 -->
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+          aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+          aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+          aria-label="Slide 3"></button>
+      </div>
+      <!-- 輪播內容 -->
+      <div class="carousel-inner">
+        <div class="carousel-item">
+          <img src="images/ff80808193438b04019343a38b6d0000_Alpha-universe_pc_d00004604.jpg" class="d-block w-100"
+            alt="...">
+        </div>
+        <div class="carousel-item active">
+          <img src="images/ff80808191504b7801919770a5531e0c_SEL85F14GM2_pc_31e0c2520.jpg" class="d-block w-100"
+            alt="...">
+        </div>
+        <div class="carousel-item">
+          <img src="images/ff808081939a01e60193b504e4c91c79_A1II_pc_91c792058.jpg" class="d-block w-100" alt="...">
+        </div>
+      </div>
+      <!-- 輪播控制箭頭 -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 麵包屑 -->
+    <div class="mt-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">首頁</a></li>
+          <li class="breadcrumb-item"><a href="#">產品系列</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Canon</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="row">
+      <!-- 篩選按鈕（390px 以下顯示） -->
+      <button class="filter-toggle-btn d-md-none">篩選條件</button>
+      <!-- 側邊欄 -->
+      <div class="col-md-3">
+        <div class="aside-filter">
+          <aside>
+            <div class="accordion" id="dropdown-container">
+
+              <!-- 機身選單 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-body" aria-expanded="false" aria-controls="collapse-body">
+                    機身
+                  </button>
+                </h2>
+                <div id="collapse-body" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <label><input type="checkbox" name="brand" value="Sony"> Sony</label><br>
+                    <label><input type="checkbox" name="brand" value="Canon"> Canon</label><br>
+                    <label><input type="checkbox" name="brand" value="Nikon"> Nikon</label><br>
+                    <label><input type="checkbox" name="brand" value="Hasselblad"> Hasselblad</label><br>
+                    <label><input type="checkbox" name="brand" value="Leica"> Leica</label><br>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 鏡頭選單 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-lens" aria-expanded="false" aria-controls="collapse-lens">
+                    鏡頭
+                  </button>
+                </h2>
+                <div id="collapse-lens" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <label><input type="checkbox" name="lens" value="廣角"> 廣角</label><br>
+                    <label><input type="checkbox" name="lens" value="標準"> 標準</label><br>
+                    <label><input type="checkbox" name="lens" value="長焦"> 長焦</label><br>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 配件選單 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-accessory" aria-expanded="false" aria-controls="collapse-accessory">
+                    配件
+                  </button>
+                </h2>
+                <div id="collapse-accessory" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <label><input type="checkbox" name="accessory" value="電池"> 電池</label><br>
+                    <label><input type="checkbox" name="accessory" value="記憶卡"> 記憶卡</label><br>
+                    <label><input type="checkbox" name="accessory" value="其他"> 其他</label><br>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 價格選單 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-price" aria-expanded="false" aria-controls="collapse-price">
+                    價格
+                  </button>
+                </h2>
+                <div id="collapse-price" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <div class="d-flex align-items-center">
+                      <input type="number" id="min-price" class="form-control price-input me-2" placeholder="最低金額"
+                        min="0">
+                      <span class="mx-2"> ~ </span>
+                      <input type="number" id="max-price" class="form-control price-input" placeholder="最高金額" min="0">
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-primary apply-filter" data-target="#collapse-price">確定</button>
+                </div>
+              </div>
+
+              <!-- 庫存狀態選單 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-stock" aria-expanded="false" aria-controls="collapse-stock">
+                    庫存狀態
+                  </button>
+                </h2>
+                <div id="collapse-stock" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <label><input type="checkbox" name="stock" value="有庫存"> 上架</label><br>
+                    <label><input type="checkbox" name="stock" value="無庫存"> 下架</label><br>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+      <!-- 主內容 -->
+      <div class="col-md-9">
+        <main>
+          <!-- 排列按鈕和排序選單 -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- 品牌按鈕 -->
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-outline-secondary">所有品牌</button>
+              <button type="button" class="btn btn-outline-secondary">Sony</button>
+              <button type="button" class="btn btn-outline-secondary">Canon</button>
+              <button type="button" class="btn btn-outline-secondary">Nikon</button>
+              <button type="button" class="btn btn-outline-secondary">Hasselblad</button>
+              <button type="button" class="btn btn-outline-secondary">Leica</button>
+            </div>
+
+            <!-- 選單的容器 -->
+            <div class="filter-sort-container">
+              <!-- 排序方式 -->
+              <div class="sort-dropdown">
+                <select id="sortOptions" class="form-select">
+                  <option value="熱銷優先">熱銷優先</option>
+                  <option value="最新上架">最新上架</option>
+                  <option value="價格由低至高">價格由低至高</option>
+                  <option value="價格由高至低">價格由高至低</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 商品列表 -->
+          <div class="row">
+            <!-- 商品卡片範例 -->
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <a href="#">
+                  <div class="icon-container">
+                    <div class="icon-circle">
+                      <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <span class="icon-text">比較</span>
+                  </div>
+                </a>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div class="card position-relative">
+                <div class="icon-container">
+                  <div class="icon-circle">
+                    <i class="fa-solid fa-camera"></i>
+                  </div>
+                  <p class="icon-text">比較</p>
+                </div>
+                <img src="images/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png" class="card-img-top"
+                  alt="Camera">
+                <div class="card-body">
+                  <p class="text">Sony</p>
+                  <h5 class="card-title">EOS 5D Mark IV</h5>
+                  <p class="card-text">NT. 10,000</p>
+                  <div class="d-flex justify-content-center">
+                    <a href="#" class="btn btn-secondary w-100 text-white custom">立即選購</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-4">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link active-link" href="#">1</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#">2</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#">3</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#">4</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#">5</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#">&raquo;</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- footer -->
+  <div id="footer"></div>
+
+  <script>
+    document.querySelector(".filter-toggle-btn").addEventListener("click", function () {
+      document.querySelector(".aside-filter").classList.toggle("show");
+    });
+
+    // 點擊畫面其他地方時關閉篩選與排序選單
+    document.addEventListener("click", function (event) {
+      const filterBtn = document.querySelector(".filter-toggle-btn");
+      const asideFilter = document.querySelector(".aside-filter");
+
+      if (!filterBtn.contains(event.target) && !asideFilter.contains(event.target)) {
+        asideFilter.classList.remove("show");
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const filterBtn = document.querySelector(".filter-toggle-btn");
+      const footer = document.getElementById("footer");
+
+      function toggleFilterButton() {
+        const footerRect = footer.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+
+        // 當 footer 進入視窗範圍時，隱藏按鈕
+        if (footerRect.top < windowHeight) {
+          filterBtn.classList.add("hidden");
+        } else {
+          filterBtn.classList.remove("hidden");
+        }
+      }
+
+      // 監聽滾動事件
+      window.addEventListener("scroll", toggleFilterButton);
+    });
+  </script>
+  <!-- fetch header -->
+  <script>
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header').innerHTML = data);
+  </script>
+  <!-- fetch footer -->
+  <script>
+    fetch('footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer').innerHTML = data);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

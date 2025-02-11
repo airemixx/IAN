@@ -8,12 +8,20 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 import coursesRouter from "./routes/courses.js";
+import productRoutes from "./routes/product.js";
+
+
 
 // 讀取 .env 設定
 dotenv.config();
 
 const app = express();
+
+// 📌 讓 Express 提供 `public` 資料夾內的靜態資源
+app.use("/images", express.static(path.join(process.cwd(), "public/images")));
+
 
 app.use(cors()); // 允許跨域請求
 app.use(express.json()); // 解析 JSON 格式的請求
@@ -22,6 +30,8 @@ app.use(express.json()); // 解析 JSON 格式的請求
 app.get("/", (req, res) => {
   res.send("API 運行中...");
 });
+
+app.use("/api/product", productRoutes);
 
 app.use("/api/courses", coursesRouter);
 
