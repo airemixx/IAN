@@ -1,9 +1,13 @@
 "use client";
 
 import React, { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import Breadcrumb from "./_components/breadcrumb";
 import LoopAd from "./_components/loop-ad";
 import SelectList from "./_components/select-list";
+import ListCard from "./_components/list-card";
+import Pagination from "./_components/Pagination";
+import style from "../../styles/article.css";
 import Link from "next/link";
 
 export default function NewsPage() {
@@ -51,68 +55,20 @@ export default function NewsPage() {
   }, []);
 
   return (
-    <div>
+    <div >
       <Breadcrumb />
       <LoopAd />
 
       <section className="y-container">
       <SelectList />
 
-        {/* 卡片區 */}
-        <div className="row y-list-card-area">
-          {/* 這裡以陣列迭代模擬 8 個卡片 */}
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div className="col-md-3" key={index}>
-              <div className="card y-card">
-                <img
-                  src="/images/article/social.jpg"
-                  className="card-img-top y-card-img-top-css"
-                  alt="Social Image"
-                />
-                <div className="px-0 card-body y-card-body-css">
-                  <div className="mb-3 y-article-list-tag d-flex justify-content-between">
-                    <p className="mb-0">產品情報</p>
-                    <div className="y-button-container">
-                      {/* 懸浮式選單，預設隱藏 */}
-                      <div className="y-float-window" id="floatingMenu">
-                        <button id="editBtn">
-                          <img
-                            src="/images/article/file-edit-02-black.svg"
-                            alt="Edit Icon"
-                          />
-                          編輯
-                        </button>
-                        <button id="deleteBtn">
-                          <img
-                            src="/images/article/trash-02-black.svg"
-                            alt="Delete Icon"
-                          />
-                          刪除
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mb-5 y-list-card-content">
-                    <a href="#" className="text-decoration-none">
-                      <h4 className="card-title">Sony α1 II 當代全能旗艦相機重磅登場</h4>
-                    </a>
-                  </div>
-                  <div className="y-author-date">
-                    <p className="mb-0">
-                      <img
-                        className="mb-2 y-user-list-profile rounded-pill me-2"
-                        src="/images/article/user (1).jpg"
-                        alt="User Profile"
-                      />
-                      編輯部
-                    </p>
-                    <p>2024-10-10</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* 卡片區 */}
+      <ListCard />
+
+      {/* 分頁區 */}
+      <div className="d-flex justify-content-center mb-5">
+        <Pagination />
+      </div>
       </section>
     </div>
   );

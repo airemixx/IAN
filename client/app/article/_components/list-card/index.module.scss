@@ -1,0 +1,56 @@
+.y-list-title {  
+  width: 100%;  
+  button {  
+    background-color: #ffffff00; 
+    border: none;  
+    color: #000;  
+  }  
+}  
+
+.y-user-list-profile {  
+  width: 35px;  
+  height: 35px;  
+  object-fit: cover;  
+}  
+
+.y-article-list-tag {  
+  p {  
+    color: #7e7267;  
+  }  
+  button {  
+    border: none;  
+    background-color: #ffffff00;
+    padding: 0;  
+    margin: 0;  
+  }  
+}  
+
+.y-list-card-content {  
+  h4 {  
+    color: #000;  
+  }  
+  &:hover {  
+    text-decoration: underline;  
+  }  
+}  
+
+.y-author-date {  
+  p {  
+    color: #757776;  
+  }  
+}  
+
+.y-list-card-area {  
+  .y-card {
+    margin-top: 70px;
+    border: none;
+    border-radius: 0;
+    background-color: #ffffff00;
+
+    img {  
+      border-radius: 0;  
+      aspect-ratio: 4 / 3;  
+      object-fit: cover;  
+    }  
+  }  
+}  
