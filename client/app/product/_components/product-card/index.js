@@ -17,12 +17,12 @@ export default function ProductCard({ product }) {
 
         {/* 商品圖片，確保它一直顯示，不會 hover 才出現 */}
         <div className="position-relative">
-        <img src={`http://localhost:8000/images/product/${product.image_url}`} alt={product.name} />
+        <img src="./images/product/000001_1620959886.webp" alt={product.name} className={styles.cardImgTop} />
 
         </div>
 
         <div className="card-body position-relative">
-          <p className={`text ${styles.productBrand}`}>Sony</p>
+        <p className={`text ${styles.productBrand}`}>{product.brand_name}</p>  
           <h5 className={`card-title ${styles.productTitle}`}>{product.name}</h5>
           <p className={`card-text ${styles.productPrice}`}>NT. {product.price.toLocaleString()}</p>
 

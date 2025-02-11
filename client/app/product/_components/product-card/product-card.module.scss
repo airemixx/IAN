@@ -6,12 +6,7 @@
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
   }
-  .card-img-top {
-    max-height: calc(100% - 100px);
-    object-fit: contain;
-    margin-top: 40px;
-  }
-
+  
   .card-text {
     color: #d0b189;
   }
@@ -45,6 +40,14 @@
   &:not(.active):hover {
     background-color: #1b3846;
   }
+}
+.cardImgTop {
+  width: 100%;  
+  height: auto; 
+  max-height: 180px; 
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
 }
 
 .btn.custom {
