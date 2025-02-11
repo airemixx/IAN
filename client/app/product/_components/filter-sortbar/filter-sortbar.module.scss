@@ -1,0 +1,37 @@
+/* 📌 按鈕樣式 */
+.btn-outline-secondary {
+  border-radius: 30px;
+  padding: 6px 20px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.btn-outline-secondary.active,
+.btn-outline-secondary:focus {
+  background-color: #1b3846;
+  color: white;
+}
+
+.btn-outline-secondary:not(.active):hover {
+  background-color: #1b3846;
+}
+
+/* 📌 篩選 & 排序樣式 */
+.filter-sort-container {
+  .form-select {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    border-radius: 0;
+    font-size: 1rem;
+    padding: 10px;
+    box-shadow: none;
+  }
+}
+
+/* 📌 響應式設計 */
+@media (max-width: 391px) {
+  .sort-dropdown {
+    display: none;
+  }
+}

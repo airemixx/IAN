@@ -1,0 +1,47 @@
+/* 📌 分頁樣式 */
+.pagination {
+  .page-link {
+    border: none;
+    color: #6c757d;
+    background-color: transparent;
+    font-size: 18px;
+    position: relative;
+
+    &.active-link {
+      color: black;
+      font-weight: bold;
+
+      &::after {
+        content: "";
+        display: block;
+        margin: 0 auto;
+        width: 30%;
+        height: 3px;
+        background-color: black;
+        position: absolute;
+        bottom: -2px;
+        left: 35%;
+      }
+    }
+  }
+
+  .page-item {
+    &:not(.disabled) .page-link:hover {
+      color: black;
+      text-decoration: none;
+    }
+  }
+}
+
+/* 📌 響應式設計 */
+@media (max-width: 391px) {
+  .breadcrumb {
+    display: none;
+  }
+
+  .pagination {
+    .page-link {
+      font-size: 16px;
+    }
+  }
+}
