@@ -1,0 +1,103 @@
+body,
+html {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* 📌 按鈕樣式 */
+.buy {
+  width: 50%;
+  background-color: #062F4F;
+  border: none;
+  margin-bottom: 10px;
+}
+
+.remove {
+  width: 50%;
+  color: black;
+}
+
+/* 📌 比較標題 */
+.compare-title {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* 📌 比較表格 */
+.comparison-table {
+  margin-bottom: 50px;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+th {
+  text-align: center;
+  background-color: #f8f9fa;
+  width: 19%;
+}
+
+td {
+  width: 24%;
+}
+
+/* 📌 容器設定 */
+.container {
+  max-width: 1440px;
+}
+
+/* 📌 產品區塊 */
+.empty-box {
+  border: 2px dashed #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 1.2rem;
+  height: 400px;
+}
+
+.product-box {
+  display: flex;
+  flex-direction: column;
+  /* 讓內容垂直排列 */
+  align-items: center;
+  /* 讓按鈕置中 */
+}
+
+.product-box img {
+  width: 100%;
+}
+
+/* 📌 產品容器 */
+.product-container {
+  display: flex;
+  margin: 30px auto;
+  max-width: 1440px;
+  justify-content: flex-end;
+  margin-left: 241px;
+  /* 整體左移 */
+}
+
+/* 📌 響應式設計 */
+@media (max-width: 391px) {
+  .product-container {
+    margin: 30px auto;
+  }
+
+  .product-box {
+    width: 102px;
+    text-align: center;
+  }
+}

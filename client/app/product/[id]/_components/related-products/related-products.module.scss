@@ -1,0 +1,47 @@
+// 📌 主要容器
+.relatedProducts {
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+  }
+  
+  // 📌 Swiper 設定 (僅在手機版顯示)
+  .swiperContainer {
+    display: block;
+  }
+  
+  @media (min-width: 768px) {
+    .swiperContainer {
+      display: none; // 桌機版隱藏 Swiper
+    }
+  }
+  
+  // 📌 桌機版佈局 (768px 以上顯示)
+  .desktopContainer {
+    display: none;
+  }
+  
+  @media (min-width: 768px) {
+    .desktopContainer {
+      display: flex;
+    }
+  }
+  
+  // 📌 卡片樣式
+  .card {
+    img {
+      width: 100%;
+    }
+  
+    .cardBody {
+      text-align: center;
+    }
+  }
+  
+  // 📌 響應式設計
+  @media (max-width: 391px) {
+    .relatedProducts {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+  }
+  

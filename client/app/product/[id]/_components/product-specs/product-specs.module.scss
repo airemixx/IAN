@@ -1,0 +1,61 @@
+// 📌 產品規格區塊
+.spec {
+    display: flex;
+    margin-top: 150px;
+    align-items: flex-start;
+  }
+  
+  // 📌 左側產品描述
+  .description {
+    flex: 1;
+    margin-right: 20px;
+    color: #23425A;
+  }
+  
+  // 📌 右側詳細規格
+  .specDetails {
+    flex: 1;
+  
+    .accordion-item {
+      border: none;
+    }
+  
+    .accordion-header button {
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid #ddd;
+      border-radius: 0;
+      text-align: left;
+      padding-bottom: 10px;
+      color: #23425A;
+    }
+  
+    .accordion-body {
+      font-size: 0.9rem;
+    }
+  }
+  
+  // 📌 手機版下拉選單
+  .accordionMobile {
+    display: block;
+  }
+  
+  @media (min-width: 768px) {
+    .accordionMobile {
+      display: none; // 手機版下拉選單在桌機隱藏
+    }
+  }
+  
+  // 📌 響應式設計
+  @media (max-width: 391px) {
+    .spec {
+      margin-top: 0;
+    }
+  
+    .description {
+      display: none; // 小螢幕隱藏左側描述
+    }
+  }
+  

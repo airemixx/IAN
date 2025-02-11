@@ -1,0 +1,50 @@
+/* 📌 篩選 & 排序樣式 */
+.filter-toggle-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1b3846;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  z-index: 1050;
+}
+
+.filter-toggle-btn.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.accordion-button {
+  background-color: #ffffff !important;
+  border: none;
+  box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #f8f9fa !important; /* 當選單展開時的背景顏色 */
+}
+
+/* 隱藏篩選條件和排序選單 */
+.aside-filter,
+.sort-dropdown {
+  display: none;
+}
+
+/* 讓篩選條件展開時出現在按鈕上方 */
+.aside-filter.show {
+  display: block;
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}

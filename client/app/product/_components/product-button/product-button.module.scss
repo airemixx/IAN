@@ -1,0 +1,80 @@
+/* 📌 按鈕樣式 */
+.btn-outline-secondary {
+  border-radius: 30px;
+  padding: 6px 20px;
+  font-size: 14px;
+  margin-bottom: 20px;
+
+  &.active,
+  &:focus {
+    background-color: #1b3846;
+    color: white;
+  }
+
+  &:not(.active):hover {
+    background-color: #1b3846;
+  }
+}
+
+.custom {
+  border: none;
+}
+
+/* 📌 圖示樣式 */
+.icon-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.card:hover .icon-container {
+  opacity: 1;
+  visibility: visible;
+}
+
+.icon-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #f8f9fa;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+
+  i {
+    font-size: 20px;
+    color: #333;
+  }
+}
+
+.icon-text {
+  font-size: 12px;
+  color: black;
+}
+
+/* 📌 響應式設計 */
+@media (max-width: 391px) {
+  .card a {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .card:hover {
+    box-shadow: none;
+  }
+
+  .card:hover .icon-container {
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .icon-container {
+    display: none !important;
+  }
+}
