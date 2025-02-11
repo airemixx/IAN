@@ -28,16 +28,17 @@ export default function RootLayout({ children }) {
           <header className="nav-fixed-1" data-type="nav-fixed-1">
             <div className="search-icon">
               <a href="#">
-                <img src="./images/icon/search.svg" alt="search" />
+                <img src="/images/icon/search.svg" alt="search" />
               </a>
             </div>
             <div className="logo">
               <a href="#">
-                <img src="./images/icon//lenstudio-logo.svg" alt="logo" />
+                <img src="./images/icon/lenstudio-logo.svg" alt="logo" />
+
               </a>
             </div>
             <div className="menu-icon">
-              <img src="./images/icon//menu.svg" alt="menu" />
+              <img src="/images/icon/menu.svg" alt="menu" />
             </div>
             <nav>
               <ul className="nav-left">
@@ -53,32 +54,32 @@ export default function RootLayout({ children }) {
                       <a href="#">
                         機身
                         <span className="icon">
-                          <img src="./images/icon/arrow-down.svg" alt="Icon" />
+                          <img src="/images/icon/arrow-down.svg" alt="Icon" />
                         </span>
                       </a>
                       <ul className="camera-brands">
                         <li>
                           <a href="#">
-                            <img src="./images/canon.png" alt="Canon" />
+                            <img src="/images/canon.png" alt="Canon" />
                             <span>Canon</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/nikon.png" alt="Nikon" />
+                            <img src="/images/nikon.png" alt="Nikon" />
                             <span>Nikon</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/sony.png" alt="Sony" />
+                            <img src="/images/sony.png" alt="Sony" />
                             <span>Sony</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
                             <img
-                              src="./images/hasselblad.png"
+                              src="/images/hasselblad.png"
                               alt="Hasselblad"
                             />
                             <span>Hasselblad</span>
@@ -86,7 +87,7 @@ export default function RootLayout({ children }) {
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/leica.png" alt="Leica" />
+                            <img src="/images/leica.png" alt="Leica" />
                             <span>Leica</span>
                           </a>
                         </li>
@@ -96,32 +97,32 @@ export default function RootLayout({ children }) {
                       <a href="#">
                         鏡頭
                         <span className="icon">
-                          <img src="./images/icon//arrow-down.svg" alt="Icon" />
+                          <img src="./images/icon/arrow-down.svg" alt="Icon" />
                         </span>
                       </a>
                       <ul className="lens-brands">
                         <li>
                           <a href="#">
-                            <img src="./images/canon.png" alt="Canon" />
+                            <img src="/images/canon.png" alt="Canon" />
                             <span>Canon</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/nikon.png" alt="Nikon" />
+                            <img src="/images/nikon.png" alt="Nikon" />
                             <span>Nikon</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/sony.png" alt="Sony" />
+                            <img src="/images/sony.png" alt="Sony" />
                             <span>Sony</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
                             <img
-                              src="./images/hasselblad.png"
+                              src="/images/hasselblad.png"
                               alt="Hasselblad"
                             />
                             <span>Hasselblad</span>
@@ -129,7 +130,7 @@ export default function RootLayout({ children }) {
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/leica.png" alt="Leica" />
+                            <img src="/images/leica.png" alt="Leica" />
                             <span>Leica</span>
                           </a>
                         </li>
@@ -139,32 +140,32 @@ export default function RootLayout({ children }) {
                       <a href="#">
                         配件
                         <span className="icon">
-                          <img src="./images/icon/arrow-down.svg" alt="Icon" />
+                          <img src="/images/icon/arrow-down.svg" alt="Icon" />
                         </span>
                       </a>
                       <ul className="other-brands">
                         <li>
                           <a href="#">
-                            <img src="./images/canon.png" alt="Canon" />
+                            <img src="/images/canon.png" alt="Canon" />
                             <span>Canon</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/nikon.png" alt="Nikon" />
+                            <img src="/images/nikon.png" alt="Nikon" />
                             <span>Nikon</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/sony.png" alt="Sony" />
+                            <img src="/images/sony.png" alt="Sony" />
                             <span>Sony</span>
                           </a>
                         </li>
                         <li>
                           <a href="#">
                             <img
-                              src="./images/hasselblad.png"
+                              src="/images/hasselblad.png"
                               alt="Hasselblad"
                             />
                             <span>Hasselblad</span>
@@ -172,7 +173,7 @@ export default function RootLayout({ children }) {
                         </li>
                         <li>
                           <a href="#">
-                            <img src="./images/leica.png" alt="Leica" />
+                            <img src="/images/leica.png" alt="Leica" />
                             <span>Leica</span>
                           </a>
                         </li>
@@ -197,16 +198,16 @@ export default function RootLayout({ children }) {
               <ul className="nav-right">
                 <li>
                   <a href="#">
-                    <img src="./images/icon/search.svg" alt="" />
+                    <img src="/images/icon/search.svg" alt="" />
                   </a>
                   <a href="#">
-                    <img src="./images/icon/user.svg" alt="" />
+                    <img src="/images/icon/user.svg" alt="" />
                   </a>
                   <a href="#">
-                    <img src="./images/icon/compare.svg" alt="" />
+                    <img src="/images/icon/compare.svg" alt="" />
                   </a>
                   <a href="#">
-                    <img src="./images/icon/cart.svg" alt="" />
+                    <img src="/images/icon/cart.svg" alt="" />
                   </a>
                 </li>
               </ul>

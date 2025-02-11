@@ -1,0 +1,245 @@
+body,
+html {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* 📌 卡片樣式 */
+.card {
+  border: none;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+  max-height: calc(100% - 100px);
+  object-fit: contain;
+  margin-top: 40px;
+}
+
+.card-text {
+  color: #d0b189;
+}
+
+.card a {
+  background-color: #e08534;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.card:hover a {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 📌 按鈕樣式 */
+.btn-outline-secondary {
+  border-radius: 30px;
+  padding: 6px 20px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.btn-outline-secondary.active,
+.btn-outline-secondary:focus {
+  background-color: #1b3846;
+  color: white;
+}
+
+.btn-outline-secondary:not(.active):hover {
+  background-color: #1b3846;
+}
+
+.custom {
+  border: none;
+}
+
+
+/* 📌 篩選 & 排序樣式 */
+.filter-toggle-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1b3846;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  z-index: 1050;
+}
+
+.filter-toggle-btn.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.sort-dropdown .form-select {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ddd;
+  border-radius: 0;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  padding: 10px;
+}
+
+/* 📌 圖示樣式 */
+.icon-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.card:hover .icon-container {
+  opacity: 1;
+  visibility: visible;
+}
+
+.icon-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #f8f9fa;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.icon-circle i {
+  font-size: 20px;
+  color: #333;
+}
+
+.icon-text {
+  font-size: 12px;
+  color: black;
+}
+
+/* 📌 麵包屑樣式 */
+.breadcrumb li a {
+  text-decoration: none;
+  color: #8F8F8F;
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+  content: '>';
+  color: #8F8F8F;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+/* 📌 分頁樣式 */
+.pagination .page-link {
+  border: none;
+  color: #6c757d;
+  background-color: transparent;
+  font-size: 18px;
+  position: relative;
+}
+
+.pagination .page-link.active-link {
+  color: black;
+  font-weight: bold;
+}
+
+.pagination .page-link.active-link::after {
+  content: '';
+  display: block;
+  margin: 0 auto;
+  width: 30%;
+  height: 3px;
+  background-color: black;
+  position: absolute;
+  bottom: -2px;
+  left: 35%;
+}
+
+.pagination .page-item:not(.disabled) .page-link:hover {
+  color: black;
+  text-decoration: none;
+}
+
+/* 📌 輪播樣式 */
+.carousel-item img {
+  object-fit: contain;
+  background-color: #1b3846;
+}
+
+.accordion-button {
+  background-color: #ffffff !important;
+  border: none;
+  box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #f8f9fa !important;
+  /* 當選單展開時的背景顏色 */
+}
+
+.sort-dropdown .form-select {
+  box-shadow: none;
+}
+
+
+
+/* 📌 響應式設計 */
+@media (max-width: 391px) {
+  .breadcrumb {
+    display: none;
+  }
+
+  .card a {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .card:hover {
+    box-shadow: none;
+  }
+
+  .card:hover .icon-container {
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .icon-container {
+    display: none !important;
+  }
+
+  /* 隱藏篩選條件和排序選單 */
+  .aside-filter,
+  .sort-dropdown {
+    display: none;
+  }
+
+  /* 讓篩選條件展開時出現在按鈕上方 */
+  .aside-filter.show {
+    display: block;
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  }
+}
