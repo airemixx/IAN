@@ -17,7 +17,8 @@ export default function ProductCard({ product }) {
 
         {/* 商品圖片，確保它一直顯示，不會 hover 才出現 */}
         <div className="position-relative">
-        <img src="./images/product/zf.png" className="card-img-top" alt="測試圖片" />
+        <img src={`http://localhost:8000/images/product/${product.image_url}`} alt={product.name} />
+
         </div>
 
         <div className="card-body position-relative">

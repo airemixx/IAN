@@ -1,0 +1,49 @@
+// 📌 比較表格外層
+.comparisonTable {
+  margin-bottom: 50px;
+  max-width: 1440px;
+  display: flex;
+  justify-content: center; // ✅ 讓 `table` 置中
+  align-items: center; 
+  flex-direction: column; // ✅ 確保內容置中
+  width: 100%; // ✅ 確保 `div` 佔滿寬度
+
+  // 📌 表格樣式
+  table {
+    width: 100%; // ✅ 讓 `table` 自適應寬度
+    max-width: 1200px; // ✅ 防止 `table` 過大
+    border-collapse: collapse;
+    margin: 0 auto; // ✅ 讓 `table` 置中
+    text-align: center;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    width: 19%;
+  }
+
+  td {
+    width: 24%;
+  }
+
+  // 📌 響應式設計
+  @media (max-width: 768px) {
+    table {
+      max-width: 100%; // ✅ 讓 `table` 適應小螢幕
+    }
+    
+    th, td {
+      padding: 8px;
+      font-size: 0.85rem;
+    }
+  }
+}
