@@ -4,7 +4,6 @@ import ProductList from "./_components/product-list";
 import FilterSidebar from "./_components/filter-sidebar";
 import Pagination from "./_components/product-pagination";
 import FilterSortBar from "./_components/filter-sortbar";
-import "./css/product.css"; // 引入商品列表專用 CSS
 
 export default function ProductPage() {
   const [filters, setFilters] = useState({ brand_id: [], category_id: [] }); // ✅ 狀態管理篩選條件
