@@ -25,16 +25,15 @@ FROM courses c
 LEFT JOIN teacher t ON c.teacher_id = t.id
 LEFT JOIN comments cm ON c.id = cm.course_id
 GROUP BY c.id, t.name;
-    `);
+    `)
 
-    console.log("📢 從資料庫獲取的課程資料：", courses);
-    res.json(courses);
+    console.log('📢 從資料庫獲取的課程資料：', courses)
+    res.json(courses)
   } catch (error) {
-    console.error("❌ 取得課程失敗：", error.message);
-    res.status(500).json({ error: "無法取得課程資料" });
+    console.error('❌ 取得課程失敗：', error.message)
+    res.status(500).json({ error: '無法取得課程資料' })
   }
-});
-
+})
 
 // 取得單一課程
 router.get('/:id', async (req, res) => {

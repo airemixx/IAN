@@ -55,3 +55,7 @@ yarn.lock
 /.temp
 /.html
 .vercel
+
+#ian
+course-seed.js
+teacher-seed.js

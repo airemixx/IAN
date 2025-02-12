@@ -4,16 +4,16 @@ import React, { useState, useEffect } from 'react'
 import styles from './courses-card.module.scss'
 import StarRating from '../star-rating/page.js'
 import FavoriteButton from '../favorite-button/page'
+import Pagination from '../pagination/page.js' // ✅ 引入分頁元件
 
 export default function CourseList() {
-  const [courses, setCourses] = useState([]) // ✅ 初始為空，等待 API 資料
-  const [visibleCourses, setVisibleCourses] = useState(4) // ✅ 初始顯示課程數
-  const [isMobile, setIsMobile] = useState(false)
-  const [loading, setLoading] = useState(true) // ✅ 加入 loading 狀態
-  const [error, setError] = useState(null) // ✅ 加入錯誤處理
+  const [courses, setCourses] = useState([]) // ✅ 課程資料
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1) // ✅ 當前頁數
+  const coursesPerPage = 12 // ✅ 每頁顯示 12 個課程
 
-  // ✅ 請確保你的 API URL 是正確的
-  const API_URL = 'http://localhost:8000/api/courses' // ⚠️ 請改成你的後端 URL
+  const API_URL = 'http://localhost:8000/api/courses' // ⚠️ 請確認 API URL
 
   // 🚀 **取得課程資料**
   useEffect(() => {
@@ -28,47 +28,42 @@ export default function CourseList() {
         console.error('載入課程失敗:', err)
         setError(err.message)
       } finally {
-        setLoading(false) // ✅ 取消 loading 狀態
+        setLoading(false)
       }
     }
 
     fetchCourses()
-  }, []) // ✅ 只在元件掛載時執行
-
-  // 監聽視窗大小變化
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 576)
-    }
-
-    handleResize() // 初始化
-    window.addEventListener('resize', handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // 載入更多課程
-  const loadMoreCourses = () => {
-    setVisibleCourses((prev) => prev + 4)
-  }
+  // 計算總頁數
+  const totalPages = Math.ceil(courses.length / coursesPerPage)
+
+  // 取得當前頁面的課程資料
+  const indexOfLastCourse = currentPage * coursesPerPage
+  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage
+  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse)
 
   return (
     <section className={`container ${styles['course-list']}`}>
-      {loading && <p>載入中...</p>} {/* ✅ 顯示 Loading 訊息 */}
-      {error && <p className="text-danger">{error}</p>} {/* ✅ 顯示錯誤訊息 */}
+      {loading && <p>載入中...</p>}
+      {error && <p className="text-danger">{error}</p>}
+
+      {/* 課程列表 */}
       <div className="row mt-4">
         {!loading &&
           !error &&
-          courses
-            .slice(0, isMobile ? visibleCourses : courses.length)
-            .map((course, index) => <CourseCard key={index} course={course} />)}
+          currentCourses.map((course, index) => (
+            <CourseCard key={index} course={course} />
+          ))}
       </div>
-      {isMobile && visibleCourses < courses.length && (
-        <div className={styles['load-more-btn-container']}>
-          <button className={styles['load-more-btn']} onClick={loadMoreCourses}>
-            更多課程
-          </button>
-        </div>
+
+      {/* 分頁 */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage} // ✅ 更新當前頁數
+        />
       )}
     </section>
   )
@@ -83,7 +78,7 @@ export function CourseCard({ course }) {
         <div className={`${styles['course-card']} mb-md-5 mb-4`}>
           <div className={styles['card-img']}>
             <img
-              src={course.image_url} // ✅ 確保 `image_url` 來自資料庫
+              src={course.image_url}
               alt={course.title}
               className="img-fluid"
             />
@@ -100,22 +95,20 @@ export function CourseCard({ course }) {
           {/* ⭐ 評分 + 學生數量 */}
           <div className={styles['rating-student']}>
             <div className={styles['rating']}>
-              <p>{parseFloat(course.rating).toFixed(1)}</p>{' '}
-              {/* ✅ 移除多餘小數 */}
+              <p>{parseFloat(course.rating).toFixed(1)}</p>
               <StarRating rating={course.rating} />
             </div>
             <div className={styles['student-count']}>
               <img src="/images/icon/student-count.svg" alt="學生數量" />
               <div className={styles['student-num']}>
-                {course.student_count.toLocaleString('en-US')} {/* ✅ 千分位 */}
+                {course.student_count.toLocaleString('en-US')}
               </div>
             </div>
           </div>
 
           {/* 💰 價錢 */}
           <div className={styles['course-price']}>
-            <p>NT$ {course.sale_price.toLocaleString('en-US')}</p>{' '}
-            {/* ✅ 千分位 */}
+            <p>NT$ {course.sale_price.toLocaleString('en-US')}</p>
           </div>
         </div>
       </a>

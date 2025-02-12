@@ -19,11 +19,6 @@ export default function CoursesPage() {
       <CoursesBreadcumb />
       <CoursesFilter />
       <CourseCard />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
       <PopularTeacher />
     </>
   )
