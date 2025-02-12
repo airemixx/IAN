@@ -15,9 +15,10 @@ export default function ProductList({ filters }) { // ✅ 接收 `filters`
         const queryString = new URLSearchParams({
           brand_id: filters.brand_id.length ? filters.brand_id.join(",") : "",
           category_id: filters.category_id.length ? filters.category_id.join(",") : "",
+          subcategory_id: filters.subcategory_id.length ? filters.subcategory_id.join(",") : "",
         }).toString();
 
-        const apiUrl = `http://localhost:8000/api/product?${queryString}`;
+        const apiUrl = `http://localhost:3005/api/product?${queryString}`;
 
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error("HTTP 錯誤 " + response.status);

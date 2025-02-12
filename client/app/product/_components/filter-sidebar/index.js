@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import styles from "./filter-sidebar.module.scss"; // 確保 Bootstrap 樣式
 
 export default function FilterSidebar({ onFilterChange }) {
-  const [filters, setFilters] = useState({ brand: [], category: [] });
+  const [filters, setFilters] = useState({ brand: [], category: [], subcategory: [],});
   const [expanded, setExpanded] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({
     brand_id: [],
     category_id: [],
+    subcategory_id: [],
   });
 
   const [isMobile, setIsMobile] = useState(false); // 🔹 判斷是否為手機版
@@ -52,12 +53,12 @@ export default function FilterSidebar({ onFilterChange }) {
   useEffect(() => {
     async function fetchFilters() {
       try {
-        const response = await fetch("http://localhost:8000/api/product/filters");
+        const response = await fetch("http://localhost:3005/api/product/filters");
         if (!response.ok) throw new Error("HTTP 錯誤 " + response.status);
         const data = await response.json();
 
         console.log("取得篩選條件:", data);
-        if (!data.brand || !data.category) {
+        if (!data.brand || !data.category || !data.subcategory) {
           throw new Error("API 回應格式錯誤");
         }
 
@@ -108,7 +109,7 @@ export default function FilterSidebar({ onFilterChange }) {
                   type="button"
                   onClick={() => toggleExpand("lens")}
                 >
-                  種類
+                  機身
                 </button>
               </h2>
               <div className={`accordion-collapse ${expanded === "lens" ? "show" : "collapse"}`}>
@@ -174,21 +175,38 @@ export default function FilterSidebar({ onFilterChange }) {
 
             {/*鏡頭 (種類篩選) */}
 
-
-            {/* 配件 */}
-            <div className="accordion-item">
+             {/* 種類 */}
+             <div className="accordion-item">
               <h2 className="accordion-header">
                 <button
-                  className={`accordion-button ${styles.accordionButton} ${expanded === "accessory" ? "" : "collapsed"}`}
+                  className={`accordion-button ${styles.accordionButton} ${expanded === "subcategory" ? "" : "collapsed"}`}
                   type="button"
-                  onClick={() => toggleExpand("accessory")}
+                  onClick={() => toggleExpand("subcategory")}
                 >
-                  配件
+                  種類
                 </button>
               </h2>
-              <div className={`accordion-collapse ${expanded === "accessory" ? "show" : "collapse"}`}>
+              <div className={`accordion-collapse ${expanded === "subcategory" ? "show" : "collapse"}`}>
                 <div className="accordion-body">
-                  <p>配件篩選 (可擴充)</p>
+                  {filters.subcategory.length > 0 ? (
+                    filters.subcategory.map((subcategory) => (
+                      <div key={subcategory.id} className="form-check">
+                        <input
+                          type="checkbox"
+                          id={`subcategory${subcategory.id}`}
+                          name="subcategory_id"
+                          value={subcategory.id}
+                          className="form-check-input"
+                          onChange={handleCheckboxChange}
+                        />
+                        <label htmlFor={`subcategory_${subcategory.id}`} className="form-check-label">
+                          {subcategory.name}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    <p>沒有品牌資料</p>
+                  )}
                 </div>
               </div>
             </div>
