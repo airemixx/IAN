@@ -37,7 +37,8 @@ const corsOptions = {
 }
 
 // 📌 讓 Express 提供 `public` 資料夾內的靜態資源
-app.use("/images/product", express.static(path.join(process.cwd(), "public/images/product")));
+app.use("/images/product", express.static(path.resolve("client/public/images/product")));
+
 
 
 app.use(cors(corsOptions)); // 允許跨域請求

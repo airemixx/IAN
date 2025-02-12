@@ -48,8 +48,8 @@ router.get("/", async (req, res) => {
         p.brand_id, 
         p.category_id, 
         p.subcategory_id, 
-        b.brand_name AS brand_name,  -- ✅ 取得品牌名稱
-        CONCAT('http://localhost:8000/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image_url
+        b.brand_name AS brand_name,  
+        CONCAT('/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image_url
       FROM product p
       LEFT JOIN brand b ON p.brand_id = b.brand_id
       LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
@@ -58,12 +58,17 @@ router.get("/", async (req, res) => {
     `, queryParams);
 
     connection.release();
+
+    // 🔍 確保 API 回傳了 `image_url`
+    console.log("📌 取得的產品資料:", rows);
+
     res.json(rows); 
   } catch (error) {
     console.error("獲取商品錯誤:", error);
     res.status(500).json({ error: "無法獲取商品", details: error.message });
   }
 });
+
 
 // ✅ 新增這個 `/filters` API，確保它存在
 router.get("/filters", async (req, res) => { 
