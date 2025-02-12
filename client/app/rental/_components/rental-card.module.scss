@@ -1,0 +1,30 @@
+.rentalGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.rentalCard {
+  transition: transform 0.3s ease-in-out;
+}
+
+.rentalCard:hover {
+  transform: scale(1.03);
+  box-shadow: inset 0 0 0 1px #23425a;
+}
+
+.cardImage {
+  object-fit: cover;
+  width: 100%;
+  height: 200px;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.cardText {
+  font-size: 1rem;
+  color: #7e7267;
+}
