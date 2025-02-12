@@ -11,7 +11,13 @@ import dotenv from "dotenv";
 import path from "path";
 import coursesRouter from "./routes/courses.js";
 import productRoutes from "./routes/product.js";
+<<<<<<< HEAD
 import cartRouter from "./routes/cart.js";
+=======
+import articleRoutes from './routes/article.js';
+
+
+>>>>>>> fdf0ce2e053890a258af1929934f82c51b6ff3a1
 
 
 // 讀取 .env 設定
@@ -46,10 +52,15 @@ app.use("/api/product", productRoutes);
 
 app.use("/api/courses", coursesRouter);
 
+<<<<<<< HEAD
 app.use("/api/cart", cartRouter);
+=======
+app.use("/api/articles", articleRoutes);
+
+>>>>>>> fdf0ce2e053890a258af1929934f82c51b6ff3a1
 
 // 設定伺服器監聽埠號
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`);
 });

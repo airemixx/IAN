@@ -39,21 +39,7 @@
 
 /* 📌 響應式設計 */
 @media (max-width: 391px) {
-  .card a {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-
-  .card:hover {
-    box-shadow: none;
-  }
-
-  .card:hover .icon-container {
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-
-  .icon-container {
-    display: none !important;
+  .iconcontainer {
+    display: none;
   }
 }

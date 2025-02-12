@@ -1,47 +1,21 @@
-/* 📌 分頁樣式 */
-.pagination {
-  .page-link {
-    border: none;
-    color: #6c757d;
-    background-color: transparent;
-    font-size: 18px;
-    position: relative;
+.page-link {  
+  width: 50px;  
+  border: none !important;  
+  border-radius: 0 !important;  
+  color: #777676;  
+  border-bottom: 2px solid #777676 !important;  
+  text-align: center;
+  background-color: #00000000;
+}  
 
-    &.active-link {
-      color: black;
-      font-weight: bold;
+.page-link:hover {  
+  background-color: #ffffff00;  
+  border-bottom: 2px solid #000000 !important;  
+  color: #000;  
+}  
 
-      &::after {
-        content: "";
-        display: block;
-        margin: 0 auto;
-        width: 30%;
-        height: 3px;
-        background-color: black;
-        position: absolute;
-        bottom: -2px;
-        left: 35%;
-      }
-    }
-  }
-
-  .page-item {
-    &:not(.disabled) .page-link:hover {
-      color: black;
-      text-decoration: none;
-    }
-  }
-}
-
-/* 📌 響應式設計 */
-@media (max-width: 391px) {
-  .breadcrumb {
-    display: none;
-  }
-
-  .pagination {
-    .page-link {
-      font-size: 16px;
-    }
-  }
-}
+.page-link:focus {  
+  background-color: #ffffff00;  
+  border-bottom: 2px solid #000000 !important;  
+  color: #000;  
+}  

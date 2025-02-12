@@ -11,7 +11,7 @@ export default function CompareButton({ product }) {
 
   return (
 
-  <div className="icon-container">
+  <div className={styles.iconcontainer}>
     <div className="icon-circle">
       <i className="fa-solid fa-camera" />
     </div>
