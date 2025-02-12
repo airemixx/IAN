@@ -66,14 +66,28 @@ export default function shoppingCartOnePage() {
         },
         // 其他商品...
       ];
-    
+      const cartLession = [{
+        type: "lession",
+        image: "/images/shopping-cart-image/lesson1.png",
+        lessionNametitle: "旅行攝影：按下快門，用攝影書寫故事",
+        lessionName: "食癮，拾影",
+        price: "NT$21800"
+      }]
+
+      const cartRent = [{
+        type: "rent",
+        image: "/images/shopping-cart-image/shoppingCartItemPhoto.png",
+        brand: "FUJIFILM",
+        model: "X-T5 16-50mm",
+        price: "NT$1800"
+      }]
     return (
        
-        <div>
+        <>
         <div className="container">
           <CartTitle count={cartItems.length} />
-          <div className="row">
-            <CartSection items={cartItems} />
+          <div className="row d-flex justify-content-center">
+            <CartSection items={cartItems} lessions={cartLession} rentals={cartRent}/>
             <PriceSummary />
           </div>
         </div>
@@ -81,6 +95,6 @@ export default function shoppingCartOnePage() {
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
           strategy="afterInteractive"
         />
-      </div>
+      </>
     )
 }
