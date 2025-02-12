@@ -1,22 +1,32 @@
-import { RentalList, RentalSearch, RentalPagination } from "./_components";
+import RentBreadcrumb from './_components/rent-breadcrumb/page'
+import RentSearch from './_components/rent-searsh/page'
+import RentHashtags from './_components/rent-hashtags/page'
+import RentFilter from './_components/rent-filter/page'
+import RentTotal from './_components/rent-total/page'
+import RentOrder from './_components/rent-order/page'
+import RentList from './_components/rent-list/page'
+import RentPagination from './_components/rent-pagination/page'
 
-console.log("✅ RentalList:", RentalList);
-console.log("✅ RentalSearch:", RentalSearch);
-console.log("✅ RentalPagination:", RentalPagination);
+import './rent-list.scss'
 
 export default function RentalPage() {
   return (
     <div className="container mt-4">
-      <h1>租借列表</h1>
-
-      {/* 搜尋功能 */}
-      <RentalSearch />
-
-      {/* 商品列表 */}
-      <RentalList />
-
-      {/* 分頁功能 */}
-      <RentalPagination />
+      <div className="row mb-4" style={{ paddingTop: '120px' }}>
+        <RentBreadcrumb />
+        <aside className="col-0 col-md-4 col-lg-3 p-3">
+          <hr className="d-none d-md-block" />
+          <RentSearch />
+          <RentHashtags />
+          <RentFilter />
+        </aside>
+        <main className="col-12 col-md-8 col-lg-9">
+          <RentTotal />
+          <RentOrder />
+          <RentList />
+          <RentPagination />
+        </main>
+      </div>
     </div>
-  );
+  )
 }
