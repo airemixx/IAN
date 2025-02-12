@@ -12,7 +12,7 @@ const pool = mysql.createPool({
 //cors設定
 const corsOptions = {
   origin : ["http://localhost:3000", "http://localhost:5000"],
-  Credentials : true
+  credentials : true
 }
 
 const router = Router();
@@ -20,7 +20,7 @@ router.use(cors(corsOptions))
 
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
-  const { year, month } = req.query;
+  const { year, month, category } = req.query;
   let query = `
     SELECT a.*, c.name as category_name
     FROM article a
@@ -28,15 +28,22 @@ router.get('/', async (req, res) => {
   `;
   const queryParams = [];
 
+  let conditions = [];
   if (year) {
-    query += ' WHERE YEAR(a.created_at) = ?';
+    conditions.push("YEAR(a.created_at) = ?");
     queryParams.push(year);
   }
-
   if (month) {
-    query += year ? ' AND' : ' WHERE';
-    query += ' MONTH(a.created_at) = ?';
+    conditions.push("MONTH(a.created_at) = ?");
     queryParams.push(month);
+  }
+  if (category) {
+    conditions.push("a.category_id = ?");
+    queryParams.push(category);
+  }
+
+  if (conditions.length > 0) {
+    query += " WHERE " + conditions.join(" AND ");
   }
 
   try {
@@ -49,27 +56,28 @@ router.get('/', async (req, res) => {
   } catch (err) {
     res.status(500).json({
       status: 'error',
-      message: err.message ? err.message : "取得文章失敗"
+      message: err.message || "取得文章失敗"
     });
   }
 });
 
 // 取得所有文章分類
 router.get('/categories', async (req, res) => {
-  try{
+  try {
     const [rows] = await pool.query("SELECT id, name FROM article_category")
     res.status(200).json({
       status: 'success',
       data: rows,
       message: "取得所有文章分類成功"
     });
-  }catch(err){
+  } catch (err) {
+    console.error("Error getting categories:", err);
     res.status(500).json({
       status: 'error',
       message: err.message ? err.message : "取得文章分類失敗"
-    })
+    });
   }
-})
+});
 
 // 取得所有文章年份
 router.get('/years', async (req, res) => {
