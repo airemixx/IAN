@@ -1,18 +1,33 @@
-  .footer-block{
-    display: none;
-  }
-  .copyright {
-    background-color: #f6f6f6;
-    padding-right: 5%;
-    padding-left: 5%;
-  }
-  .copyright-text{
-    color: #000;
-  }
-  .copyright a,
-  .copyright span {
-    color: #000
-  }
+.j-shoppingCartBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.j-shoppingItemsBox {
+  overflow: auto;
+  height: 529px;
+}
+
+.j-shoppingItemsBox {
+  overflow: auto;
+  height: 529px;
+}
+
+.footer-block{
+  display: none;
+}
+.copyright {
+  background-color: #f6f6f6;
+  padding-right: 5%;
+  padding-left: 5%;
+}
+.copyright-text{
+  color: #000;
+}
+.copyright a,
+.copyright span {
+  color: #000
+}
 
   // @media(max-width:390px) {
   //   .container {
