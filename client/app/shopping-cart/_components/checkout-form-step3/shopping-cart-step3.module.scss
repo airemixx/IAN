@@ -1,0 +1,105 @@
+  .j-addressTitle{
+    color: #000;
+    text-align: center;
+    font-family: "Noto Sans";
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  .j-addressDetailContent{
+    font-family: "Noto Sans";
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  .j-payStep {
+    width: 550px;
+    padding: 22px;
+    gap: 10px;
+    border-radius: 20px;
+    background-color: #fff;
+  }
+
+  .j-payTitle{
+    color: #003150;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  
+  .j-creditCardInput input{
+    border-radius: 20px;
+  }
+  .j-useCredit input{
+    display: none;
+  }
+  .j-needCheckBox span{
+    color: red;
+  }
+  .j-mustWrite{
+    color: red;
+  }
+
+  .j-Checkout {
+    height: 50px;
+    border-radius: 50px;
+    background: #003150;
+  }
+
+  .j-Checkout .j-btn {
+    color: #FFF;
+    font-size: 14px;
+  }
+
+  @media(max-width:390px) {
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container .shoppingCartTitle {
+      font-size: 65px;
+    }
+
+    .container .shoppingCartBox {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .shoppingItemsMoblieBox {
+      width: 390px;
+    }
+
+    .j-cartItemBox {
+      width: 390px;
+      height: auto;
+    }
+
+    .j-lessonImg img {
+      width: 375px;
+    }
+
+    .j-payStep {
+      width: 390px;
+    }
+    .footer {
+      display: block;
+    }
+
+    .copyright{
+      text-align: center;
+    }
+    
+    .copyright .right-links {
+      display: none;
+    }
+
+    .copyright .right-links .copyRight {
+      display: block;
+    }
+    
+  }

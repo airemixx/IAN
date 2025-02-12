@@ -1,7 +1,7 @@
 import styles from "./price-summary.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function PriceSummary() {
+export default function CheckoutFormStep1() {
   return (
     <div className={`${styles['j-payStep']} col-md-4 mb-5 d-flex flex-column align-items-center`}>
       <div className={`${styles['j-pCount']} border-bottom mb-3 d-flex flex-column gap-2`}>

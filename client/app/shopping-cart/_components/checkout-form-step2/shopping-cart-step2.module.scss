@@ -1,34 +1,37 @@
-.j-shoppingCartBox {
-  display: flex;
-  flex-direction: column;
-}
 
-.j-shoppingItemsBox {
-  overflow: auto;
-  height: 529px;
-}
 
-.j-shoppingItemsBox {
-  overflow: auto;
-  height: 529px;
-}
+  .j-payStep {
+    padding: 22px;
+    gap: 35px;
+    border-radius: 20px;
+    background-color: #fff;
+  }
 
-.footer-block{
-  display: none;
-}
-.copyright {
-  background-color: #f6f6f6;
-  padding-right: 5%;
-  padding-left: 5%;
-}
-.copyright-text{
-  color: #000;
-}
-.copyright a,
-.copyright span {
-  color: #000
-}
+  .j-payStep .j-pTitle {
+    font-size: 24px;
+  }
+  .j-payTitle{
+    color: #003150;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  .j-buyerInput input{
+    border-radius: 20px;
+  }
 
+  .j-Checkout {
+    height: 50px;
+    border-radius: 50px;
+    background: #003150;
+  }
+
+  .j-Checkout .j-btn {
+    color: #FFF;
+    font-size: 14px;
+  }
   
   @media(max-width:390px) {
     .container {
