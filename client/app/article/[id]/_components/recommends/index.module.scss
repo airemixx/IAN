@@ -1,0 +1,42 @@
+.y-recommends-area-bg{
+  margin-top: 100px;
+  padding: 10px 0;
+  background-color: #eaeaea;
+}
+.y-recommends-area{
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+.y-recommends-line{
+  width: 100%;
+  border-top: 2px solid #000000;
+  margin-bottom: 50px;
+}
+.y-card-title{
+  width: 100%;
+  button{
+    border-radius: 50px;
+    border: none;
+    background-color: #ffffff00;
+  }
+}
+.y-card-tag{
+  color: #8F8F8F;
+}
+.y-card-price{
+  color: #996A4E;
+}
+
+@media screen and (max-width: 390px){
+  .y-recommends-area h2{
+    font-size: 20px;
+  }
+  .y-recommends-card-area {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .y-recommends-card-area .card {
+    min-width: 18rem; 
+  }
+}

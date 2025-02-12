@@ -10,11 +10,14 @@ export default function CompareButton({ product }) {
   };
 
   return (
-    <div className={`icon-container ${styles.compareButton}`} onClick={handleClick}>
-      <div className="icon-circle">
-        {/* <FontAwesomeIcon icon={faCamera} /> */}
-      </div>
-      <span className="icon-text">比較</span>
+
+  <div className="icon-container">
+    <div className="icon-circle">
+      <i className="fa-solid fa-camera" />
     </div>
+    <p className="icon-text">比較</p>
+  </div>
+
+
   );
 }

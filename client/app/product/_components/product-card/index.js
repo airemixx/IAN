@@ -5,7 +5,7 @@ import styles from "./product-card.module.scss"; // ✅ 正確引入 SCSS Module
 
 export default function ProductCard({ product }) {
   return (
-    <div className={`col-6 col-sm-6 col-md-4 col-lg-3 mb-4 ${styles.productCard}`}>
+    <div className={`col-6 col-sm-6 col-md-4 col-lg-3 mb-4 ${styles.card}`}>
       <div className="card position-relative">
         {/* 比較按鈕 (這個不會被 stretched-link 影響) */}
         <div className="position-absolute top-0 end-0 p-2 z-3">
@@ -21,14 +21,14 @@ export default function ProductCard({ product }) {
 
         </div>
 
-        <div className="card-body position-relative">
+        <div className={`${styles.cardbody} position-relative`}>
         <p className={`text ${styles.productBrand}`}>{product.brand_name}</p>  
           <h5 className={`card-title ${styles.productTitle}`}>{product.name}</h5>
-          <p className={`card-text ${styles.productPrice}`}>NT. {product.price.toLocaleString()}</p>
+          <p className={`card-text ${styles.cardText}`}>NT. {product.price.toLocaleString()}</p>
 
           {/* 按鈕區域，加上 position-relative，確保不被 stretched-link 影響 */}
           <div className="d-flex justify-content-center">
-            <button className={`btn btn-secondary custom w-100 ${styles.purchaseButton}`}>
+            <button className={`btn btn-secondary ${styles.custom} w-100 ${styles.purchaseButton}`}>
               立即選購
             </button>
           </div>
