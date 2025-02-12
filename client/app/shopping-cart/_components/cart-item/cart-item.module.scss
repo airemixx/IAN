@@ -1,0 +1,99 @@
+.j-publicFont {
+  font-family: "Noto Sans HK";
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.j-cartItemBox {
+  border-radius: 20px;
+  background-color: #fff;
+}
+
+.j-cartItem {
+  border-radius: 20px;
+  background-color: #fff;
+  gap: 10px;
+}
+
+.j-cameraImg {
+  width: 109px;
+  height: 89px;
+}
+
+.j-detailcollapse {
+  padding: 0;
+  font-size: 14px;
+  border: none;
+  background-color: #fff;
+  text-align: left;
+}
+
+.j-content {
+  height: 108px;
+  gap: 44px;
+}
+
+.j-itemDetail {
+  gap: 15px;
+}
+
+.j-brand {
+  color: #8F8F8F;
+  font-size: 12px;
+}
+
+.j-model {
+  color: #000;
+  font-size: 14px;
+}
+
+.j-amount-text {
+  width: 40px;
+}
+
+@media(max-width:390px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container .j-shoppingCartTitle {
+    font-size: 65px;
+  }
+
+  .container .j-shoppingCartBox {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .j-shoppingItemsMoblieBox {
+    width: 390px;
+  }
+
+  .j-cartItemBox {
+    width: 390px;
+    height: auto;
+  }
+
+  .j-lessonImg img {
+    width: 375px;
+  }
+
+  .footer {
+    display: block;
+  }
+
+  .copyright {
+    text-align: center;
+  }
+
+  .copyright .right-links {
+    display: none;
+  }
+
+  .copyright .right-links .copyRight {
+    display: block;
+  }
+
+}

@@ -1,28 +1,41 @@
 /* 📌 卡片樣式 */
 .card {
-  border: none;
   transition: box-shadow 0.3s ease-in-out;
-
+  
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
   }
   
-  .card-text {
+  .cardText {
     color: #d0b189;
   }
-
-  a {
+  
+  button {
     background-color: #e08534;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
   }
-
-  &:hover a {
+  
+  &:hover button {
     opacity: 1;
     visibility: visible;
   }
+
+  .cardImgTop {
+    width: 100%;  
+    height: auto; 
+    max-height: 180px; 
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
 }
+
+.cardbody {
+  padding: 0.5rem;
+}
+
 
 /* 📌 按鈕樣式 */
 .btn-outline-secondary {
@@ -41,55 +54,9 @@
     background-color: #1b3846;
   }
 }
-.cardImgTop {
-  width: 100%;  
-  height: auto; 
-  max-height: 180px; 
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
-}
 
-.btn.custom {
+.custom {
   border: none !important;
-}
-
-/* 📌 圖示樣式 */
-.icon-container {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.card:hover .icon-container {
-  opacity: 1;
-  visibility: visible;
-}
-
-.icon-circle {
-  width: 50px;
-  height: 50px;
-  background-color: #f8f9fa;
-  border: 2px solid #ddd;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
-
-  i {
-    font-size: 20px;
-    color: #333;
-  }
-}
-
-.icon-text {
-  font-size: 12px;
-  color: black;
 }
 
 /* 📌 響應式設計 */
@@ -99,7 +66,7 @@
   }
 
   .card {
-    a {
+    button {
       opacity: 1 !important;
       visibility: visible !important;
     }
@@ -107,14 +74,5 @@
     &:hover {
       box-shadow: none;
     }
-
-    &:hover .icon-container {
-      opacity: 0 !important;
-      visibility: hidden !important;
-    }
-  }
-
-  .icon-container {
-    display: none !important;
   }
 }

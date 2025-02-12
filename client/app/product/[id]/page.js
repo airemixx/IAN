@@ -3,6 +3,7 @@ import { use } from "react";
 import ImageGallery from "./_components/image-gallery";
 import ProductSpecs from "./_components/product-specs";
 import RelatedProducts from "./_components/related-products";
+import BreadcrumbIndex from "../_components/breadcrumb";
 import "../css/product-list.css";
 
 export default function ProductDetailPage({ params }) {
@@ -30,13 +31,7 @@ export default function ProductDetailPage({ params }) {
     <div className="container mt-4" style={{ paddingTop: "80px" }}>
 
       {/* 麵包屑 */}
-      <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item"><a href="#">首頁</a></li>
-          <li className="breadcrumb-item"><a href="#">產品系列</a></li>
-          <li className="breadcrumb-item active" aria-current="page">{product.brand}</li>
-        </ol>
-      </nav>
+      <BreadcrumbIndex/>
 
       <div className="row mt-5">
         {/* 左邊 - 圖片區 */}
