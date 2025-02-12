@@ -9,6 +9,7 @@ import CourseContent from './_components/course-content/page'
 import TeacherInfo from './_components/teacher-info/page'
 import CourseRating from './_components/course-rating/page'
 import PriceFixed from './_components/price-fixed/page'
+import RelatedCourses from './_components/related-course/page'
 
 export default function CourseDetailPage() {
   return (
@@ -33,6 +34,7 @@ export default function CourseDetailPage() {
               <PriceFixed />
             </div>
           </div>
+          <RelatedCourses/>
         </div>
       </section>
     </>

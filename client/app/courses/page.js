@@ -5,7 +5,7 @@ import CoursesBanner from './_components/courses-banner/page'
 import CoursesCategory from './_components/courses-category/page'
 import CoursesBreadcumb from './_components/courses-breadcumb/page'
 import CoursesFilter from './_components/courses-filter/page'
-import CourseList from './_components/courses-list/page'
+import CourseCard from './_components/courses-card/page'
 import Pagination from './_components/pagination/page'
 import PopularTeacher from './_components/popular-teacher/page'
 
@@ -18,7 +18,7 @@ export default function CoursesPage() {
       <CoursesCategory />
       <CoursesBreadcumb />
       <CoursesFilter />
-      <CourseList />
+      <CourseCard />
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

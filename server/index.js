@@ -19,12 +19,14 @@ dotenv.config();
 
 const app = express();
 
-// 📌 讓 Express 提供 `public` 資料夾內的靜態資源
+// 讓 Express 提供 `public` 資料夾內的靜態資源
 app.use("/images/product", express.static(path.join(process.cwd(), "public/images/product")));
 
 
 app.use(cors()); // 允許跨域請求
 app.use(express.json()); // 解析 JSON 格式的請求
+
+
 
 // 設定 API 路由
 app.get("/", (req, res) => {
