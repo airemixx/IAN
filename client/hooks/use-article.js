@@ -9,7 +9,8 @@ const useArticles = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try{
-        const response = await axios.get("http://localhost:3005/api/articles")
+        const response = await axios.get("http://localhost:3005/api/articles");
+        console.log(response.data);
         setArticles(response.data.data);
       }catch(err){
         setError(err);
@@ -17,6 +18,8 @@ const useArticles = () => {
         setLoading(false);
       }
     };
+
+    fetchArticles();
   }, []);
 
   return {articles, error, loading};
