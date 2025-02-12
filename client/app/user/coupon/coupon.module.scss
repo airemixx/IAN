@@ -1,0 +1,64 @@
+// 背景顏色
+.body {
+  background-color: #f5f5f5;
+}
+.marginTop {
+  margin-top: 100px;
+}
+// 側邊選單
+.sidenav {
+  padding: 20px;
+
+  a {
+    color: black;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    transition: background-color 0.3s;
+
+    &:hover {
+      color: #5292c5;
+    }
+  }
+}
+
+// 垂直線 (大螢幕顯示)
+@media (min-width: 992px) {
+  .verticalLine {
+    display: block;
+  }
+}
+
+// 優惠券卡片
+.couponCard {
+  position: relative;
+  width: 400px;
+  height: 150px;
+  background-image: url("/images/shopping-cart-image/95off.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+// 優惠券日期文字
+.couponDate {
+  font-size: 16px;
+  position: absolute;
+  left: 52px;
+  bottom: -5px;
+  width: 100%;
+  color: #ffffff;
+  text-align: center;
+  padding: 0 10px;
+}
+
+// 響應式設計
+@media (max-width: 768px) {
+  .couponCard {
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto;
+  }
+}

@@ -1,0 +1,129 @@
+body {
+  max-width: 1920px;
+  background-color: #f5f5f5;
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+}
+
+.sidenav {
+  width: 264px;
+  max-height: 580px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  gap: 20px;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.line {
+  width: 0.5px;
+  height: 1500px;
+  background-color: #8f8f8f;
+}
+
+.maincontainer {
+  width: 1209px;
+  padding-left: 100px;
+  gap: 48px;
+}
+
+.box {
+  width: 272px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+}
+
+.boxAdd {
+  width: 272px;
+  padding: 20px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  border: 1px dashed #d2d2d2;
+  border-radius: 20px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+.box1 {
+  position: relative;
+  width: 65px;
+  height: 65px;
+  border: 1px solid #d2d2d2;
+  border-radius: 50px;
+}
+
+.boxLine1 {
+  position: absolute;
+  width: 16px;
+  height: 0px;
+  left: 25px;
+  top: 32px;
+  opacity: 0.5;
+  border: 1px solid #000000;
+  transform: rotate(90deg);
+}
+
+.boxLine2 {
+  position: absolute;
+  width: 15px;
+  height: 0px;
+  left: 25px;
+  top: 32.5px;
+  border: 1px solid #000000;
+}
+
+.boxH5 {
+  width: 100px;
+  position: absolute;
+  left: 7px;
+  top: 50px;
+}
+
+img {
+  width: 100%;
+  border-radius: 20px;
+}
+
+.box1_2 {
+  margin: 20px 0;
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: #8f8f8f;
+}
+
+.box1_2 h6 {
+  color: #8f8f8f;
+}
+
+.margin {
+  margin: 10px 0 !important;
+}
+
+.cardBox {
+  display: flex;
+  gap: 20px;
+}
+
+.maturity {
+  color: red;
+}
+
+.rental {
+  color: #d0b088;
+  text-align: end;
+}

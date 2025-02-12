@@ -1,7 +1,8 @@
 /* 📌 卡片樣式 */
 .card {
   transition: box-shadow 0.3s ease-in-out;
-  
+  // background-color: #fff;
+  margin: 0px;
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
   }
@@ -24,7 +25,7 @@
 
   .cardImgTop {
     width: 100%;  
-    height: auto; 
+    height: 200px; 
     max-height: 180px; 
     object-fit: contain;
     display: block;
@@ -57,6 +58,7 @@
 
 .custom {
   border: none !important;
+
 }
 
 /* 📌 響應式設計 */
