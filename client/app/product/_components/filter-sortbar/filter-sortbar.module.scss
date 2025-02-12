@@ -1,23 +1,40 @@
 /* 📌 按鈕樣式 */
-.btn-outline-secondary {
+.btnOutlineSecondary {
   border-radius: 30px;
   padding: 6px 20px;
   font-size: 14px;
   margin-bottom: 20px;
+  border: 1px solid #6c757d;
+  color: #6c757d;
+  background-color: transparent;
 }
 
-.btn-outline-secondary.active,
-.btn-outline-secondary:focus {
-  background-color: #1b3846;
-  color: white;
+.btnOutlineSecondary {
+  border-radius: 30px;
+  padding: 6px 20px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #6c757d;
+  color: #6c757d;
+  background-color: transparent;
+
+ 
+  &.active {
+    background-color: #1b3846 !important;
+    color: white !important;
+    border-color: #1b3846 !important;
+  }
+
+  &:hover {
+    background-color: #1b3846;
+    color: white;
+  }
 }
 
-.btn-outline-secondary:not(.active):hover {
-  background-color: #1b3846;
-}
+
 
 /* 📌 篩選 & 排序樣式 */
-.filter-sort-container {
+.sortContainer {
   .form-select {
     width: 100%;
     border: none;
@@ -31,7 +48,7 @@
 
 /* 📌 響應式設計 */
 @media (max-width: 391px) {
-  .sort-dropdown {
+  .sortContainer {
     display: none;
   }
 }

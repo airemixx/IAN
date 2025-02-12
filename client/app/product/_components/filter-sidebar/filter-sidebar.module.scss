@@ -19,13 +19,13 @@
   visibility: hidden;
 }
 
-.accordion-button {
+.accordionButton {
   background-color: #ffffff !important;
   border: none;
   box-shadow: none !important;
 }
 
-.accordion-button:not(.collapsed) {
+.accordionButton:not(.collapsed) {
   background-color: #f8f9fa !important; /* 當選單展開時的背景顏色 */
 }
 
@@ -48,3 +48,53 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
+
+/* 📌 手機版篩選按鈕 */
+.filterToggleBtn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1b3846;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 20px;
+  font-size: 16px;
+  z-index: 1050;
+}
+
+.filterToggleBtn.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* 📌 手機版篩選側邊欄 */
+.mobileAsideFilter {
+  position: fixed;
+  top: 0px;
+  right: -100%;
+  width: 80%;
+  height: 100%;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease-in-out;
+  z-index: 1100;
+  padding: 20px;
+}
+
+.mobileAsideFilter.show {
+  right: 0px;
+  width: 250px;
+}
+
+/* 📌 關閉按鈕 */
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  position: absolute;
+  top: 0px;
+  right: 10px;
+}
+

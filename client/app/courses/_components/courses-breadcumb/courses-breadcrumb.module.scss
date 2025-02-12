@@ -1,0 +1,36 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+  margin-bottom: 1rem;
+  ul {
+    padding-left: 0;
+  }
+}
+
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+
+  a {
+    text-decoration: none;
+    color: var(--line-color-gray);
+  }
+}
+
+.breadcrumb-item-active {
+  color: var(--primary-color);
+}
+
+:global(.breadcrumb-item) + :global(.breadcrumb-item)::before {
+  content: '';
+  color: var(--line-color-gray);
+  padding: 0 0.5rem;
+}
+
+@media screen and (max-width: 1200px) {
+  .breadcrumb {
+    display: none;
+  }
+}
