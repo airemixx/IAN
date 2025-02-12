@@ -11,19 +11,30 @@ import dotenv from "dotenv";
 import path from "path";
 import coursesRouter from "./routes/courses.js";
 import productRoutes from "./routes/product.js";
-
+import cartRouter from "./routes/cart.js";
 
 
 // 讀取 .env 設定
 dotenv.config();
 
 const app = express();
+const whiteList = ["http://localhost:5500", "http://localhost:3000"];
+const corsOptions = {
+  credential: true,
+  origin: (origin,callback) => {
+    if(!origin || whiteList.includes(origin)){
+      callback(null,true);
+    }else{
+      callback(new Error("不允許連線"))
+    }
+  }
+}
 
 // 📌 讓 Express 提供 `public` 資料夾內的靜態資源
 app.use("/images/product", express.static(path.join(process.cwd(), "public/images/product")));
 
 
-app.use(cors()); // 允許跨域請求
+app.use(cors(corsOptions)); // 允許跨域請求
 app.use(express.json()); // 解析 JSON 格式的請求
 
 // 設定 API 路由
@@ -34,6 +45,8 @@ app.get("/", (req, res) => {
 app.use("/api/product", productRoutes);
 
 app.use("/api/courses", coursesRouter);
+
+app.use("/api/cart", cartRouter);
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000;
