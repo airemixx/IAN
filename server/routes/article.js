@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'admin',
   password: '12345',
-  database: 'camera'
+  database: 'lenstudio'
 })
 
 //cors設定
@@ -28,27 +28,81 @@ router.get('/', async (req, res) => {
       message: "取得所有文章成功"
     })
   }catch(err){
-    res.status(500).send('伺服器錯誤')
+    res.status(500).json({
+      status: 'error',
+      message: err.message ? err.message : "取得文章失敗"
+    })
   }
 });
 // 取得指定文章
-router.get('/:id', (req, res) => {
-  res.send(`取得文章ID: ${req.params.id}`);
+router.get('/:id', async (req, res) => {
+  try{
+    const [rows] = await pool.query("SELECT * FROM article WHERE id = ?" , [req.params.id]);
+      if (rows.length === 0){
+        return res.status(404).json({
+          status: 'error',
+          message: `找不到${req.params.id}文章`
+        })
+      }
+      res.status(200).json({
+        status: 'success',
+        data: rows[0],
+        message: `取得${req.params.id}文章成功`
+      })
+  }catch(err){
+    res.status(500).json({
+      status: 'error',
+      message: err.message ? err.message : "連結伺服器錯誤"
+    })
+  }
 });
 
 // 新增文章
-router.post('/', (req, res) => {
-  res.send('新增文章');
+router.post('/',async (req, res) => {
+  try{
+    //此為初步測試 實際的新增邏輯請根據需求補上，例如取得 req.body 資料
+    res.status(201).json({
+      status: 'success',
+      message: '新增文章成功'
+    })
+  }catch(err){
+    res.status(500).json({
+      status: 'error',
+      message: err.message ? err.message : "新增文章失敗"
+    })
+  }
 });
 
 // 更新指定文章
-router.put('/:id', (req, res) => {
-  res.send(`更新文章ID: ${req.params.id}`);
+router.put('/:id', async (req, res) => {
+  try{
+    //此為初步測試 實際的新增邏輯請根據需求補上，例如取得 req.body 資料
+    res.status(200).json({
+      status: 'success',
+      message: `更新文章ID: ${req.params.id}成功`
+    })
+  }catch(err){
+    res.status(500).json({
+      status: 'error',
+      message: err.message ? err.message : "更新文章失敗TAT"
+    })
+  }
 });
 
 // 刪除指定文章
-router.delete('/:id', (req, res) => {
-  res.send(`刪除文章ID: ${req.params.id}`);
+router.delete('/:id', async (req, res) => {
+  try{
+    //此為初步測試 實際的新增邏輯請根據需求補上，例如取得 req.body 資料
+    res.status(200).json({
+      status: 'success',
+      message: `刪除文章ID: ${req.params.id}成功`
+    })
+  }catch(err){
+    res.status(500).json({
+      status: 'error',
+      message: err.message ? err.message : "刪除文章失敗~"
+    })
+  }
 });
 
 export default router;
