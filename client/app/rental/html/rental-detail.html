@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- bootstrap v5.3.3 css -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- font-awesome v6.7.2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- Swiper CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+	<!-- Swiper JS -->
+	<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <!-- 字體 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK&display=swap" rel="stylesheet">
+  <!-- 本地 -->
+	<link rel="stylesheet" href="../css/rental-detail.css">
+	<link rel="stylesheet" href="../css/rental-list.css">
+  <link rel="stylesheet" href="../css/header.css">
+  <link rel="stylesheet" href="../css/footer.css">
+  <title> Page</title>    
+</head>
+<body>
+  <!-- header -->
+  <div id="header"></div>
+  <!-- 內容 -->
+	<div class="container mt-4">
+    <!-- nav導航(麵包屑) -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="#">首頁</a></li>
+				<li class="breadcrumb-item"><a href="#">租借列表</a></li>
+				<li class="breadcrumb-item active" aria-current="page">租借商品</li>
+				<!-- <li class="breadcrumb-item active" aria-current="page">租借細節</li> -->
+			</ol>
+    </nav>
+  <!-- Main Content -->
+  <div class="container mt-4">
+		<main>
+			<div class="row">
+				<!-- Left Section: Product Images and Description -->
+				<div class="col-lg-7">
+					<div class="p-card text-center">
+						<img id="mainImage" src="rent-images/leica-Q3-0.png" alt="Product Image" class="product-image img-fluid">
+				</div>
+				
+				<div class="thumbnails-container mt-3 d-flex align-items-center position-relative">
+						<!-- 左按鈕 -->
+						<button id="prevBtn" class="carousel-control-prev" type="button">
+								<span class="carousel-control-prev-icon" style="filter: invert(1);" aria-hidden="true"></span>
+								<span class="visually-hidden">Previous</span>
+						</button>
+				
+						<div id="thumbnailWrapper" class="d-flex justify-content-between overflow-hidden mx-5"></div>
+				
+						<!-- 右按鈕 -->
+						<button id="nextBtn" class="carousel-control-next" type="button">
+								<span class="carousel-control-next-icon" style="filter: invert(1);" aria-hidden="true"></span>
+								<span class="visually-hidden">Next</span>
+						</button>
+				</div>
+				
+					<!-- Product Description -->
+					<div class="mt-5">
+					</div>
+				</div>
+				<!-- Right Section: Product Details and Reviews -->
+				<div class="col-lg-5">
+					<h2>Leica Q3</h2>
+					<p class="fee-text h4 ms-2">NT$ 2,500 / 天</p>
+					<p class="fee2-text ms-2">借出及歸還均免運費</p>
+				<!-- 新增的 .nav-tabs -->
+				 
+				<div class="mt-3">
+					<div class="d-flex">
+						<button class="btn btn-primary btn-radius me-1 active" id="rentalButton">租借內容</button>
+						<button class="btn btn-primary btn-radius" id="specButton">產品規格</button>
+					</div>
+					<div id="tabContent">
+						<!-- 預設顯示的內容 -->
+						<div class="card card-radius">
+							<div class="card-body">
+								<h5 class="card-title brand-text">商品配件</h5>
+								<ul class="fee-text">
+									<li>64G SD 記憶卡</li>
+									<li>電池 x2</li>
+									<li>充電器</li>
+									<li>鏡頭蓋</li>		
+								</ul>
+								<div class="mt-4">
+									<h5 class="card-title brand-text">租借時段</h5>
+									<label class="fee-text" for="startDate">開始日期</label>
+									<input type="date" id="startDate" class="form-control mb-2">
+									<label class="fee-text" for="endDate">結束日期</label>
+									<input type="date" id="endDate" class="form-control">
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary">立即租借</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+
+				<!-- hashtag -->
+				<div class="mt-1 mb-2">
+					<span class="badge tag-bg">輕巧</span>
+					<span class="badge tag-bg">8K錄影</span>
+					<span class="badge tag-bg">內建鏡頭</span>
+					<span class="badge tag-bg">觸控螢幕</span>
+					<span class="badge tag-bg">大光圈</span>
+					<span class="badge tag-bg">高解析度</span>	
+				</div>
+
+				<!-- 評論(CMT) -->
+				<div class="mt-4">
+					<h5>評價</h5>
+					<div class="d-flex align-items-center">
+							<span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+							<span class="ms-2">4.0 (25 條評論)</span>
+					</div>
+					<div class="mt-3" id="reviewContainer">
+							<div class="border p-3 mb-3 d-flex">
+									<!-- 頭貼 -->
+									<img src="images/4.jpg" alt="用戶 A" class="rounded-circle me-3" width="50" height="50">
+									<div>
+											<strong>中壢大谷祥平</strong>
+											<p>桃園棒球場第一排 拿出這台直接高調<br>
+												客服聲音一聽就正妹 加個IG直接給五星</p>
+											<span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+									</div>
+							</div>
+							<div class="border p-3 mb-3 d-flex">
+									<img src="images/6.jpg" alt="用戶 B" class="rounded-circle me-3" width="50" height="50">
+									<div>
+											<strong>卡哇七寶媽</strong>
+											<p>宅配到府真的超推!!!<br>
+												上次運動會帶這支很方便，不用額外組鏡頭，費用也很值在，下次會再來租借👍👍</p>
+											<span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+									</div>
+							</div>
+							<div class="border p-3 mb-3 d-flex">
+									<img src="images/1.jpg" alt="用戶 C" class="rounded-circle me-3" width="50" height="50">
+									<div>
+											<strong>彤彤</strong>
+											<p>大學專題一起借，可以直接寄社辦 很方便!!!</p>
+											<span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+									</div>
+							</div>
+							<div class="d-flex justify-content-end">
+									<button id="showMoreReviews" class="btn btn-primary">顯示更多</button>
+							</div>
+					</div>
+				</div>
+
+				
+				</div>
+			</div>
+		</div>
+		<!-- 變回一列 -->
+		
+		<!-- 推薦商品(RMD) -->
+		<div class="col-lg-12 col-xl-10 mx-auto my-4">
+			<div class="d-flex justify-content-between align-items-center">
+				<h3>推薦商品</h3>
+				<div class="d-flex gap-2">
+						<button id="prev-btn" class="btn btn-primary btn-sm btn-sm-radius2">
+								<span aria-hidden="true"> <i class="fa-solid fa-fw fa-caret-left" style="padding-top: 6px;"></i></span>
+								<span class="visually-hidden">往前一個 Previous</span>
+						</button>	
+						<button id="next-btn" class="btn btn-primary btn-sm btn-sm-radius2">
+								<span aria-hidden="true"><i class="fa-solid fa-fw fa-caret-right" style="padding-top: 6px;"> </i></span>
+								<span class="visually-hidden">往後一個 Next</span>
+						</button>
+				</div>
+		</div>
+
+				<!-- 商品列表 -->			
+		
+					<div id="rental-rmd" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1"></div>
+
+			</div>
+		</main>
+	</div>
+
+  <!-- footer -->
+  <div id="footer"></div>
+   
+
+	<script src="../js/rental-detail.js"></script>
+
+	<!-- rental-product -->
+	<script src="../js/rental-rmd.js"></script>
+
+  <!-- fetch header -->
+  <script>
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header').innerHTML = data);
+  </script>
+  <!-- fetch footer -->
+  <script>
+    fetch('footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer').innerHTML = data);
+  </script>
+  <!-- bootstrap v5.3.3 js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

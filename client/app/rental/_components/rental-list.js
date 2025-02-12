@@ -1,33 +1,66 @@
-import RentalCard from "./rental-card";
+import React from 'react'
+import styles from './rental-list.module.scss'
+import RentalCard from './rental-card'
 
-export default function RentalList() {
-  // Mock Data，確保 `fetch()` 之後再啟用
-  const rentals = [
-    {
-      id: 1,
-      name: "EOS-R3",
-      fee: 2500,
-      image: ["EOS-R3-0"]
-    },
-    {
-      id: 2,
-      name: "EOS-R5",
-      fee: 1600,
-      image: ["EOS-R5-0"]
-    },
-    {
-      id: 3,
-      name: "EOS-R6II",
-      fee: 1200,
-      image: ["EOS-R6II-0"]
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+
+async function getRentals() {
+  try {
+    const res = await fetch(`${BASE_URL}/json/rental/rental-list.json`, {
+      cache: 'no-store',
+    })
+    if (!res.ok) {
+      throw new Error(`無法載入商品資料 (HTTP ${res.status})`)
     }
-  ];
+    return res.json()
+  } catch (error) {
+    console.error('載入租借列表時發生錯誤:', error)
+    return []
+  }
+}
+
+export default async function RentalList() {
+  const rentals = await getRentals()
 
   return (
-    <div className="rental-list">
-      {rentals.map((rental) => (
-        <RentalCard key={rental.id} rental={rental} />
-      ))}
+    <div style={{ marginTop: '120px' }}>
+      <div
+        className={`row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1 ${styles.rentalGrid}`}
+      >
+        {rentals.length > 0 ? (
+          rentals.map((rental) => (
+            <div key={rental.id} className={`col ${styles.rentalCard}`}>
+              <div className="card h-100">
+                {/* 狀態標籤 */}
+                <span
+                  className={`${styles.statusTag} ${
+                    rental.state === '可供出租'
+                      ? styles.available
+                      : styles.unavailable
+                  }`}
+                >
+                  {rental.state}
+                </span>
+                <img
+                  src={`/images/rental/cams/${rental.image[0]}.png`}
+                  className={`card-img-top ${styles.cardImage}`}
+                  alt={rental.name}
+                />
+                <div className="card-body">
+                  <h5 className={`card-title ${styles.cardTitle}`}>
+                    {rental.name}
+                  </h5>
+                  <p className={`card-text ${styles.cardText}`}>
+                    NT$ {rental.fee} / 天
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center">目前沒有可租借的設備</p>
+        )}
+      </div>
     </div>
-  );
+  )
 }
