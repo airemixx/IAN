@@ -9,50 +9,45 @@ import ListCard from "./_components/list-card";
 import Pagination from "./_components/Pagination";
 import '../../styles/article.css';
 import Link from "next/link";
+import useArticles from "../../hooks/use-article";
 
 export default function NewsPage() {
-  useEffect(() => {
-    const filterCollapse = document.querySelector("#filter-collapse");
-    const toggleButtonIcon = document.querySelector('[data-bs-target="#filter-collapse"] i');
-    const clearOptionsBtn = document.querySelector("#y-clear-options-btn");
+  const { articles, error, loading} = useArticles();
 
-    if (filterCollapse && toggleButtonIcon) {
-      filterCollapse.addEventListener("show.bs.collapse", () => {
-        toggleButtonIcon.classList.replace("fa-angle-down", "fa-angle-up");
-      });
-      filterCollapse.addEventListener("hide.bs.collapse", () => {
-        toggleButtonIcon.classList.replace("fa-angle-up", "fa-angle-down");
-      });
-    }
+  useEffect(() => {  
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");  
+  
+    const filterCollapse = document.querySelector("#filter-collapse");  
+    const toggleButtonIcon = document.querySelector('[data-bs-target="#filter-collapse"] i');  
+    const clearOptionsBtn = document.querySelector("#y-clear-options-btn");  
+  
+    if (filterCollapse && toggleButtonIcon) {  
+      const handleShow = () => toggleButtonIcon.classList.replace("fa-angle-down", "fa-angle-up");  
+      const handleHide = () => toggleButtonIcon.classList.replace("fa-angle-up", "fa-angle-down");  
+  
+      filterCollapse.addEventListener("show.bs.collapse", handleShow);  
+      filterCollapse.addEventListener("hide.bs.collapse", handleHide);  
+  
+      return () => {  
+        filterCollapse.removeEventListener("show.bs.collapse", handleShow);  
+        filterCollapse.removeEventListener("hide.bs.collapse", handleHide);  
+      };  
+    }  
+  
+    if (clearOptionsBtn) {  
+      const handleClear = () => {  
+        document.querySelectorAll("select").forEach((select) => {  
+          select.selectedIndex = 0;  
+        });  
+      };  
+      clearOptionsBtn.addEventListener("click", handleClear);  
+  
+      return () => clearOptionsBtn.removeEventListener("click", handleClear);  
+    }  
+  }, []);  
 
-    if (clearOptionsBtn) {
-      clearOptionsBtn.addEventListener("click", () => {
-        document.querySelectorAll("select").forEach((select) => {
-          select.selectedIndex = 0;
-        });
-      });
-    }
-
-    // 如果需要移除事件監聽器，可在 return 區塊中做清理
-    return () => {
-      if (filterCollapse && toggleButtonIcon) {
-        filterCollapse.removeEventListener("show.bs.collapse", () => {
-          toggleButtonIcon.classList.replace("fa-angle-down", "fa-angle-up");
-        });
-        filterCollapse.removeEventListener("hide.bs.collapse", () => {
-          toggleButtonIcon.classList.replace("fa-angle-up", "fa-angle-down");
-        });
-      }
-
-      if (clearOptionsBtn) {
-        clearOptionsBtn.removeEventListener("click", () => {
-          document.querySelectorAll("select").forEach((select) => {
-            select.selectedIndex = 0;
-          });
-        });
-      }
-    };
-  }, []);
+  if (loading) return <div>載入中...</div>;
+  if (error) return <div>發生錯誤：{error.message}</div>;
 
   return (
     <div >
@@ -63,7 +58,9 @@ export default function NewsPage() {
       <SelectList />
 
       {/* 卡片區 */}
-      <ListCard />
+      {articles.map((article) => (
+        <ListCard key={article.id} article={article}/>
+      ))}
 
       {/* 分頁區 */}
       <div className="d-flex justify-content-center mb-5">
