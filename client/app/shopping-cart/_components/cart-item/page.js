@@ -1,3 +1,4 @@
+import styles from "./cart-item.module.scss";
 import ProductDetails from "../product-details/page";
 
 export default function CartItem({ id, type, itemData }) {
@@ -5,22 +6,22 @@ export default function CartItem({ id, type, itemData }) {
 
   return (
     <div className="d-flex">
-      <input type="checkbox" className="form-check" id={`item${id}`} />
-      <div className="j-cartItemBox me-3 mb-2 d-flex flex-grow-1">
-        <div className="j-cartItem d-flex flex-grow-1">
-          <div className="j-cameraImg m-2">
+      <input type="checkbox" className="form-check me-2" id={`item${id}`} />
+      <div className={`${styles['j-cartItemBox']} me-3 mb-2 d-flex flex-grow-1`}>
+        <div className={`${styles['j-cartItem']} d-flex flex-grow-1`}>
+          <div className={`${styles['j-cameraImg']} m-2`}>
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
           <div className="d-flex flex-column flex-grow-1">
-            <div className="j-content d-flex justify-content-between align-items-center">
-              <div className="j-itemDetail d-flex flex-column">
+            <div className={`${styles['j-content']} d-flex justify-content-between align-items-center`}>
+              <div className={`${styles['j-itemDetail']} d-flex flex-column`}>
                 <div>
-                  <span className="j-brand j-publicFont">{brand}</span>
+                  <span className={`${styles['j-brand']} ${styles['j-publicFont']}`}>{brand}</span>
                   <br />
-                  <span className="j-model j-publicFont">{model}</span>
+                  <span className={`${styles['j-model']} ${styles['j-publicFont']}`}>{model}</span>
                 </div>
                 <button
-                  className="j-detailcollapse"
+                  className={`${styles['j-detailcollapse']}`}
                   type="button"
                   data-bs-toggle="collapse"
                   data-bs-target={`#collapseExample${id}`}
@@ -28,12 +29,12 @@ export default function CartItem({ id, type, itemData }) {
                   +詳細資訊
                 </button>
               </div>
-              <div className="j-amount d-flex flex-row align-items-start">
-                <button className="j-increase btn pb-0 ps-0 pt-0">+</button>
-                <p className="j-amount-text mb-0 j-publicFont">數量</p>
-                <button className="j-decrease btn pb-0 ps-2 pt-0">-</button>
+              <div className={`${styles['j-amount']} d-flex flex-row align-items-start`}>
+                <button className={`${styles['j-increase']} btn pb-0 ps-0 pt-0`}>+</button>
+                <p className={`${styles['j-amount-text']} mb-0 ${styles['j-publicFont']}`}>數量</p>
+                <button className={`${styles['j-decrease']} btn pb-0 ps-2 pt-0`}>-</button>
               </div>
-              <p className="price me-3">{price}</p>
+              <p className={`${styles['price']} me-3`}>{price}</p>
             </div>
             <ProductDetails id={id} specs={specs} />
           </div>
