@@ -1,27 +1,30 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import CoursesBanner from './courses-banner/page'
-import CoursesCategory from './courses-category/page'
-import CoursesBreadcumb from './courses-breadcumb/page'
-import CoursesFilter from './courses-filter/page'
-import CourseList from './courses-list/page'
-import Pagination from './pagination/page'
-import PopularTeacher from './popular-teacher/page'
+import CoursesBanner from './_components/courses-banner/page'
+import CoursesCategory from './_components/courses-category/page'
+import CoursesBreadcumb from './_components/courses-breadcumb/page'
+import CoursesFilter from './_components/courses-filter/page'
+import CourseList from './_components/courses-list/page'
+import Pagination from './_components/pagination/page'
+import PopularTeacher from './_components/popular-teacher/page'
 
 export default function CoursesPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = 5
   return (
     <>
-    <CoursesBanner/>
-    <CoursesCategory/>
-    <CoursesBreadcumb/>
-    <CoursesFilter/>
-    <CourseList/>
-    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-    <PopularTeacher/>
-   </>
+      <CoursesBanner />
+      <CoursesCategory />
+      <CoursesBreadcumb />
+      <CoursesFilter />
+      <CourseList />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+      <PopularTeacher />
+    </>
   )
 }
-

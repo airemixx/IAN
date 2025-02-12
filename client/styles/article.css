@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+.y-container {
+=======
 ::-webkit-scrollbar {
   width: 2px;
 }
@@ -8,6 +11,7 @@
 
 
 .y-container{
+>>>>>>> b6872f751a36267efacd9adcddea64dc0b63d6a2
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
