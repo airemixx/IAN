@@ -1,0 +1,139 @@
+.btn-primary{
+  color: #fff;
+  background: #23425A !important;
+  border-color: #23425A !important;
+  border-radius: 50px;
+  transition: opacity .1s;
+  &:hover, &:focus, &:active, &:active:focus, &:active:hover{
+    background: #0F2D3C !important;
+    border-color: #0F2D3C !important;
+    opacity: 0.9 !important;
+  }
+}
+.btn-radius{
+  border-radius: 5px 5px 0 0;
+}
+.btn-sm-radius2{
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+.tag-bg, .tpye-bg {
+  color: #fff;
+  background-color: #23425A;
+}
+.brand-text {
+  color: #8F8F8F;
+}
+.fee-text {
+  color: #23425A;
+}
+.fee2-text {
+  color: #7E7267;
+}
+body {
+  color: #000;
+  background-color: #F6F7F9;
+}
+.p-card {
+  max-width: 580px;
+  margin: 0 auto;
+  background: #fff;
+}
+.p-card img {
+  object-fit: cover;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.card-radius{
+  border-radius: 0 5px 5px 5px;
+}
+
+.table tbody tr:last-child th, .table tbody tr:last-child td {
+    border-bottom: none;
+    padding-bottom: 0 !important;
+}
+
+/* 商品輪播 */
+.thumbnails-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#thumbnailWrapper {
+  display: flex;
+  max-width: 600px;
+  overflow: hidden;  
+  overflow-x: auto; /* 水平滾動 */
+  scroll-snap-type: x mandatory; /* 對齊效果 */
+  scroll-behavior: smooth; /* 平滑滾動 */
+  -webkit-overflow-scrolling: touch; /* 平滑滾動 */
+}
+
+.thumbnail img {
+  border: 4px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.3s ease-in-out;
+  flex-shrink: 0; /* 防止縮圖因為內容太多而縮小 */
+  scroll-snap-align: center; /* 滑動後居中 */
+  width: 100%; /* 縮圖寬度 */
+  height: auto;
+}
+
+.thumbnail img.active {
+  border-color: #23425A;  /* 藍色邊框高亮 */
+  z-index: 9999;
+  border-width: 4px;
+}
+
+.thumbnail img:hover:not(.active) {
+  border-color: #ccc;
+}
+/* 控制按鈕獨占左右區域 */
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.carousel-control-prev {
+  left: 0;
+}
+
+.carousel-control-next {
+  right: 0;
+}
+
+/* 讓按鈕反轉顏色 */
+.carousel-control-prev-icon, 
+.carousel-control-next-icon {
+  filter: invert(1);
+  width: 40px;
+  height: 40px;
+}
+
+
+/* 手機模式，最大顯示 2 張圖片，並調整間距 */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .thumbnail img {
+    border: 3px solid transparent;
+  }  
+  .thumbnail img.active {
+    border-width: 3px;
+  }
+}
+@media (max-width: 768px) {
+  #thumbnailWrapper {
+    max-width: 400px;  /* 限制縮圖區域寬度 */
+  }
+}
+

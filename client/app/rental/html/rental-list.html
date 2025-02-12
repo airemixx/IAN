@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bootstrap v5.3.3 css -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- font-awesome v6.7.2 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- 字體 -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK&display=swap"
+      rel="stylesheet"
+    />
+    <!-- 本地 -->
+    <link rel="stylesheet" href="./css/rental-list.css" />
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="stylesheet" href="./css/footer.css" />
+    <title>Page</title>
+  </head>
+  <body>
+    <!-- header -->
+    <div id="header"></div>
+
+    <!-- 內容 -->
+    <div class="container mt-4">
+      <!-- nav導航(麵包屑) -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">首頁</a></li>
+          <li class="breadcrumb-item active" aria-current="page">租借列表</li>
+          <!-- <li class="breadcrumb-item active" aria-current="page">租借細節</li> -->
+        </ol>
+      </nav>
+      <!-- Aside左 Main右 -->
+      <div class="row mb-4">
+        <!-- Aside(固定) -->
+        <aside class="col-0 col-md-4 col-lg-3 p-3">
+          <hr class="d-none d-md-block" />
+          <!-- 搜尋框 -->
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="搜尋關鍵字"
+              aria-label="搜尋"
+            />
+            <button class="btn btn-primary" type="button">
+              <i class="fa fa-search"></i>
+            </button>
+            <!-- #tag -->
+          </div>
+          <div class="mt-1 mb-2">
+            <span class="badge tag-bg">防抖</span>
+            <span class="badge tag-bg">4K</span>
+            <span class="badge tag-bg">輕便</span>
+            <span class="badge tag-bg">快速對焦</span>
+            <span class="badge tag-bg">大光圈</span>
+            <span
+              class="badge tag-bg"
+              onmouseover="showTooltip(event)"
+              onmouseout="hideTooltip()"
+              >...</span
+            >
+          </div>
+          <div
+            id="tooltip"
+            style="
+              display: none;
+              position: absolute;
+              background: #333d;
+              color: #fff;
+              padding: 5px;
+              border-radius: 5px;
+            "
+          >
+            連拍<br />小光圈<br />
+          </div>
+          <!-- 手風琴 -->
+          <div class="accordion" id="filterAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#categoryOne"
+                  aria-expanded="true"
+                >
+                  簡易篩選
+                </button>
+              </h2>
+              <div id="categoryOne" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+                  <input type="checkbox" /> 人像攝影 <br />
+                  <input type="checkbox" /> 旅遊攝影 <br />
+                  <input type="checkbox" /> 街拍、Vlog <br />
+                  <input type="checkbox" /> 婚禮、商業攝影 <br />
+                  <input type="checkbox" /> 產品、美食攝影 <br />
+                  <input type="checkbox" /> 運動、生態攝影
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#categoryTwo"
+                >
+                  設備類型
+                </button>
+              </h2>
+              <div id="categoryTwo" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <input type="checkbox" /> 相機 <br />
+                  <input type="checkbox" /> 鏡頭 <br />
+                  <input type="checkbox" /> 配件
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#categoryThree"
+                >
+                  進階篩選
+                </button>
+              </h2>
+              <div id="categoryThree" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <input type="checkbox" /> 全幅相機 <br />
+                  <input type="checkbox" /> 半幅相機 (APS-C) <br />
+                  <input type="checkbox" /> 定焦鏡頭 <br />
+                  <input type="checkbox" /> 變焦鏡頭 <br />
+                  <input type="checkbox" /> 廣角鏡頭 (10-35mm) <br />
+                  <input type="checkbox" /> 標準鏡頭 (35-70mm) <br />
+                  <input type="checkbox" /> 望遠鏡頭 (70mm ↑ )
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#categoryFour"
+                >
+                  相機品牌
+                </button>
+              </h2>
+              <div id="categoryFour" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <input type="checkbox" /> Canon <br />
+                  <input type="checkbox" /> Leica <br />
+                  <input type="checkbox" /> Nikon <br />
+                  <input type="checkbox" /> Sony
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main(3>2>1)-->
+        <main class="col-12 col-md-8 col-lg-9">
+          <!-- 顯示幾台相機 -->
+          <div class="text-end"><span>顯示 18 項中的 12 項</span></div>
+          <div><section></section></div>
+          <!-- 商品列表 -->
+          <div
+            id="rental-product"
+            class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1"
+          ></div>
+        </main>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <div id="footer"></div>
+
+    <!-- Aside  -->
+    <!-- title換行 -->
+    <script>
+      function showTooltip(event) {
+        var tooltip = document.getElementById('tooltip')
+        tooltip.style.display = 'block'
+        tooltip.style.top = event.pageY + 'px'
+        tooltip.style.left = event.pageX + 'px'
+      }
+
+      function hideTooltip() {
+        document.getElementById('tooltip').style.display = 'none'
+      }
+    </script>
+
+    <!-- rental-product -->
+    <script src="./js/rental-list.js"></script>
+
+    <!-- fetch header -->
+    <script>
+      fetch('header.html')
+        .then((response) => response.text())
+        .then((data) => (document.getElementById('header').innerHTML = data))
+    </script>
+    <!-- fetch footer -->
+    <script>
+      fetch('footer.html')
+        .then((response) => response.text())
+        .then((data) => (document.getElementById('footer').innerHTML = data))
+    </script>
+    <!-- bootstrap v5.3.3 js -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
