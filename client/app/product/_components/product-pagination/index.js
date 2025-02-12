@@ -1,34 +1,32 @@
-"use client";
+'use client';
 
-import styles from "./product-pagination.module.scss"; // ✅ 正確引入 SCSS Module
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import styles from './product-pagination.module.scss';
 
-export default function Pagination() {
+export default function Pagination({ className }) {
   return (
-    <div className={`container mt-4 ${styles.paginationContainer}`}>
-      <nav aria-label="Page navigation">
-        <ul className="pagination justify-content-center">
-          <li className="page-item disabled">
-            <a className="page-link" href="#" tabIndex="-1" aria-disabled="true">
-              &laquo;
+    <div>
+      <nav aria-label="Page navigation example">
+        <ul className="pagination" >
+          <li className="page-item">
+            <a className={`page-link ${styles['page-link']}`} href="#" aria-label="Previous">
+              <span aria-hidden="true">«</span>
             </a>
           </li>
           <li className="page-item">
-            <a className={`page-link ${styles.activePage}`} href="#">1</a>
+            <a className={`page-link ${styles['page-link']}`} href="#">1</a>
           </li>
           <li className="page-item">
-            <a className="page-link" href="#">2</a>
+            <a className={`page-link ${styles['page-link']}`} href="#">2</a>
           </li>
           <li className="page-item">
-            <a className="page-link" href="#">3</a>
+            <a className={`page-link ${styles['page-link']}`} href="#">3</a>
           </li>
           <li className="page-item">
-            <a className="page-link" href="#">4</a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">5</a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">&raquo;</a>
+            <a className={`page-link ${styles['page-link']}`} href="#" aria-label="Next">
+              <span aria-hidden="true">»</span>
+            </a>
           </li>
         </ul>
       </nav>
