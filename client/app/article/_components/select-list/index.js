@@ -64,7 +64,7 @@ export default function SelectList({ onFilterChange }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:3005/api/articles/categories");
+        const response = await axios.get("http://localhost:8000/api/articles/categories");
         const categoryOptions = response.data.data.map((category) => ({
           value: category.id,
           label: category.name,
@@ -77,7 +77,7 @@ export default function SelectList({ onFilterChange }) {
 
     const fetchYears = async () => {
       try {
-        const response = await axios.get("http://localhost:3005/api/articles/years");
+        const response = await axios.get("http://localhost:8000/api/articles/years");
         const yearOptions = response.data.data.map((year) => ({
           value: year.year,
           label: year.year,
