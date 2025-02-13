@@ -11,22 +11,28 @@
 
 .j-accBtn {
   background-color: #fff;
-}
 
-.j-accBtn:active {
-  background-color: #fff;
-}
+  &:not(.collapsed){
+    box-shadow:none;
+    background: #fff;
+  }
 
-.j-accBtn:focus {
-  background-color: #fff;
-}
+  &:active {
+    background-color: #fff;
+  }
 
-.j-accBtn:visited {
-  background-color: #fff;
-}
+  &:focus {
+    background-color: #fff;
+  }
 
-.j-accBtn:link {
-  background-color: #fff;
+  &:visited {
+    background-color: #fff;
+  }
+
+  &:link {
+    background-color: #fff;
+  }
+
 }
 
 .j-accBody {
@@ -36,7 +42,7 @@
 .j-detialTypeContent {
   width: 200px;
   font-size: 14px;
-  color: #8F8F8F;
+  color: #555;
 }
 
   @media(max-width:390px) {

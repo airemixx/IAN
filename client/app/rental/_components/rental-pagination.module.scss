@@ -1,0 +1,27 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-primary {
+  color: #fff;
+  background: #23425a;
+  border-color: #23425a;
+
+  &:hover {
+    background: #0f2d3c;
+    border-color: #0f2d3c;
+  }
+}
+
+.btn-outline-primary {
+  color: #23425a;
+  border-color: #23425a;
+
+  &:hover {
+    color: #fff;
+    background-color: #0f2d3c;
+    border-color: #0f2d3c;
+  }
+}

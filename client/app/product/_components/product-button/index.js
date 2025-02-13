@@ -12,10 +12,10 @@ export default function CompareButton({ product }) {
   return (
 
   <div className={styles.iconcontainer}>
-    <div className="icon-circle">
+    <div className={styles.iconCircle}>
       <i className="fa-solid fa-camera" />
     </div>
-    <p className="icon-text">比較</p>
+    <p className={styles.iconText}>比較</p>
   </div>
 
 
