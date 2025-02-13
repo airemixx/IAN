@@ -52,7 +52,7 @@ app.use("/api/articles", articleRoutes);
 
 
 // 設定伺服器監聽埠號
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`);
 });
