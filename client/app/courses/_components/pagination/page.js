@@ -19,15 +19,12 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       {/* 頁數列表 */}
       <ul className={styles['pages']}>
         {Array.from({ length: totalPages }, (_, index) => (
-          <li key={index} className={styles['page']}>
-            <button
-              className={`${styles['page-link']} ${
-                currentPage === index + 1 ? styles['active'] : ''
-              }`}
-              onClick={() => onPageChange(index + 1)}
-            >
-              {index + 1}
-            </button>
+          <li
+            key={index}
+            className={`${styles['page']} ${currentPage === index + 1 ? styles['active'] : ''}`}
+            onClick={() => onPageChange(index + 1)}
+          >
+            <button className={styles['page-link']}>{index + 1}</button>
           </li>
         ))}
       </ul>

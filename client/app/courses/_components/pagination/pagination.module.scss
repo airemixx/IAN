@@ -8,6 +8,7 @@
 
 .pages-container ul {
   list-style: none;
+  cursor: pointer;
 }
 
 .pages {
@@ -38,7 +39,13 @@
     transform 0.3s ease;
 }
 
-.pages li:hover::after {
+.pages li.active::after {
+  background-color: var(--black);
+  transform: scaleY(2.5);
+}
+
+.pages li:hover::after,
+.pages li .active::after {
   background-color: var(--black);
   transform: scaleY(2.5);
 }
@@ -51,7 +58,8 @@
   padding-bottom: 8px;
 }
 
-.page:hover {
+.page:hover,
+.page.active {
   color: var(--black);
 }
 
