@@ -1,16 +1,14 @@
 'use client'
 
-import './shopping-cart-step2.scss'
+import './cart-step3.scss'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import CartItem from '../_components/cart-item/page'
-import CheckoutFormStep2 from '../_components/checkout-form-step2/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
+import CheckoutFormStep3 from '../_components/checkout-form-step3/page'
 
-export default function shoppingCartTwoPage() {
-  // const cartItemsStorage = localStorage.getItem("cartItem");
-  // const cartItems = JSON.parse(cartItemsStorage)
+export default function cartPageThree() {
   const cartItems = [
     {
       type: 'product',
@@ -69,6 +67,7 @@ export default function shoppingCartTwoPage() {
     },
     // 其他商品...
   ]
+
   const cartLession = [
     {
       type: 'lession',
@@ -92,31 +91,31 @@ export default function shoppingCartTwoPage() {
   ]
   return (
     <div className="container" style={{ height: '91vh' }}>
-  <div className="j-heightspace"></div>
-  <div className="row d-flex justify-content-center pt-2">
-    <div className="j-shoppingCartBox justify-content-between mt-4 col-md-7">
-      <div className="j-shoppingItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
-        {cartItems.map((item, index) => (
-          <div className="p-2 border-bottom" key={index}>
-            <CartItem key={index} id={index + 1} itemData={item} />
+    <div className="j-heightspace"></div>
+      <div className="row d-flex justify-content-center pt-2">
+        <div className="j-shoppingCartBox justify-content-center mt-4 col-md-7 pt-5">
+          <div className="j-shoppingItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
+            {cartItems.map((item, index) => (
+              <div className="p-2 border-bottom"  key={index}>
+                <CartItem key={index} id={index + 1} itemData={item} />
+              </div>
+            ))}
+            {cartLession.map((lession, index) => (
+              <div className="p-2 border-bottom"  key={index}>
+                <LessonItem key={index} lessionitem={lession} />
+              </div>
+              
+            ))}
+            {cartRent.map((rental, index) => (
+              <div className="p-2 border-bottom"  key={index}>
+                <RentItem key={index} rentalitem={rental} />
+              </div>
+            ))}
           </div>
-        ))}
-        {cartLession.map((lession, index) => (
-          <div className="p-2 border-bottom" key={index}>
-            <LessonItem key={index} lessionitem={lession} />
-          </div>
-        ))}
-        {cartRent.map((rental, index) => (
-          <div className="p-2 border-bottom" key={index}>
-            <RentItem key={index} rentalitem={rental} />
-          </div>
-        ))}
+          {/* 移動端版本... */}
+        </div>
+        <CheckoutFormStep3 />
       </div>
     </div>
-    <CheckoutFormStep2 />
-  </div>
-</div>
-
-
   )
 }

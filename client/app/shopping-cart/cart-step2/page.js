@@ -1,27 +1,16 @@
 'use client'
 
-import './shopping-cart-step1.scss'
+import './cart-step2.scss'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Script from 'next/script'
-import CartTitle from '../_components/cart-title/page'
-import CheckoutFormStep1 from '../_components/checkout-form-step1/page'
+
 import CartItem from '../_components/cart-item/page'
+import CheckoutFormStep2 from '../_components/checkout-form-step2/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
-import  useAddCart  from '@/hooks/use-cart.js';
 
-export default function shoppingCartOnePage() {
-  // test()
-  // async function test(){
-  //   let api = "http://localhost:8000/api/cart";
-  //   const res =await fetch(api,{
-  //     method: "GET"
-  //   });
-  //   const result =await res.json();
-  //   console.log(result);
-  // }
-  const test = useAddCart();
-  console.log(test);
+export default function cartPageTwo() {
+  // const cartItemsStorage = localStorage.getItem("cartItem");
+  // const cartItems = JSON.parse(cartItemsStorage)
   const cartItems = [
     {
       type: 'product',
@@ -80,7 +69,6 @@ export default function shoppingCartOnePage() {
     },
     // 其他商品...
   ]
-
   const cartLession = [
     {
       type: 'lession',
@@ -103,53 +91,32 @@ export default function shoppingCartOnePage() {
     },
   ]
   return (
-    <>
-      <div className="container" style={{ height: '91vh' }}>
-        <CartTitle count={cartItems.length} />
-        <div className="row d-flex justify-content-center">
-          <div className="j-shoppingCartBox justify-content-between mt-4 col-md-8">
-            <div className="j-shoppingItemsBox d-none d-sm-block p-0">
-              {cartItems.map((item, index) => (
-                <div className="d-flex align-items-center gap-3 p-2 border-bottom" key={index + 1}>
-                  <input
-                    type="checkbox"
-                    className="form-check-input form-check-lg shadow-sm rounded"
-                    id={`cartItem-${index}`}
-                  />
-                  <CartItem key={index} id={index + 1} itemData={item} />
-                </div>
-              ))}
-              {cartLession.map((lession, index) => (
-                <div className="d-flex align-items-center gap-3 p-2 border-bottom" key={index + 1}>
-                  <input
-                    type="checkbox"
-                    className="form-check-input form-check-lg shadow-sm rounded"
-                    id={`lessonItem-${index}`}
-                  />
-                  <LessonItem key={index} lessionitem={lession} />
-                </div>
-              ))}
-              {cartRent.map((rental, index) => (
-                <div className="d-flex align-items-center gap-3 p-2 border-bottom" key={index + 1}>
-                  <input
-                    type="checkbox"
-                    className="form-check-input form-check-lg shadow-sm rounded"
-                    id={`rentItem-${index}`}
-                  />
-                  <RentItem key={index} rentalitem={rental} />
-                </div>
-              ))}
-            </div>
-            {/* 移動端版本... */}
+    <div className="container" style={{ height: '91vh' }}>
+  <div className="j-heightspace"></div>
+  <div className="row d-flex justify-content-center pt-2">
+    <div className="j-shoppingCartBox justify-content-between mt-4 col-md-7">
+      <div className="j-shoppingItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
+        {cartItems.map((item, index) => (
+          <div className="p-2 border-bottom" key={index}>
+            <CartItem key={index} id={index + 1} itemData={item} />
           </div>
-          <CheckoutFormStep1 />
-        </div>
+        ))}
+        {cartLession.map((lession, index) => (
+          <div className="p-2 border-bottom" key={index}>
+            <LessonItem key={index} lessionitem={lession} />
+          </div>
+        ))}
+        {cartRent.map((rental, index) => (
+          <div className="p-2 border-bottom" key={index}>
+            <RentItem key={index} rentalitem={rental} />
+          </div>
+        ))}
       </div>
+    </div>
+    <CheckoutFormStep2 />
+  </div>
+</div>
 
-      <Script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        strategy="afterInteractive"
-      />
-    </>
+
   )
 }

@@ -2,14 +2,14 @@
     color: #000;
     text-align: center;
     font-family: "Noto Sans";
-    font-size: 48px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
   }
   .j-addressDetailContent{
     font-family: "Noto Sans";
-    font-size: 11px;
+    font-size: 12px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -51,6 +51,17 @@
   }
 
   .j-Checkout .j-btn {
+    &:not(.j-payStep){
+      border: none;
+    }
+  
+    &:focus{
+      border: none;
+    }
+    &:active{
+      border: none;
+      color: #fff;
+    }
     color: #FFF;
     font-size: 14px;
   }
