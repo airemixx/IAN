@@ -53,11 +53,12 @@
   margin-top: 1.5rem;
   display: flex;
   justify-content: end;
+
 }
 
 .go-page-link a {
   text-decoration: none;
-  color: var(--line-color-gray);
+  color: var(--secondary-color-med);
   display: flex;
   gap: 10px;
 }
@@ -70,4 +71,65 @@
 
 .hr {
   margin-top: 2rem;
+}
+
+/* 響應式樣式 */
+
+@media screen and (max-width: 768px) {
+  
+
+  /*--- 評價 --- */
+  .course-rating {
+    display: block;
+  }
+
+  .rating-right {
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .progress {
+    width: 100%;
+  }
+
+}
+
+@media screen and (max-width: 567px) {
+  .title-block {
+    display: none;
+  }
+
+  /* --- 評價 --- */
+  .section-detail-title {
+    margin-top: 2rem;
+  }
+
+  .go-page-link {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .total-score {
+    display: none;
+  }
+  .score-area {
+    margin-left: 0;
+  }
+
+  .score-area .score {
+    font-size: 1.2rem;
+  }
+
+  .rating-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .star-area {
+    margin-left: 8px;
+  }
+
+  .all-comment-link {
+    margin: 0.5rem;
+  }
 }

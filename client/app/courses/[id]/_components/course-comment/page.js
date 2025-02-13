@@ -1,4 +1,5 @@
 'use client'
+import StarRating from '@/app/courses/_components/star-rating/page'
 import styles from './course-comment.module.scss'
 
 export default function CourseComment({
@@ -22,9 +23,7 @@ export default function CourseComment({
               <p className={styles['commenter-time']}>{date}</p>
             </div>
           </div>
-          <div className={styles['commenter-rating']}>
-        
-          </div>
+          <StarRating  rating="4.8"/>
         </div>
         <div className={styles['comment-card-content']}>
           <p className={styles['title']}>{title}</p>
