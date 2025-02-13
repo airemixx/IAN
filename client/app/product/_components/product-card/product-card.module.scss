@@ -1,8 +1,5 @@
 /* 📌 卡片樣式 */
 .card {
-  transition: box-shadow 0.3s ease-in-out;
-  // background-color: #fff;
-  margin: 0px;
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
   }
@@ -30,11 +27,13 @@
     object-fit: contain;
     display: block;
     margin: 0 auto;
+    background-color: #fff;
   }
 }
 
 .cardbody {
   padding: 0.5rem;
+  background-color: #fff;
 }
 
 
