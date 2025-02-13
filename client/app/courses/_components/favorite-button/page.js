@@ -1,9 +1,9 @@
 import { FaRegHeart, FaHeart } from 'react-icons/fa6'
-import styles from '../courses-card/courses-card.module.scss'
+
 
 export default function FavoriteButton({ isFavorite, toggleFavorite }) {
   return (
-    <button onClick={toggleFavorite} className={styles['favorite-icon']}>
+    <button onClick={toggleFavorite} className='e-favorite-icon'>
       {isFavorite ? (
         <FaHeart size={18} color="white" /> // ✅ 實心愛心
       ) : (

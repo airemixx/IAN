@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     res.json(courses)
   } catch (error) {
     console.error('❌ 取得課程失敗：', error.message)
-    res.status(500).json({ error: '無法取得課程資料' })
+    res.status(500).json({ error: '無法取得課程資料', details: error.message })
   }
 })
 
@@ -63,7 +63,7 @@ router.get('/:id', async (req, res) => {
 
 // 取得特定課程的所有評論
 router.get('/:id/comments', async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params
   try {
     const sql = `
       SELECT 
@@ -71,15 +71,42 @@ router.get('/:id/comments', async (req, res) => {
       FROM comments cm
       WHERE cm.course_id = ?
       ORDER BY cm.created_at DESC;
-    `;
+    `
 
-    const [comments] = await pool.execute(sql, [id]);
+    const [comments] = await pool.execute(sql, [id])
 
-    res.json(comments);
+    res.json(comments)
   } catch (error) {
-    console.error('❌ 無法獲取課程評論:', error);
-    res.status(500).json({ error: '無法獲取課程評論' });
+    console.error('❌ 無法獲取課程評論:', error)
+    res.status(500).json({ error: '無法獲取課程評論' })
   }
-});
+})
 
 export default router
+
+// **取得同分類課程**
+router.get('/related/:category', async (req, res) => {
+  const category = req.params.category
+
+  try {
+    const sql = `
+      SELECT c.id, c.title, c.image_url, c.sale_price, c.student_count, 
+       COALESCE(AVG(cm.rating), 0) AS rating, 
+       t.name AS teacher_name
+      FROM courses c
+      JOIN teachers t ON c.teacher_id = t.id
+      LEFT JOIN comments cm ON c.id = cm.course_id
+      WHERE c.category = ?  
+      GROUP BY c.id, t.name
+ORDER BY RAND()
+      LIMIT 4;
+    `
+
+    const [rows] = await pool.execute(sql, [category])
+
+    res.json(rows)
+  } catch (error) {
+    console.error('❌ 無法獲取相關課程:', error)
+    res.status(500).json({ error: '無法獲取相關課程' })
+  }
+})

@@ -1,7 +1,6 @@
 import express from 'express'
 import pool from '../db.js'
 import jwt from 'jsonwebtoken'
-import bcrypt from 'bcryptjs'
 
 const router = express.Router()
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key'
@@ -29,6 +28,38 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: '無法獲取講師列表' })
   }
 })
+
+// ✅ 獲取特定講師資料
+router.get("/:id", async (req, res) => {
+  const teacherId = parseInt(req.params.id, 10);
+  if (isNaN(teacherId)) {
+    return res.status(400).json({ error: "Invalid teacher ID" });
+  }
+
+  try {
+    const sql = `
+      SELECT 
+        t.*, 
+        (SELECT COUNT(*) FROM courses WHERE teacher_id = t.id) AS courseCount,
+        (SELECT COALESCE(SUM(student_count), 0) FROM courses WHERE teacher_id = t.id) AS studentCount
+      FROM teachers t
+      WHERE t.id = ?
+    `;
+
+    const [rows] = await pool.execute(sql, [teacherId]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Teacher not found" });
+    }
+
+    res.json(rows[0]); // ✅ 回傳老師資訊 + 計算後的數據
+  } catch (error) {
+    console.error("❌ 獲取講師資料失敗:", error);
+    res.status(500).json({ error: "無法獲取講師資料" });
+  }
+});
+
+
 
 // **老師登入**
 router.post('/login', async (req, res) => {
