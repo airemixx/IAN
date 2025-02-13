@@ -109,6 +109,9 @@ export default function SelectList({ onFilterChange }) {
           篩選條件
           <FontAwesomeIcon icon={isCollapsed ? faAngleDown : faAngleUp} className="ms-1" style={{ fontSize: '20px', color: 'black' }} />  
         </button>
+      {typeof resultCount !== 'undefined' && (
+          <p className="mt-2">搜尋到 {resultCount} 筆資料</p>
+      )}
       </div>
 
       <div className="mb-4 collapse" id="filter-collapse">  

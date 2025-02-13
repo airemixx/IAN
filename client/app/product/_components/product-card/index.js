@@ -15,7 +15,6 @@ export default function ProductCard({ product }) {
         {/* 讓整張卡片可點擊，除了按鈕 */}
         <Link href={`/product/${product.id}`} className="stretched-link" aria-label={`查看 ${product.name} 的詳細資訊`} />
 
-        {/* 商品圖片，確保它一直顯示，不會 hover 才出現 */}
         <div className="position-relative">
         <img src={product.image_url} alt={product.name} className={styles.cardImgTop} />
 

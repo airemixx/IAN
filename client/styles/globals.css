@@ -186,6 +186,34 @@ nav {
   display: none;
 }
 
+/* search area */
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.search-button {
+  margin-left: 1.5rem;
+  padding: 0.4rem 2rem;
+  border:1px solid #7e726700;
+  background: #7E7267;
+  color: #fff;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.search-button:hover {
+  background: #ffffff;
+  color: #7E7267;
+  border:1px solid #7E7267;
+}
+
 /* 透明緩衝區 */
 .hover-gap {
   position: absolute;

@@ -18,10 +18,11 @@ router.get("/", async (req, res) => {
     const connection = await pool.getConnection();
     
     // 取得查詢參數
-    const { brand_id, category_id, subcategory_id } = req.query;
+    const { brand_id, category_id, subcategory_id,min_price, max_price } = req.query;
+    
     
     // 構建 SQL 查詢條件
-    let whereClause = "WHERE 1=1"; // `1=1` 確保 WHERE 一開始有效
+    let whereClause = "WHERE 1=1";
     const queryParams = [];
 
     if (brand_id) {
@@ -39,6 +40,19 @@ router.get("/", async (req, res) => {
       queryParams.push(subcategory_id);
     }
 
+   // ✅ 確保 `min_price` 和 `max_price` 只有在用戶輸入時才會加入查詢
+   const minPriceNum = min_price ? Number(min_price) : null;
+   const maxPriceNum = max_price ? Number(max_price) : null;
+
+   if (!isNaN(minPriceNum) && minPriceNum !== null) {
+     whereClause += " AND p.price >= ?";
+     queryParams.push(minPriceNum);
+   }
+
+   if (!isNaN(maxPriceNum) && maxPriceNum !== null) {
+     whereClause += " AND p.price <= ?";
+     queryParams.push(maxPriceNum);
+   }
     // 執行 SQL 查詢
     const [rows] = await connection.query(`
       SELECT 
@@ -70,7 +84,6 @@ router.get("/", async (req, res) => {
 });
 
 
-// ✅ 新增這個 `/filters` API，確保它存在
 router.get("/filters", async (req, res) => { 
   try {
     const connection = await pool.getConnection();

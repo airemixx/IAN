@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect } from "react";
 
-function setCartItem(){
+const setCartItem = (cartItems) => {
+  localStorage.setItem("cartItem",JSON.stringify(cartItems))
+  }
 
-}
-
-function getCartItem() {
-  const cartItemsStorage = localStorage.getItem();
-  // 類似於 componentDidMount 和 componentDidUpdate
+  const getCartItem = () => {
+    const cartItemsStorage = localStorage.getItem("cartItem");
+    const cartItem = JSON.parse(cartItemsStorage);
+    return cartItem  ? JSON.parse(cartItemsStorage) : [];
+  }
+const useAddCart = () => {
   useEffect(() => {
-   
-  }, []); // 空依賴陣列表示只在組件掛載和卸載時執行
-
+    return getCartItem;
+  },[])
 }
 
-export default getCartItem;
+export default useAddCart;

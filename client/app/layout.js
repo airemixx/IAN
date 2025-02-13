@@ -25,6 +25,12 @@ const inter = Inter({
 
 export default function RootLayout({ children }) {
 
+  const [aboutUsOpen, setAboutUsOpen] = useState(false)
+  const [accountCenterOpen, setAccountCenterOpen] = useState(false)
+  const [faqOpen, setFaqOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  
+
 
   // 🔹 排除課程管理中心 (`/admin/courses`)
   // const isAdminPage = router.pathname.startsWith('/teacher')
@@ -33,7 +39,11 @@ export default function RootLayout({ children }) {
     <>
       <html lang="en">
         <body className={`${notoSansTC.variable} ${inter.variable}`}>
-        <Header/>
+        <Header
+          searchOpen={searchOpen}
+          setSearchOpen={setSearchOpen}
+        />
+
           {children}
         <Footer/>
         </body>

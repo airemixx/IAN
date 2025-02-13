@@ -20,15 +20,18 @@ router.use(cors(corsOptions))
 
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
-  const { year, month, category } = req.query;
+  const { year, month, category, search } = req.query;
   let query = `
-    SELECT a.*, c.name as category_name
+    SELECT a.*, c.name as category_name,
+           GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags
     FROM article a
     LEFT JOIN article_category c ON a.category_id = c.id
+    LEFT JOIN article_tags at ON a.id = at.article_id
+    LEFT JOIN tag t ON at.tag_id = t.id
   `;
   const queryParams = [];
+  const conditions = [];
 
-  let conditions = [];
   if (year) {
     conditions.push("YEAR(a.created_at) = ?");
     queryParams.push(year);
@@ -41,10 +44,16 @@ router.get('/', async (req, res) => {
     conditions.push("a.category_id = ?");
     queryParams.push(category);
   }
-
+  if (search) {
+    conditions.push("(a.title LIKE ? OR t.tag_name LIKE ?)");
+    queryParams.push(`%${search}%`);
+    queryParams.push(`%${search}%`);
+  }
   if (conditions.length > 0) {
     query += " WHERE " + conditions.join(" AND ");
   }
+
+  query += " GROUP BY a.id ORDER BY a.created_at DESC";
 
   try {
     const [rows] = await pool.query(query, queryParams);
@@ -56,7 +65,7 @@ router.get('/', async (req, res) => {
   } catch (err) {
     res.status(500).json({
       status: 'error',
-      message: err.message || "取得文章失敗"
+      message: err.message ? err.message : "取得文章失敗"
     });
   }
 });
