@@ -23,6 +23,8 @@ export default function RootLayout({ children }) {
   const [aboutUsOpen, setAboutUsOpen] = useState(false)
   const [accountCenterOpen, setAccountCenterOpen] = useState(false)
   const [faqOpen, setFaqOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  
   return (
     <>
       <html lang="en">
@@ -199,9 +201,83 @@ export default function RootLayout({ children }) {
               </ul>
               <ul className="nav-right">
                 <li>
-                  <a href="#">
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setSearchOpen(!searchOpen)
+                    }}
+                  >
                     <img src="/images/icon/search.svg" alt="" />
                   </a>
+
+                  {searchOpen && (
+                    <div
+                      className="search-modal"
+                      style={{
+                        width: '100%',
+                        background: '#eaeaea',
+                        padding: '1rem',
+                        position: 'absolute',
+                        top: '100%', // 彈窗緊貼header下方
+                        left: 0,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onMouseLeave={() => setSearchOpen(false)}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          width: '100%',
+                          maxWidth: '600px', // 搜尋區塊寬度可調整
+                          alignItems: 'center',
+                        }}
+                      >
+                        <input
+                          type="text"
+                          placeholder="搜尋關鍵字"
+                          style={{
+                            flex: 3,
+                            padding: '0.5rem',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                          }}
+                        />
+                        <select
+                          defaultValue="全站搜尋"
+                          style={{
+                            flex: 1,
+                            marginLeft: '1rem',
+                            padding: '0.5rem',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            background: '#fff',
+                          }}
+                        >
+                          <option value="全站搜尋">全站搜尋</option>
+                          <option value="產品">產品</option>
+                          <option value="最新消息">最新消息</option>
+                          <option value="課程">課程</option>
+                          <option value="租賃">租賃</option>
+                        </select>
+                        <button
+                          style={{
+                            marginLeft: '1rem',
+                            padding: '0.5rem 1rem',
+                            border: 'none',
+                            background: '#333',
+                            color: '#fff',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          搜尋
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   <a href="#">
                     <img src="/images/icon/user.svg" alt="" />
                   </a>
