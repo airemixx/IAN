@@ -1,6 +1,7 @@
 ## 筆記
 
 ```
+--- 筆記
 LENSTUDIO/
 ├─ client/ # ✅ 前端程式碼
 │ ├── app/
@@ -8,24 +9,26 @@ LENSTUDIO/
 │ │ ├── course/ # ✅ 課程系統
 │ │ ├── product/ # ✅ 商品系統
 │ │ ├── rental/ # ✅ 租借系統
-│ │ │ ├── page.js
-│ │ │ ├── rental-list.module.scss
-│ │ │ ├── \_components
-│ │ │ │ ├── index.js # 商品列表(server)
-│ │ │ │ ├── rental-list.js # 商品列表(server)
-│ │ │ │ ├── rental-card.js # 單個商品(server)
-│ │ │ │ ├── rental-pagination.js # 分頁(client)
-│ │ │ │ └── rental-search.js # 搜尋(client)
-│ │ │ └── [id]/
-│ │ │ ├── page.js
-│ │ │ ├── rental-detail.module.scss
-│ │ │ └── \_components
-│ │ │ ├── index.js
-│ │ │ ├── rental-detail.js # 租借詳情(server)
-│ │ │ ├── rental-carousel.js # 輪播(client)
-│ │ │ ├── rental-tabs.js # 切換(client)
-│ │ │ ├── rental-reviews.js # 評論(client)
-│ │ │ └── rental-recommendation.js # 推薦商品(server)
+│ │ │ 　├── page.js
+│ │ │ 　├── \_components
+│ │ │ 　│ 　├── rent-breadcrumb
+│ │ │ 　│ 　├── rent-filter
+│ │ │ 　│ 　├── rent-hashtags
+│ │ │ 　│ 　├── rent-list
+│ │ │ 　│ 　├── rent-order
+│ │ │ 　│ 　├── rent-pagination
+│ │ │ 　│ 　├── rent-searsh
+│ │ │ 　│ 　└── rent-total
+│ │ │ 　└── [id]/
+│ │ │ 　　　├── page.js
+│ │ │ 　　　└── \_components
+│ │ │ 　　　　　├── rent-breadcrumb
+│ │ │ 　　　　　├── rent-detail
+│ │ │ 　　　　　├── rent-hashtag
+│ │ │ 　　　　　├── rent-pagination
+│ │ │ 　　　　　├── rent-photo
+│ │ │ 　　　　　├── rent-recommendation
+│ │ │ 　　　　　└── rent-reviews
 │ │ │
 │ │ ├── cart/ # ✅ 購物車系統
 │ │ ├── user/ # ✅ 會員系統
@@ -46,10 +49,9 @@ LENSTUDIO/
 │ │ │ └── user/ # ✅ 會員系統的圖片
 │ │ └── favicon.ico
 │ │
-│ │
-│ │
 │ └── styles/
 │ └── globals.css
 │
 └── server/ # ✅ 後端程式碼
+
 ```
