@@ -9,7 +9,6 @@ import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
 
 export default function shoppingCartOnePage() {
-
   // test()
   // async function test(){
   //   let api = "http://localhost:8000/api/cart";
@@ -19,7 +18,7 @@ export default function shoppingCartOnePage() {
   //   const result =await res.json();
   //   console.log(result);
   // }
-  
+
   const cartItems = [
     {
       type: 'product',
@@ -101,45 +100,46 @@ export default function shoppingCartOnePage() {
     },
   ]
 
-  // localStorage.setItem(cartItems)
+  localStorage.setItem("cartItem",JSON.stringify(cartItems))
   return (
     <>
-      <div className="container" style={{height:"91vh"}}>
+      <div className="container" style={{ height: '91vh' }}>
         <CartTitle count={cartItems.length} />
         <div className="row d-flex justify-content-center">
-          <div
-            className="j-shoppingCartBox justify-content-between mt-4 col-md-8"
-          >
-            <div
-              className="j-shoppingItemsBox d-none d-sm-block p-0"
-            >
+          <div className="j-shoppingCartBox justify-content-between mt-4 col-md-8">
+            <div className="j-shoppingItemsBox d-none d-sm-block p-0">
               {cartItems.map((item, index) => (
-                <div className='d-flex' key={index+1}>
-                  <input type="checkbox" className="form-check me-2" id={index + 1} />
+                <div className="d-flex" key={index + 1}>
+                  <input
+                    type="checkbox"
+                    className="form-check me-2"
+                    id={index + 1}
+                  />
                   <CartItem key={index} id={index + 1} itemData={item} />
                 </div>
               ))}
               {cartLession.map((lession, index) => (
-                <div className='d-flex' key={index+1}>
-                  <input type="checkbox" className="form-check me-2" id={index + 1} />
+                <div className="d-flex" key={index + 1}>
+                  <input
+                    type="checkbox"
+                    className="form-check me-2"
+                    id={index + 1}
+                  />
                   <LessonItem
                     key={index}
-                    id={index + 1}
                     lessionitem={lession}
                   />
                 </div>
-                
               ))}
               {cartRent.map((rental, index) => (
-                <div className='d-flex' id={index+1}>
-                  <input type="checkbox" className="form-check me-2" id={index + 1} />
-                  <RentItem
-                    key={index}
+                <div className="d-flex" key={index + 1}>
+                  <input
+                    type="checkbox"
+                    className="form-check me-2"
                     id={index + 1}
-                    rentalitem={rental}
                   />
+                  <RentItem key={index} rentalitem={rental} />
                 </div>
-               
               ))}
             </div>
             {/* 移動端版本... */}
