@@ -10,7 +10,7 @@ const useArticles = (filter = {}) => {
     const fetchArticles = async () => {
       setLoading(true);
       try{
-        let url = 'http://localhost:3005/api/articles';
+        let url = 'http://localhost:8000/api/articles';
         const queryParams = new URLSearchParams();
 
         if(filter.year) queryParams.append("year", filter.year);//如果有年份就加入queryParams

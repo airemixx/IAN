@@ -10,20 +10,7 @@ export default function UserPage(props) {
     <div className={`container py-4 ${styles.body}`}>
     <div className={`row ${styles.marginTop}`}>
       {/* 側邊選單 */}
-      <div className="col-md-3 mb-4">
-        <nav className={styles.sidenav}>
-          <div className="d-flex flex-column">
-            <a href="#">會員資料修改</a>
-            <a href="#">我的訂單</a>
-            <a href="#">我的文章</a>
-            <a href="#">我的租借</a>
-            <a href="#">我的課程</a>
-            <a href="#">我的收藏</a>
-            <a href="#">優惠券</a>
-            <a href="#">登出</a>
-          </div>
-        </nav>
-      </div>
+      <Sidenav />
       {/* 主要內容區 */}
       <div className="col-md-8">
         <h1 className="mb-4">我的訂單(2)</h1>
@@ -36,7 +23,7 @@ export default function UserPage(props) {
           {/* 商品 1 */}
           <div className={styles.productBorder}>
             <div className={`d-flex ${styles.productDetails} gap-4`}>
-              <img src="/images/product/α1.jpg" alt="相機" className={styles.productImage} />
+              <img src="/images/product/zf.png" alt="相機" className={styles.productImage} />
               <div className="flex-grow-1">
                 <span className={styles.productLabel}>相機</span>
                 <h6 className={styles.productBrand}>FUJIFILM 富士</h6>
@@ -59,7 +46,7 @@ export default function UserPage(props) {
           {/* 商品 2 */}
           <div className={styles.productBorder}>
             <div className={`d-flex ${styles.productDetails} gap-4`}>
-              <img src="/images/product/α1.jpg" alt="相機" className={styles.productImage} />
+              <img src="/images/product/zf.png" alt="相機" className={styles.productImage} />
               <div className="flex-grow-1">
                 <span className={styles.productLabel}>課程</span>
                 <h6 className={styles.productBrand}>食癮，合影</h6>
@@ -79,7 +66,7 @@ export default function UserPage(props) {
               </div>
             </div>
           </div>
-          <h4 className={styles.orderTotal}>訂單金額: NT$123456</h4>
+          <h5 className={styles.orderTotal}>訂單金額: NT$123456</h5>
         </div>
         {/* 訂單卡片 2 */}
         <div className={styles.orderCard}>
@@ -90,7 +77,7 @@ export default function UserPage(props) {
           {/* 重複的商品項目結構 */}
           <div className={styles.productBorder}>
             <div className={`d-flex ${styles.productDetails} gap-4`}>
-              <img src="/images/product/α1.jpg" alt="相機" className={styles.productImage} />
+              <img src="/images/product/zf.png" alt="相機" className={styles.productImage} />
               <div className="flex-grow-1">
                 <span className={styles.productLabel}>相機</span>
                 <h6 className={styles.productBrand}>FUJIFILM 富士</h6>
@@ -110,7 +97,7 @@ export default function UserPage(props) {
               </div>
             </div>
           </div>
-          <h4 className={styles.orderTotal}>訂單金額: NT$123456</h4>
+          <h5 className={styles.orderTotal}>訂單金額: NT$123456</h5>
         </div>
       </div>
     </div>

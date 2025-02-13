@@ -35,7 +35,7 @@ export default function UserPage(props) {
                     <form>
                       <div className="mb-3">
                         <label className="form-label">電郵地址</label>
-                        <input type="email" className={`form-control ${styles.customInput}`} />
+                        <input type="email" className={`form-control ${styles.customInput}`} disabled  value={"a2825514620@gmail.com"}/>
                       </div>
                       <div className="mb-3">
                         <label className="form-label">稱謂 *</label>
@@ -64,8 +64,8 @@ export default function UserPage(props) {
                 <div className="col-lg-5 mb-4">
                   <div className={styles.customCard}>
                     <h5>我的密碼</h5>
-                    <p className="text-muted">如要更改密碼，您需要先輸入目前的密碼。</p>
-                    <button className={styles.customBtn}>更新我的密碼</button>
+                    <p className="mt-4 text-muted">如要更改密碼，您需要先輸入目前的密碼。</p>
+                    <button className={`mt-4 ${styles.customBtn}`}>更新我的密碼</button>
                   </div>
                 </div>
               </div>

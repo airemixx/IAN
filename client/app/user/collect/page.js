@@ -22,7 +22,7 @@ export default function UserPage() {
               {/* Card 1 */}
               <div className="col-12 col-md-6 col-lg-4">
                 <div className={`p-4 ${styles.collectionCard}`} >
-                  <img src="/images/product/α1.jpg" alt="相機" className="mb-3" />
+                  <img src="/images/product/zf.png" alt="相機" className="mb-3" />
                   <div className={styles.cardDivider} />
                   <h6 className={styles.textGray}>FUJIFILM 富士</h6>
                   <h5 className="mb-3">X-T5 16-50mm</h5>
@@ -51,7 +51,7 @@ export default function UserPage() {
             <div className="row g-4">
               <div className="col-12 col-md-6 col-lg-4">
                 <div className={`p-4 ${styles.collectionCard}`}>
-                  <img src="/images/product/α1.jpg" alt="租賃" className="mb-3" />
+                  <img src="/images/product/zf.png" alt="租賃" className="mb-3" />
                   <div className={styles.cardDivider} />
                   <h6 className={styles.textGray}>FUJIFILM 富士</h6>
                   <h5 className="mb-3">X-T5 16-50mm</h5>
