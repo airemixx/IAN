@@ -1,12 +1,11 @@
 import styles from "./cart-item.module.scss";
 import ProductDetails from "../product-details/page";
 
-export default function CartItem({ id, type, itemData }) {
+export default function CartItem({id, type, itemData }) {
   const { image, brand, model, price, specs } = itemData;
 
   return (
-    <div className="d-flex">
-      <input type="checkbox" className="form-check me-2" id={`item${id}`} />
+    <div className="d-flex flex-grow-1">
       <div className={`${styles['j-cartItemBox']} me-3 mb-2 d-flex flex-grow-1`}>
         <div className={`${styles['j-cartItem']} d-flex flex-grow-1`}>
           <div className={`${styles['j-cameraImg']} m-2`}>
