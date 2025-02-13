@@ -28,14 +28,14 @@ const nextConfig = {
   // output: 'export', // don't use with `next start` or api route
   // distDir: 'dist',
   // avoid cors with proxy
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: '/api/:path*',
-  //       destination: 'http://localhost:3005/:path*', // Proxy to Backend
-  //     },
-  //   ]
-  // },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:8000/api/:path*', // Proxy to Backend
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

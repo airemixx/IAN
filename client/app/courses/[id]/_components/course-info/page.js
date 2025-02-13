@@ -3,7 +3,7 @@
 import styles from './course-info.module.scss'
 import FavoriteButtonG from '../favorite-button-g/page'
 
-export default function CourseInfo() {
+export default function CourseInfo({ course }) {
   return (
     <section className={styles['course-info-container']}>
       <div className="container">
@@ -33,35 +33,35 @@ export default function CourseInfo() {
             <li
               className={`${styles['breadcrumb-item']} ${styles['breadcrumb-item-active']}`}
             >
-              美食攝影逐光旅行，餐桌上的四季光影
+              {course.title}
             </li>
           </ul>
         </nav>
         {/* 課程資訊 */}
         <div className={`row ${styles['course-info']}`}>
           <div className={`col-md-6 ${styles['course-img']}`}>
-            <img src="/images/course-cover/course_13_1.avif" alt="" />
+            <img src={course.image_url}  alt="" />
           </div>
           <div className={`col-md-6 ${styles['course-detail']}`}>
-            <h1>美食攝影逐光旅行，餐桌上的四季光影</h1>
+            <h1> {course.title}</h1>
             <a href="">
               <div className={styles['course-info-teacher']}>
                 <div className={styles['teacher-img']}>
-                  <img src="/images/teacher/teacher_4.avif" alt="" />
+                  <img src={course.teacher_image} alt="" />
                 </div>
-                <h3>Ada Lin</h3>
+                <h3>{course.teacher_name}</h3>
               </div>
             </a>
-            <p>
-              這門課程將教你如何使用自然光，與簡單的人造補光，拍攝出各種風格的餐桌饗宴。
-              利用實作範例分享，了解各種風格可以利用什麼樣的配件與道具、色彩的搭配，
-              從無到有的拍攝出吸睛的美食攝影照。
-            </p>
+            <p>{course.description}</p>
             <div className={styles['line']}></div>
-            <div className={styles['original-price']}>$2,500</div>
+            <div className={styles['original-price']}>
+              {course.original_price.toLocaleString('en-US')}
+            </div>
             <div className={styles['shopping-btns']}>
               <div className={styles['price']}>
-                <div className={styles['discount-price']}>$1,890</div>
+                <div className={styles['discount-price']}>
+                  {course.sale_price.toLocaleString('en-US')}
+                </div>
               </div>
               <div className={styles['shopping-btn']}>
                 <button className={styles['buy-btn']}>+ 立即購買</button>
