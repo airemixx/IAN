@@ -24,7 +24,9 @@ const useArticles = (filter = {}) => {
         }
 
         const response = await axios.get(url);//發送請求
-        setArticles(response.data.data);//將資料存入articles
+        let data = response.data.data;//取得文章資料
+
+        setArticles(data);//設定文章
       }catch(err){
         setError(err);
       } finally {

@@ -24,12 +24,7 @@ export default function NewsCard() {
       tag: '產品情報',  
       title: 'Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！',  
       image: '/images/article/course-3.jpg',  
-    },  
-    {  
-      tag: '產品情報',  
-      title: 'Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！',  
-      image: '/images/article/course-3.jpg',  
-    },  
+    }
   ];  
 
   return (  

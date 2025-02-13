@@ -1,15 +1,13 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
+import React, { useRef, useEffect } from 'react';
 
 export default function Header({ searchOpen, setSearchOpen }) {
-
+  const router = useRouter();
   const searchRef = useRef(null);
   const inputRef = useRef(null);
   const selectRef = useRef(null);
-  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -24,21 +22,23 @@ export default function Header({ searchOpen, setSearchOpen }) {
     };
   }, [setSearchOpen]);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    const keyword = inputRef.current.value;
-    const selectedOption = selectRef.current.value;
-    let query = '';
+    const keyword = inputRef.current.value.trim();
+    if (!keyword) return;
 
-    // 若選擇「最新消息」，以搜尋文章標題及 tag 為例
-    if(selectedOption === '最新消息'){
-      query = `?search=${encodeURIComponent(keyword)}`;
-    }else {
-      query = `?search=${encodeURIComponent(keyword)}`;
-    }
+    // 清除當前 URL 的查詢參數
+    await router.replace('/article');
 
-    // 導向 /article 頁面並帶上 query 參數
-    router.push(`/article${query}`);
+    // 根據使用者輸入產生新的查詢參數
+    const query = `?search=${encodeURIComponent(keyword)}`;
+    const targetUrl = `/article${query}`;
+
+    router.push(targetUrl);
+    // 強制重新渲染
+    router.refresh();
+
+    inputRef.current.value = '';
     setSearchOpen(false);
   };
 
@@ -46,11 +46,13 @@ export default function Header({ searchOpen, setSearchOpen }) {
     <>
       <header className="nav-fixed-1" data-type="nav-fixed-1">
         <div className="search-icon">
-          <a href="#"
+          <a
+            href="#"
             onClick={(e) => {
               e.preventDefault();
               setSearchOpen(!searchOpen);
-            }}>
+            }}
+          >
             <img src="/images/icon/search.svg" alt="search" />
           </a>
         </div>
@@ -110,7 +112,6 @@ export default function Header({ searchOpen, setSearchOpen }) {
                     <li>
                       <a href="#">
                         <img src="/images/leica.png" alt="Leica" />
-                        <span>Leica</span>
                       </a>
                     </li>
                   </ul>
@@ -250,14 +251,15 @@ export default function Header({ searchOpen, setSearchOpen }) {
             width: '100%',
             background: '#eaeaea',
             padding: '1rem',
-            position: 'absolute',
-            top: '80px',
+            position: 'fixed', // 改為 fixed 定位
+            top: '80px',       // 設定與 header 底部的距離（根據 header 高度調整）
             left: 0,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             animation: 'slideDown 0.5s ease forwards',
             overflow: 'hidden',
+            zIndex: 9, 
           }}
         >
           <div

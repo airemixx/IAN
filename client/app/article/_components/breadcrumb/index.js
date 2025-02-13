@@ -12,10 +12,6 @@ export default function Breadcrumb() {
           <span className="mx-2">&gt;</span>
           <a href="#" className="text-decoration-none">最新消息</a>
         </div>
-
-        <div className="my-sm-5 y-list-title">
-          <h1>最新消息 News</h1>
-        </div>
       </section>
     </>
   )
