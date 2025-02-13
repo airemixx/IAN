@@ -97,7 +97,7 @@ export default function SelectList({ onFilterChange }) {
   return (  
     <>  
       <div className={`my-sm-5 ${styles['y-list-title']} d-flex justify-content-between align-items-center`}>  
-        <h2 className="mb-0">文章列表</h2>  
+        <h2 className="mb-0">所有文章</h2>  
         <button  
           className="mb-0 btn rounded-pill"
           type="button"
