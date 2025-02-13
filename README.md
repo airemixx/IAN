@@ -1,4 +1,6 @@
---- 筆記
+## 筆記
+
+```
 LENSTUDIO/
 ├─ client/ # ✅ 前端程式碼
 │ ├── app/
@@ -43,10 +45,11 @@ LENSTUDIO/
 │ │ │ ├── teacher/ # ✅ 教師系統的圖片
 │ │ │ └── user/ # ✅ 會員系統的圖片
 │ │ └── favicon.ico
-│ │  
+│ │
 │ │
 │ │
 │ └── styles/
 │ └── globals.css
 │
 └── server/ # ✅ 後端程式碼
+```

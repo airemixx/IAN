@@ -1,5 +1,5 @@
 import { FaRegHeart, FaHeart } from 'react-icons/fa6'
-import styles from '../courses-list/courses-list.module.scss'
+import styles from '../courses-card/courses-card.module.scss'
 
 export default function FavoriteButton({ isFavorite, toggleFavorite }) {
   return (
