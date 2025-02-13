@@ -97,3 +97,56 @@
   border: 1px solid var(--line-color-gray-light2);
   margin: 1rem 0;
 }
+
+
+@media screen and (max-width: 768px) {
+ 
+  /* -- 關於講師 -- */
+  .teacher-info {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .teacher-info-img {
+    max-width: 100%; /* 讓圖片寬度佔滿 */
+  }
+
+  .teacher-info-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .teacher-info-text {
+    margin-left: 2rem;
+  }
+}
+
+@media screen and (max-width: 567px) {
+  .title-block {
+    display: none;
+  }
+
+  .teacher-info {
+    width: 100%;
+    display: block;
+  }
+
+  .teacher-info-img {
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .teacher-info-text h3 {
+    margin-bottom: 1rem;
+  }
+
+  .teacher-data {
+    display: block;
+  }
+
+  .data-item {
+    margin: 0.5rem 0;
+  }
+}
