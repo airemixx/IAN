@@ -28,6 +28,10 @@
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 20px;
+  transition: transform 0.3s;
+  &:hover {
+    transform: translateY(-5px);
+  }
 }
 
 .orderStatus {
