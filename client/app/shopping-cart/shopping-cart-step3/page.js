@@ -93,17 +93,24 @@ export default function shoppingCartTwoPage() {
   return (
     <div className="container" style={{ height: '91vh' }}>
     <div className="j-heightspace"></div>
-      <div className="row d-flex justify-content-center">
-        <div className="j-shoppingCartBox justify-content-center mt-4 col-md-7 ">
-          <div className="j-shoppingItemsBox d-none d-sm-block p-0 ">
+      <div className="row d-flex justify-content-center pt-2">
+        <div className="j-shoppingCartBox justify-content-center mt-4 col-md-7 pt-5">
+          <div className="j-shoppingItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
             {cartItems.map((item, index) => (
-              <CartItem key={index} id={index + 1} itemData={item} />
+              <div className="p-2 border-bottom"  key={index}>
+                <CartItem key={index} id={index + 1} itemData={item} />
+              </div>
             ))}
             {cartLession.map((lession, index) => (
-              <LessonItem key={index} lessionitem={lession} />
+              <div className="p-2 border-bottom"  key={index}>
+                <LessonItem key={index} lessionitem={lession} />
+              </div>
+              
             ))}
             {cartRent.map((rental, index) => (
-              <RentItem key={index} rentalitem={rental} />
+              <div className="p-2 border-bottom"  key={index}>
+                <RentItem key={index} rentalitem={rental} />
+              </div>
             ))}
           </div>
           {/* 移動端版本... */}
