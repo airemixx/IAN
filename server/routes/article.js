@@ -20,7 +20,7 @@ router.use(cors(corsOptions))
 
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
-  const { year, month, category } = req.query;
+  const { year, month, category, search } = req.query;
   let query = `
     SELECT a.*, c.name as category_name,
            GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags
@@ -43,6 +43,11 @@ router.get('/', async (req, res) => {
   if (category) {
     conditions.push("a.category_id = ?");
     queryParams.push(category);
+  }
+  if (search) {
+    conditions.push("(a.title LIKE ? OR t.tag_name LIKE ?)");
+    queryParams.push(`%${search}%`);
+    queryParams.push(`%${search}%`);
   }
   if (conditions.length > 0) {
     query += " WHERE " + conditions.join(" AND ");

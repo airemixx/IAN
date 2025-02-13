@@ -39,7 +39,10 @@ export default function RootLayout({ children }) {
     <>
       <html lang="en">
         <body className={`${notoSansTC.variable} ${inter.variable}`}>
-        <Header/>
+        <Header
+          searchOpen={searchOpen}
+          setSearchOpen={setSearchOpen}
+        />
 
           {children}
         <Footer/>
