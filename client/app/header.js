@@ -1,5 +1,5 @@
 'use client'
-
+import Link from 'next/link';
 import React, { useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -55,9 +55,9 @@ export default function Header({ searchOpen, setSearchOpen }) {
           </a>
         </div>
         <div className="logo">
-          <a href="#">
+          <Link href="/">
             <img src="/images/icon/lenstudio-logo.svg" alt="logo" />
-          </a>
+          </Link>
         </div>
         <div className="menu-icon">
           <img src="/images/icon/menu.svg" alt="menu" />
@@ -228,9 +228,9 @@ export default function Header({ searchOpen, setSearchOpen }) {
               >
                 <img src="/images/icon/search.svg" alt="" />
               </a>
-              <a href="#">
+              <Link href="/login">
                 <img src="/images/icon/user.svg" alt="" />
-              </a>
+              </Link>
               <a href="#">
                 <img src="/images/icon/compare.svg" alt="" />
               </a>
