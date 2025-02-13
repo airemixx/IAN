@@ -1,15 +1,14 @@
 'use client'
 
-import './shopping-cart-step3.scss'
+import './cart-step3.scss'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import CartItem from '../_components/cart-item/page'
-import CartTitle from '../_components/cart-title/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
 import CheckoutFormStep3 from '../_components/checkout-form-step3/page'
 
-export default function shoppingCartTwoPage() {
+export default function cartPageThree() {
   const cartItems = [
     {
       type: 'product',

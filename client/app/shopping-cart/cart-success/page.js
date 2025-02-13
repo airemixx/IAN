@@ -1,9 +1,9 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./buy-success-module.scss";
+import "./cart-success.scss";
 import { CheckCircle } from "react-bootstrap-icons";
 
-export default function buySuccessPage({ orderNumber, email }) {
+export default function cartSuccessPage({ orderNumber, email }) {
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="container text-center p-4 ">

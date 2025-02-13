@@ -3,7 +3,7 @@ import styles from "./shopping-cart-step3.module.scss";
 export default function CheckoutFormStep3() {
     return (
         <div className={`${styles['j-pay']} col-md-5 ps-0 mt-5 pt-5`}>
-            <p className={`${styles['j-addressTitle']} text-start ps-3`}>結帳</p>
+            <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3`}>結帳</p>
             <div className={`${styles['addressDetail']} d-flex flex-wrap mb-3 row ps-3`}>
                 <div className="d-flex flex-column me-4 col-5">
                     <span className={`${styles['j-addressDetailContent']}`}>
@@ -45,19 +45,19 @@ export default function CheckoutFormStep3() {
                 <div className={`${styles['j-creditCardInput']} d-flex flex-wrap row`}>
                     <div className="d-flex flex-column flex-grow-1 mb-3 col-12">
                         <p className="mb-0">信用卡號碼</p>
-                        <input type="text" className="form-control" />
+                        <input type="text" className="form-control focus-ring focus-ring-light" />
                     </div>
                     <div className="d-flex flex-column flex-grow-1 mb-3 col-6">
                         <p className="mb-0">到期日期</p>
-                        <input type="text" className="form-control" />
+                        <input type="text" className="form-control focus-ring focus-ring-light" />
                     </div>
                     <div className="d-flex flex-column flex-grow-1 mb-3 col-6">
                         <p className="mb-0">安全碼</p>
-                        <input type="text" className="form-control" />
+                        <input type="text" className="form-control focus-ring focus-ring-light" />
                     </div>
                     <div className="d-flex flex-column flex-grow-1 col-6">
                         <p className="mb-0">信用卡上的名字</p>
-                        <input type="text" className="form-control" />
+                        <input type="text" className="form-control focus-ring focus-ring-light" />
                     </div>
                     <div className="col-6" />
                 </div>

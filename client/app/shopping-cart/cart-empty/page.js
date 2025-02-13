@@ -2,7 +2,7 @@
 import  "./shopping-cart-empty.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function shoppingCartEmptyPage(){
+export default function CartEmptyPage(){
     return(
         <>
              <div className="container d-xs-flex flex-sm-column pt-5">

@@ -4,43 +4,43 @@ export default function CheckoutFormStep2() {
     return (
         <div className={`${styles['j-payStep']} col-5 mt-4`}>
             <div className={`${styles['j-payTitle']} mb-3`}>結帳</div>
-            <div className={`${styles['buyerData']} mb-5`}>訂購人資料</div>
+            <div className={`${styles['buyerData']} mb-4`}>訂購人資料</div>
             <div className={`${styles['j-buyerInput']} d-flex flex-wrap mb-5`}>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>稱謂*</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">稱謂*</p>
+                    <input type="text" className="form-control mb-2 focus-ring focus-ring-light" />
                 </div>
                 <div className="d-flex flex-column flex-grow-1">
-                    <p>姓氏*</p>
-                    <input type="text" className="form-control" />
+                    <p className="mb-2">姓氏*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>姓名*</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">姓名*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>地址欄*</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">地址欄*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>城市*</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">城市*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>地區*</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">地區*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>郵遞區號*</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">郵遞區號*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>電話號碼</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">電話號碼*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
-                <div className="d-flex flex-column flex-grow-1">
-                    <p>本地電話*</p>
-                    <input type="text" className="form-control" />
+                <div className="d-flex flex-column flex-grow-1 mb-2">
+                    <p className="mb-2">本地電話*</p>
+                    <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
             </div>
             <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center align-self-stretch`}>
