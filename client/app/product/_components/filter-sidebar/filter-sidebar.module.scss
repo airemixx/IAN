@@ -1,3 +1,10 @@
+.asideFilter {
+  position: sticky;
+  top: 80px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
 /* 📌 篩選 & 排序樣式 */
 .filter-toggle-btn {
   position: fixed;
