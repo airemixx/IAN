@@ -11,7 +11,7 @@ import {
   decrementOne,
   generateCartState,
 } from './cart-reducer-state'
-import useLocalStorage from '@/hooks/use-localstorage'
+import useLocalStorage from './use-localStorage.js'
 
 const CartContext = createContext(null)
 

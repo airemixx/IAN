@@ -8,7 +8,6 @@ import CheckoutFormStep1 from '../_components/checkout-form-step1/page'
 import CartItem from '../_components/cart-item/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
-import useAddCart  from '@/hooks/use-cart.js';
 
 export default function cartPageOne() {
   // test()
@@ -20,8 +19,6 @@ export default function cartPageOne() {
   //   const result =await res.json();
   //   console.log(result);
   // }
-  const test = useAddCart();
-  console.log(test);
   const cartItems = [
     {
       type: 'product',
