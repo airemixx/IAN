@@ -11,8 +11,8 @@ import './rent-list.scss'
 
 export default function RentalPage() {
   return (
-    <div className="container mt-4">
-      <div className="row mb-4" style={{ paddingTop: '120px' }}>
+    <div className="container" style={{ paddingTop: '120px' }}>
+      <div className="row mb-4" >
         <RentBreadcrumb />
         <aside className="col-0 col-md-4 col-lg-3 p-3">
           <hr className="d-none d-md-block" />

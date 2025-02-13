@@ -9,14 +9,14 @@ export default function UserPage(props) {
     <div className="col-md-3 mb-4">
       <nav className="sidenav p-3">
         <div className="d-flex flex-column">
-          <a href="#">會員資料修改</a>
-          <a href="#">我的訂單</a>
-          <a href="#">我的文章</a>
-          <a href="#">我的租借</a>
-          <a href="#">我的課程</a>
-          <a href="#">我的收藏</a>
-          <a href="#">優惠券</a>
-          <a href="#">登出</a>
+          <Link href="/user">會員資料修改</Link>
+          <Link href="/user/order">我的訂單</Link>
+          <Link href="/user/article">我的文章</Link>
+          <Link href="/user/rental">我的租借</Link>
+          <Link href="/user/course">我的課程</Link>
+          <Link href="/user/collect">我的收藏</Link>
+          <Link href="/user/coupon">優惠券</Link>
+          <Link href="/login">登出</Link>
         </div>
       </nav>
     </div>

@@ -1,0 +1,40 @@
+body {
+  background-color: #F5F5F5;
+}
+
+.marginTop {
+  margin: 160px 0;
+}
+// 容器樣式
+.container1 {
+  max-width: 600px;
+  // background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.formBox{
+  margin: 120px 0;
+    background: white;
+    padding: 60px;
+    border-radius: 20px;
+}
+
+// 表單輸入框
+.formControl {
+  border-radius: 20px;
+}
+
+// 標籤樣式
+.formLabel {
+  font-size: 14px;
+}
+
+// 自定義按鈕
+.btnCustom {
+  background-color: #062F4F;
+  color: white;
+  border-radius: 20px;
+  padding: 10px 20px;
+  width: 100%;
+}
