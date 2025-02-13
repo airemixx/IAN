@@ -1,7 +1,7 @@
 "use client"
 import styles from "./rental-item.module.scss";
 
-export default function RentItem({id, rentalitem }) {
+export default function RentItem({rentalitem }) {
     const {image, brand, model, rentDate, dueDate} = rentalitem
     return (
         <div className="d-flex flex-grow-1">

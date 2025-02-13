@@ -63,4 +63,5 @@ article-list.html
 article-detail.html
 
 # ian 
-ian-file/
+ian-file/"client/.vscode/" 
+"server/.vscode/" 

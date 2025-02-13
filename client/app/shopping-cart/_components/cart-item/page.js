@@ -1,7 +1,7 @@
 import styles from "./cart-item.module.scss";
 import ProductDetails from "../product-details/page";
 
-export default function CartItem({id, type, itemData }) {
+export default function CartItem({id, itemData }) {
   const { image, brand, model, price, specs } = itemData;
 
   return (

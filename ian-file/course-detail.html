@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- googlefont -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- font-awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Link Swiper's CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <!-- hover.css -->
+    <link rel="stylesheet" href="./style/hover-min.css" />
+
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- mycss -->
+    <link rel="stylesheet" href="./style/course-detail-style.css" />
+    <title>影像學院</title>
+  </head>
+  <body>
+    <header>
+      <div class="search-icon">
+        <a href=""><img src="./images/search.svg" alt="search" /></a>
+      </div>
+      <div class="logo">
+        <a href=""><img src="./images/lenstudio-logo.svg" alt="logo" /></a>
+      </div>
+      <div class="menu-icon">
+        <img src="./images/menu.svg" alt="menu" />
+      </div>
+      <nav>
+        <ul class="nav-left">
+          <li><a href="#">首頁</a></li>
+          <li class="product-item">
+            <a href="#">產品系列</a>
+            <div class="hover-gap"></div>
+            <!-- 透明的緩衝區域 -->
+            <ul class="pd-dropdown">
+              <li class="drop-camera">
+                <a href="#"
+                  >機身<span class="icon"
+                    ><img src="./images/arrow-down.svg" alt="Icon"
+                  /></span>
+                </a>
+                <ul class="camera-brands">
+                  <li>
+                    <a href="#">
+                      <img src="./images/canon.png" alt="Canon" />
+                      <span>Canon</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/nikon.png" alt="Nikon" />
+                      <span>Nikon</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/sony.png" alt="Sony" />
+                      <span>Sony</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/hasselblad.png" alt="Hasselblad" />
+                      <span>Hasselblad</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/leica.png" alt="Leica" />
+                      <span>Leica</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="drop-lens">
+                <a href="#"
+                  >鏡頭<span class="icon"
+                    ><img src="./images/arrow-down.svg" alt="Icon"
+                  /></span>
+                </a>
+                <ul class="lens-brands">
+                  <li>
+                    <a href="#">
+                      <img src="./images/canon.png" alt="Canon" />
+                      <span>Canon</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/nikon.png" alt="Nikon" />
+                      <span>Nikon</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/sony.png" alt="Sony" />
+                      <span>Sony</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/hasselblad.png" alt="Hasselblad" />
+                      <span>Hasselblad</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/leica.png" alt="Leica" />
+                      <span>Leica</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="drop-other">
+                <a href="#"
+                  >配件<span class="icon"
+                    ><img src="./images/arrow-down.svg" alt="Icon"
+                  /></span>
+                </a>
+                <ul class="other-brands">
+                  <li>
+                    <a href="#">
+                      <img src="./images/canon.png" alt="Canon" />
+                      <span>Canon</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/nikon.png" alt="Nikon" />
+                      <span>Nikon</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/sony.png" alt="Sony" />
+                      <span>Sony</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/hasselblad.png" alt="Hasselblad" />
+                      <span>Hasselblad</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <img src="./images/leica.png" alt="Leica" />
+                      <span>Leica</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <div class="separator"></div>
+            </ul>
+          </li>
+          <li><a href="#">租借服務</a></li>
+          <li><a href="#">影像學院</a></li>
+          <li><a href="#">影像誌</a></li>
+          <li><a href="#">聯絡我們</a></li>
+        </ul>
+        <ul class="nav-right">
+          <li>
+            <a href="#"><img src="./images/search.svg" alt="" /></a>
+            <a href="#"><img src="./images/user.svg" alt="" /></a>
+            <a href="#"><img src="./images/compare.svg" alt="" /></a>
+            <a href="#"><img src="./images/cart.svg" alt="" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="course-info-container">
+      <div class="container">
+        <!-- breadcrumb -->
+        <nav class="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="">首頁</a></li>
+            <li><img src="./images/breadcrumb-arrow.svg" alt="" /></li>
+            <li class="breadcrumb-item"><a href="">影像學院</a></li>
+            <li><img src="./images/breadcrumb-arrow.svg" alt="" /></li>
+            <li class="breadcrumb-item breadcrumb-item-active">
+              <a href="">商業攝影</a>
+            </li>
+            <li><img src="./images/breadcrumb-arrow.svg" alt="" /></li>
+            <li class="breadcrumb-item breadcrumb-item-active">
+              美食攝影逐光旅行，餐桌上的四季光影
+            </li>
+          </ol>
+        </nav>
+        <!-- 課程資訊 -->
+        <div class="row course-info">
+          <div class="col-md-6 course-img">
+            <img src="./images/course-cover/course_13_1.avif" alt="" />
+          </div>
+          <div class="col-md-6 course-detail">
+            <h1>美食攝影逐光旅行，餐桌上的四季光影</h1>
+            <a href="">
+              <div class="course-info-teacher">
+                <div class="teacher-img">
+                  <img src="./images/teacher/teacher_4.avif" alt="" />
+                </div>
+                <h3>Ada Lin</h3>
+              </div></a
+            >
+            <p>
+              這門課程將教你如何使用自然光，與簡單的人造補光，拍攝出各種風格的餐桌饗宴。利用實作範例分享，了解各種風格可以利用什麼樣的配件與道具、色彩的搭配，從無到有的拍攝出吸睛的美食攝影照。
+            </p>
+            <div class="line"></div>
+            <div class="original-price">$2,500</div>
+            <div class="shopping-btns">
+              <div class="prine">
+                <div class="discount-price">$1,890</div>
+              </div>
+              <div class="shopping-btn">
+                <button class="buy-btn">+ 立即購買</button>
+                <button class="cart-btn hvr-icon-pulse">
+                  <img src="./images/cart-btn.svg" alt="" class="hvr-icon" />
+                  <p>加入購物車</p>
+                </button>
+                <button class="favorite-btn hvr-icon-pulse">
+                  <i class="fa-regular fa-heart hvr-icon"></i>
+                  <p>收藏課程</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 四大課程資訊 -->
+    <div class="four-course-info-container">
+      <div class="container">
+        <div class="four-course-info-wrapper">
+          <div class="four-course-info">
+            <div class="info-content">
+              <div class="title-text">課程章節</div>
+              <div class="content-text">8 章 22 單元</div>
+            </div>
+            <div class="line"></div>
+            <div class="info-content">
+              <div class="title-text">課程時長</div>
+              <div class="content-text">2 時 19 分鐘</div>
+            </div>
+            <div class="line"></div>
+            <div class="info-content">
+              <div class="title-text">學員人數</div>
+              <div class="content-text">484 位同學</div>
+            </div>
+            <div class="line"></div>
+            <div class="info-content">
+              <div class="rating">
+                <p>4.8</p>
+                <div class="rating-star" data-rating="4.8"></div>
+              </div>
+              <div class="title-text">1566 則評價</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 課程內容 -->
+    <section class="course-detail-container">
+      <div class="container">
+        <div class="detail-nav-links">
+          <a href="" class="detail-nav-link"
+            ><div class="circle"></div>
+            <p>課程內容</p></a
+          >
+          <a href="" class="detail-nav-link"
+            ><div class="circle"></div>
+            <p>評價</p></a
+          >
+          <a href="" class="detail-nav-link"
+            ><div class="circle"></div>
+            <p>相關課程推薦</p></a
+          >
+        </div>
+        <div class="line d-none d-sm-block"></div>
+
+        <!-- 課程內容 -->
+        <div class="course-detail-title">
+          <div class="title-block"></div>
+          <h2>課程內容</h2>
+          <div class="line d-block d-sm-none"></div>
+        </div>
+        <div class="course-detail-wrapper">
+          <div class="row">
+            <div class="col-12 col-xl-8">
+              <div class="course-detail-content">
+                <div class="content-text">
+                  <h3>課程核心特色</h3>
+                  <p>
+                    了解拍攝的擺放邏輯，課程會實際操作與示範每一張美食攝影照後面如何選擇道具、配色、擺放的位置，並且透過我們設計的作業的訓練，不斷的擺放，讓腦海記住拍攝的感覺，輕鬆掌握拍攝美食攝影照的心法！
+                  </p>
+                  <img src="./images/content/content_1.jpg" alt="" />
+                  <h3>章節一：光線的基本介紹</h3>
+                  <p>
+                    每天的天氣都不同，光線是構成一張照片最主要的重點，如何運用晴天與陰天的陽光去拍攝，會是這個部分的學習重點！
+                  </p>
+                  <img src="./images/content/content_2.jpg" alt="" />
+                  <h3>章節二：自然光的實際操作</h3>
+                  <p>
+                    觀察光線後，我們將練習實際運用自然光拍攝，並且在光線不足的時候，教會大家如何運用手邊的器材補光，這些器材包含平板電腦、手電筒、LED
+                    燈、檯燈等等發光的小器材。
+                  </p>
+                  <img src="./images/content/content_3.jpg" alt="" />
+                </div>
+                <div class="toggle-btn-container">
+                  <button class="toggle-btn">
+                    <span>更多課程內容</span>
+                    <img src="./images/arrow-down-white.svg" alt="" />
+                  </button>
+                </div>
+              </div>
+
+              <!-- 講師資訊 -->
+              <section class="teacher-info-container">
+                <div class="section-detail-title" data-aos="fade-right">
+                  <div class="title-block"></div>
+                  <h2>關於講師</h2>
+                </div>
+                <div
+                  class="teacher-info"
+                  data-aos="fade-up"
+                  data-aos-anchor-placement="top-bottom"
+                >
+                  <div class="teacher-info-img">
+                    <img src="./images/teacher/teacher_4.avif" alt="" />
+                  </div>
+
+                  <div class="teacher-info-text">
+                    <h3>Ada Lin</h3>
+                    <ul class="teacher-data">
+                      <li class="data-item">
+                        <img src="./images/course-icon.svg" alt="" />
+                        <p>2 堂課程</p>
+                      </li>
+                      <li class="data-item">
+                        <img src="./images/article-icon.svg" alt="" />
+                        <p>1 篇文章</p>
+                      </li>
+                      <li class="data-item">
+                        <img src="./images/student-icon.svg" alt="" />
+                        <p>1,832 位學生</p>
+                      </li>
+                    </ul>
+                    <div class="line"></div>
+                    <p class="">
+                      林居工作室攝影師，熱愛美食、設計以及藝術！ NOM
+                      飲食文化誌長期配合攝影師，並累積與野宴燒肉、樂法、OK
+                      超商等廠商合作經驗。 
+                    </p>
+                    <div class="go-page-link">
+                      <a href=""
+                        >前往講師頁面<img src="./images/arrow-right.svg" alt=""
+                      /></a>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- 課程評價 -->
+              <section class="course-rating-container">
+                <div class="section-detail-title" data-aos="fade-right">
+                  <div class="title-block"></div>
+                  <h2>課程評價</h2>
+                </div>
+                <div
+                  class="course-rating"
+                  data-aos="fade-up"
+                  data-aos-anchor-placement="top-bottom"
+                >
+                  <div class="rating-left">
+                    <div class="score-area">
+                      <p class="score">4.8</p>
+                      <p class="total-score">/ 5.0</p>
+                    </div>
+                    <div class="star-area">
+                      <div class="rating">
+                        <div class="rating-star" data-rating="4.8"></div>
+                      </div>
+                      <div class="rating-count">1566 則評價</div>
+                    </div>
+                  </div>
+                  <div class="rating-right">
+                    <div class="progress-container">
+                      <div class="count">5</div>
+                      <div
+                        class="progress"
+                        role="progressbar "
+                        aria-label="Basic example"
+                        aria-valuenow="0"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      >
+                        <div class="progress-bar" style="width: 90%"></div>
+                      </div>
+                    </div>
+                    <div class="progress-container">
+                      <div class="count">4</div>
+                      <div
+                        class="progress"
+                        role="progressbar"
+                        aria-label="Basic example"
+                        aria-valuenow="0"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      >
+                        <div class="progress-bar" style="width: 8%"></div>
+                      </div>
+                    </div>
+                    <div class="progress-container">
+                      <div class="count">3</div>
+                      <div
+                        class="progress"
+                        role="progressbar"
+                        aria-label="Basic example"
+                        aria-valuenow="0"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      >
+                        <div class="progress-bar" style="width: 2%"></div>
+                      </div>
+                    </div>
+                    <div class="progress-container">
+                      <div class="count">2</div>
+                      <div
+                        class="progress"
+                        role="progressbar"
+                        aria-label="Basic example"
+                        aria-valuenow="0"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      >
+                        <div class="progress-bar" style="width: 0%"></div>
+                      </div>
+                    </div>
+                    <div class="progress-container">
+                      <div class="count">1</div>
+                      <div
+                        class="progress"
+                        role="progressbar"
+                        aria-label="Basic example"
+                        aria-valuenow="0"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      >
+                        <div class="progress-bar" style="width: 0%"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 評論區 -->
+                <div class="row g-3">
+                  <div
+                    class="col-md-6 col-sm-12 mt-0 my-3"
+                    data-aos="fade-up"
+                    data-aos-anchor-placement="top-bottom"
+                  >
+                    <div class="course-comment">
+                      <div class="comment-card-nav">
+                        <div class="commenter">
+                          <div class="commenter-img">
+                            <img
+                              src="./images/commentator/commenter_1.jpg"
+                              alt=""
+                            />
+                          </div>
+                          <div class="commenter-info">
+                            <p class="commenter-name">Alice</p>
+                            <p class="commenter-time">2025/01/05</p>
+                          </div>
+                        </div>
+                        <div class="commenter-rating">
+                          <div class="rating-star" data-rating="4.8"></div>
+                        </div>
+                      </div>
+                      <div class="comment-card-content">
+                        <p class="title">
+                          帶你看從影像的人設切入，一層一層疊加上去的過程
+                        </p>
+                        <p class="content">
+                          從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．
+                        </p>
+                      </div>
+                      <div class="go-page-link">
+                        <a href=""
+                          >查看更多<img
+                            src="./images/arrow-right-gold.svg"
+                            alt=""
+                        /></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-md-6 col-sm-12 mt-0 my-3"
+                    data-aos="fade-up"
+                    data-aos-anchor-placement="top-bottom"
+                  >
+                    <div class="course-comment">
+                      <div class="comment-card-nav">
+                        <div class="commenter">
+                          <div class="commenter-img">
+                            <img
+                              src="./images/commentator/commenter_1.jpg"
+                              alt=""
+                            />
+                          </div>
+                          <div class="commenter-info">
+                            <p class="commenter-name">Alice</p>
+                            <p class="commenter-time">2025/01/05</p>
+                          </div>
+                        </div>
+                        <div class="commenter-rating">
+                          <div class="rating-star" data-rating="4.8"></div>
+                        </div>
+                      </div>
+                      <div class="comment-card-content">
+                        <p class="title">
+                          帶你看從影像的人設切入，一層一層疊加上去的過程
+                        </p>
+                        <p class="content">
+                          從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．
+                        </p>
+                      </div>
+                      <div class="go-page-link">
+                        <a href=""
+                          >查看更多<img
+                            src="./images/arrow-right-gold.svg"
+                            alt=""
+                        /></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-md-6 col-sm-12 mt-0 my-3"
+                    data-aos="fade-up"
+                    data-aos-anchor-placement="top-bottom"
+                  >
+                    <div class="course-comment">
+                      <div class="comment-card-nav">
+                        <div class="commenter">
+                          <div class="commenter-img">
+                            <img
+                              src="./images/commentator/commenter_1.jpg"
+                              alt=""
+                            />
+                          </div>
+                          <div class="commenter-info">
+                            <p class="commenter-name">Alice</p>
+                            <p class="commenter-time">2025/01/05</p>
+                          </div>
+                        </div>
+                        <div class="commenter-rating">
+                          <div class="rating-star" data-rating="4.8"></div>
+                        </div>
+                      </div>
+                      <div class="comment-card-content">
+                        <p class="title">
+                          帶你看從影像的人設切入，一層一層疊加上去的過程
+                        </p>
+                        <p class="content">
+                          從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．
+                        </p>
+                      </div>
+                      <div class="go-page-link">
+                        <a href=""
+                          >查看更多<img
+                            src="./images/arrow-right-gold.svg"
+                            alt=""
+                        /></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-md-6 col-sm-12 mt-0 my-3"
+                    data-aos="fade-up"
+                    data-aos-anchor-placement="top-bottom"
+                  >
+                    <div class="course-comment">
+                      <div class="comment-card-nav">
+                        <div class="commenter">
+                          <div class="commenter-img">
+                            <img
+                              src="./images/commentator/commenter_1.jpg"
+                              alt=""
+                            />
+                          </div>
+                          <div class="commenter-info">
+                            <p class="commenter-name">Alice</p>
+                            <p class="commenter-time">2025/01/05</p>
+                          </div>
+                        </div>
+                        <div class="commenter-rating">
+                          <div class="rating-star" data-rating="4.8"></div>
+                        </div>
+                      </div>
+                      <div class="comment-card-content">
+                        <p class="title">
+                          帶你看從影像的人設切入，一層一層疊加上去的過程
+                        </p>
+                        <p class="content">
+                          從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．
+                        </p>
+                      </div>
+                      <div class="go-page-link">
+                        <a href=""
+                          >查看更多<img
+                            src="./images/arrow-right-gold.svg"
+                            alt=""
+                        /></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="all-comment-link">
+                  <a href=""
+                    >所有評價<img src="./images/all-comment.svg" alt=""
+                  /></a>
+                </div>
+              </section>
+            </div>
+
+            <!-- 右邊價格固定區 -->
+            <div class="col-md-4 d-none d-xl-block">
+              <div class="course-price-fixed" data-aos="fade-down">
+                <div class="fixed-price">
+                  <div class="discount-price">NT$1,980</div>
+                  <div class="original-price">NT$2,500</div>
+                </div>
+                <div class="shopping-btn-fixed">
+                  <button class="buy-btn">+ 立即購買</button>
+                  <div class="shopping-btn-flex">
+                    <button class="cart-btn hvr-icon-pulse">
+                      <img
+                        src="./images/cart-btn.svg"
+                        alt=""
+                        class="hvr-icon"
+                      />
+                      <p>加入購物車</p>
+                    </button>
+                    <button class="favorite-btn hvr-icon-pulse">
+                      <i class="fa-regular fa-heart hvr-icon"></i>
+                      <p>收藏課程</p>
+                    </button>
+                  </div>
+                  <div class="refund"><p>30 天退款保證</p></div>
+                  <div class="fixed-content">
+                    <div class="content-title">此課程包含</div>
+                    <div class="line"></div>
+                    <ul class="content-text">
+                      <li>
+                        <img src="./images/fixed_icon_1.svg" alt="" />2 小時 19
+                        分鐘的影片
+                      </li>
+                      <li>
+                        <img src="./images/fixed_icon_2.svg" alt="" />4
+                        個可下載的資源
+                      </li>
+                      <li>
+                        <img
+                          src="./images/fixed_icon_3.svg"
+                          alt=""
+                        />透過行動裝置與電視存取
+                      </li>
+                      <li>
+                        <img
+                          src="./images/fixed_icon_4.svg"
+                          alt=""
+                        />完整終身存取權
+                      </li>
+                      <li>
+                        <img src="./images/fixed_icon_5.svg" alt="" />結業證書
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="price-bottom-fixed">
+      <div class="price">NT$1,980</div>
+      <button class="buy-btn">+ 立即購買</button>
+      <button class="cart-btn hvr-icon-pulse">
+        <img src="./images/cart-btn-primary.svg" alt="" class="hvr-icon" />
+        <p>加入購物車</p>
+      </button>
+    </section>
+
+    <div class="container">
+      <hr />
+      <div class="section-detail-title">
+        <div class="title-block"></div>
+        <h2>相關課程推薦</h2>
+      </div>
+      <div class="row mt-4" id="course-list"></div>
+    </div>
+
+    <!-- footer -->
+    <footer>
+      <div class="container">
+        <div class="row footer-block">
+          <!-- Left side (About Us, Account Center, FAQ) -->
+          <div class="col-sm-7 col-12 col-md">
+            <div class="row">
+              <!-- About Us -->
+              <div class="col-12 col-md mb-3">
+                <div
+                  class="title-plus d-flex justify-content-between"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#about-us"
+                >
+                  <h5 class="footer-title">About Us</h5>
+                  <div class="plus d-md-none mx-0 mx-sm-5">+</div>
+                </div>
+
+                <ul id="about-us" class="list-unstyled collapse d-md-block">
+                  <li><a href="#">關於我們</a></li>
+                  <li><a href="#">品牌故事</a></li>
+                  <li><a href="#">新聞與公告</a></li>
+                  <li><a href="#">媒體報導</a></li>
+                  <li><a href="#">服務條款</a></li>
+                </ul>
+              </div>
+
+              <!-- Account Center -->
+              <div class="col-12 col-md mb-3">
+                <div
+                  class="title-plus d-flex justify-content-between"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#account-center"
+                >
+                  <h5 class="footer-title">Account Center</h5>
+                  <div class="plus d-md-none mx-0 mx-sm-5">+</div>
+                </div>
+                <ul
+                  id="account-center"
+                  class="list-unstyled collapse d-md-block"
+                >
+                  <li><a href="#">會員中心</a></li>
+                  <li><a href="#">我的最愛</a></li>
+                  <li><a href="#">訂單資訊查詢</a></li>
+                  <li><a href="#">租賃訂單查詢</a></li>
+                  <li><a href="#">課程查詢</a></li>
+                  <li><a href="#">優惠專區</a></li>
+                </ul>
+              </div>
+
+              <!-- FAQ -->
+              <div class="col-12 col-md mb-3">
+                <div
+                  class="title-plus d-flex justify-content-between"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#faq"
+                >
+                  <h5 class="footer-title">FAQ</h5>
+                  <div class="plus d-md-none mx-0 mx-sm-5">+</div>
+                </div>
+                <ul id="faq" class="list-unstyled collapse d-md-block">
+                  <li><a href="#">購物須知</a></li>
+                  <li><a href="#">產品諮詢</a></li>
+                  <li><a href="#">維修保固</a></li>
+                  <li><a href="#">帳戶問題</a></li>
+                  <li><a href="#">訂單問題</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right side (LENSTUDIO, Open Hours) -->
+          <div class="col-sm-5 col-12 col-md">
+            <div class="row">
+              <!-- LENSTUDIO -->
+              <div class="col mb-md-0 mb-4">
+                <h5 footer-title>LENSTUDIO</h5>
+                <p>桃園市中壢區新生路二段421號</p>
+                <p>03-3583-2748</p>
+                <p>客服信箱：LENSTUDIO@gamil.com</p>
+                <div class="social-icons">
+                  <a href="#"><i class="fab fa-facebook"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-line"></i></a>
+                </div>
+              </div>
+
+              <!-- Open Hours -->
+              <div class="col">
+                <h5 class="footer-title">OPEN HOURS</h5>
+                <ul class="list-unstyled">
+                  <li>週二至週五 13:00-18:30</li>
+                  <li>週六及週日 11:00-18:30</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- copyright -->
+    <div class="copyright justify-content-between">
+      <div class="row">
+        <!-- 左側連結 -->
+        <div
+          class="col-lg-4 col-md-6 col-12 copyright-left d-flex justify-content-md-start justify-content-center"
+        >
+          <a href="#">聯絡我們</a>
+          <span>|</span>
+          <a href="#">購物說明</a>
+          <span>|</span>
+          <a href="#">最新消息</a>
+        </div>
+        <!-- 右側連結 -->
+        <div
+          class="col-lg-8 col-md-6 col-12 copyright-right d-flex justify-content-md-end justify-content-center mt-md-0 mt-1 p-0"
+        >
+          <div class="copyright-right-div">
+            <div class="mobile-none">
+              <a href="#">網站使用條款</a>
+              <span>|</span>
+              <a href="#">隱私權政策</a>
+              <span>|</span>
+              <a href="#">免責聲明</a>
+              <span>|</span>
+            </div>
+            <div class="copyright-text">
+              © Copyright 2025. Lenstudio Co. Ltd. All rights reserved
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+      var swiper = new Swiper(".mySwiper", {
+        slidesPerView: "auto",
+        spaceBetween: 30,
+        centeredSlides: true,
+        loop: true,
+        autoplay: {
+          delay: 2500,
+          disableOnInteraction: false,
+        },
+        speed: 1000,
+        spaceBetween: 20,
+        loopAdditionalSlides: 0,
+      });
+    </script>
+
+    <!-- 課程列表 -->
+    <script>
+      const courses = [
+        {
+          title: "旅行攝影：按下快門，用攝影書寫故事",
+          teacher: "食癮，拾影",
+          rating: 4.8,
+          studentCount: 1234,
+          price: 2180,
+          imageUrl: "./images/course-cover/course_1_1.avif",
+        },
+        {
+          title: "攝影入門：從零開始學習攝影",
+          teacher: "影像學院",
+          rating: 4.5,
+          studentCount: 3456,
+          price: 1980,
+          imageUrl: "./images/course-cover/course_2_1.avif",
+        },
+        {
+          title: "光影的魔法：專業攝影技術",
+          teacher: "大師教室",
+          rating: 4.2,
+          studentCount: 4567,
+          price: 2500,
+          imageUrl: "./images/course-cover/course_3_1.avif",
+        },
+        {
+          title: "戶外攝影：探索大自然",
+          teacher: "戶外攝影師",
+          rating: 4.7,
+          studentCount: 5678,
+          price: 1999,
+          imageUrl: "./images/course-cover/course_4_1.avif",
+        },
+      ];
+      // 取得父容器
+      const courseList = document.getElementById("course-list");
+
+      // 生成課程卡片
+      courses.forEach((course) => {
+        const courseCard = document.createElement("div");
+        courseCard.classList.add("col-md-3"); // 使用 Bootstrap 的 grid 結構來控制每行顯示四個卡片
+
+        courseCard.setAttribute("data-aos", "fade-up");
+        courseCard.setAttribute("data-aos-anchor-placement", "top-bottom");
+
+        // 填充課程卡片內容
+        courseCard.innerHTML = `
+     <a href="#" class="course-card-link" >
+<div class="course-card mb-4 mb-md-5 ">
+  <div class="card-img">
+    <img src="${course.imageUrl}" alt="${course.title}" class="img-fluid" />
+    <div class="img-overlay"></div>
+    <div class="favorite-icon hvr-push">
+      <i class="fa-regular fa-heart hvr-icon"></i>
+    </div>
+  </div>
+  <h3 class="course-title">${course.title}</h3>
+  <p class="teacher-name">${course.teacher}</p>
+  <div class="rating-student">
+    <div class="rating">
+      <p>${course.rating}</p>
+      <div class="rating-star" data-rating="${course.rating}"></div>
+    </div>
+    <div class="student-count">
+      <img src="./images/student-count.svg" alt="學生數量" />
+      <div class="student-num">${course.studentCount}</div>
+    </div>
+  </div>
+  <div class="course-price">
+    <p>NT$ ${course.price}</p>
+  </div>
+</div>
+ </a>
+`;
+
+        // 將課程卡片加入到父容器
+        courseList.appendChild(courseCard);
+      });
+    </script>
+
+    <!---渲染星星函式--->
+    <script>
+      function renderStars(rating) {
+        const fullStar = '<i class="fa-solid fa-star"></i>';
+        const halfStar = '<i class="fa-solid fa-star-half-stroke"></i>';
+        const emptyStar = '<i class="fa-regular fa-star"></i>';
+
+        let stars = ""; // 初始化星星字串
+        for (let i = 1; i <= 5; i++) {
+          if (rating >= i) {
+            // 滿星條件：評分大於等於當前星星數
+            stars += fullStar;
+          } else if (rating > i - 1) {
+            // 半星條件：評分落在當前星星數 - 1 與當前星星數之間
+            stars += halfStar;
+          } else {
+            // 空星條件：其他情況
+            stars += emptyStar;
+          }
+        }
+        return stars;
+      }
+
+      // 動態渲染
+      document.querySelectorAll(".rating-star").forEach((el) => {
+        const rating = parseFloat(el.getAttribute("data-rating")); // 讀取評分
+        el.innerHTML = renderStars(rating); // 插入星星 HTML
+      });
+    </script>
+
+    <!-- 固定的區塊 -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        AOS.init({
+          once: false,
+        });
+
+        const stickyElement = document.querySelector(".course-price-fixed");
+        const triggerSection = document.querySelector(
+          ".course-detail-container"
+        );
+
+        window.addEventListener("scroll", () => {
+          const triggerRect = triggerSection.getBoundingClientRect();
+
+          if (
+            triggerRect.top <= window.innerHeight / 2 &&
+            triggerRect.bottom >= window.innerHeight / 2
+          ) {
+            stickyElement.style.opacity = "1";
+            stickyElement.style.visibility = "visible";
+          } else {
+            stickyElement.style.opacity = "0";
+            setTimeout(() => {
+              // 確保 opacity 動畫完成後才隱藏
+              if (stickyElement.style.opacity === "0") {
+                stickyElement.style.visibility = "hidden";
+              }
+            }, 200); // 這裡的 300ms 需與 transition 時間一致
+          }
+        });
+      });
+    </script>
+
+    <!-- --- 展開課程內容 --- -->
+    <script>
+      $(document).ready(function () {
+        $(".toggle-btn").click(function () {
+          var courseDetailContent = $(this).closest(".course-detail-content");
+          var isExpanding = !courseDetailContent.hasClass("expanded");
+
+          courseDetailContent.toggleClass("expanded");
+
+          if (isExpanding) {
+            $(this).find("span").text("收起內容");
+          } else {
+            setTimeout(() => {
+              $(this).find("span").text("更多課程內容");
+            }, 400);
+          }
+        });
+      });
+    </script>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        duration: 1000, // 動畫持續 1 秒
+        once: true, // 滾動只觸發一次
+      });
+    </script>
+  </body>
+</html>

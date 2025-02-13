@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./style/course-center.css" />
+    <title>課程管理中心</title>
+  </head>
+  <body>
+    <section class="center-dashboard">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- 側邊欄 -->
+          <div class="col-md-3 col-lg-2 d-none d-xl-block">
+            <div class="center-sidebar">
+              <button class="close-sidebar-btn d-md-none">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              <!-- 新增收合按鈕 -->
+              <div class="logo">
+                <img src="./images/lenstudio-logo.svg" alt="" />
+                <hr />
+              </div>
+              <div class="teacher-data">
+                <div class="teacher-sticker">
+                  <img src="./images/teacher/teacher_6.avif" alt="" />
+                </div>
+
+                <h2 class="teacher-name">Ada Lin</h2>
+                <p class="teacher-email">ada@gmail.com</p>
+              </div>
+              <div class="control-center">
+                <ul>
+                  <li>
+                    <a href=""
+                      ><i class="fa-regular fa-address-book fa-fw"></i
+                      >講師資料</a
+                    >
+                  </li>
+                  <li>
+                    <a href=""
+                      ><i class="fa-solid fa-chalkboard-user fa-fw"></i
+                      >我的課程</a
+                    >
+                  </li>
+                  <li>
+                    <a href=""
+                      ><i class="fa-regular fa-square-plus fa-fw"></i
+                      >新增課程</a
+                    >
+                  </li>
+                  <li>
+                    <a href=""
+                      ><i class="fa-regular fa-circle-question fa-fw"></i
+                      >客服中心</a
+                    >
+                  </li>
+                </ul>
+                <div class="logout">
+                  <a href="">
+                    <i class="fa-solid fa-arrow-right-from-bracket fa-fw"></i
+                    >登出</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 內容區 -->
+          <div class="col-12 col-xl-10">
+            <button class="btn btn-dark d-xl-none" id="toggleSidebar">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="center-content" id="contentArea">
+              <div class="nav-bar">
+                <h1>課程管理中心</h1>
+                <p>在您的專屬教學平台上創建並管理您的課程。</p>
+              </div>
+              <div class="control-btns">
+                <div class="btns-left">
+                  <div class="filter">
+                    <a href="">
+                      <i class="fa-solid fa-list"></i>
+                      <p>篩選</p></a
+                    >
+                  </div>
+                  <div class="course-search">
+                    <input
+                      class="search-input"
+                      type="text"
+                      placeholder="搜尋課程"
+                    />
+                    <button class="search-btn">
+                      <img src="./images/search-blue.svg" alt="" />
+                    </button>
+                  </div>
+                </div>
+                <div class="add">
+                  <a href="">
+                    <i class="fa-regular fa-square-plus fa-fw"></i>
+                    <p>新增課程</p></a
+                  >
+                </div>
+              </div>
+
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>課程圖片</th>
+                      <th>
+                        <a href=""
+                          >課程名稱<img src="./images/sort.svg" alt=""
+                        /></a>
+                      </th>
+                      <th>
+                        <a href=""
+                          >課程分類<img src="./images/sort.svg" alt=""
+                        /></a>
+                      </th>
+                      <th>
+                        <a href=""
+                          >建立日期<img src="./images/sort.svg" alt=""
+                        /></a>
+                      </th>
+                      <th>
+                        <a href=""
+                          >售價<img src="./images/sort.svg" alt=""
+                        /></a>
+                      </th>
+                      <th>
+                        <a href=""
+                          >銷售量<img src="./images/sort.svg" alt=""
+                        /></a>
+                      </th>
+                      <th>
+                        <a href=""
+                          >學生人數<img src="./images/sort.svg" alt=""
+                        /></a>
+                      </th>
+                      <th>發布狀態</th>
+                      <th>編輯</th>
+                      <th>刪除</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="course-img">
+                        <img
+                          src="./images/course-cover/course_9_1.avif"
+                          alt=""
+                        />
+                      </td>
+                      <td>旅行攝影：按下快門， 用攝影書寫故事</td>
+                      <td>影像創作</td>
+
+                      <td>2025-01-13</td>
+                      <td>1,980</td>
+                      <td>$2,256,843</td>
+                      <td>532人</td>
+                      <td>
+                        <div class="state-circle">
+                          <div class="state"></div>
+                          上架中
+                        </div>
+                      </td>
+                      <td>
+                        <button class="edit-btn">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button class="delete-btn">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="course-img">
+                        <img
+                          src="./images/course-cover/course_9_1.avif"
+                          alt=""
+                        />
+                      </td>
+                      <td>旅行攝影：按下快門， 用攝影書寫故事</td>
+                      <td>影像創作</td>
+                      <td>2025-01-13</td>
+                      <td>1,980</td>
+                      <td>$2,256,843</td>
+                      <td>532人</td>
+                      <td>
+                        <div class="state-circle">
+                          <div class="state"></div>
+                          上架中
+                        </div>
+                      </td>
+                      <td>
+                        <button class="edit-btn">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button class="delete-btn">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="course-img">
+                        <img
+                          src="./images/course-cover/course_9_1.avif"
+                          alt=""
+                        />
+                      </td>
+                      <td>旅行攝影：按下快門， 用攝影書寫故事</td>
+                      <td>影像創作</td>
+                      <td>2025-01-13</td>
+                      <td>1,980</td>
+                      <td>$2,256,843</td>
+                      <td>532人</td>
+                      <td>
+                        <div class="state-circle">
+                          <div class="state"></div>
+                          上架中
+                        </div>
+                      </td>
+                      <td>
+                        <button class="edit-btn">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button class="delete-btn">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="course-img">
+                        <img
+                          src="./images/course-cover/course_9_1.avif"
+                          alt=""
+                        />
+                      </td>
+                      <td>旅行攝影：按下快門， 用攝影書寫故事</td>
+                      <td>影像創作</td>
+                      <td>2025-01-13</td>
+                      <td>1,980</td>
+                      <td>$2,256,843</td>
+                      <td>532人</td>
+                      <td>
+                        <div class="state-circle">
+                          <div class="state"></div>
+                          上架中
+                        </div>
+                      </td>
+                      <td>
+                        <button class="edit-btn">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button class="delete-btn">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="course-img">
+                        <img
+                          src="./images/course-cover/course_9_1.avif"
+                          alt=""
+                        />
+                      </td>
+                      <td>旅行攝影：按下快門， 用攝影書寫故事</td>
+                      <td>影像創作</td>
+                      <td>2025-01-13</td>
+                      <td>1,980</td>
+                      <td>$2,256,843</td>
+                      <td>532人</td>
+                      <td>
+                        <div class="state-circle">
+                          <div class="state"></div>
+                          上架中
+                        </div>
+                      </td>
+                      <td>
+                        <button class="edit-btn">
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                      </td>
+                      <td>
+                        <button class="delete-btn">
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 分頁 -->
+            <section class="pages-container" data-aos="fade-up">
+              <a href="" class="page-arrow hvr-icon-back">
+                <i class="fa-solid fa-angle-left hvr-icon"></i>
+              </a>
+              <ul class="pages">
+                <li class="page">
+                  <a href="#" class="page-link">1</a>
+                </li>
+                <li class="page">
+                  <a href="#" class="page-link">2</a>
+                </li>
+                <li class="page">
+                  <a href="#" class="page-link">3</a>
+                </li>
+                <li class="page">
+                  <a href="#" class="page-link">4</a>
+                </li>
+                <li class="page">
+                  <a href="#" class="page-link">5</a>
+                </li>
+              </ul>
+              <a href="" class="page-arrow hvr-icon-forward">
+                <i class="fa-solid fa-angle-right hvr-icon"></i>
+              </a>
+            </section>
+
+            <footer>
+              <div class="copyright-right-div">
+                <div class="mobile-none">
+                  <a href="#">網站使用條款</a>
+                  <span>|</span>
+                  <a href="#">隱私權政策</a>
+                  <span>|</span>
+                  <a href="#">免責聲明</a>
+                  <span>|</span>
+                </div>
+                <div class="copyright-text">
+                  © Copyright 2025. Lenstudio Co. Ltd. All rights reserved
+                </div>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // 選擇側邊欄、按鈕
+      const sidebar = document.querySelector(".center-sidebar");
+      const toggleButton = document.getElementById("toggleSidebar");
+      const closeButton = document.querySelector(".close-sidebar-btn"); // 新增關閉按鈕
+      const contentArea = document.getElementById("contentArea");
+
+      // 點擊漢堡按鈕展開側邊欄
+      toggleButton.addEventListener("click", function () {
+        sidebar.classList.toggle("show");
+      });
+
+      // 點擊關閉按鈕，隱藏側邊欄
+      closeButton.addEventListener("click", function () {
+        sidebar.classList.remove("show");
+      });
+
+      // 點擊內容區時，收回側邊欄
+      contentArea.addEventListener("click", function () {
+        if (sidebar.classList.contains("show")) {
+          sidebar.classList.remove("show");
+        }
+      });
+    </script>
+  </body>
+</html>
