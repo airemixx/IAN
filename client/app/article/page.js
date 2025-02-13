@@ -20,6 +20,10 @@ export default function NewsPage() {
       setFilters(newFilters);
     };
 
+    const handleTagClick = (tag) => {
+      setFilters({ ...filters, tag });
+    };
+
   useEffect(() => {  
     import("bootstrap/dist/js/bootstrap.bundle.min.js");  
   
@@ -60,12 +64,12 @@ export default function NewsPage() {
 
       <section className="y-container">
       <SelectList onFilterChange={handleFilterChange}/>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error.message || '出現錯誤...'}</p>}
+      {/* {loading && <p>Loading...</p>}
+      {error && <p>Error: {error.message || '出現錯誤...'}</p>} */}
 
       {/* 卡片區 */}
       {articles.map((article) => (
-        <ListCard key={article.id} article={article}/>
+        <ListCard key={article.id} article={article} onTagClick={handleTagClick}/>
       ))}
 
       {/* 分頁區 */}

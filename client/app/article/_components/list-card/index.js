@@ -3,7 +3,7 @@
 import React from 'react';  
 import styles from './index.module.scss';  
 
-const ListCard = ({ article }) => {
+const ListCard = ({ article, onTagClick }) => {
   return (
     <div className={`col-md-3 ${styles['y-list-card-area']}`}>
       <div className={`card ${styles['y-card']}`}>
@@ -22,6 +22,15 @@ const ListCard = ({ article }) => {
             <a href="#" className="text-decoration-none">
               <h4 className="card-title">{article.title}</h4>
             </a>
+          </div>
+          <div className={`${styles['y-tag-area']} mb-3`}>
+            {article.tags &&
+              article.tags.split(',').map((tag, idx) => (
+                <button key={idx} onClick={() => onTagClick(tag.trim())}>
+                  {tag.trim()}
+                </button>
+              ))
+            }
           </div>
           <div className={styles['y-author-date']}>
             <p className="mb-0">

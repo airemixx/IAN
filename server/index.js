@@ -46,11 +46,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/product", productRoutes);
-
 app.use("/api/courses", coursesRouter);
-
 app.use("/api/cart", cartRouter);
-
 app.use("/api/articles", articleRoutes);
 
 
