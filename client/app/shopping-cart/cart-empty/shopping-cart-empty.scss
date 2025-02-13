@@ -1,0 +1,159 @@
+body {
+    height: 100vh;
+  }
+
+  body>footer {
+    position: sticky;
+    top: 100vh;
+  }
+
+  .j-publicFont {
+    font-family: "Noto Sans HK";
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+
+  .j-shoppingCartTitleBox .j-shoppingCartTitle {
+    font-family: Inter;
+    font-size: 60px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  .j-shoppingCartTitleBox small {
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  .j-emptyShoppingImg {
+    width: 452px;
+    height: 315px;
+    flex-shrink: 0;
+  }
+
+  .j-emptyShoppingImg img {
+    border-radius: 25px;
+  }
+
+  .j-emptyShoppingTitle {
+    color: #fff;
+    bottom: 16%;
+    left: 20%;
+  }
+
+  .j-linkCamera {
+    color: #000;
+    padding: 15px 18px;
+    text-decoration: none;
+    background-color: #fff;
+    border-radius: 50px;
+    font-size: 12px;
+  }
+
+  .j-AllcameraTitle {
+    font-size: 18px;
+  }
+
+  .j-illustrateBox {
+    width: 446px;
+    height: 315px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background: #fff;
+  }
+
+  .j-illustrate {
+    bottom: 40%;
+    left: 15%;
+  }
+
+  .j-popularTitle {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .j-popularProduct .p2 {
+    color: #D0B088;
+  }
+
+  .j-popularProduct img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .j-popularProduct p {
+    font-family: "Noto Sans HK";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  .copyright {
+    background-color: #fff;
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .copyright-text{
+    color: #000;
+  }
+  
+  .copyright a,
+  .copyright span {
+    color: #000
+  }
+
+  
+  @media (max-width: 390px) {
+    
+    .j-shoppingCartTitleBox .j-shoppingCartTitle {
+      font-size: 54px;
+    }
+
+    .j-emptyShoppingImg {
+      width: 350px;
+      height: 315px;
+      flex-shrink: 0;
+    }
+
+    .j-emptyShoppingImg img {
+      width: 350px;
+    }
+
+    .j-emptyShoppingImgBox {
+      width: 360px;
+    }
+    .j-emptyShoppingTitle{
+      bottom: 35%;
+    }
+    .j-linkCamera{
+      padding: 10px 15px;
+    }
+    .footer{
+      display: block;
+      
+    }
+    .left-links{
+      text-align: center;
+    }
+    .right-links a{
+      display:none
+    }
+    .right-links span{
+      display:none
+    }
+    .right-links .copyRight{
+      display:block
+    }
+  }
+
+  @media (min-width: 576px) {
+
+    
+  }
