@@ -2,7 +2,7 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa'
 import PropTypes from 'prop-types'
 import styles from './star-rating.module.scss'
 
-export default function StarRating({ rating }) {
+export default function StarRating({ rating=0 }) {
   const renderStars = () => {
     const stars = []
     for (let i = 1; i <= 5; i++) {
