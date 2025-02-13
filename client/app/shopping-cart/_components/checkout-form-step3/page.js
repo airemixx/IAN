@@ -73,8 +73,8 @@ export default function CheckoutFormStep3() {
                         <p>此為必填欄目</p>
                     </div>
                 </div>
-                <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center align-self-stretch`}>
-                    <button className={`${styles['j-btn']} btn text-align-center`}>付款</button>
+                <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center`}>
+                    <button className={`${styles['j-btn']} btn text-align-center d-flex flex-grow-1 justify-content-center`}>付款</button>
                 </div>
             </div>
         </div>

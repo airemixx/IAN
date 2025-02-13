@@ -14,13 +14,10 @@ body {
     line-height: normal;
   }
 
-  hr {
-    color: #aBaBaB;
-  }
 
   .j-shoppingCartTitleBox .j-shoppingCartTitle {
     font-family: Inter;
-    font-size: 90px;
+    font-size: 60px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -68,7 +65,7 @@ body {
     height: 315px;
     flex-shrink: 0;
     border-radius: 20px;
-    background: #F6F6F6;
+    background: #fff;
   }
 
   .j-illustrate {
@@ -97,9 +94,22 @@ body {
     font-weight: 700;
     line-height: normal;
   }
-  .footer{
-    display: none;
+  .copyright {
+    background-color: #fff;
+    padding-right: 5%;
+    padding-left: 5%;
   }
+
+  .copyright-text{
+    color: #000;
+  }
+  
+  .copyright a,
+  .copyright span {
+    color: #000
+  }
+
+  
   @media (max-width: 390px) {
     
     .j-shoppingCartTitleBox .j-shoppingCartTitle {
@@ -145,14 +155,5 @@ body {
 
   @media (min-width: 576px) {
 
-    .copyright {
-      background-color: #fff;
-      padding-right: 5%;
-      padding-left: 5%;
-    }
-
-    .copyright a,
-    .copyright span {
-      color: #000
-    }
+    
   }

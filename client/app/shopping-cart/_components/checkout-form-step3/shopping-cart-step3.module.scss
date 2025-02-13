@@ -51,6 +51,17 @@
   }
 
   .j-Checkout .j-btn {
+    &:not(.j-payStep){
+      border: none;
+    }
+  
+    &:focus{
+      border: none;
+    }
+    &:active{
+      border: none;
+      color: #fff;
+    }
     color: #FFF;
     font-size: 14px;
   }

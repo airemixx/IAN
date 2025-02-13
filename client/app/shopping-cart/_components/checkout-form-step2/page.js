@@ -43,8 +43,8 @@ export default function CheckoutFormStep2() {
                     <input type="text" className="form-control focus-ring focus-ring-light" />
                 </div>
             </div>
-            <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center align-self-stretch`}>
-                <button className={`${styles['j-btn']} btn text-alig-center`}>繼續</button>
+            <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center`}>
+                <button className={`${styles['j-btn']} btn text-alig-center d-flex flex-grow-1 justify-content-center`}>繼續</button>
             </div>
         </div>
     );
