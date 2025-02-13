@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Breadcrumb from "./_components/breadcrumb";
 import LoopAd from "./_components/loop-ad";
@@ -12,7 +12,13 @@ import Link from "next/link";
 import useArticles from "../../hooks/use-article";
 
 export default function NewsPage() {
-  const { articles, error, loading} = useArticles();
+  const [filters, setFilters] = useState({});
+  const { articles, error, loading } = useArticles(filters);
+
+    // 定義 handleFilterChange，並將它傳給 SelectList
+    const handleFilterChange = (newFilters) => {
+      setFilters(newFilters);
+    };
 
   useEffect(() => {  
     import("bootstrap/dist/js/bootstrap.bundle.min.js");  
@@ -46,8 +52,6 @@ export default function NewsPage() {
     }  
   }, []);  
 
-  if (loading) return <div>載入中...</div>;
-  if (error) return <div>發生錯誤：{error.message}</div>;
 
   return (
     <div >
@@ -55,7 +59,9 @@ export default function NewsPage() {
       <LoopAd />
 
       <section className="y-container">
-      <SelectList />
+      <SelectList onFilterChange={handleFilterChange}/>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error.message || '出現錯誤...'}</p>}
 
       {/* 卡片區 */}
       {articles.map((article) => (
