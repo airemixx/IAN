@@ -1,3 +1,5 @@
+// rent-filter
+
 export default function RentFilter() {
   return (
     <div className="accordion" id="filterAccordion">

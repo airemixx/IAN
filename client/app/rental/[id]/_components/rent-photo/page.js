@@ -1,7 +1,12 @@
+// rent-photo
+
 'use client';
 
 import { useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
+// 縮圖圖片列表
 const images = [
   "/images/rental/test/leica-Q3-0.png",
   "/images/rental/test/leica-Q3-1.png",
@@ -12,41 +17,42 @@ const images = [
 ];
 
 export default function RentPhoto() {
+  // 主圖的狀態，初始顯示第一張圖片
   const [mainImage, setMainImage] = useState(images[0]);
-  const [startIndex, setStartIndex] = useState(0);
-  const visibleCount = 3;
 
+  // 計算需要補齊的空白區塊數量，確保圖片真的小於 3 張才補足
+  const missingImages = images.length < 3 ? 3 - images.length : 0;
+
+  // 縮圖點擊切換主圖
   const handleThumbnailClick = (image) => {
     setMainImage(image);
   };
 
-  const handlePrev = () => {
-    setStartIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-  };
-
-  const handleNext = () => {
-    setStartIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
   return (
-    <div className="text-center">
-      <img src={mainImage} alt="Product Image" className="product-image img-fluid" />
+    <div>
+      {/* 主圖顯示區域 */}
+      <div className="text-center p-card2">
+        <img src={mainImage} alt="Product Image" className="product-image img-fluid" />
+      </div>
+      
+      {/* 縮圖輪播區域 */}
       <div className="thumbnails-container mt-3 d-flex align-items-center position-relative">
-        <button className="carousel-control-prev" type="button" onClick={handlePrev}>
-          <span className="carousel-control-prev-icon" style={{ filter: "invert(1)" }} aria-hidden="true"></span>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <div className="d-flex justify-content-between overflow-hidden mx-5">
-          {images.slice(startIndex, startIndex + visibleCount).map((img, index) => (
-            <div key={index} className="thumbnail mx-2" onClick={() => handleThumbnailClick(img)}>
-              <img src={img} alt={`Thumbnail ${index}`} className={`img-fluid ${mainImage === img ? 'active' : ''}`} />
-            </div>
+        <Swiper spaceBetween={10} slidesPerView={3}>
+          {images.map((img, index) => (
+            <SwiperSlide key={index}>
+              {/* 縮圖，點擊後切換主圖 */}
+              <div className="thumbnail p-card2" onClick={() => handleThumbnailClick(img)}>
+                <img src={img} alt={`Thumbnail ${index}`} className={`img-fluid ${mainImage === img ? 'active' : ''}`} />
+              </div>
+            </SwiperSlide>
           ))}
-        </div>
-        <button className="carousel-control-next" type="button" onClick={handleNext}>
-          <span className="carousel-control-next-icon" style={{ filter: "invert(1)" }} aria-hidden="true"></span>
-          <span className="visually-hidden">Next</span>
-        </button>
+          {/* 使用 CSS 偽元素補足空白，確保只有當圖片少於 3 張時才補齊 */}
+          {missingImages > 0 && Array(missingImages).fill(null).map((_, index) => (
+            <SwiperSlide key={`empty-${index}`} className="empty-slide">
+              <div className="thumbnail p-card2 placeholder-slide" aria-hidden="true"></div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </div>
   );

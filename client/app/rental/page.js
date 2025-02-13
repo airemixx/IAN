@@ -1,6 +1,6 @@
 import RentBreadcrumb from './_components/rent-breadcrumb/page'
-import RentSearch from './_components/rent-searsh/page'
-import RentHashtags from './_components/rent-hashtags/page'
+import RentSearch from './_components/rent-search/page'
+import RentHashtag from './_components/rent-hashtag/page'
 import RentFilter from './_components/rent-filter/page'
 import RentTotal from './_components/rent-total/page'
 import RentOrder from './_components/rent-order/page'
@@ -17,7 +17,7 @@ export default function RentalPage() {
         <aside className="col-0 col-md-4 col-lg-3 p-3">
           <hr className="d-none d-md-block" />
           <RentSearch />
-          <RentHashtags />
+          <RentHashtag />
           <RentFilter />
         </aside>
         <main className="col-12 col-md-8 col-lg-9">

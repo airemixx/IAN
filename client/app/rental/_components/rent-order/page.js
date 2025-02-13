@@ -1,3 +1,5 @@
+// rent-order
+
 export default function RentOrder() {
   return (
     <div>
