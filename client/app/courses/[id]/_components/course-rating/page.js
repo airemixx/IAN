@@ -1,48 +1,55 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import styles from './course-rating.module.scss'
 import CourseComment from '../course-comment/page'
 import StarRating from '@/app/courses/_components/star-rating/page'
+import { useParams } from 'next/navigation'
 
 export default function CourseRating() {
-  const comments = [
-    {
-      name: 'Alice',
-      date: '2025/01/05',
-      rating: 4.8,
-      title: '帶你看從影像的人設切入，一層一層疊加上去的過程',
-      content:
-        '從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．',
-      imgSrc: '/images/commentator/commenter_1.jpg',
-    },
-    {
-      name: 'Bob',
-      date: '2025/01/10',
-      rating: 5.0,
-      title: '很值得購買的課程',
-      content:
-        '從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．',
-      imgSrc: '/images/commentator/commenter_2.jpg',
-    },
-    {
-      name: 'Alice',
-      date: '2025/01/05',
-      rating: 4.8,
-      title: '帶你看從影像的人設切入，一層一層疊加上去的過程',
-      content:
-        '從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．',
-      imgSrc: '/images/commentator/commenter_1.jpg',
-    },
-    {
-      name: 'Bob',
-      date: '2025/01/10',
-      rating: 5.0,
-      title: '很值得購買的課程',
-      content:
-        '從影像的人設開始構思：使用一天哪個時段感的燈光、搭配的物品、以及配色，再加上前置拍攝品的擺放準備（比如怎麼＂做＂出一個漢堡）、反光道具選擇及配置圖，一直到進後製修圖；不僅用單眼示範還加上手機的拍攝，非常仔細，如果忘記到底講了哪些東西或是聽到恍神，最後還有條列出章節回顧，之後如果要回放也可以先從最後查找，很值得購入以及反覆觀看學習的課程．',
-      imgSrc: '/images/commentator/commenter_2.jpg',
-    },
-  ]
+  const { id } = useParams()
+  const [comments, setComments] = useState([])
+  const [averageRating, setAverageRating] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [showAllComments, setShowAllComments] = useState(false) // ✅ 控制彈出視窗
+
+  useEffect(() => {
+    if (!id) return
+  
+    const fetchComments = async () => {
+      try {
+        const res = await fetch(`/api/courses/${id}/comments`)
+        if (!res.ok) throw new Error('無法獲取評論資料')
+  
+        const data = await res.json()
+        console.log('🔍 從 API 獲取的評論數據:', data) // ✅ 檢查 API 回傳資料
+  
+        setComments(data)
+  
+        // ✅ 確保所有 `rating` 值都是數字
+        const validRatings = data
+          .map(comment => parseFloat(comment.rating)) // 轉換成數字
+          .filter(rating => !isNaN(rating)) // 移除 `NaN` 值
+  
+        console.log('✅ 有效的評分數據:', validRatings)
+  
+        // ✅ 計算平均評分
+        const avg = validRatings.length
+          ? validRatings.reduce((sum, rating) => sum + rating, 0) / validRatings.length
+          : 0
+  
+        console.log('⭐ 最終計算的 `averageRating`:', avg) // 檢查計算結果
+        setAverageRating(avg.toFixed(1)) // ✅ 設定評分，確保它是數字
+      } catch (err) {
+        console.error('❌ 載入評論失敗:', err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+  
+    fetchComments()
+  }, [id])
+  
 
   return (
     <section className={styles['course-rating-container']}>
@@ -53,50 +60,59 @@ export default function CourseRating() {
       <div className={styles['course-rating']} data-aos="fade-up">
         <div className={styles['rating-left']}>
           <div className={styles['score-area']}>
-            <p className={styles['score']}>4.8</p>
+            <p className={styles['score']}>{averageRating}</p>
             <p className={styles['total-score']}>/ 5.0</p>
           </div>
           <div className={styles['star-area']}>
             <div className={styles['rating']}>
-              <StarRating rating="4.8" />
+              <StarRating rating={averageRating} />
             </div>
-            <div className={styles['rating-count']}>1566 則評價</div>
+            <div className={styles['rating-count']}>
+              {comments.length} 則評價
+            </div>
           </div>
         </div>
-        <div className={styles['rating-right']}>
-          {[5, 4, 3, 2, 1].map((rating, index) => (
-            <div key={rating} className={styles['progress-container']}>
-              <div className={styles['count']}>{rating}</div>
-              <div
-                className="progress"
-                style={{ width: '400px', height: '8px', minWidth: '50px' }} // 確保最小寬度
-              >
-                <div
-                  className={styles['progress-bar']}
-                  role="progressbar"
-                  style={{
-                    width: `${[90, 8, 2, 0, 0][index]}%`,
-                  }}
-                ></div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
-      {/* 評論區 */}
+      {/* 評論區 - 只顯示前 4 則評論 */}
       <div className="row g-3">
-        {comments.map((comment, index) => (
-          <CourseComment key={index} {...comment} />
-        ))}
+        {loading ? (
+          <p>載入中...</p>
+        ) : (
+          comments
+            .slice(0, 4)
+            .map((comment, index) => <CourseComment key={index} {...comment} />)
+        )}
       </div>
 
-      {/* 所有評價按鈕 */}
-      <div className={styles['all-comment-link']}>
-        <a href="">
-          所有評價 <img src="/images/icon/all-comment.svg" alt="所有評價" />
-        </a>
-      </div>
+      {/* 所有評價按鈕（打開彈出視窗） */}
+      {comments.length > 4 && (
+        <div className={styles['all-comment-link']}>
+          <button onClick={() => setShowAllComments(true)}>
+            所有評價 <img src="/images/icon/all-comment.svg" alt="所有評價" />
+          </button>
+        </div>
+      )}
+
+      {/* 彈出視窗 - 顯示所有評論 */}
+      {showAllComments && (
+        <div className={styles['modal-overlay']}>
+          <div className={styles['modal']}>
+            <button
+              className={styles['close-btn']}
+              onClick={() => setShowAllComments(false)}
+            >
+              ✖
+            </button>
+            <h2>所有評論</h2>
+            <div className={styles['modal-content']}>
+              {comments.map((comment, index) => (
+                <CourseComment key={index} {...comment} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

@@ -62,6 +62,7 @@
   margin: 30px;
   color: var(--white);
   font-size: 1.3rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .teacher-card-img p {
@@ -70,6 +71,7 @@
   bottom: 30px;
   color: var(--white);
   font-size: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
   display: -webkit-box; /* 必需：啟用彈性盒子模型 */
   -webkit-box-orient: vertical; /* 必需：設定為垂直方向 */
   overflow: hidden; /* 隱藏超出內容 */
