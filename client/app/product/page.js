@@ -15,6 +15,14 @@ export default function ProductPage() {
     setFilters(newFilters);
   };
 
+   // ✅ 新增 handleBrandSelect
+   const handleBrandSelect = (brand) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      brand_id: brand === "所有品牌" ? [] : [brand], // 如果選擇「所有品牌」，則清空 brand_id
+    }));
+  };
+
   return (
     <>
       <CarouselIndex />
@@ -25,7 +33,7 @@ export default function ProductPage() {
             <FilterSidebar onFilterChange={handleFilterChange} selectedFilters={filters} />
           </div>
           <div className="col-md-9">
-            <FilterSortBar />
+            <FilterSortBar onBrandSelect={handleBrandSelect} />
             <ProductList filters={filters} />
             <div className="d-flex justify-content-center mt-5 mb-5">
               <Pagination />
