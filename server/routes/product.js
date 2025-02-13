@@ -101,10 +101,24 @@ router.get("/filters", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ 獲取篩選條件錯誤:", error);
+    console.error("獲取篩選條件錯誤:", error);
     res.status(500).json({ error: "無法獲取篩選條件", details: error.message });
   }
 })
 
+router.get("/brand", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [brand] = await connection.query(`SELECT brand_id AS id, brand_name AS name FROM brand`);
+
+
+    connection.release();
+
+    res.json(brand.map(b => b.name));
+  } catch (error) {
+    console.error("取得品牌時發生錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
 
 export default router; 
