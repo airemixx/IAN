@@ -1,4 +1,4 @@
-// rent-photo
+// rent-picture
 
 'use client';
 
@@ -16,7 +16,7 @@ const images = [
   "/images/rental/test/leica-Q3-5.png",
 ];
 
-export default function RentPhoto() {
+export default function RentPicture() {
   // 主圖的狀態，初始顯示第一張圖片
   const [mainImage, setMainImage] = useState(images[0]);
 
