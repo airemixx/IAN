@@ -1,56 +1,49 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import styles from './courses-filter.module.scss'
 import CourseList from '../courses-list/page'
 
 export default function CoursesFilter({ courses, setFilteredCourses }) {
   const [search, setSearch] = useState('')
+  const [tempSearch, setTempSearch] = useState('')
   const [sort, setSort] = useState('popular')
+  const [isComposing, setIsComposing] = useState(false)
 
-  useEffect(() => {
-    console.log('🔄 useEffect in CoursesFilter triggered!')
-    console.log('📢 原始 courses:', courses)
-
-    // ✅ **確保 API 已回應，且 courses 不是空的**
-    if (!courses || courses.length === 0) {
-      console.log('❌ API 還沒回來，跳過篩選')
-      return
-    }
-
-    let filtered = [...courses]
+  // 使用 useMemo 計算過濾結果
+  const filtered = useMemo(() => {
+    if (!courses || courses.length === 0) return []
+    let result = [...courses]
 
     if (search.trim() !== '') {
-      console.log(`🔍 進行關鍵字搜尋: ${search}`)
-      filtered = filtered.filter(
+      result = result.filter(
         (course) =>
           course.title.toLowerCase().includes(search.toLowerCase()) ||
-          course.teacher_name.toLowerCase().includes(search.toLowerCase())
+          course.teacher_name.toLowerCase().includes(search.toLowerCase()),
       )
     }
 
     if (sort === 'popular') {
-      filtered.sort((a, b) => b.student_count - a.student_count)
+      result.sort((a, b) => b.student_count - a.student_count)
     } else if (sort === 'new') {
-      filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     } else if (sort === 'low-price') {
-      filtered.sort((a, b) => a.sale_price - b.sale_price)
+      result.sort((a, b) => a.sale_price - b.sale_price)
     } else if (sort === 'high-price') {
-      filtered.sort((a, b) => b.sale_price - a.sale_price)
+      result.sort((a, b) => b.sale_price - a.sale_price)
     }
 
-    console.log('📢 篩選後的 filteredCourses:', filtered)
-
-    // ✅ **只有當 `filteredCourses` 內容變更時才更新**
-    setFilteredCourses((prev) => {
-      if (JSON.stringify(prev) !== JSON.stringify(filtered)) {
-        console.log('✅ 更新 setFilteredCourses:', filtered)
-        return filtered
-      }
-      return prev
-    })
+    return result
   }, [search, sort, courses])
 
+  // 處理搜尋
+  const handleSearch = () => {
+    if (!isComposing) {
+      setSearch(tempSearch)
+    }
+  }
+
+  // 將 filtered 直接在父組件渲染
   return (
     <section className={`container ${styles['course-list']}`}>
       <div className={styles['search-filter']}>
@@ -59,10 +52,20 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
             className={styles['search-input']}
             type="text"
             placeholder="搜尋課程、講師"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={tempSearch}
+            onChange={(e) => setTempSearch(e.target.value)}
+            onCompositionStart={() => setIsComposing(true)}
+            onCompositionEnd={(e) => {
+              setIsComposing(false)
+              handleSearch()
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch()
+              }
+            }}
           />
-          <button className={styles['search-btn']}>
+          <button className={styles['search-btn']} onClick={handleSearch}>
             <img src="/images/icon/search-blue.svg" alt="搜尋" />
           </button>
         </div>
@@ -79,11 +82,10 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
         </select>
       </div>
 
-      {/* 📚 課程清單 */}
       {courses.length === 0 ? (
         <p>課程載入中...</p>
       ) : (
-        <CourseList courses={courses} />
+        <CourseList courses={filtered} />
       )}
     </section>
   )
