@@ -112,7 +112,7 @@ export default function cartPageThree() {
               </div>
             ))}
           </div>
-          {/* <div className="j-shoppingItemsBox d-sm-none d-block p-0 d-flex flex-grow-1 flex-column gap-3">
+          <div className="j-shoppingItemsBox d-sm-none d-block p-0 d-flex flex-grow-1 flex-column gap-3 row">
             {cartItems.map((item, index) => (
               <div className="p-2 border-bottom"  key={index+1}>
                 <CartItem key={index} id={index + 1} itemData={item} />
@@ -129,7 +129,7 @@ export default function cartPageThree() {
                 <RentItem key={index} rentalitem={rental} />
               </div>
             ))}
-          </div> */}
+          </div>
         </div>
         <CheckoutFormStep3 />
       </div>
