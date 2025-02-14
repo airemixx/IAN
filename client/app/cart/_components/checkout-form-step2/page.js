@@ -2,7 +2,7 @@ import styles from "./shopping-cart-step2.module.scss";
 
 export default function CheckoutFormStep2() {
     return (
-        <div className={`${styles['j-payStep']} col-5 mt-4`}>
+        <div className={`${styles['j-payStep']} col-sm-11 col-md-9 col-lg-7 col-xl-6 col-xxl-5 mt-4 me-lg-0 `}>
             <div className={`${styles['j-payTitle']} mb-3`}>結帳</div>
             <div className={`${styles['buyerData']} mb-4`}>訂購人資料</div>
             <div className={`${styles['j-buyerInput']} d-flex flex-wrap mb-5`}>

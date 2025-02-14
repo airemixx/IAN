@@ -45,11 +45,16 @@
 
 .j-model {
   color: #000;
-  font-size: 14px;
 }
 
 .j-amount-text {
   width: 40px;
+}
+
+@media(max-width:1400px) {
+  .j-model{
+    font-size: 15px;
+  }
 }
 
 @media(max-width:390px) {
