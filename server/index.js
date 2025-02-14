@@ -45,7 +45,6 @@ app.get('/', (req, res) => {
   res.send('API 運行中...')
 })
 
-
 app.use('/api/product', productRoutes)
 
 app.use('/api/courses', coursesRouter)
@@ -56,14 +55,9 @@ app.use('/api/cart', cartRouter)
 app.use('/api/articles', articleRoutes)
 
 // 設定伺服器監聽埠號
-app.use("/api/product", productRoutes);
-app.use("/api/courses", coursesRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/articles", articleRoutes);
+const PORT = process.env.PORT || 8000
 
 
-// 設定伺服器監聽埠號
-const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)
 })

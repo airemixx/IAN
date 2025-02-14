@@ -11,45 +11,51 @@ export default function CourseRating() {
   const [comments, setComments] = useState([])
   const [averageRating, setAverageRating] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [showAllComments, setShowAllComments] = useState(false) // ✅ 控制彈出視窗
+  const [showAllComments, setShowAllComments] = useState(false)
 
   useEffect(() => {
     if (!id) return
-  
+
     const fetchComments = async () => {
       try {
         const res = await fetch(`/api/courses/${id}/comments`)
         if (!res.ok) throw new Error('無法獲取評論資料')
-  
+
         const data = await res.json()
-        console.log('🔍 從 API 獲取的評論數據:', data) // ✅ 檢查 API 回傳資料
-  
+
         setComments(data)
-  
-        // ✅ 確保所有 `rating` 值都是數字
+
+        //  確保所有 `rating` 值都是數字
         const validRatings = data
-          .map(comment => parseFloat(comment.rating)) // 轉換成數字
-          .filter(rating => !isNaN(rating)) // 移除 `NaN` 值
-  
-        console.log('✅ 有效的評分數據:', validRatings)
-  
-        // ✅ 計算平均評分
+          .map((comment) => parseFloat(comment.rating))
+          .filter((rating) => !isNaN(rating))
+
+        //  計算平均評分
         const avg = validRatings.length
-          ? validRatings.reduce((sum, rating) => sum + rating, 0) / validRatings.length
+          ? validRatings.reduce((sum, rating) => sum + rating, 0) /
+            validRatings.length
           : 0
-  
-        console.log('⭐ 最終計算的 `averageRating`:', avg) // 檢查計算結果
-        setAverageRating(avg.toFixed(1)) // ✅ 設定評分，確保它是數字
+        setAverageRating(avg.toFixed(1)) // ✅ 確保這行執行
       } catch (err) {
         console.error('❌ 載入評論失敗:', err.message)
       } finally {
         setLoading(false)
       }
     }
-  
+
     fetchComments()
   }, [id])
-  
+
+  // ✅ 先定義 `ratingCounts` 再計算 `ratingPercentages`
+  const ratingCounts = [5, 4, 3, 2, 1].map(
+    (star) =>
+      comments.filter((comment) => Math.round(comment.rating) === star).length,
+  )
+
+  const totalReviews = comments.length || 1 // 避免除以 0
+  const ratingPercentages = ratingCounts.map(
+    (count) => (count / totalReviews) * 100,
+  )
 
   return (
     <section className={styles['course-rating-container']}>
@@ -71,6 +77,25 @@ export default function CourseRating() {
               {comments.length} 則評價
             </div>
           </div>
+        </div>
+        <div className={styles['rating-right']}>
+          {[5, 4, 3, 2, 1].map((rating, index) => (
+            <div key={rating} className={styles['progress-container']}>
+              <div className={styles['count']}>{rating}</div>
+              <div
+                className="progress"
+                style={{ width: '400px', height: '8px', minWidth: '50px' }}
+              >
+                <div
+                  className={styles['progress-bar']}
+                  role="progressbar"
+                  style={{
+                    width: `${ratingPercentages[index]}%`, // ✅ 正確計算進度條
+                  }}
+                ></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
