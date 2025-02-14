@@ -4,7 +4,7 @@ export default function LessonItem({lessionitem}) {
     const { image, title, instructor, rating, price } = lessionitem;
     return (
         <div className="d-flex flex-grow-1">
-            <div className={`${styles['j-cartItemBox']} me-3 mb-2 d-flex flex-grow-1 justify-content-center`}>
+            <div className={`${styles['j-cartItemBox']}  mb-2 d-flex flex-grow-1 justify-content-center`}>
                 <div className={`${styles['shoppingLesson']} d-flex flex-column`}>
                     <div className={`${styles['j-lessonImg']} m-2`}>
                         <img src={image} alt={title} className="object-fit-contain" />

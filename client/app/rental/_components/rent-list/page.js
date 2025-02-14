@@ -1,3 +1,5 @@
+// rent-list
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -23,12 +25,14 @@ export default function RentList() {
             <div className="position-absolute top-0 end-0 state-text text-uppercase fw-bold pt-2 pe-3 rounded-start">
               {rental.state}
             </div>
-            <img
-              src={`/images/rental/test/${rental.image[0]}.png`}
-              className="d-block mx-auto"
-              style={{ width: '50%' }}
-              alt={rental.name}
-            />
+            <div className='mt-4'>
+              <img
+                src={`/images/rental/test/${rental.image[0]}.png`}
+                className="d-block mx-auto"
+                style={{ width: '50%' }}
+                alt={rental.name}
+              />
+            </div>
             <div className="pt-0 pe-3 pb-2 ps-4">
               <h3 className="fs-5 fw-bold text-dark">{rental.name}</h3>
               <div className="d-flex justify-content-between align-items-center">
