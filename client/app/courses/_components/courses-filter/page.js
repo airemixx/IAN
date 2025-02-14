@@ -1,59 +1,76 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
 import styles from './courses-filter.module.scss'
-import { CourseCard } from '../courses-card/page'
+import CourseList from '../courses-list/page'
 
-export default function CoursesFilter() {
-  const [courses, setCourses] = useState([]) // 課程列表
-  const [search, setSearch] = useState('') // 搜尋關鍵字
-  const [sort, setSort] = useState('popular') // 排序方式
+export default function CoursesFilter({ courses, setFilteredCourses }) {
+  const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('popular')
 
-  // 🚀 取得篩選後的課程資料
-  const fetchCourses = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:8000/api/courses?search=${search}&sort=${sort}`,
-      )
-      if (!res.ok) throw new Error(`HTTP 錯誤！狀態碼：${res.status}`)
-
-      const data = await res.json()
-      console.log('📢 取得的課程資料：', data) // ✅ 確保這裡有正確的資料
-
-      if (!Array.isArray(data)) throw new Error('API 回應的資料不是陣列')
-
-      setCourses(data)
-    } catch (error) {
-      console.error('❌ 載入課程失敗:', error)
-      setCourses([]) // 避免 courses 變成 undefined
-    }
-  }
-
-  // 🔄 當 `search` 或 `sort` 變動時，重新抓取資料
   useEffect(() => {
-    fetchCourses()
-  }, [search, sort])
+    console.log('🔄 useEffect in CoursesFilter triggered!')
+    console.log('📢 原始 courses:', courses)
+
+    // ✅ **確保 API 已回應，且 courses 不是空的**
+    if (!courses || courses.length === 0) {
+      console.log('❌ API 還沒回來，跳過篩選')
+      return
+    }
+
+    let filtered = [...courses]
+
+    if (search.trim() !== '') {
+      console.log(`🔍 進行關鍵字搜尋: ${search}`)
+      filtered = filtered.filter(
+        (course) =>
+          course.title.toLowerCase().includes(search.toLowerCase()) ||
+          course.teacher_name.toLowerCase().includes(search.toLowerCase())
+      )
+    }
+
+    if (sort === 'popular') {
+      filtered.sort((a, b) => b.student_count - a.student_count)
+    } else if (sort === 'new') {
+      filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    } else if (sort === 'low-price') {
+      filtered.sort((a, b) => a.sale_price - b.sale_price)
+    } else if (sort === 'high-price') {
+      filtered.sort((a, b) => b.sale_price - a.sale_price)
+    }
+
+    console.log('📢 篩選後的 filteredCourses:', filtered)
+
+    // ✅ **只有當 `filteredCourses` 內容變更時才更新**
+    setFilteredCourses((prev) => {
+      if (JSON.stringify(prev) !== JSON.stringify(filtered)) {
+        console.log('✅ 更新 setFilteredCourses:', filtered)
+        return filtered
+      }
+      return prev
+    })
+  }, [search, sort, courses])
 
   return (
     <section className={`container ${styles['course-list']}`}>
       <div className={styles['search-filter']}>
-        {/* 🔍 搜尋框 */}
         <div className={styles['course-search']}>
           <input
             className={styles['search-input']}
             type="text"
             placeholder="搜尋課程、講師"
             value={search}
-            onChange={(e) => setSearch(e.target.value)} // ✅ 更新 `search`，觸發 `useEffect`
+            onChange={(e) => setSearch(e.target.value)}
           />
-          <button className={styles['search-btn']} onClick={fetchCourses}>
-            <img src="/images/icon/search-blue.svg" alt="" />
+          <button className={styles['search-btn']}>
+            <img src="/images/icon/search-blue.svg" alt="搜尋" />
           </button>
         </div>
 
-        {/* 🔽 篩選下拉選單 */}
         <select
           className={styles['custom-select']}
           value={sort}
-          onChange={(e) => setSort(e.target.value)} // ✅ 更新 `sort`，觸發 `useEffect`
+          onChange={(e) => setSort(e.target.value)}
         >
           <option value="popular">熱門程度優先</option>
           <option value="new">最新上架優先</option>
@@ -63,26 +80,11 @@ export default function CoursesFilter() {
       </div>
 
       {/* 📚 課程清單 */}
-      <div className={styles['course-list-container']}>
-        {courses.length === 0 ? (
-          <p>找不到符合條件的課程</p>
-        ) : (
-          courses
-            .filter((course) => course && course.image_url) // ✅ 過濾掉 `undefined` 或 `null`
-            .map((course, index) => {
-              console.log(`📢 渲染 course[${index}]:`, course) // ✅ 確保 console 內部的資料正確
-              return (
-                <CourseCard
-                  key={course.id}
-                  title={course.title}
-                  teacher={course.teacher_name}
-                  price={course.sale_price}
-                  image={course.image_url}
-                />
-              )
-            })
-        )}
-      </div>
+      {courses.length === 0 ? (
+        <p>課程載入中...</p>
+      ) : (
+        <CourseList courses={courses} />
+      )}
     </section>
   )
 }

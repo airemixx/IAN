@@ -49,6 +49,17 @@
   box-shadow: none; /* 移除 Bootstrap 預設陰影 */
 }
 
+// 沒找到關鍵字
+.notfound {
+  width: 100%;
+  height: 100px;
+  margin: 8rem 0 5rem 0;
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--line-color-gray);
+}
+
 /* 響應式樣式 */
 @media screen and (max-width: 1200px) {
   .search-filter {
