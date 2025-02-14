@@ -1,3 +1,5 @@
+// rent-total
+
 export default function RentTotal() {
   return (
     <div className="text-end">
