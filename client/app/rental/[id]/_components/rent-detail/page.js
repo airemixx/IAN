@@ -1,3 +1,5 @@
+// rent-detail
+
 'use client';
 
 import { useState } from "react";
@@ -32,21 +34,23 @@ export default function RentDetail() {
           {activeTab === "rental" ? (
             <div className="card card-radius">
               <div className="card-body">
-                <h5 className="card-title brand-text">商品配件</h5>
-                <ul className="fee-text">
-                  <li>64G SD 記憶卡</li>
-                  <li>電池 x2</li>
-                  <li>充電器</li>
-                  <li>鏡頭蓋</li>
-                </ul>
-                <div className="mt-4">
-                  <h5 className="card-title brand-text">租借時段</h5>
-                  <label className="fee-text" htmlFor="startDate">開始日期</label>
-                  <input type="date" id="startDate" className="form-control mb-2" />
-                  <label className="fee-text" htmlFor="endDate">結束日期</label>
-                  <input type="date" id="endDate" className="form-control" />
-                  <div className="d-flex justify-content-end mt-3">
-                    <button className="btn btn-primary">立即租借</button>
+                <h5 className="card-title fee-text">商品配件</h5>
+                <p>
+                  ．64G SD 記憶卡<br/>
+                  ．電池 x2<br/>
+                  ．充電器<br/>
+                  ．鏡頭蓋
+                </p>
+                <div className="mt-3">
+                  <h5 className="card-title fee-text">租借時段</h5>
+                  <div className="m-2">
+                    <label htmlFor="startDate">開始日期</label>
+                    <input type="date" id="startDate" className="form-control mb-2" />
+                    <label htmlFor="endDate">結束日期</label>
+                    <input type="date" id="endDate" className="form-control" />
+                    <div className="d-flex justify-content-end mt-3">
+                      <button className="btn btn-primary">立即租借</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -78,13 +82,11 @@ export default function RentDetail() {
                   <tr>
                     <th className="ps-3">產品特點</th>
                     <td>
-                      <ul className="list-unstyled mb-0">
-                        <li>6000萬像素</li>
-                        <li>內建 28mm f/1.7 大光圈鏡頭</li>
-                        <li>低光表現優秀</li>
-                        <li>8K 30p 影片錄製</li>
-                        <li>可傾斜觸控螢幕</li>
-                      </ul>
+                      ．6000萬像素<br/>
+                      ．內建 28mm f/1.7 大光圈鏡頭<br/>
+                      ．低光表現優秀<br/>      
+                      ．8K 30p 影片錄製<br/>
+                      ．可傾斜觸控螢幕        
                     </td>
                   </tr>
                 </tbody>
