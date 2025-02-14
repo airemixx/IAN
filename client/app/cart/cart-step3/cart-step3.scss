@@ -3,13 +3,14 @@
 }
 
 .j-shoppingCartBox {
+  margin-top: 12%;
   display: flex;
   flex-direction: column;
+  
 }
 
 .j-shoppingItemsBox {
   overflow: auto;
-  height: 605px;
 }
 
 .footer-block{
@@ -30,7 +31,12 @@
 .copyright span {
   color: #000
 }
-
+@media (max-width: 1200px){
+  .j-shoppingCartBox {
+    margin-top: 10%;
+  }
+  
+}
 @media (max-width: 390px) {
   .container {
     display: flex;

@@ -1,21 +1,20 @@
   .j-addressTitle{
     color: #000;
     text-align: center;
-    font-family: "Noto Sans";
     font-size: 30px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
   }
-  .j-addressDetailContent{
-    font-family: "Noto Sans";
-    font-size: 12px;
-    font-style: normal;
+  .j-adDetailtitle{
     font-weight: 500;
+  }
+  .j-adDetailContent{
+    font-size: 14px;
+    font-style: normal;
     line-height: normal;
   }
   .j-payStep {
-    width: 550px;
     padding: 22px;
     gap: 10px;
     border-radius: 20px;
@@ -24,7 +23,6 @@
 
   .j-payTitle{
     color: #003150;
-    font-family: Inter;
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
