@@ -101,10 +101,10 @@ export default function cartPageOne() {
   ]
   return (
     <>
-      <div className="container" style={{ height: '91vh' }}>
+      <div className="container j-bodyHeight">
         <CartTitle count={cartItems.length} />
         <div className="row d-flex justify-content-center">
-          <div className="j-shoppingCartBox justify-content-between mt-4 col-md-8">
+          <div className="j-shoppingCartBox justify-content-between mt-4 col-sm-10 col-lg-6 col-xl-8">
             <div className="j-shoppingItemsBox d-none d-sm-block p-0">
               {cartItems.map((item, index) => (
                 <div className="d-flex align-items-center gap-3 p-2 border-bottom" key={index + 1}>

@@ -28,9 +28,9 @@
 .y-list-card-content {  
   h4 {  
     color: #000;  
-  }  
-  &:hover {  
-    text-decoration: underline;  
+    &:hover {  
+      text-decoration: underline;  
+    }  
   }  
 }  
 
@@ -65,4 +65,8 @@
       text-decoration: underline;
     }
   }
+}
+
+.card-sub-title{
+  color: #7f7f7f;
 }

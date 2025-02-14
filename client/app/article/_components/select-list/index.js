@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';  
 import styles from './index.module.scss';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 
 export default function SelectList({ onFilterChange }) {
@@ -27,6 +28,7 @@ export default function SelectList({ onFilterChange }) {
     { value: '11', label: '11' },
     { value: '12', label: '12' },
   ]);
+  const router = useRouter();
 
 
   // 動態載入 Bootstrap JS（僅在 client-side）
@@ -97,7 +99,7 @@ export default function SelectList({ onFilterChange }) {
   return (  
     <>  
       <div className={`my-sm-5 ${styles['y-list-title']} d-flex justify-content-between align-items-center`}>  
-        <h2 className="mb-0">文章列表</h2>  
+        <h2 className="mb-0">所有文章</h2>  
         <button  
           className="mb-0 btn rounded-pill"
           type="button"
@@ -126,11 +128,18 @@ export default function SelectList({ onFilterChange }) {
               id="y-clear-options-btn"  
               className="btn btn-link"  
               onClick={() => {
+                const scrollPosition = window.scrollY; // 記住滾動位置
+
                 document.querySelectorAll('select').forEach((select) => {
                   select.selectedIndex = 0;
                 });//清除選項
                 handleFilterChange();//清除選項後觸發篩選
-              }}
+                Promise.resolve(router.push('/article')).then(() => { // 確保 router.push 返回 Promise
+                setTimeout(() => {
+                  window.scrollTo(0, scrollPosition); // 恢復滾動位置
+                }, 100);
+              });
+            }}
             >
               清除選項
             </button>

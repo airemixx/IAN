@@ -1,14 +1,14 @@
 .y-ad-card {
   margin: auto;
-  max-width: 355px;
+  max-width: 300px;
   background-color: #d9d9d9;
   text-align: start;
   padding-top: 20px;
 }
 
 .y-ad-card img {
-  max-width: 320px;
-  height: 300px;
+  max-width: 270px;
+  height: 250px;
   margin: 0 auto;
   object-fit: cover;
   display: block;
@@ -16,23 +16,23 @@
 }
 
 .y-ad-card .product-info {
-  padding: 25px;
+  padding: 15px;
 }
 
 .y-ad-card .product-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #000;
 }
 
 .y-ad-card .product-subtitle {
-  font-size: 16px;
+  font-size: 14px;
   color: #777;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .y-ad-card .product-price {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #000;
 }
@@ -40,7 +40,7 @@
 /* 按鈕樣式 */
 .y-ad-card .buy-button {
   width: 100%;
-  padding: 15px 0;
+  padding: 5px 0;
   background-color: #00000000;
   border: 5px solid #000;
   color: #000;
