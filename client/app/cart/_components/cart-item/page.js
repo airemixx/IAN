@@ -42,5 +42,3 @@ export default function CartItem({id, itemData }) {
     </div>
   );
 }
-
-// {`${styles['price']} me-3 ms-lg-5 ps-lg-5 ps-xl-0 ms-xl-0`}

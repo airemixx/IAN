@@ -2,7 +2,7 @@
 
 import './cart-step2.scss'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import CartItem from '../_components/cart-item/page'
 import CheckoutFormStep2 from '../_components/checkout-form-step2/page'
 import LessonItem from '../_components/lession-item/page'
@@ -97,17 +97,17 @@ export default function cartPageTwo() {
     <div className="j-shoppingCartBox justify-content-between mt-4 me-xxl-2 col-sm-12 col-md-9 col-lg-7 col-xl-6 col-xxl-6">
       <div className="j-shoppingItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
         {cartItems.map((item, index) => (
-          <div className="p-2 border-bottom" key={index}>
+          <div className="p-2 border-bottom" key={index+1}>
             <CartItem key={index} id={index + 1} itemData={item} />
           </div>
         ))}
         {cartLession.map((lession, index) => (
-          <div className="p-2 border-bottom" key={index}>
+          <div className="p-2 border-bottom" key={index+1}>
             <LessonItem key={index} lessionitem={lession} />
           </div>
         ))}
         {cartRent.map((rental, index) => (
-          <div className="p-2 border-bottom" key={index}>
+          <div className="p-2 border-bottom" key={index+1}>
             <RentItem key={index} rentalitem={rental} />
           </div>
         ))}
