@@ -2,6 +2,7 @@
 
 import './cart-step1.scss'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Script from 'next/script'
 import CartTitle from '../_components/cart-title/page'
 import CheckoutFormStep1 from '../_components/checkout-form-step1/page'
@@ -104,7 +105,7 @@ export default function cartPageOne() {
       <div className="container j-bodyHeight">
         <CartTitle count={cartItems.length} />
         <div className="row d-flex justify-content-center">
-          <div className="j-shoppingCartBox justify-content-between mt-4 col-sm-11 col-md-9 col-lg-6 col-xl-7 me-lg-3 me-xl-3">
+          <div className="j-shoppingCartBox justify-content-between mt-4 col-sm-11 col-md-9 col-lg-6 col-xl-7 me-lg-3 me-xl-3 ">
             <div className="j-shoppingItemsBox d-none d-sm-block p-0">
               {cartItems.map((item, index) => (
                 <div className="d-flex align-items-center gap-3 p-2 border-bottom" key={index + 1}>
@@ -137,16 +138,12 @@ export default function cartPageOne() {
                 </div>
               ))}
             </div>
-            {/* 移動端版本... */}
           </div>
           <CheckoutFormStep1 />
         </div>
       </div>
 
-      <Script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        strategy="afterInteractive"
-      />
+    
     </>
   )
 }

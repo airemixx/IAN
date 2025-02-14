@@ -1,16 +1,22 @@
 // rent-hashtag
 
-'use client'
+'use client';
 
-export default function RentHashtag() {
+export default function RentHashtag({ onHashtagClick }) {
+  const hashtags = ["防抖", "4K", "輕便", "快速對焦", "大光圈"];
+
   return (
     <div className="mt-1 mb-2">
-      <span className="badge tag-bg me-1">防抖</span>
-      <span className="badge tag-bg me-1">4K</span>
-      <span className="badge tag-bg me-1">輕便</span>
-      <span className="badge tag-bg me-1">快速對焦</span>
-      <span className="badge tag-bg me-1">大光圈</span>
-      <span className="badge tag-bg">...</span>
+      {hashtags.map((tag, index) => (
+        <span 
+          key={index} 
+          className="badge tag-bg me-1" 
+          style={{ cursor: 'pointer' }}
+          onClick={() => onHashtagClick(tag)}
+        >
+          {tag}
+        </span>
+      ))}
     </div>
-  )
+  );
 }

@@ -2,27 +2,32 @@ import styles from "./shopping-cart-step3.module.scss";
 
 export default function CheckoutFormStep3() {
     return (
-        <div className={`${styles['j-pay']} col-md-5 ps-0 mt-5 pt-5`}>
-            <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3`}>結帳</p>
-            <div className={`${styles['addressDetail']} d-flex flex-wrap mb-3 row ps-3`}>
-                <div className="d-flex flex-column me-4 col-5">
-                    <span className={`${styles['j-addressDetailContent']}`}>
-                        您的送貨方式<br />
-                        2-3個工作天 (若有選擇調整錶帶服務，將在3-5個工作天送達)<br />
+        <div className={`d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 ms-xl-5 ms-xxl-0 mt-xl-5 mt-xl-5 pt-xl-5 mt-sm-5`}>
+            <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3 mt-1`}>結帳</p>
+            <div className={`${styles['addressDetail']} d-flex flex-column mb-3 ps-3`}>
+                <div className="d-flex mb-3">
+                    <span className={`${styles['j-adDetailtitle']} ` }>
+                        送貨方式：<br />
+                    </span>
+                    <span className={`${styles['j-adDetailContent']}`}>
+                        2-3個工作天<br /> (若有選擇調整錶帶服務，將在3-5個工作天送達)<br />
                     </span>
                 </div>
-                <div className="d-flex flex-column w-50 col-auto">
-                    <span className={`${styles['j-addressDetailContent']}`}>
-                        送貨地址：<br />
-                        XX 黃 先生<br />
-                        XX街XX號<br />
-                        XX縣 XX鎮 Taiwan Sheng, 310<br />
+                <div className="d-flex mb-3">
+                    <span className={`${styles['j-adDetailtitle']} `}>
+                        送貨地址：
+                    </span>
+                    <span className={`${styles['j-adDetailContent']}`}>
+                        黃XX 先生<br />
+                        XX街XX號 XX縣 XX鎮 Taiwan Sheng, 310<br />
                         台灣地區(0918556231)<br />
                     </span>
                 </div>
-                <div className="d-flex flex-column col">
-                    <span className={`${styles['j-addressDetailContent']}`}>
-                        帳單地址 <br />
+                <div className="d-flex mb-3 ">
+                    <span className={`${styles['j-adDetailtitle']} `}>
+                        帳單地址：
+                    </span>
+                    <span className={`${styles['j-adDetailContent']}`}>
                         與送貨地址相同<br />
                     </span>
                 </div>
