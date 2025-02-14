@@ -1,15 +1,14 @@
+.j-bodyHeight{
+  height: auto;
+}
+
 .j-heightspace{
-  height: 15%;
+  padding: 3.5rem;
 }
 
 .j-shoppingCartBox {
   display: flex;
   flex-direction: column;
-}
-
-.j-shoppingItemsBox {
-  overflow: auto;
-  height: 529px;
 }
 
 .j-shoppingItemsBox {
@@ -32,6 +31,25 @@
 .copyright span {
   color: #000
 }
+
+@media(max-width:1400px){
+  .j-shoppingItemsBox {
+    overflow: auto;
+    height: 529px;
+  }
+
+  .j-bodyHeight{
+    height: auto;
+  }
+}
+
+@media(max-width:1200px){
+  .j-shoppingItemsBox {
+    overflow: visible;
+    height: auto;
+  }
+}
+
 
   
   @media(max-width:390px) {
