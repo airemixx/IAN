@@ -26,7 +26,7 @@ export default function UserPage(props) {
               <img src="/images/product/zf.png" alt="相機" className={styles.productImage} />
               <div className="flex-grow-1">
                 <span className={styles.productLabel}>相機</span>
-                <h6 className={styles.productBrand}>FUJIFILM 富士</h6>
+                <h6 className={`mt-3 ${styles.productBrand}`}>FUJIFILM 富士</h6>
                 <h5>X-T5 16-50mm</h5>
               </div>
               <div className={`${styles.priceGrid} me-5`}>
@@ -49,7 +49,7 @@ export default function UserPage(props) {
               <img src="/images/product/zf.png" alt="相機" className={styles.productImage} />
               <div className="flex-grow-1">
                 <span className={styles.productLabel}>課程</span>
-                <h6 className={styles.productBrand}>食癮，合影</h6>
+                <h6 className={`mt-3 ${styles.productBrand}`}>食癮，合影</h6>
                 <h5>旅行攝影：按下快門，用攝影書寫故事</h5>
               </div>
               <div className={`${styles.priceGrid} me-5`}>
@@ -80,7 +80,7 @@ export default function UserPage(props) {
               <img src="/images/product/zf.png" alt="相機" className={styles.productImage} />
               <div className="flex-grow-1">
                 <span className={styles.productLabel}>相機</span>
-                <h6 className={styles.productBrand}>FUJIFILM 富士</h6>
+                <h6 className={`mt-3 ${styles.productBrand}`}>FUJIFILM 富士</h6>
                 <h5>X-T5 16-50mm</h5>
               </div>
               <div className={`${styles.priceGrid} me-5`}>
