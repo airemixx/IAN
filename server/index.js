@@ -12,6 +12,7 @@ import path from 'path'
 import coursesRouter from './routes/courses.js'
 import teachersRouter from './routes/teachers.js'
 import productRoutes from './routes/product.js'
+import rentalRouter from './routes//rental.js';
 import cartRouter from './routes/cart.js'
 import articleRoutes from './routes/article.js'
 
@@ -49,6 +50,8 @@ app.use('/api/product', productRoutes)
 
 app.use('/api/courses', coursesRouter)
 app.use('/api/teachers', teachersRouter)
+
+app.use('/api/rental', rentalRouter);
 
 app.use('/api/cart', cartRouter)
 

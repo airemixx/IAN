@@ -1,4 +1,4 @@
-// rent-recommendation
+// rent-recommend
 
 'use client';
 
@@ -9,7 +9,7 @@ import RentCard from "../rent-card/page";
 // 動態載入 RentPagination，避免影響 SSR
 const RentPagination = dynamic(() => import("../rent-pagination/page"), { ssr: false });
 
-export default function RentRecommendation() {
+export default function RentRecommend() {
   const [rentalData, setRentalData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);

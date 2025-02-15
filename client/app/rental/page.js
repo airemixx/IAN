@@ -1,7 +1,4 @@
 import RentBreadcrumb from './_components/rent-breadcrumb/page'
-import RentSearch from './_components/rent-search/page'
-import RentHashtag from './_components/rent-hashtag/page'
-import RentFilter from './_components/rent-filter/page'
 import RentList from './_components/rent-list/page'
 
 import './rent-list.scss'
