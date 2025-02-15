@@ -1,18 +1,16 @@
-
-/* 📌 圖示樣式 */
+/* 預設隱藏 */
 .iconcontainer {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0px;
+  right: -11px;
   text-align: center;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-// 🚀 讓 `.card` hover 時，`.iconcontainer` 顯示
-.card:hover .iconcontainer,
-.iconcontainer:hover {
+/* 當 `isHovered` 為 true 時顯示 icon + 文字 */
+.show {
   opacity: 1;
   visibility: visible;
 }
@@ -27,19 +25,16 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s;
-
-  i {
-    font-size: 20px;
-    color: #333;
-  }
 }
 
 .iconText {
   font-size: 12px;
   color: black;
+  opacity: 1; /* 讓文字始終顯示 */
+  transition: opacity 0.3s ease;
 }
 
-/* 📌 響應式設計 */
+/* ✅ 讓手機版 (小於 390px) **始終顯示** */
 @media (max-width: 391px) {
   .iconcontainer {
     display: none;
