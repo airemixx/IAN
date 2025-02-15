@@ -1,6 +1,6 @@
 .cartButton {
     margin-top: 10px;
-    background-color: #e08534;
+    background-color: #E58E41;
     border: none;
     border-radius: 5px;
     font-size: 16px;
@@ -10,6 +10,7 @@
     visibility: hidden;
     color: white;
     z-index: 1; /* ✅ 增加層級，讓它高於 stretched-link */
+    width: 100%;
   }
   
   /* ✅ 當 `isHovered` 為 true 時顯示按鈕 */

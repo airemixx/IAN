@@ -14,6 +14,9 @@ export default function BreadcrumbIndex() {
                     <li className={`breadcrumb-item active ${styles.breadcrumbItem}`} aria-current="page">
                         <a href="/product" className={styles.breadcrumbLink}>產品系列</a>
                     </li>
+                    <li className={`breadcrumb-item active ${styles.breadcrumbItem}`} aria-current="page">
+                        詳細列表
+                    </li>
                 </ol>
             </nav>
         </div>
