@@ -1,8 +1,7 @@
-// rent-pagination
-
 'use client';
 
 import { useEffect } from "react";
+import { BiSolidLeftArrow, BiSolidRightArrow } from "react-icons/bi";
 
 export default function RentPagination({ currentIndex = 0, setCurrentIndex, totalItems = 0, itemsPerPage = 3 }) {
   // 當 totalItems 為 0，隱藏 Pagination
@@ -36,7 +35,7 @@ export default function RentPagination({ currentIndex = 0, setCurrentIndex, tota
         disabled={currentIndex === 0}
       >
         <span aria-hidden="true">
-          <i className="fa-solid fa-fw fa-caret-left" style={{ paddingTop: "6px" }}></i>
+          <BiSolidLeftArrow size={16} className="left-btn"/>
         </span>
         <span className="visually-hidden">往前一個 Previous</span>
       </button>
@@ -46,7 +45,7 @@ export default function RentPagination({ currentIndex = 0, setCurrentIndex, tota
         disabled={currentIndex + itemsPerPage >= totalItems}
       >
         <span aria-hidden="true">
-          <i className="fa-solid fa-fw fa-caret-right" style={{ paddingTop: "6px" }}></i>
+          <BiSolidRightArrow size={16} className="right-btn"/>
         </span>
         <span className="visually-hidden">往後一個 Next</span>
       </button>

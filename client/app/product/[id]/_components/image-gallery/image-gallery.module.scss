@@ -81,22 +81,11 @@
 }
 
 @media (max-width: 391px) {
-  .arrowLeft {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-  }
-
-  .arrowRight {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-  }
-
   .cameraIconContainer {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 100px;
+
   }
 
   .thumbnailContainer {
@@ -105,7 +94,7 @@
 
   .mainImageContainer {
     position: relative;
-    max-width: 100%;
+    max-width: 76%;
     margin: 0 auto;
   }
 }

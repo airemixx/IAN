@@ -1,9 +1,9 @@
 import RentBreadcrumb from "./_components/rent-breadcrumb/page";
-import RentPhoto from "./_components/rent-photo/page";
+import RentPicture from "./_components/rent-picture/page";
 import RentDetail from "./_components/rent-detail/page";
-import RentHashtags from "./_components/rent-hashtag/page";
+import RentHashtag from "./_components/rent-hashtag/page";
 import RentReviews from "./_components/rent-reviews/page";
-import RentRecommendation from "./_components/rent-recommendation/page";
+import RentRecommend from "./_components/rent-recommend/page";
 
 import "./rent-detail.scss";
 
@@ -16,24 +16,24 @@ export default function RentalPage() {
       <div className="container pt-4" >
         <main>
           <div className="row">
-            {/* Photo Section */}
+            {/* Pictur Section */}
             <div className="col-lg-7">
-              <RentPhoto />
+              <RentPicture />
             </div>
 
             {/* Rental Details */}
             <div className="col-lg-5">
               <RentDetail />
-              <RentHashtags />
+              <RentHashtag />
               <RentReviews />
             </div>
           </div>
         </main>
       </div>
 
-      {/* Pagination & Recommendation */}
+      {/* Pagination & Recommend */}
       <div className="col-lg-12 col-xl-10 mx-auto my-4">
-        <RentRecommendation />
+        <RentRecommend />
       </div>
     </div>
   );

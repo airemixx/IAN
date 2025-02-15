@@ -25,9 +25,9 @@ export default function RentPagination({ totalItems = 1, itemsPerPage = 1, onPag
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center mt-3">
+    <div className="d-flex justify-content-center align-items-center mt-4 mb-1">
       <button 
-        className="btn btn-sm btn-outline-primary mx-1" 
+        className="page-link" 
         onClick={handlePrev} 
         disabled={currentPage === 1}
       >
@@ -36,14 +36,14 @@ export default function RentPagination({ totalItems = 1, itemsPerPage = 1, onPag
       {[...Array(totalPages)].map((_, i) => (
         <button
           key={i + 1}
-          className={`btn btn-sm mx-1 ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline-primary'}`}
+          className={`page-link ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline-primary'}`}
           onClick={() => handlePageClick(i + 1)}
         >
           {i + 1}
         </button>
       ))}
       <button 
-        className="btn btn-sm btn-outline-primary mx-1" 
+        className="page-link" 
         onClick={handleNext} 
         disabled={currentPage === totalPages}
       >
