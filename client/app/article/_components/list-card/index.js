@@ -40,7 +40,7 @@ const ListCard = ({ article, onTagClick }) => {
                 src={article.authorImageUrl || "/images/article/user (1).jpg"}
                 alt={article.author}
               />
-              {article.user_id || "未知作者"}
+              {article.user_id || "編輯部"}
             </p>
             <p>{new Date(article.created_at).toLocaleDateString('zh-tw',{
               year: 'numeric',
