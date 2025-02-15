@@ -1,52 +1,61 @@
-// 📌 確保 SCSS 模組正確載入
+.compareHeader {
+  margin-bottom: 20px;
+}
+
+/* 🔹 返回按鈕 */
+.backButton {
+  font-size: 16px;
+  padding-top: 6rem;
+  border: none !important;
+  background-color: transparent !important;
+  color: #6c757d !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .compareTitle {
   text-align: center;
-  margin: 0 auto;
-  padding-top: 5rem; // ✅ 讓標題不被 header 擋住
-  font-size: 2rem;
+  padding-top: 6rem;
   font-weight: bold;
 }
 
 // 📌 產品比較容器
 .productContainer {
-  padding-top: 5rem; 
   display: flex;
-  padding-top: 0;
-  margin-top: 5rem;
   max-width: 1440px;
   justify-content: flex-end;
-  margin-left: 241px;
+  margin-left: 176px;
 
   .productBox {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
+    width: 24%;
 
     img {
       width: 100%;
     }
 
     h5 {
-      font-size: 1.2rem;
       font-weight: bold;
     }
 
     p {
-      font-size: 1rem;
       color: #333;
     }
 
     .buy {
       width: 50%;
-      background-color: #062F4F;
+      background-color: #062f4f;
       border: none;
       margin-bottom: 10px;
+      margin-top: 10px;
     }
 
     .remove {
       width: 50%;
       color: black;
+      margin-bottom: 20px;
     }
   }
 
@@ -64,12 +73,53 @@
 
 // 📌 響應式設計
 @media (max-width: 391px) {
-  .productContainer {
-    margin: 30px auto;
-    flex-direction: column; // 小螢幕排列方式改為直列
+  .backButton {
+    font-size: 12px;
+    padding-top: 6rem;
+    white-space: nowrap;
+    border: none !important;
+    background-color: transparent !important;
+    color: #6c757d !important;
+    box-shadow: none !important;
+    outline: none !important;
   }
 
-  .productBox {
-    width: 100%;
+  .productContainer {
+    margin: auto;
+
+    .productBox {
+      text-align: center;
+      // margin-right: 5px;
+      // border: 1px solid red;
+      width: 26.5%;
+
+      h5 {
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+
+      p {
+        font-size: 0.7rem;
+
+        color: #333;
+      }
+
+      .buy {
+        width: 43%;
+        background-color: #062f4f;
+        border: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .remove {
+        width: 50%;
+        color: black;
+        margin-bottom: 10px;
+      }
+    }
+    .emptyBox {
+      height: 200px;
+    }
   }
 }

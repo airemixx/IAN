@@ -1,4 +1,4 @@
-body,
+/* body,
 html {
   font-family: Arial, sans-serif;
   line-height: 1.6;
@@ -6,35 +6,32 @@ html {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
+} */
 
 /* 📌 按鈕樣式 */
-.buy {
+/* .buy {
   width: 50%;
   background-color: #062F4F;
   border: none;
   margin-bottom: 10px;
-}
+} */
 
-.remove {
+/* .remove {
   width: 50%;
   color: black;
-}
+} */
 
 /* 📌 比較標題 */
-.compare-title {
+/* .compare-title {
   text-align: center;
   margin-top: 20px;
   font-size: 2rem;
   font-weight: bold;
-}
+} */
 
 /* 📌 比較表格 */
-.comparison-table {
-  margin-bottom: 50px;
-}
 
-th,
+/* th,
 td {
   border: 1px solid #ddd;
   padding: 15px;
@@ -50,12 +47,12 @@ th {
 
 td {
   width: 24%;
-}
+} */
 
 /* 📌 容器設定 */
-.container {
+/* .container {
   max-width: 1440px;
-}
+} */
 
 /* 📌 產品區塊 */
 .empty-box {
@@ -71,9 +68,7 @@ td {
 .product-box {
   display: flex;
   flex-direction: column;
-  /* 讓內容垂直排列 */
   align-items: center;
-  /* 讓按鈕置中 */
 }
 
 .product-box img {

@@ -1,23 +1,42 @@
 "use client";
-import { useState } from "react";
-import styles from "./image-gallery.module.scss"; // ✅ 正確引入 SCSS Module
+import { useEffect, useState } from "react";
+import styles from "./image-gallery.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera } from "@fortawesome/free-solid-svg-icons"; // ✅ 確保引入 `faCamera`
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
-
-export default function ImageGallery() {
-  const images = [
-    "/images/product/8a2741e6db5f49f5b7ae91e34c3ad045_eos-5d-mk-iv-body-b21.png",
-    "/images/product/2b2ea827765d48108ab5b2246a7fe2db_eos-5d-mk-iv-body-b22.png",
-    "/images/product/504ad16701d848659666ac9afb059555_eos-5d-mk-iv-body-b26.png",
-  ];
-
+export default function ImageGallery({ productId }) {
+  const [images, setImages] = useState([]); // 存放商品圖片
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // 📌 向後端請求該商品的圖片
+  useEffect(() => {
+    async function fetchProductImages() {
+      try {
+        const response = await fetch(`http://localhost:8000/api/product/${productId}`);
+        if (!response.ok) throw new Error("無法獲取商品圖片");
+
+        const data = await response.json();
+        console.log("📸 取得的商品圖片:", data.images);
+
+        if (data.images && data.images.length > 0) {
+          setImages(data.images);
+        }
+      } catch (error) {
+        console.error("圖片載入錯誤:", error);
+      }
+    }
+
+    if (productId) {
+      fetchProductImages();
+    }
+  }, [productId]);
+
+  // 📌 當點擊縮圖時更新主圖片
   const updateMainImage = (index) => {
     setCurrentIndex(index);
   };
 
+  // 📌 左右切換圖片
   const previousImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
@@ -26,9 +45,13 @@ export default function ImageGallery() {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
+  if (images.length === 0) {
+    return <p>圖片載入中...</p>;
+  }
+
   return (
     <div className="col-md-6 col-12 d-flex">
-      {/* 縮圖區域 */}
+      {/* 🔹 縮圖區域 */}
       <div className={`flex-column ${styles.thumbnailContainer}`}>
         {images.map((img, index) => (
           <img
@@ -42,7 +65,7 @@ export default function ImageGallery() {
         ))}
       </div>
 
-      {/* 主要圖片區域 */}
+      {/* 🔹 主要圖片區域 */}
       <div className={styles.mainImageContainer}>
         <img
           id="mainImage"
@@ -51,7 +74,7 @@ export default function ImageGallery() {
           alt="商品圖片"
         />
 
-        {/* 左右切換按鈕 */}
+        {/* 🔹 左右切換按鈕 */}
         <span className={`${styles.arrow} ${styles.arrowLeft}`} onClick={previousImage}>
           &lt;
         </span>
@@ -59,10 +82,10 @@ export default function ImageGallery() {
           &gt;
         </span>
 
-        {/* 比較按鈕 */}
+        {/* 🔹 比較按鈕 */}
         <div className={styles.cameraIconContainer}>
           <div className={styles.cameraIcon}>
-          <FontAwesomeIcon icon={faCamera} />
+            <FontAwesomeIcon icon={faCamera} />
           </div>
           <p className={styles.cameraText}>比較</p>
         </div>

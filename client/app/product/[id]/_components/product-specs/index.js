@@ -1,73 +1,134 @@
 "use client";
-
+import { useEffect } from "react";
 import styles from "./product-specs.module.scss"; // ✅ 正確使用 SCSS Module
 
-export default function ProductSpecs({ specs = [] }) {
-  if (!specs.length) {
-    return <p>無可用規格</p>; // 如果沒有規格顯示替代內容
-  }
-
+export default function ProductSpecs({ introduce, specs = [] }) {
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap.bundle.min")
+      .then(() => {
+        console.log("✅ Bootstrap 已載入！");
+      })
+      .catch((error) => {
+        console.error("❌ Bootstrap 載入失敗:", error);
+      });
+  }, []);
   return (
     <div className="mt-4">
-      {/* 產品資訊 - 手機版下拉選單 */}
-      <div className={`accordion d-md-none ${styles.accordionMobile}`} id="mobileDescription">
+      {/* 🔹 手機版下拉選單 (768px 以下顯示) */}
+      <div className={`accordion d-md-none`} id="mobileIntroduce">
         <div className="accordion-item">
-          <h2 className="accordion-header" id="mobileHeading">
+          <h2 className="accordion-header" id="headingIntroduce">
             <button
               className="accordion-button collapsed"
               type="button"
               data-bs-toggle="collapse"
-              data-bs-target="#mobileCollapse"
+              data-bs-target="#collapseIntroduce"
+              aria-expanded="false"
+              aria-controls="collapseIntroduce"
             >
-              產品資訊
+              產品介紹
             </button>
           </h2>
-          <div id="mobileCollapse" className="accordion-collapse collapse" data-bs-parent="#mobileDescription">
+          <div id="collapseIntroduce" className="accordion-collapse collapse" data-bs-parent="#mobileIntroduce">
             <div className="accordion-body">
-              <p>
-                EOS 5D Mark IV 整合了革新的 Accelerated Capture 系統及高畫質傳感器，帶來卓越的性能和功能。
-                EOS 5D Mark IV，4500 萬像素全畫幅影像感測器 CMOS，讓每一張影像都有極致的細節與清晰度。
-                8K DCI 60p Light RAW 的 4K 120p HDR，是一次性將專業影像帶至新境界的佳選。
-                EOS 5D Mark IV 結合最先進的焦點技術及靈敏的對焦系統。適合多種拍攝需求，包括專業攝影師以及影片創作者。
-              </p>
+              <p>{introduce || "暫無產品介紹"}</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className={styles.spec}>
-        {/* 左側說明 */}
+        {/* 🔹 桌機版 (768px 以上顯示左側內容) */}
         <div className={styles.description}>
-          <p>
-            EOS 5D Mark IV 整合了革新的 Accelerated Capture 系統及高畫質傳感器，帶來卓越的性能和功能。
-            EOS 5D Mark IV，4500 萬像素全畫幅影像感測器 CMOS，讓每一張影像都有極致的細節與清晰度。
-            8K DCI 60p Light RAW 的 4K 120p HDR，是一次性將專業影像帶至新境界的佳選。
-            EOS 5D Mark IV 結合最先進的焦點技術及靈敏的對焦系統。適合多種拍攝需求，包括專業攝影師以及影片創作者。
-          </p>
+          <p>{introduce || "暫無產品介紹"}</p>
         </div>
 
         {/* 右側詳細規格 */}
         <div className={styles.specDetails}>
           <div className="accordion" id="specAccordion">
-            {specs.map((spec, index) => (
-              <div className="accordion-item" key={index}>
-                <h2 className="accordion-header">
-                  <button
-                    className="accordion-button"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target={`#collapse${index}`}
-                  >
-                    {spec.label}
-                  </button>
-                </h2>
-                <div id={`collapse${index}`} className="accordion-collapse collapse" data-bs-parent="#specAccordion">
-                  <div className="accordion-body">
-                    <p>{spec.value}</p>
+            {specs.length > 0 ? (
+              specs.map((spec, index) => (
+                <div key={index}>
+                  {/* ✅ 感光元件格式 */}
+                  <div className={`${styles.accordionItem}`}>
+                    <h2 className={styles.accordionHeader}>
+                      <button
+                        className="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target={`#camera-format-${index}`}
+                        aria-expanded="false"
+                        aria-controls={`camera-format-${index}`}
+                      >
+                        防手震功能
+                      </button>
+                    </h2>
+                    <div
+                      id={`camera-format-${index}`}
+                      className="accordion-collapse collapse"
+                      data-bs-parent="#specAccordion"
+                    >
+                      <div className="accordion-body">
+                        <p>{spec.image_stabilization || "無資料"}</p>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* ✅ 推出日期 */}
+                  <div className={`${styles.accordionItem}`}>
+                    <h2 className={styles.accordionHeader}>
+                      <button
+                        className="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target={`#release-date-${index}`}
+                        aria-expanded="false"
+                        aria-controls={`release-date-${index}`}
+                      >
+                        推出日期
+                      </button>
+                    </h2>
+                    <div
+                      id={`release-date-${index}`}
+                      className="accordion-collapse collapse"
+                      data-bs-parent="#specAccordion"
+                    >
+                      <div className="accordion-body">
+                        <p>{spec.release_date || "無資料"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ✅ 防水等級 */}
+                  <div className={`${styles.accordionItem}`}>
+                    <h2 className={styles.accordionHeader}>
+                      <button
+                        className="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target={`#waterproof-level-${index}`}
+                        aria-expanded="false"
+                        aria-controls={`waterproof-level-${index}`}
+                      >
+                        防水等級
+                      </button>
+                    </h2>
+                    <div
+                      id={`waterproof-level-${index}`}
+                      className="accordion-collapse collapse"
+                      data-bs-parent="#specAccordion"
+                    >
+                      <div className="accordion-body">
+                        <p>{spec.waterproof_level || "無資料"}</p>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-muted">沒有可用的產品規格</p>
+            )}
           </div>
         </div>
       </div>
