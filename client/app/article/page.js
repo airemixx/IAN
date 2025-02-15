@@ -11,6 +11,7 @@ import Pagination from "./_components/Pagination";
 import '../../styles/article.css';
 import Link from "next/link";
 import useArticles from "../../hooks/use-article";
+import Modal from "./_components/add-article/Modal";
 
 export default function NewsPage() {
   const searchParams = useSearchParams();
@@ -75,8 +76,9 @@ export default function NewsPage() {
     <div >
       <Breadcrumb />
       <LoopAd />
-      <div className="my-sm-5 y-list-title y-container">
+      <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
           <h1>最新消息 News</h1>
+          <Modal />
       </div>
 
       <section className="y-container">

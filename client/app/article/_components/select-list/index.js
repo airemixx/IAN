@@ -64,34 +64,52 @@ export default function SelectList({ onFilterChange }) {
 
   // 載入分類與年份等資料
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/articles/categories");
+        const response = await axios.get("http://localhost:8000/api/articles/categories", {
+          signal: controller.signal,
+        });
         const categoryOptions = response.data.data.map((category) => ({
           value: category.id,
           label: category.name,
         }));
         setCategories((prev) => [...prev, ...categoryOptions]);
       } catch (err) {
-        console.error("取得分類失敗", err);
+        if (err.name === 'CanceledError' || err.message === 'Request aborted') {
+          console.log("分類請求已被中斷");
+        } else {
+          console.error("取得分類失敗", err);
+        }
       }
     };
 
     const fetchYears = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/articles/years");
+        const response = await axios.get("http://localhost:8000/api/articles/years", {
+          signal: controller.signal,
+        });
         const yearOptions = response.data.data.map((year) => ({
           value: year.year,
           label: year.year,
         }));
         setYears((prev) => [...prev, ...yearOptions]);
       } catch (err) {
-        console.error("取得年份失敗", err);
+        if (err.name === 'CanceledError' || err.message === 'Request aborted') {
+          console.log("年份請求已被中斷");
+        } else {
+          console.error("取得年份失敗", err);
+        }
       }
     };
 
     fetchCategories();
     fetchYears();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   

@@ -32,6 +32,11 @@
   }
 }
 
+/* sweetalert */
+.swal2-popup {
+  border-radius: 25px;
+}
+
 aside {
   align-self: flex-start;
   position: sticky;
