@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useCallback } from 'react'  
 import dynamic from 'next/dynamic'  
 import 'bootstrap/dist/css/bootstrap.min.css'  
+import Swal from 'sweetalert2'  
 import styles from './AddArticleModal.module.scss'  
 import BackSelectTitle from './back-select-title'  
 import ImageUpdate from './imageUpdate'  
@@ -22,7 +23,7 @@ export default function AddArticleModal() {
 
   useEffect(() => {  
     if (typeof window === 'undefined') return  
-    
+
     import('bootstrap/js/dist/modal').then(({ default: Modal }) => {  
       bsModal.current =  
         Modal.getInstance(modalRef.current) ||  
@@ -129,11 +130,36 @@ export default function AddArticleModal() {
       }  
 
       modalEl.addEventListener('shown.bs.modal', handleModalShown)  
+
+      // 監聽 backdrop 點擊事件  
+      modalEl.addEventListener('click', (event) => {  
+        // 檢查點擊的目標是否為modal的背景區域  
+        if (event.target === modalEl) {  
+          Swal.fire({  
+            title: '尚未儲存完畢，是否確認離開？',  
+            icon: 'warning',  
+            showCancelButton: true,  
+            confirmButtonText: '確認',  
+            cancelButtonText: '取消',
+            customClass: {
+              confirmButton: `${styles['btn-sweetalert']} btn`,
+              cancelButton: `${styles['btn-sweetalert-2']} btn`,
+              
+            }
+          }).then((result) => {  
+            if (result.isConfirmed) {  
+              confirmClose() // 確認關閉 modal  
+            }  
+          })  
+        }  
+      })  
+
       return () => {  
         modalEl.removeEventListener('shown.bs.modal', handleModalShown)  
+        modalEl.removeEventListener('click', () => {}); // 清除 click 事件  
       }  
     })  
-  }, [])  
+  }, [confirmClose])  
 
   return (  
     <>  
