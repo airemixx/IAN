@@ -4,7 +4,7 @@ import styles from "./filter-sortbar.module.scss";
 
 export default function FilterSortBar({ onBrandSelect, onSortChange }) {
   const [selectedBrand, setSelectedBrand] = useState("所有品牌");
-  const [selectedSort, setSelectedSort] = useState("");
+  const [selectedSort, setSelectedSort] = useState(""); // ✅ 確保這裡有管理 `sort`
   const [brands, setBrands] = useState(["所有品牌"]);
 
   // 🔹 從 API 獲取品牌列表
@@ -15,8 +15,8 @@ export default function FilterSortBar({ onBrandSelect, onSortChange }) {
         if (!res.ok) throw new Error("無法取得品牌列表");
         const data = await res.json();
 
-        // ✅ 確保 API 取得的品牌陣列加上「所有品牌」
-        setBrands(["所有品牌", ...data]);
+        // 讓 `brands` 存 id 和 name，並確保「所有品牌」在陣列中
+        setBrands([{ id: null, name: "所有品牌" }, ...data]);
       } catch (error) {
         console.error("獲取品牌列表時發生錯誤:", error);
       }
@@ -27,41 +27,51 @@ export default function FilterSortBar({ onBrandSelect, onSortChange }) {
 
   // 🔹 處理品牌篩選
   const brandClick = (brand) => {
-    setSelectedBrand(brand);
-    
-    // ✅ 如果點擊的是「所有品牌」，則重置 brand_id
-    if (brand === "所有品牌") {
-      onBrandSelect({ brand_id: [] }); 
+    setSelectedBrand(brand.name);
+
+    if (brand.id === null) {
+      // 如果點選「所有品牌」，則清空篩選
+      onBrandSelect({ brand_id: [] });
     } else {
-      onBrandSelect({ brand_id: [brand] }); // ✅ 確保 `brand_id` 是陣列
+      // 傳遞 `brand_id`
+      onBrandSelect({ brand_id: [brand.id] });
     }
   };
-  
 
-  // 🔹 處理排序變更
+  // ✅ 修正：確保 `onSortChange` 傳遞的是正確的 `sort` 值
   const sortChange = (event) => {
     const newSort = event.target.value;
     setSelectedSort(newSort);
-    if (onSortChange) onSortChange(newSort);
+  
+    console.log("🔄 排序方式變更:", newSort);
+  
+    if (onSortChange) {
+      if (newSort === "") {
+        onSortChange(""); // ✅ 選擇「排序」時，重置 `sort` 回到 `id`
+      } else {
+        onSortChange(newSort === "價格由低至高" ? "price_asc" : "price_desc");
+      }
+    }
   };
 
   return (
     <div className={`d-flex justify-content-between align-items-center mb-3 ${styles.filterSortBar}`}>
-      {/* 品牌篩選（動態載入） */}
       <div className="d-flex flex-wrap gap-2">
         {brands.map((brand) => (
           <button
-            key={brand}
+            key={brand.id || "all"}
             type="button"
-            className={`${styles.btnOutlineSecondary} ${selectedBrand === brand ? styles.active : ""}`}
+            className={`${styles.btnOutlineSecondary} ${selectedBrand === brand.name ? styles.active : ""}`}
             onClick={() => brandClick(brand)}
           >
-            {brand}
+            {brand.name}
           </button>
         ))}
       </div>
 
+
       {/* 排序方式 */}
+      {/* ✅ 確保 `onSortChange` 能正確觸發 */}
       <div className={styles.sortContainer}>
         <select className="form-select" value={selectedSort} onChange={sortChange}>
           <option value="">排序</option>

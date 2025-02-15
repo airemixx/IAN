@@ -12,8 +12,9 @@ LENSTUDIO/
 │ │ │ 　├── page.js
 │ │ │ 　├── \_components
 │ │ │ 　│ 　├── rent-breadcrumb
+│ │ │ 　│ 　├── rent-card
 │ │ │ 　│ 　├── rent-filter
-│ │ │ 　│ 　├── rent-hashtags
+│ │ │ 　│ 　├── rent-hashtag
 │ │ │ 　│ 　├── rent-list
 │ │ │ 　│ 　├── rent-order
 │ │ │ 　│ 　├── rent-pagination
@@ -23,12 +24,14 @@ LENSTUDIO/
 │ │ │ 　　　├── page.js
 │ │ │ 　　　└── \_components
 │ │ │ 　　　　　├── rent-breadcrumb
+│ │ │ 　　　　　├── rent-card
 │ │ │ 　　　　　├── rent-detail
 │ │ │ 　　　　　├── rent-hashtag
 │ │ │ 　　　　　├── rent-pagination
 │ │ │ 　　　　　├── rent-photo
 │ │ │ 　　　　　├── rent-recommendation
-│ │ │ 　　　　　└── rent-reviews
+│ │ │ 　　　　　├── rent-reviews
+│ │ │ 　　　　　└── rent-tabs
 │ │ │
 │ │ ├── cart/ # ✅ 購物車系統
 │ │ ├── user/ # ✅ 會員系統

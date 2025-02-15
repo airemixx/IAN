@@ -1,0 +1,71 @@
+.j-bodyHeight{
+  height: '91vh'
+}
+
+.j-shoppingCartBox {
+  margin-top: 12%;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.j-shoppingItemsBox {
+  overflow: auto;
+}
+
+.footer-block{
+  display: none;
+}
+
+.copyright {
+  background-color: #f6f6f6;
+  padding-right: 5%;
+  padding-left: 5%;
+}
+
+.copyright-text{
+  color: #000;
+}
+
+.copyright a,
+.copyright span {
+  color: #000
+}
+@media (max-width: 1200px){
+  .j-shoppingCartBox {
+    margin-top: 10%;
+  }
+  
+}
+@media (max-width: 390px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container .shoppingCartTitle {
+    font-size: 65px;
+  }
+
+  .container .shoppingCartBox {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .shoppingItemsMoblieBox {
+    width: 390px;
+  }
+
+  .j-cartItemBox {
+    width: 390px;
+    height: auto;
+  }
+
+  .j-lessonImg img {
+    width: 375px;
+  }
+
+  .payStep {
+    width: 390px;
+  }
+}

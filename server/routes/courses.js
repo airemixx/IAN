@@ -7,12 +7,15 @@ import express from 'express'
 
 const router = express.Router()
 
-// 取得所有課程
+// 取得所有課程（支援搜尋 & 排序）
 router.get('/', async (req, res) => {
   try {
-    const [courses] = await pool.query(`
+    console.log('🌍 API 收到請求：', req.query) // ✅ 看看前端傳了什麼參數
+
+    let { search, sort } = req.query
+    let query = `
       SELECT 
-        c.*,  -- ✅ 取得 courses 表的所有欄位
+        c.*,  
         t.name AS teacher_name, 
         t.image AS teacher_image,
         IFNULL(AVG(cm.rating), 0) AS rating,
@@ -20,14 +23,39 @@ router.get('/', async (req, res) => {
       FROM courses c
       LEFT JOIN teachers t ON c.teacher_id = t.id
       LEFT JOIN comments cm ON c.id = cm.course_id
-      GROUP BY c.id, t.id;
-    `)
+    `
 
-    console.log('📢 從資料庫獲取的課程資料：', courses)
+    let filters = []
+    let params = []
+
+    if (search) {
+      filters.push(`(c.title LIKE ? OR t.name LIKE ?)`)
+      params.push(`%${search}%`, `%${search}%`)
+    }
+
+    if (filters.length) {
+      query += ` WHERE ` + filters.join(' AND ')
+    }
+
+    query += ` GROUP BY c.id, t.id`
+
+    if (sort) {
+      if (sort === 'popular') query += ` ORDER BY c.student_count DESC`
+      if (sort === 'new') query += ` ORDER BY c.created_at DESC`
+      if (sort === 'low-price') query += ` ORDER BY c.sale_price ASC`
+      if (sort === 'high-price') query += ` ORDER BY c.sale_price DESC`
+    }
+
+    console.log('📢 執行的 SQL：', query, params)
+
+    const result = await pool.query(query, params)
+    const courses = result[0] // ✅ 確保 courses 是陣列
+
+    console.log('✅ 從資料庫獲取的課程：', courses)
     res.json(courses)
   } catch (error) {
-    console.error('❌ 取得課程失敗：', error.message)
-    res.status(500).json({ error: '無法取得課程資料' })
+    console.error('❌ 取得課程失敗:', error.stack) // 🔥 這裡會顯示完整錯誤
+    res.status(500).json({ error: '無法取得課程資料', details: error.message })
   }
 })
 
@@ -63,7 +91,7 @@ router.get('/:id', async (req, res) => {
 
 // 取得特定課程的所有評論
 router.get('/:id/comments', async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params
   try {
     const sql = `
       SELECT 
@@ -71,15 +99,42 @@ router.get('/:id/comments', async (req, res) => {
       FROM comments cm
       WHERE cm.course_id = ?
       ORDER BY cm.created_at DESC;
-    `;
+    `
 
-    const [comments] = await pool.execute(sql, [id]);
+    const [comments] = await pool.execute(sql, [id])
 
-    res.json(comments);
+    res.json(comments)
   } catch (error) {
-    console.error('❌ 無法獲取課程評論:', error);
-    res.status(500).json({ error: '無法獲取課程評論' });
+    console.error('❌ 無法獲取課程評論:', error)
+    res.status(500).json({ error: '無法獲取課程評論' })
   }
-});
+})
 
 export default router
+
+// **取得同分類課程**
+router.get('/related/:category', async (req, res) => {
+  const category = req.params.category
+
+  try {
+    const sql = `
+      SELECT c.id, c.title, c.image_url, c.sale_price, c.student_count, 
+       COALESCE(AVG(cm.rating), 0) AS rating, 
+       t.name AS teacher_name
+      FROM courses c
+      JOIN teachers t ON c.teacher_id = t.id
+      LEFT JOIN comments cm ON c.id = cm.course_id
+      WHERE c.category = ?  
+      GROUP BY c.id, t.name
+ORDER BY RAND()
+      LIMIT 4;
+    `
+
+    const [rows] = await pool.execute(sql, [category])
+
+    res.json(rows)
+  } catch (error) {
+    console.error('❌ 無法獲取相關課程:', error)
+    res.status(500).json({ error: '無法獲取相關課程' })
+  }
+})

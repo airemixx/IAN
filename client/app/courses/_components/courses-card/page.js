@@ -38,7 +38,7 @@ export default function CourseList({ courses }) {
     </section>
   )
 }
-
+ 
 export function CourseCard({ course }) {
   const [isFavorite, setIsFavorite] = useState(false)
 
@@ -46,13 +46,13 @@ export function CourseCard({ course }) {
     <div className="col-lg-3 col-sm-6 col-12" data-aos="fade-up">
       <a href="#" className={styles['course-card-link']}>
         <div className={`${styles['course-card']} mb-md-5 mb-4`}>
-          <div className={styles['card-img']}>
+          <div className='e-card-img'>
             <img
               src={course.image_url}
               alt={course.title}
               className="img-fluid"
             />
-            <div className={styles['img-overlay']}></div>
+            <div className='e-img-overlay'></div>
 
             <FavoriteButton
               isFavorite={isFavorite}

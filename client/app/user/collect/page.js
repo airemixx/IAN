@@ -22,6 +22,9 @@ export default function UserPage() {
               {/* Card 1 */}
               <div className="col-12 col-md-6 col-lg-4">
                 <div className={`p-4 ${styles.collectionCard}`} >
+                  <div className={`mb-3 ${styles.iconFav}`}>
+                  <img src="/images/icon/favorite-btn.svg" alt="相機"  />
+                  </div>
                   <img src="/images/product/zf.png" alt="相機" className="mb-3" />
                   <div className={styles.cardDivider} />
                   <h6 className={styles.textGray}>FUJIFILM 富士</h6>

@@ -12,6 +12,7 @@ import path from 'path'
 import coursesRouter from './routes/courses.js'
 import teachersRouter from './routes/teachers.js'
 import productRoutes from './routes/product.js'
+import rentalRouter from './routes//rental.js';
 import cartRouter from './routes/cart.js'
 import articleRoutes from './routes/article.js'
 
@@ -31,11 +32,11 @@ const corsOptions = {
   },
 }
 
-// 讓 Express 提供 `public` 資料夾內的靜態資源
-app.use(
-  '/images/product',
-  express.static(path.join(process.cwd(), 'public/images/product'))
-)
+// 讓 Express 提供 `public` 資料夾內的靜態資源 (先不刪)
+// app.use(
+//   '/images/product',
+//   express.static(path.join(process.cwd(), 'public/images/product'))
+// )
 
 app.use(cors(corsOptions)) // 允許跨域請求
 app.use(express.json()) // 解析 JSON 格式的請求
@@ -45,25 +46,21 @@ app.get('/', (req, res) => {
   res.send('API 運行中...')
 })
 
-
 app.use('/api/product', productRoutes)
 
 app.use('/api/courses', coursesRouter)
 app.use('/api/teachers', teachersRouter)
+
+app.use('/api/rental', rentalRouter);
 
 app.use('/api/cart', cartRouter)
 
 app.use('/api/articles', articleRoutes)
 
 // 設定伺服器監聽埠號
-app.use("/api/product", productRoutes);
-app.use("/api/courses", coursesRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/articles", articleRoutes);
+const PORT = process.env.PORT || 8000
 
 
-// 設定伺服器監聽埠號
-const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)
 })

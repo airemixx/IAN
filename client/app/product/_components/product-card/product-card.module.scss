@@ -9,12 +9,12 @@
     color: #d0b189;
   }
   
-  button {
-    background-color: #e08534;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-  }
+  // button {
+  //   background-color: #e08534;
+  //   opacity: 0;
+  //   visibility: hidden;
+  //   transition: opacity 0.3s ease, visibility 0.3s ease;
+  // }
   
   &:hover button {
     opacity: 1;
@@ -28,13 +28,11 @@
     object-fit: contain;
     display: block;
     margin: 0 auto;
-    background-color: #fff;
   }
 }
 
 .cardbody {
   padding: 0.5rem;
-  background-color: #fff;
 }
 
 
@@ -56,11 +54,6 @@
   }
 }
 
-.custom {
-  border: none !important;
-
-}
-
 /* 📌 響應式設計 */
 @media (max-width: 391px) {
   .breadcrumb {
@@ -74,7 +67,7 @@
     }
 
     &:hover {
-      box-shadow: none;
+      box-shadow: none !important;
     }
   }
 }

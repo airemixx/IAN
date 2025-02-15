@@ -43,6 +43,7 @@ export default function CourseDetailPage() {
         setLoading(false)
       }
     }
+    console.log('🚀 取得的課程資料:', course)
 
     fetchCourse()
   }, [id]) // ✅ 監聽 ID 變化
@@ -65,15 +66,15 @@ export default function CourseDetailPage() {
               </div>
               <div className="row">
                 <div className="col-12 col-xl-8">
-                  <CourseContent course={course}/>
-                  <TeacherInfo />
+                  <CourseContent course={course} />
+                  <TeacherInfo teacherId={course.teacher_id} />
                   <CourseRating />
                 </div>
                 <div className="col-md-4 d-none d-xl-block">
                   <PriceFixed />
                 </div>
               </div>
-              <RelatedCourses />
+              <RelatedCourses course={course} />
             </div>
           </section>
         </>

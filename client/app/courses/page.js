@@ -41,10 +41,10 @@ export default function CoursesPage() {
 
   return (
     <>
-      <CoursesBanner />
-      <CoursesCategory />
-      <CoursesBreadcumb />
-      <CoursesFilter />
+      <CoursesBanner courses={courses}/>
+      <CoursesCategory courses={courses}/>
+      <CoursesBreadcumb courses={courses}/>
+      <CoursesFilter courses={courses}/>
       {loading && <p>載入中...</p>}
       {error && <p className="text-danger">{error}</p>}
       {!loading && !error && (

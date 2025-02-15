@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
     const connection = await pool.getConnection();
     
     // 取得查詢參數
-    const { brand_id, category_id, subcategory_id,min_price, max_price } = req.query;
+    const { brand_id, category_id, subcategory_id,min_price, max_price, sort } = req.query;
     
     
     // 構建 SQL 查詢條件
@@ -53,6 +53,15 @@ router.get("/", async (req, res) => {
      whereClause += " AND p.price <= ?";
      queryParams.push(maxPriceNum);
    }
+
+    // ✅ 設定排序條件
+     // ✅ 預設排序為 `id` 升序
+     let orderByClause = "ORDER BY p.id ASC";
+     if (sort === "price_asc") {
+       orderByClause = "ORDER BY p.price ASC";
+     } else if (sort === "price_desc") {
+       orderByClause = "ORDER BY p.price DESC";
+     }
     // 執行 SQL 查詢
     const [rows] = await connection.query(`
       SELECT 
@@ -68,7 +77,7 @@ router.get("/", async (req, res) => {
       LEFT JOIN brand b ON p.brand_id = b.brand_id
       LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
       ${whereClause}
-      ORDER BY p.id ASC
+      ${orderByClause}  -- ✅ 確保正確排序
     `, queryParams);
 
     connection.release();
@@ -111,14 +120,14 @@ router.get("/brand", async (req, res) => {
     const connection = await pool.getConnection();
     const [brand] = await connection.query(`SELECT brand_id AS id, brand_name AS name FROM brand`);
 
-
     connection.release();
 
-    res.json(brand.map(b => b.name));
+    res.json(brand); 
   } catch (error) {
     console.error("取得品牌時發生錯誤:", error);
     res.status(500).json({ error: "伺服器錯誤", details: error.message });
   }
 });
+
 
 export default router; 

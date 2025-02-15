@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import styles from "./image-gallery.module.scss"; // ✅ 正確引入 SCSS Module
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera } from "@fortawesome/free-solid-svg-icons"; // ✅ 確保引入 `faCamera`
+
 
 export default function ImageGallery() {
   const images = [
@@ -59,7 +62,7 @@ export default function ImageGallery() {
         {/* 比較按鈕 */}
         <div className={styles.cameraIconContainer}>
           <div className={styles.cameraIcon}>
-            <i className="fa-solid fa-camera"></i>
+          <FontAwesomeIcon icon={faCamera} />
           </div>
           <p className={styles.cameraText}>比較</p>
         </div>
