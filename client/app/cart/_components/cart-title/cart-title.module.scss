@@ -1,0 +1,58 @@
+.j-shoppingCartTitleBox .j-shoppingCartTitle {
+    font-size: 54px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .j-shoppingCartTitleBox small {
+    font-size: 35px;
+    font-style: normal;
+    line-height: normal;
+  }
+
+  @media(max-width:390px) {
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container .j-shoppingCartTitle {
+      font-size: 65px;
+    }
+
+    .container .j-shoppingCartBox {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .j-shoppingItemsMoblieBox {
+      width: 390px;
+    }
+
+    .j-cartItemBox {
+      width: 390px;
+      height: auto;
+    }
+
+    .j-lessonImg img {
+      width: 375px;
+    }
+
+    .footer {
+      display: block;
+    }
+
+    .copyright {
+      text-align: center;
+    }
+
+    .copyright .right-links {
+      display: none;
+    }
+
+    .copyright .right-links .copyRight {
+      display: block;
+    }
+
+  }

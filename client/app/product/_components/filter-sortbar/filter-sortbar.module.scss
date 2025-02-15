@@ -31,11 +31,9 @@
   }
 }
 
-
-
-/* 📌 篩選 & 排序樣式 */
 .sortContainer {
-  .form-select {
+  width: 120px;
+  select {
     width: 100%;
     border: none;
     border-bottom: 2px solid #ddd;
@@ -43,6 +41,15 @@
     font-size: 1rem;
     padding: 10px;
     box-shadow: none;
+    background-color: #ffffff00;
+    appearance: none; /* ✅ 移除瀏覽器預設樣式 */
+  }
+
+  /* ✅ 移除 `focus` 時的藍色框框 */
+  select:focus {
+    border-color: #1b3846 !important;
+    box-shadow: none !important;
+    outline: none !important;
   }
 }
 

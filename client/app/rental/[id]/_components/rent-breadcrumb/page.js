@@ -1,4 +1,4 @@
-'use client';
+// rent-breadcrumb
 
 import Link from "next/link";
 

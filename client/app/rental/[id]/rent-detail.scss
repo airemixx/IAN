@@ -5,8 +5,9 @@
   border-radius: 50px;
   transition: opacity .1s;
   &:hover, &:focus, &:active, &:active:focus, &:active:hover {
-    background: #0F2D3C !important;
-    border-color: #0F2D3C !important;
+    background: #143146 !important;
+    border-color: #143146  !important;
+    // border-color: #0F2D3C !important;
     opacity: 0.9 !important;
   }
 }
@@ -17,8 +18,16 @@
 
 .btn-sm-radius2 {
   width: 35px;
-  height: 35px;
+  height: 35px;  
   border-radius: 50%;
+}
+
+.left-btn{
+  padding: 0 2px 3px 0;
+}
+
+.right-btn{
+  padding: 0 1px 3px 1px;
 }
 
 .tag-bg, .tpye-bg {
@@ -43,7 +52,7 @@
 }
 
 body {
-  color: #000;
+  color: #252525;
   background-color: #F6F7F9;
 }
 
@@ -53,7 +62,7 @@ body {
   background: #fff;
 }
 
-.p-card2 img {
+.p-card img, .p-card2 img {
   object-fit: cover;
   max-height: 100%;
   max-width: 100%;
@@ -67,10 +76,6 @@ body {
 .p-card:hover {
   transform: scale(1.03);
   box-shadow: inset 0 0 0 1px #23425A;
-}
-
-.p-card img {
-  object-fit: cover;
 }
 
 a {
@@ -124,45 +129,34 @@ a {
   border-color: #ccc;
 }
 
-.carousel-control-prev,
-.carousel-control-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
-  border: none;
-  background: none;
-  cursor: pointer;
+
+@media (min-width: 1200px)  {
+  .thumbnails-container {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
 }
 
-.carousel-control-prev {
-  left: 0;
+@media (min-width: 1399px)  {
+  .thumbnails-container {
+    margin-left: 75px;
+    margin-right: 75px;
+  }
 }
 
-.carousel-control-next {
-  right: 0;
+@media (min-width: 768px) and (max-width: 991px)  {
+  .thumbnails-container {
+    margin-left: 50px;
+    margin-right: 50px;
+  }
 }
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  filter: invert(1);
-  width: 40px;
-  height: 40px;
-}
-
-@media (min-width: 992px) and (max-width: 1199px) {
+@media (max-width: 576px)  {
   .thumbnail img {
     border: 3px solid transparent;
   }
   .thumbnail img.active {
     border-width: 3px;
-  }
-}
-
-@media (max-width: 768px) {
-  #thumbnailWrapper {
-    max-width: 400px;
   }
 }
 
@@ -174,4 +168,21 @@ a {
 
 .btn-heart:hover i {
   color: #23425A !important;
+}
+
+.rent-photo-container {
+  transition: all 0.3s ease-in-out;
+}
+
+.rent-photo-container.fixed {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  z-index: 1000;
+}
+
+.recommendation-container {
+  margin-top: 50px;
 }

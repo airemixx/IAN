@@ -1,4 +1,4 @@
-'use client';
+// rent-hashtag
 
 export default function RentHashtags() {
   const tags = ["輕巧", "8K錄影", "內建鏡頭", "觸控螢幕", "大光圈", "高解析度"];
