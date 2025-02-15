@@ -207,7 +207,7 @@ const ImageUpdate = forwardRef(({ hasError }, ref) => {
           >
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${styles['form-control']}`}
               id="imagePath"
               placeholder="請輸入圖片路徑"
               value={imagePath}
