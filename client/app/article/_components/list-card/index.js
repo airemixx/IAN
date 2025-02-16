@@ -2,8 +2,14 @@
 
 import React from 'react'
 import styles from './index.module.scss'
+import Link from 'next/link'
 
 const ListCard = ({ article, onTagClick }) => {
+  // 使用 Set 過濾重複的標籤
+  const uniqueTags = new Set(
+    article.tags ? article.tags.split(',').map((tag) => tag.trim()) : []
+  )
+
   return (
     <div className={`${styles['y-list-card-area']}`}>
       <div className={`card ${styles['y-card']}`}>
@@ -19,22 +25,25 @@ const ListCard = ({ article, onTagClick }) => {
             <p className="mb-0">{article.category_name || '未分類'}</p>
           </div>
           <div className={`mb-5 ${styles['y-list-card-content']}`}>
-            <a href="#" className="text-decoration-none">
+            <Link
+              href={`/article/${article.id}`}
+              className="text-decoration-none"
+            >
               <h5 className="card-title">{article.title}</h5>
               <p
                 className={`${styles['card-sub-title']} ${styles['one-line-ellipsis']}`}
               >
                 {article.subtitle}
               </p>
-            </a>
+            </Link>
           </div>
           <div className={`${styles['y-tag-area']} mb-3`}>
-            {article.tags &&
-              article.tags.split(',').map((tag, idx) => (
-                <button key={idx} onClick={() => onTagClick(tag.trim())}>
-                  {tag.trim()}
-                </button>
-              ))}
+            {/* 將 Set 轉換為陣列，並使用 map 渲染標籤 */}
+            {Array.from(uniqueTags).map((tag, idx) => (
+              <button key={idx} onClick={() => onTagClick(tag)}>
+                {tag}
+              </button>
+            ))}
           </div>
           <div className={styles['y-author-date']}>
             <p className="mb-0">
