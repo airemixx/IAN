@@ -137,20 +137,23 @@ router.post('/', async (req, res) => {
   const { category, title, subtitle, content, image_path, hashtags } = req.body
 
   // 檢查圖片路徑格式（若有輸入才檢查）
-  if (
-    image_path &&
-    image_path.trim() &&
-    !image_path.startsWith('https://')
-  ) {
+  if (image_path && image_path.trim() && !image_path.startsWith('https://')) {
     return res.status(400).json({
       status: 'error',
       message: '圖片路徑必須以 https:// 開頭',
     })
   }
 
-  const connection = await pool.getConnection()
+  let connection // 聲明 connection 變數
   try {
+    connection = await pool.getConnection() // 取得連線
     await connection.beginTransaction()
+
+    // 修改 HTML 內容，將 background-color: rgb(255, 255, 255) 替換為 background-color: transparent
+    const transparentContent = content.replace(
+      /background-color:\s*rgb\(255,\s*255,\s*255\)/gi,
+      'background-color: transparent'
+    )
 
     // 新增文章資料，id 為 AUTO_INCREMENT，自動產生
     const articleQuery = `
@@ -161,10 +164,10 @@ router.post('/', async (req, res) => {
       category || null,
       title || null,
       subtitle || null,
-      content || null,
+      transparentContent || null,
       image_path || null,
     ])
-    const articleId = articleResult.insertId  // 使用 LAST_INSERT_ID() 得到新文章 id
+    const articleId = articleResult.insertId // 使用 LAST_INSERT_ID() 得到新文章 id
 
     // 如果有 hashtag 資料，依序處理每個 tag
     if (Array.isArray(hashtags) && hashtags.length) {
@@ -206,14 +209,27 @@ router.post('/', async (req, res) => {
       articleId,
     })
   } catch (err) {
-    await connection.rollback()
+    if (connection) {
+      try {
+        await connection.rollback()
+      } catch (rollbackErr) {
+        console.error('Rollback 錯誤:', rollbackErr)
+        // 檢查連線是否已關閉，如果已關閉，則重新建立連線
+        if (rollbackErr.code === 'PROTOCOL_CONNECTION_LOST') {
+          console.error('資料庫連線已關閉，嘗試重新連線...')
+          connection = await pool.getConnection()
+        }
+      }
+    }
     console.error('Error adding article:', err)
     res.status(500).json({
       status: 'error',
       message: err.message ? err.message : '新增文章失敗',
     })
   } finally {
-    connection.release()
+    if (connection) {
+      connection.release()
+    }
   }
 })
 

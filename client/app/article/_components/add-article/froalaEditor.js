@@ -6,7 +6,14 @@ import 'froala-editor/js/languages/zh_tw.js'
 import 'froala-editor/css/froala_style.min.css'
 import 'froala-editor/css/froala_editor.pkgd.min.css'
 import 'froala-editor/js/plugins.pkgd.min.js'
+import $ from 'jquery'
 import styles from './AddArticleModal.module.scss'
+
+// 設置 jQuery 為全域變數
+if (typeof window !== 'undefined') {
+  window.$ = $
+  window.jQuery = $
+}
 
 export default function FroalaEditorWrapper() {
   const editorRef = useRef(null)
@@ -70,38 +77,57 @@ export default function FroalaEditorWrapper() {
               buttons: ['undo', 'redo', 'fullscreen', 'html', 'help'],
             },
           },
-          pluginsEnabled: null, // 確保所有插件都啟用
+          pluginsEnabled: null,
           imageUploadURL: '/api/froala-upload?type=image',
           videoUploadURL: '/api/froala-upload?type=video',
           fileUploadURL: '/api/froala-upload?type=file',
           events: {
             contentChanged: function () {
-              // 內容變更時觸發
+              // 取得編輯器內容
+              const content = this.html.get()
+              // 建立一個 DOM 解析器
+              const parser = new DOMParser()
+              // 將編輯器內容解析為 DOM
+              const doc = parser.parseFromString(content, 'text/html')
+              // 取得所有 <img> 標籤
+              const images = doc.querySelectorAll('img')
+              // 迴圈處理每個 <img> 標籤
+              images.forEach((image) => {
+                // 取得 src 屬性
+                const src = image.getAttribute('src')
+                // 如果 src 屬性為空字串
+                if (src === '') {
+                  // 將 src 屬性設定為 null
+                  image.setAttribute('src', null)
+                }
+              })
+              // 將修改後的 DOM 轉換為 HTML
+              const newContent = doc.body.innerHTML
+              // 設定編輯器內容
+              this.html.set(newContent)
             },
             initialized: function () {
-              // 編輯器初始化完成後設定 window.editorInstance
               window.editorInstance = this
+              // 修改內文區塊的樣式
+              this.el.style.backgroundColor = 'transparent'
             },
             'image.beforeUpload': function (files) {
-              // 自定義圖片上傳邏輯
               console.log('圖片上傳前', files)
-              // 允許圖片上傳
               return true
             },
+            'image.uploaded': function (response) {
+              console.log('圖片上傳成功，返回的資料：', response)
+              // Froala 自動將 response.link 作為圖片 src 插入編輯器中
+            },
             'video.beforeUpload': function (files) {
-              // 自定義影片上傳邏輯
               console.log('影片上傳前', files)
-              // 允許影片上傳
               return true
             },
             'file.beforeUpload': function (files) {
-              // 自定義文件上傳邏輯
               console.log('文件上傳前', files)
-              // 允許文件上傳
               return true
             },
           },
-          // 調整 z-index 以確保插入連結彈出框顯示在最上層
           zIndex: 1050,
         })
       }
