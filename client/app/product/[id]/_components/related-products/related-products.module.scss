@@ -1,7 +1,12 @@
+:global(.swiper-pagination) {
+  position: relative !important;  // ✅ 確保它不會被強制固定
+  margin-top: 10px !important;  // ✅ 讓點點往下移
+}
+
 // 📌 主要容器
 .relatedProducts {
     margin-top: 5rem;
-    margin-bottom: 5rem;
+    margin-bottom: 50rem;
   }
   
   // 📌 Swiper 設定 (僅在手機版顯示)
@@ -9,32 +14,36 @@
     display: block;
   }
   
-  @media (min-width: 768px) {
-    .swiperContainer {
-      display: none; // 桌機版隱藏 Swiper
-    }
-  }
+
   
   // 📌 桌機版佈局 (768px 以上顯示)
   .desktopContainer {
     display: none;
   }
-  
-  @media (min-width: 768px) {
-    .desktopContainer {
-      display: flex;
-    }
+
+  .cardimgTop {
+    width: 100%;  
+    height: 200px; 
+    max-height: 180px; 
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
   }
   
   // 📌 卡片樣式
-  .card {
+  .productCard {
+    text-decoration: none; // 🔹 確保 Link 沒有底線
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
+  
+    &:hover {
+      transform: scale(1.05); // 🔹 滑鼠懸停時放大
+    }
+  
     img {
       width: 100%;
     }
-  
-    .cardBody {
-      text-align: center;
-    }
+    
   }
   
   // 📌 響應式設計
@@ -43,5 +52,28 @@
       margin-top: 2rem;
       margin-bottom: 2rem;
     }
+
+    .cardimgTop {
+      width: 100% !important;  
+      height: 200px !important; 
+      max-height: 180px !important; 
+      object-fit: contain !important;
+      display: block !important;
+      margin: 0 auto !important;
+    }
+
+    .cardTitle {
+      font-size: 0.99rem;
+      color: #23425A;
+    }
+
+    .swiperContainer {
+      display: none; // 桌機版隱藏 Swiper
+    }
+    .desktopContainer {
+      display: flex;
+    } 
+
+    
   }
   

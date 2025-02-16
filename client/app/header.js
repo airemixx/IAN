@@ -43,6 +43,25 @@ export default function Header({ searchOpen, setSearchOpen }) {
     setSearchOpen(false);
   };
 
+  // 監聽 Enter 鍵按下事件
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // 防止表單提交
+      handleSearch(e); // 直接呼叫 handleSearch 函數
+    }
+  };
+
+  useEffect(() => {
+    if (searchOpen && inputRef.current) {
+      inputRef.current.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      if (searchOpen && inputRef.current) {
+        inputRef.current.removeEventListener('keydown', handleKeyDown);
+      }
+    };
+  }, [searchOpen]);
+
   return (
     <>
       <header className="nav-fixed-1" data-type="nav-fixed-1">

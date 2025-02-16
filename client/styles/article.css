@@ -6,6 +6,9 @@
   border-radius: 50%;
 }
 
+.headerPadding {
+  padding-top: 80px;
+}
 
 .y-container{
   max-width: 1440px;
@@ -30,6 +33,11 @@
       object-fit: cover;
     }
   }
+}
+
+/* sweetalert */
+.swal2-popup {
+  border-radius: 25px;
 }
 
 aside {

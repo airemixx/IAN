@@ -38,7 +38,7 @@ export default function ProductCard({ product }) {
         </div>
 
         <div className={`${styles.cardbody} position-relative`}>
-          <p className={`text mb-3 ${styles.productBrand}`}>{product.brand_name}</p>
+          <p className={`text mb-2 ${styles.productBrand}`}>{product.brand_name}</p>
           <h5 className={`card-title ${styles.productTitle}`}>
             {product.name}
           </h5>

@@ -1,8 +1,7 @@
 // 📌 產品規格區塊
 .spec {
     display: flex;
-    margin-top: 150px;
-    align-items: flex-start;
+    margin-top: 100px;
   }
   
   // 📌 左側產品描述
@@ -15,27 +14,25 @@
   // 📌 右側詳細規格
   .specDetails {
     flex: 1;
+    // border: 1px solid red;
   
-    .accordion-item {
-      border: none;
-    }
-  
-    .accordion-header button {
-      font-size: 1rem;
-      font-weight: bold;
-      background-color: white !important;
-      border: none;
-      border-bottom: 2px solid #ddd;
-      border-radius: 0;
-      text-align: left;
-      padding-bottom: 10px;
-      color: #23425A !important;
+    .accordionItem {
+      border: none !important;
     }
 
-    
+    button:focus {
+      box-shadow: none !important; // 移除 Bootstrap 預設的陰影
+      outline: none !important;    // 移除瀏覽器的外框
+      border: none !important;
+
+    }
   
-    .accordion-body {
-      font-size: 0.9rem;
+    .accordionHeader button {
+      font-weight: bold;
+      background-color: transparent !important;
+      border-bottom: 1px solid rgb(139, 131, 131);
+      padding-bottom: 10px;
+      color: #23425A !important;
     }
   }
   
