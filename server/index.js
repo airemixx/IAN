@@ -15,6 +15,7 @@ import productRoutes from './routes/product.js'
 import rentalRouter from './routes//rental.js'
 import cartRouter from './routes/cart.js'
 import articleRoutes from './routes/article.js'
+import users from './routes/users.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -57,6 +58,8 @@ app.use('/api/rental', rentalRouter)
 app.use('/api/cart', cartRouter)
 
 app.use('/api/articles', articleRoutes)
+
+app.use('/api/users', users)
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000
