@@ -1,10 +1,17 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import styles from './AddArticleModal.module.scss'
 
-export default function ImageUpdate() {
+const ImageUpdate = forwardRef(({ hasError }, ref) => {
+  // 接收 hasError prop
   const fileInputRef = useRef(null)
   const dropZoneRef = useRef(null)
 
@@ -12,6 +19,19 @@ export default function ImageUpdate() {
   const [localPreview, setLocalPreview] = useState(null)
   const [imagePath, setImagePath] = useState('')
   const [pathPreview, setPathPreview] = useState('')
+  const [isDragOver, setIsDragOver] = useState(false) // 新增一個狀態來追蹤是否拖曳中
+
+  // 使用 useImperativeHandle 暴露 clearImagePreview 函式
+  useImperativeHandle(ref, () => ({
+    clearImagePreview: () => {
+      // 切換回本地圖片
+      setImageSource('local')
+      setLocalPreview(null)
+      setPathPreview('')
+      setImagePath('')
+      if (fileInputRef.current) fileInputRef.current.value = null
+    },
+  }))
 
   useEffect(() => {
     const dropZone = dropZoneRef.current
@@ -19,16 +39,19 @@ export default function ImageUpdate() {
 
     const handleDragOver = (e) => {
       e.preventDefault()
+      setIsDragOver(true) // 設置為拖曳中
       dropZone.classList.add(styles['drop-zone--over'])
     }
 
     const handleDragLeave = (e) => {
       e.preventDefault()
+      setIsDragOver(false) // 離開時設置為非拖曳中
       dropZone.classList.remove(styles['drop-zone--over'])
     }
 
     const handleDrop = (e) => {
       e.preventDefault()
+      setIsDragOver(false) // 放置時設置為非拖曳中
       if (e.dataTransfer.files && e.dataTransfer.files.length) {
         const file = e.dataTransfer.files[0]
         if (file) {
@@ -83,6 +106,22 @@ export default function ImageUpdate() {
     setPathPreview(path)
   }
 
+  // 根據是否有圖片以及是否拖曳中來決定邊框顏色
+  const dropZoneStyle = {
+    borderColor:
+      imageSource === 'local' && !localPreview && hasError
+        ? 'rgb(200, 57, 31)'
+        : '',
+  }
+
+  // 圖片路徑輸入框的樣式
+  const imagePathInputStyle = {
+    border:
+      imageSource === 'path' && !imagePath && hasError
+        ? '1px solid rgb(200, 57, 31)'
+        : '',
+  }
+
   return (
     <>
       <div className="my-4">
@@ -128,6 +167,7 @@ export default function ImageUpdate() {
             className={styles['drop-zone']}
             ref={dropZoneRef}
             onClick={() => fileInputRef.current && fileInputRef.current.click()}
+            style={dropZoneStyle} // 應用樣式
           >
             <span className="drop-zone__prompt">
               <i className="fa-regular fa-image me-2"></i>
@@ -149,7 +189,7 @@ export default function ImageUpdate() {
                 alt="預覽圖片"
                 style={{
                   display: 'block',
-                  maxWidth: '50%',
+                  maxWidth: '20%',
                   marginTop: '10px',
                 }}
                 onLoad={() => URL.revokeObjectURL(localPreview)}
@@ -167,11 +207,12 @@ export default function ImageUpdate() {
           >
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${styles['form-control']}`}
               id="imagePath"
               placeholder="請輸入圖片路徑"
               value={imagePath}
               onChange={handlePathChange}
+              style={imagePathInputStyle} // 應用圖片路徑輸入框的樣式
             />
             {pathPreview && (
               <img
@@ -191,4 +232,8 @@ export default function ImageUpdate() {
       </div>
     </>
   )
-}
+})
+
+ImageUpdate.displayName = 'ImageUpdate' // 設置 display name
+
+export default ImageUpdate

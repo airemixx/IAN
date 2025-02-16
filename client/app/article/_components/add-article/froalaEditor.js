@@ -12,9 +12,11 @@ export default function FroalaEditorWrapper() {
   const editorRef = useRef(null)
 
   useEffect(() => {
+    let editorInstance = null
+
     const loadFroalaEditor = () => {
       if (editorRef.current) {
-        window.editorInstance = new FroalaEditor(editorRef.current, {
+        editorInstance = new FroalaEditor(editorRef.current, {
           language: 'zh_tw',
           toolbarButtons: {
             moreText: {
@@ -71,9 +73,11 @@ export default function FroalaEditorWrapper() {
           pluginsEnabled: null, // 確保所有插件都啟用
           events: {
             contentChanged: function () {
-              if (window.updateButtonState) {
-                window.updateButtonState()
-              }
+              // 內容變更時觸發
+            },
+            initialized: function () {
+              // 編輯器初始化完成後設定 window.editorInstance
+              window.editorInstance = this
             },
             'image.beforeUpload': function (files) {
               // 自定義圖片上傳邏輯
@@ -103,9 +107,10 @@ export default function FroalaEditorWrapper() {
     loadFroalaEditor()
 
     return () => {
-      if (window.editorInstance) {
-        window.editorInstance.destroy()
+      if (editorInstance) {
+        editorInstance.destroy()
       }
+      window.editorInstance = null
     }
   }, [])
 
