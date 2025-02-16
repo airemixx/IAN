@@ -6,6 +6,9 @@
   border-radius: 50%;
 }
 
+.headerPadding {
+  padding-top: 80px;
+}
 
 .y-container{
   max-width: 1440px;

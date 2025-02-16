@@ -71,6 +71,9 @@ export default function FroalaEditorWrapper() {
             },
           },
           pluginsEnabled: null, // 確保所有插件都啟用
+          imageUploadURL: '/api/froala-upload?type=image',
+          videoUploadURL: '/api/froala-upload?type=video',
+          fileUploadURL: '/api/froala-upload?type=file',
           events: {
             contentChanged: function () {
               // 內容變更時觸發
@@ -87,7 +90,7 @@ export default function FroalaEditorWrapper() {
             },
             'video.beforeUpload': function (files) {
               // 自定義影片上傳邏輯
-              console.log('視頻上傳前', files)
+              console.log('影片上傳前', files)
               // 允許影片上傳
               return true
             },
