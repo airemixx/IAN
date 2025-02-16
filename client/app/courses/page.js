@@ -19,20 +19,20 @@ export default function CoursesPage() {
     const fetchCourses = async () => {
       try {
         const API_URL = '/api/courses'
-        console.log('🚀 發送 API 請求:', API_URL)
+        console.log('發送 API 請求:', API_URL)
 
         const res = await fetch(API_URL)
-        console.log('🔍 API 回應狀態:', res.status)
+        console.log('API 回應狀態:', res.status)
 
         if (!res.ok)
-          throw new Error(`❌ 錯誤: ${res.statusText} (狀態碼: ${res.status})`)
+          throw new Error(`錯誤: ${res.statusText} (狀態碼: ${res.status})`)
 
         const data = await res.json()
-        console.log('✅ API 回傳資料:', data)
+        console.log('API 回傳資料:', data)
         setCourses(data)
-        setFilteredCourses(data) // ✅ 預設 `filteredCourses` = `courses`
+        setFilteredCourses(data) // 預設 `filteredCourses` = `courses`
       } catch (err) {
-        console.error('❌ 載入課程失敗:', err.message)
+        console.error('載入課程失敗:', err.message)
         setError(err.message)
       } finally {
         setLoading(false)

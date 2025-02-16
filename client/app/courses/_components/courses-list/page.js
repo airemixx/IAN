@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import React, { useState, useEffect, useMemo } from 'react'
 import styles from './courses-list.module.scss'
 import StarRating from '../star-rating/page.js'
@@ -12,16 +13,16 @@ export default function CourseList({ courses }) {
   const totalPages = Math.ceil(courses.length / coursesPerPage)
   const [popularCourses, setPopularCourses] = useState([])
 
-  console.log('📢 `CourseList` 取得的 courses:', courses)
+  console.log('`CourseList` 取得的 courses:', courses)
 
   useEffect(() => {
     if (courses.length > 0) {
-      console.log('📢 `CourseList` 重新設定分頁為第一頁')
+      console.log('`CourseList` 重新設定分頁為第一頁')
       setCurrentPage(1) // ✅ 確保篩選變更時，分頁回到第一頁
     }
   }, [courses])
 
-  // 🚀 **請求熱門課程**
+  // **請求熱門課程**
   useEffect(() => {
     const fetchPopularCourses = async () => {
       try {
@@ -29,11 +30,11 @@ export default function CourseList({ courses }) {
         if (!res.ok) throw new Error(`HTTP 錯誤！狀態碼：${res.status}`)
 
         const data = await res.json()
-        console.log('🔥 取得熱門課程:', data)
+        console.log('取得熱門課程:', data)
 
         setPopularCourses(data.slice(0, 4))
       } catch (err) {
-        console.error('❌ 載入熱門課程失敗:', err.message)
+        console.error('載入熱門課程失敗:', err.message)
       }
     }
 
@@ -51,7 +52,7 @@ export default function CourseList({ courses }) {
     )
   }, [courses, currentPage])
 
-  console.log('📢 渲染時 currentCourses:', currentCourses)
+  console.log('渲染時 currentCourses:', currentCourses)
 
   return (
     <section className={`container ${styles['course-list']}`}>
@@ -61,7 +62,7 @@ export default function CourseList({ courses }) {
             <p>找不到符合條件的課程，試試其他關鍵字吧！</p>
           </div>
 
-          {/* 🚀 顯示熱門課程（僅顯示前 4 個） */}
+          {/* 顯示熱門課程（僅顯示前 4 個） */}
           {popularCourses.length > 0 && (
             <div className={styles['recommended-section']}>
               <div className={styles['pop-course']}>
@@ -101,10 +102,10 @@ export default function CourseList({ courses }) {
 }
 
 export function CourseCard({ course }) {
-  console.log('📢 渲染 CourseCard，接收到的 course:', course)
+  console.log('渲染 CourseCard，接收到的 course:', course)
 
   if (!course) {
-    return <div className="error">⚠️ 無法載入課程</div>
+    return <div className="error">無法載入課程</div>
   }
 
   const [isFavorite, setIsFavorite] = useState(false)
@@ -112,7 +113,7 @@ export function CourseCard({ course }) {
 
   return (
     <div className="col-lg-3 col-sm-6 col-12" data-aos="fade-up">
-      <a href="#" className={styles['course-card-link']}>
+      <Link href={`/courses/${course.id}`} className={styles['course-card-link']}>
         <div className={`${styles['course-card']} mb-md-5 mb-4`}>
           <div className="e-card-img">
             <img src={safeImage} alt={course.title} className="img-fluid" />
@@ -152,7 +153,7 @@ export function CourseCard({ course }) {
             </p>
           </div>
         </div>
-      </a>
+        </Link>
     </div>
   )
 }

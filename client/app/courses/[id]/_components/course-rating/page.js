@@ -58,7 +58,7 @@ export default function CourseRating() {
   )
 
   return (
-    <section className={styles['course-rating-container']}>
+    <section className={styles['course-rating-container']} id="course-rating">
       <div className={styles['section-detail-title']} data-aos="fade-right">
         <div className={styles['title-block']}></div>
         <h2>課程評價</h2>

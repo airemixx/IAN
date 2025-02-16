@@ -114,6 +114,7 @@ export default function Header({ searchOpen, setSearchOpen }) {
                       <a href="#">
                         <img src="/images/leica.png" alt="Leica" />
                       </a>
+                      <span>Leica</span>
                     </li>
                   </ul>
                 </li>
