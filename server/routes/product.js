@@ -129,5 +129,95 @@ router.get("/brand", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const { id } = req.params;
+
+    const [rows] = await connection.query(
+      `SELECT 
+        p.id, 
+        p.name, 
+        p.short_introduce,
+        p.introduce,
+        p.price,
+        p.brand_id,
+        b.brand_name AS brand_name,  
+        CONCAT('/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image_url
+      FROM product p
+      LEFT JOIN brand b ON p.brand_id = b.brand_id
+      LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
+      WHERE p.id = ?`,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "商品未找到" });
+    }
+
+    // ✅ 获取商品所有图片
+    const [images] = await connection.query(
+      `SELECT CONCAT('/images/product/', image_url) AS image
+       FROM image
+       WHERE product_id = ?`,
+      [id]
+    );
+
+      // ✅ 3️⃣ 單獨查詢 `specs`
+      const [specs] = await connection.query(
+        `SELECT 
+           camera_format, 
+           release_date,
+           waterproof_level,
+          image_stabilization
+         FROM spec
+         WHERE product_id = ?`,
+        [id]
+      );
+
+    connection.release();
+
+    // ✅ 返回完整的商品数据
+    res.json({
+      ...rows[0],
+      images: images.map((img) => img.image), // ✅ 轉換圖片陣列格式
+      specs: specs.length > 0 ? specs : [], // ✅ 保證 specs 正確回傳
+    });
+
+  } catch (error) {
+    console.error("取得商品错误:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
+
+router.get("/related/:brand_id/:current_id", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const { brand_id, current_id } = req.params;
+
+    const [products] = await connection.query(
+      `SELECT 
+        p.id, 
+        p.name, 
+        p.price, 
+        CONCAT('/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image
+      FROM product p
+      LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
+      WHERE p.brand_id = ? AND p.id != ?  -- ✅ 排除當前產品 id
+      ORDER BY p.id ASC  -- ✅ 依據 id 排序，最新的產品優先
+      LIMIT 8`,
+      [brand_id, current_id]  // ✅ 傳入兩個參數，brand_id & current_id
+    );
+
+    connection.release();
+    res.json(products);
+  } catch (error) {
+    console.error("取得相關產品錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
+
+
+
 
 export default router; 

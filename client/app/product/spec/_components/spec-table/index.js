@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import styles from "./spec-table.module.scss"; // ✅ 確保 SCSS Module 正確引入
 
 
 export default function ComponentsCompareTable(props) {
   return (
     <>
-     <table className="comparison-table container">
+     <table className={`comparison-table container ${styles.comparisonTable}`}>
   <thead>
     <tr>
       <th>比較項目</th>

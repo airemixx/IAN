@@ -14,24 +14,44 @@
     <!-- 主要的 Froala Editor JavaScript 檔案 -->
     <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>  
     <!-- 繁體中文語言檔案 -->
-    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/languages/zh_tw.js'></script>  
-</head>
-<style>
+    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/languages/zh_tw.js'></script>
+    <style>
+
+    .add-article-btn{
+        border-radius: 25px;
+        background-color: #7E7267;
+        color: white;
+        border: none;
+        &:hover{
+            background-color: #ffffff;
+            color: #7E7267;
+            border: 1px solid #7E7267;
+        }
+    }
+
+    .modal-content{
+        background-color: #ececec;
+        border-radius: 25px;
+    }
+    .red-sign{
+        color: red;
+    }
     .y-category-add-btn{
         select{
             background-color: #ffffff00;
             width: 15%;
             border-radius: 25px;
-            border: none;
+            border: 1px solid #7e726700;
         }
         select:focus{
             box-shadow: 0 0 15px #7E7267;
-            border: 2px solid #7E7267;
+            border: 1px solid #7E7267;
         }
         button{
             border-radius: 25px;
             background-color: #7E7267;
             color: white;
+            border: 1px solid #7e726700;
             &:hover{
                 background-color: #ffffff;
                 color: #7E7267;
@@ -93,138 +113,534 @@
         padding: 0 5rem;
         color: #000000;
     }
-</style>
 
+    /* sweetalert2 */
+    .btn-sweetalert{
+        border-radius: 25px;
+        background-color: #236a23;
+        color: white;
+        margin: 0 10px;
+    }
+    .btn-sweetalert-2{
+        border-radius: 25px;
+        background-color: rgb(201, 0, 0);
+        color: white;
+        margin: 0 10px;
+    }
+    .swal2-popup {
+        border-radius: 25px;
+    }
+
+    /* image upload path */
+    .add-image-path{
+        display: none;
+    }
+    .add-image-path-preview{
+        display:none;
+        max-width:200px;
+        margin-top:10px;
+    }
+
+    /* dropzone */
+    .drop-zone {
+        border: 2px dashed #cccccc;
+        border-radius: 25px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        background-color: #ffffff;
+
+        img{
+            display:none;
+            max-width:50%;
+            margin-top:10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .drop-zone--over {
+        border-color: #7E7267;
+        background-color: #f8f8f8;
+    }
+
+    .drop-zone__input {
+        display: none;
+    }
+    </style>
+</head>
 <body>
-    <div class="container">
-        <button class="mt-5 y-btn-back"><i class="fa-solid fa-angle-left"></i></button>
-        <h1 class="my-5 fw-bolder">新增文章</h1>
-        <div class="my-4 y-category-add-btn d-flex align-items-center">
-            <p class="mb-0">文章分類：</p>
-            <select name="文章分類" class="form-select me-4">
-                <option value="">選擇分類</option>
-                <option value="">分類1</option>
-                <option value="">分類2</option>
-                <option value="">分類3</option>
-            </select>
-            <button type="button" class="btn"><i class="fa-solid fa-plus pe-1"></i>新增分類</button>
+    <!-- Modal 觸發按鈕 (可依需求放置) -->
+    <button type="button" class="btn add-article-btn mt-5" data-bs-toggle="modal" data-bs-target="#addArticleModal">
+        <i class="fa-solid fa-plus me-1"></i>新增文章
+    </button>
+
+    <!-- Modal 結構 -->
+    <div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-body">
+                <!-- 將原有整個 .container.add-article 區塊內容放到此處 -->
+                <div class="container">
+                    <!-- 只要點選下列兩個按鈕，就允許關閉 -->
+                    <button class="mb-3 y-btn-back allowed-close"><i class="fa-solid fa-angle-left"></i></button>
+                    <div class="my-4 y-category-add-btn d-flex align-items-center">
+                        <p class="mb-0">文章分類 <span class="mx-1 red-sign">*</span>：</p>
+                        <select name="文章分類" class="form-select me-4">
+                            <option value="0">選擇分類</option>
+                            <option value="1">分類1</option>
+                            <option value="2">分類2</option>
+                            <option value="3">分類3</option>
+                        </select>
+                    </div>
+                    <input type="text" class="my-4 form-control" placeholder="標題 (必填)">
+                    <input type="text" class="my-4 form-control" placeholder="副標題">
+    
+                    <div class="my-4">
+                        <p>選擇主圖 <span class="mx-1 red-sign">*</span>: </p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="imageSource" id="imageSourceLocal" value="local" checked onchange="toggleImageSource()">
+                            <label class="form-check-label" for="imageSourceLocal">
+                                選擇本地圖片
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="imageSource" id="imageSourcePath" value="path" onchange="toggleImageSource()">
+                            <label class="form-check-label" for="imageSourcePath">
+                                輸入圖片路徑
+                            </label>
+                        </div>
+                    
+                        <div id="dropZone" class="drop-zone">
+                            <span class="drop-zone__prompt"><i class="fa-regular fa-image me-2"></i>拖曳圖片到此處，或點擊選取圖片</span>
+                            <input type="file" id="imageUpload" class="drop-zone__input" accept="image/*" onchange="previewImage(event)">
+                            <img id="imagePreview" src="#" alt="預覽圖片" >
+                        </div>
+                    
+                        <div id="imagePathDiv" class="add-image-path">
+                            <input type="text" class="form-control" id="imagePath" placeholder="請輸入圖片路徑" oninput="previewImageFromPath()">
+                        </div>
+                        <img id="imagePreviewPath" class="add-image-path-preview" src="#" alt="預覽圖片">
+                    </div>
+    
+                    <p>文章內容 <span class="mx-1 red-sign">*</span> : </p>
+                    <div id="example"></div>
+    
+                    <!-- 新增 hashtag 輸入欄位 -->
+                    <div class="my-4">
+                        <label for="hashtag-input" class="form-label">Hashtag</label>
+                        <input type="text" class="form-control" id="hashtag-input" placeholder="請輸入 hashtag，必須以 # 起頭，按 Enter 新增">
+                        <div id="hashtag-preview" class="flex-wrap gap-2 mt-2 d-flex"></div>
+                    </div>
+    
+                    <div class="my-4 d-flex justify-content-end">
+                        <button type="button" class="mx-3 btn y-btn-add">新增</button>
+                        <!-- 此取消按鈕標記 allowed-close -->
+                        <button type="button" class="btn btn-danger y-btn-cancel allowed-close">取消</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <input type="text" class="my-4 form-control" placeholder="標題">
-        <input type="text" class="my-4 form-control" placeholder="副標題">
-
-        <div class="my-4">
-            <p>選擇主圖 : </p>
-            <input class="form-control" type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
-            <img id="imagePreview" src="#" alt="預覽圖片" style="display:none; max-width:200px; margin-top:10px;">
         </div>
-
-        <p>文章內容 : </p>
-        <div id="example"></div>
-
-        <!-- 新增 hashtag 輸入欄位 -->
-        <div class="my-4">
-            <label for="hashtag-input" class="form-label">Hashtag</label>
-            <input type="text" class="form-control" id="hashtag-input" placeholder="請輸入 hashtag，必須以 # 起頭，按 Enter 新增">
-            <!-- 新增一個用來顯示 hashtag 預覽的區塊 -->
-            <div id="hashtag-preview" class="flex-wrap gap-2 mt-2 d-flex"></div>
-        </div>
-
-        <div class="my-4 d-flex justify-content-end">
-            <button type="button" class="mx-3 btn y-btn-add">新增</button>
-            <button type="button" class="btn btn-danger y-btn-cancel">取消</button>
-        </div>
-
     </div>
 
-    <script>  
-        // 等待文件完全載入後再初始化編輯器
-        document.addEventListener('DOMContentLoaded', function() {
-            var editor = new FroalaEditor('#example', {
-                language: 'zh_tw',
-                // 增加更多設定以確保語言正確載入
-                toolbarButtons: {
-                    moreText: {
-                        buttons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', 'textColor', 'backgroundColor', 'inlineClass', 'inlineStyle', 'clearFormatting']  
-                    },
-                    moreParagraph: {
-                        buttons: ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'formatOL', 'formatUL', 'paragraphFormat', 'paragraphStyle', 'lineHeight', 'outdent', 'indent', 'quote']  
-                    },
-                    moreRich: {
-                        buttons: ['insertLink', 'insertImage', 'insertVideo', 'insertTable', 'emoticons', 'fontAwesome', 'specialCharacters', 'embedly', 'insertFile', 'insertHR']  
-                    }
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // 在初始化 Froala 編輯器時，將 editorInstance 存入全域變數，以便後續重置使用
+    document.addEventListener('DOMContentLoaded', function() {
+        window.editorInstance = new FroalaEditor('#example', {
+            language: 'zh_tw',
+            toolbarButtons: {
+                moreText: {
+                    buttons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', 'textColor', 'backgroundColor', 'inlineClass', 'inlineStyle', 'clearFormatting']
+                },
+                moreParagraph: {
+                    buttons: ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'formatOL', 'formatUL', 'paragraphFormat', 'paragraphStyle', 'lineHeight', 'outdent', 'indent', 'quote']
+                },
+                moreRich: {
+                    buttons: ['insertLink', 'insertImage', 'insertVideo', 'insertTable', 'emoticons', 'fontAwesome', 'specialCharacters', 'embedly', 'insertFile', 'insertHR']
                 }
-            });
+            },
+            events: {
+                'contentChanged': function () {
+                    updateButtonState();
+                }
+            }
+        });
+    });
+
+    // 處理 hashtag 輸入與預覽
+    document.addEventListener('DOMContentLoaded', function() {
+        const hashtagInput = document.querySelector('#hashtag-input');
+        const hashtagPreview = document.querySelector('#hashtag-preview');
+        const hashtags = [];
+
+        hashtagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const inputVal = hashtagInput.value.trim();
+                if (!inputVal.startsWith('#')) {
+                    Swal.fire({
+                        title: "Hashtag 必須以 '#' 開頭",
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInUp animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutDown animate__faster'
+                        }
+                    });
+                    return;
+                }
+                // 利用 "#" 分割，過濾空字串
+                let inputTags = inputVal.split('#').filter(val => val !== '');
+                // 補上 "#" 作為前綴
+                inputTags = inputTags.map(tag => '#' + tag);
+
+                // 檢查與加入 tag
+                for (const tag of inputTags) {
+                    if (hashtags.length >= 5) {
+                        Swal.fire({
+                            title: "最多只能新增 5 個 hashtag",
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInUp animate__faster'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutDown animate__faster'
+                            }
+                        });
+                        break;
+                    }
+                    if (hashtags.includes(tag)) {
+                        Swal.fire({
+                            title: "Hashtag 不可以重複",
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInUp animate__faster'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutDown animate__faster'
+                            }
+                        });
+                        continue;
+                    }
+                    hashtags.push(tag);
+                }
+                renderHashtags();
+                hashtagInput.value = '';
+            }
         });
 
-// 處理 hashtag 輸入與預覽
-document.addEventListener('DOMContentLoaded', function() {
-    var hashtagInput = document.getElementById('hashtag-input');
-    var hashtagPreview = document.getElementById('hashtag-preview');
-    var hashtags = [];
+        function renderHashtags() {
+            hashtagPreview.innerHTML = '';
+            hashtags.forEach(function(tag, index) {
+                const tagItem = document.createElement('div');
+                tagItem.className = 'badge d-flex align-items-center rounded-pill y-hashtag';
+                tagItem.style.fontSize = '1rem';
+                tagItem.style.padding = '0.5em';
+                tagItem.innerHTML = tag + ' ';
 
-    // 監聽 Enter 鍵按下事件
-    hashtagInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            var tag = hashtagInput.value.trim();
-            // 檢查是否有以 '#' 開頭
-            if (!tag.startsWith('#')) {
-                alert("Hashtag 必須以 '#' 開頭");
-                return;
-            }
-            // 檢查是否已經達到上限
-            if (hashtags.length >= 5) {
-                alert("最多只能新增 5 個 hashtag");
-                return;
-            }
-            // 檢查是否有重複
-            if (hashtags.includes(tag)) {
-                alert("Hashtag 不可以重複");
-                return;
-            }
-            // 清除輸入欄位並更新預覽
-            hashtags.push(tag);
-            renderHashtags();
-            hashtagInput.value = '';
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn-close btn-close-black btn-sm y-close-btn';
+                removeBtn.style.marginLeft = '0.5em';
+                removeBtn.addEventListener('click', function() {
+                    hashtags.splice(index, 1);
+                    renderHashtags();
+                });
+                tagItem.appendChild(removeBtn);
+                hashtagPreview.appendChild(tagItem);
+            });
         }
     });
 
-    // 動態產生 hashtag 預覽
-    function renderHashtags() {
-        hashtagPreview.innerHTML = ''; // 清空舊的預覽
-        hashtags.forEach(function(tag, index) {
-            var tagItem = document.createElement('div');
-            tagItem.className = 'badge d-flex align-items-center rounded-pill y-hashtag';
-            tagItem.style.fontSize = '1rem';
-            tagItem.style.padding = '0.5em';
-            tagItem.innerHTML = tag + ' ';
+    // 處理拖曳上傳圖片
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropZone = document.querySelector("#dropZone");
+        const fileInput = dropZone.querySelector(".drop-zone__input");
 
-            // 新增移除按鈕
-            var removeBtn = document.createElement('button');
-            removeBtn.type = 'button';
-            removeBtn.className = 'btn-close btn-close-black btn-sm y-close-btn';
-            removeBtn.style.marginLeft = '0.5em';
-            removeBtn.addEventListener('click', function() {
-                hashtags.splice(index, 1);
-                renderHashtags();
-            });
-            tagItem.appendChild(removeBtn);
-            hashtagPreview.appendChild(tagItem);
+        // 點擊拖放區時，觸發檔案選擇
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
         });
+
+        // 拖曳進入時，增加 over 樣式
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add("drop-zone--over");
+        });
+
+        // 拖曳離開時，移除 over 樣式
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("drop-zone--over");
+        });
+
+        // 放下檔案時，將檔案賦值給 input 並呼叫預覽函式
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                previewImage({ target: fileInput });
+            }
+            dropZone.classList.remove("drop-zone--over");
+        });
+    });
+
+    // 處理圖片來源與預覽
+    function toggleImageSource() {
+        const imageSourceLocal = document.querySelector('#imageSourceLocal');
+        const dropZone = document.querySelector('#dropZone');
+        const imagePathDiv = document.querySelector('#imagePathDiv');
+        const previewImg = dropZone.querySelector('img');
+        const previewImgPath = document.querySelector('#imagePreviewPath');
+
+        if (imageSourceLocal.checked) {
+            dropZone.style.display = 'block';
+            imagePathDiv.style.display = 'none';
+
+            // 清空預覽圖片與檔案選擇
+            const imageUpload = document.querySelector('#imageUpload');
+            imageUpload.value = '';
+            if (previewImg) {
+                previewImg.style.display = 'none';
+                previewImg.src = '#';
+            }
+            // 隱藏路徑預覽圖片
+            if (previewImgPath) {
+                previewImgPath.style.display = 'none';
+                previewImgPath.src = '#';
+            }
+        } else {
+            dropZone.style.display = 'none';
+            imagePathDiv.style.display = 'block';
+            const imagePath = document.querySelector('#imagePath');
+            imagePath.value = '';
+            if (previewImgPath) {
+                previewImgPath.style.display = 'none';
+                previewImgPath.src = '#';
+            }
+        }
     }
-});
 
-
-        // 預覽圖片
-        function previewImage(event) {
-            var output = document.getElementById('imagePreview');
+    function previewImage(event) {
+        const output = document.querySelector('#imagePreview');
+        if (event.target.files && event.target.files[0]) {
             output.src = URL.createObjectURL(event.target.files[0]);
             output.style.display = 'block';
             output.onload = function() {
-        URL.revokeObjectURL(output.src);
+                URL.revokeObjectURL(output.src);
+            }
+        } else {
+            output.src = '#';
+            output.style.display = 'none';
+        }
     }
-}
-    </script>  
-</body>  
 
-</html>  
+    function previewImageFromPath() {
+        const imagePath = document.querySelector('#imagePath').value;
+        const output = document.querySelector('#imagePreviewPath');
+        output.src = imagePath;
+        output.style.display = imagePath ? 'block' : 'none';
+    }
+
+    // 處理按鈕狀態與表單驗證
+    document.addEventListener('DOMContentLoaded', function() {
+        const addButton = document.querySelector('.y-btn-add');
+        const categorySelect = document.querySelector('select[name="文章分類"]');
+        const titleInput = document.querySelector('input[placeholder="標題 (必填)"]');
+        const imageUpload = document.querySelector('#imageUpload');
+        const imagePath = document.querySelector('#imagePath');
+        const editorDiv = document.querySelector('#example');
+        let editorInstance;
+
+        editorInstance = new FroalaEditor('#example', {
+            language: 'zh_tw',
+            toolbarButtons: {
+                moreText: {
+                    buttons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', 'textColor', 'backgroundColor', 'inlineClass', 'inlineStyle', 'clearFormatting']
+                },
+                moreParagraph: {
+                    buttons: ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'formatOL', 'formatUL', 'paragraphFormat', 'paragraphStyle', 'lineHeight', 'outdent', 'indent', 'quote']
+                },
+                moreRich: {
+                    buttons: ['insertLink', 'insertImage', 'insertVideo', 'insertTable', 'emoticons', 'fontAwesome', 'specialCharacters', 'embedly', 'insertFile', 'insertHR']
+                }
+            },
+            events: {
+                'contentChanged': function () {
+                    updateButtonState();
+                }
+            }
+        });
+
+        function checkRequiredFields() {
+            let allFilled = true;
+            if (categorySelect.value === "0") {
+                categorySelect.style.border = '1px solid red';
+                allFilled = false;
+            } else {
+                categorySelect.style.border = '';
+            }
+            if (!titleInput.value.trim()) {
+                titleInput.style.border = '1px solid red';
+                allFilled = false;
+            } else {
+                titleInput.style.border = '';
+            }
+            const imageSourceLocal = document.querySelector('#imageSourceLocal');
+            if (imageSourceLocal.checked) {
+                if (!imageUpload.files || imageUpload.files.length === 0) {
+                    imageUpload.style.border = '1px solid red';
+                    allFilled = false;
+                } else {
+                    imageUpload.style.border = '';
+                }
+            } else {
+                if (!imagePath.value.trim()) {
+                    imagePath.style.border = '1px solid red';
+                    allFilled = false;
+                } else {
+                    imagePath.style.border = '';
+                }
+            }
+            const content = editorInstance.html.get();
+            if (!content.trim() || content.trim() === '<p><br></p>') {
+                editorDiv.style.border = '1px solid red';
+                allFilled = false;
+            } else {
+                editorDiv.style.border = '';
+            }
+            return allFilled;
+        }
+
+        function updateButtonState() {
+            if (checkRequiredFields()) {
+                addButton.classList.remove('disabled');
+                addButton.disabled = false;
+            } else {
+                addButton.classList.add('disabled');
+                addButton.disabled = true;
+            }
+        }
+
+        categorySelect.addEventListener('change', updateButtonState);
+        titleInput.addEventListener('input', updateButtonState);
+        imageUpload.addEventListener('change', updateButtonState);
+        imagePath.addEventListener('input', updateButtonState);
+        const imageSourceLocalRadio = document.querySelector('#imageSourceLocal');
+        const imageSourcePathRadio = document.querySelector('#imageSourcePath');
+        imageSourceLocalRadio.addEventListener('change', updateButtonState);
+        imageSourcePathRadio.addEventListener('change', updateButtonState);
+        setInterval(updateButtonState, 100);
+        updateButtonState();
+    });
+
+    // 控制 modal 的關閉行為
+    let allowClose = false;
+    document.querySelectorAll('.allowed-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+            allowClose = true;
+            $('#addArticleModal').modal('hide'); // 關閉 modal
+        });
+    });
+
+    $('#addArticleModal').on('hide.bs.modal', function(e) {
+        if (allowClose) {
+            allowClose = false;
+            return; // 允許關閉
+        }
+        e.preventDefault(); // 取消關閉
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-sweetalert",
+                cancelButton: "btn btn-sweetalert-2"
+            },
+            buttonsStyling: false
+        });
+        
+        swalWithBootstrapButtons.fire({
+            title: "尚未儲存，是否確定要離開？",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "確定",
+            cancelButtonText: "取消",
+            reverseButtons: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                allowClose = true;
+                $('#addArticleModal').modal('hide');
+            }
+        });
+    });
+
+    // 當 modal 完全關閉後，清除所有內容
+    $('#addArticleModal').on('hidden.bs.modal', function() {
+        // 重置分類選擇
+        const categorySelect = document.querySelector('select[name="文章分類"]');
+        if(categorySelect) {
+            categorySelect.selectedIndex = 0;
+            categorySelect.style.border = '';
+        }
+        // 清空標題與副標題
+        const titleInput = document.querySelector('input[placeholder="標題 (必填)"]');
+        if(titleInput) {
+            titleInput.value = "";
+            titleInput.style.border = '';
+        }
+        const subtitleInput = document.querySelector('input[placeholder="副標題"]');
+        if(subtitleInput) {
+            subtitleInput.value = "";
+        }
+        // 重置圖片上傳及預覽
+        const imageUpload = document.querySelector('#imageUpload');
+        if(imageUpload) {
+            imageUpload.value = "";
+            imageUpload.style.border = '';
+        }
+        const imagePath = document.querySelector('#imagePath');
+        if(imagePath) {
+            imagePath.value = "";
+            imagePath.style.border = '';
+        }
+        const imagePreview = document.querySelector('#imagePreview');
+        if(imagePreview) {
+            imagePreview.src = "#";
+            imagePreview.style.display = 'none';
+        }
+        const imagePreviewPath = document.querySelector('#imagePreviewPath');
+        if(imagePreviewPath) {
+            imagePreviewPath.src = "#";
+            imagePreviewPath.style.display = 'none';
+        }
+        // 重置 DropZone 與圖片來源選擇（依需要自行調整）
+        const dropZone = document.querySelector('#dropZone');
+        if(dropZone) {
+            dropZone.style.display = 'block';
+        }
+        const imagePathDiv = document.querySelector('#imagePathDiv');
+        if(imagePathDiv) {
+            imagePathDiv.style.display = 'none';
+        }
+        // 清除 hashtag 輸入與預覽
+        const hashtagInput = document.querySelector('#hashtag-input');
+        if(hashtagInput) {
+            hashtagInput.value = "";
+        }
+        const hashtagPreview = document.querySelector('#hashtag-preview');
+        if(hashtagPreview) {
+            hashtagPreview.innerHTML = "";
+        }
+        // 可視需求：若 hashtag 陣列為全域變數，也要重置 (或重新宣告)
+        // 重置 Froala 編輯器內容
+        if(window.editorInstance) {
+            window.editorInstance.html.set('');
+            const editorDiv = document.querySelector('#example');
+            if(editorDiv) {
+                editorDiv.style.border = '';
+            }
+        }
+    });
+</script>
+</body>
+</html>
