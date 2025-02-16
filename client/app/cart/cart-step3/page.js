@@ -1,12 +1,12 @@
 'use client'
 
-import './cart-step3.scss'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import CartItem from '../_components/cart-item/page'
-import LessonItem from '../_components/lession-item/page'
-import RentItem from '../_components/rental-item/page'
-import CheckoutFormStep3 from '../_components/checkout-form-step3/page'
+import './cart-step3.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.js';
+import CartItem from '../_components/cart-item/page';
+import LessonItem from '../_components/lession-item/page';
+import RentItem from '../_components/rental-item/page';
+import CheckoutFormStep3 from '../_components/checkout-form-step3/page';
 
 export default function cartPageThree() {
   const cartItems = [
@@ -95,22 +95,33 @@ export default function cartPageThree() {
       <div className="row d-flex justify-content-center pt-4">
         <div className="j-shoppingCartBox justify-content-center col-12 col-sm-10 col-md-10 col-lg-8 col-xl-6 col-xxl-6">
           <div className="j-shoppingItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
-            {cartItems.map((item, index) => (
-              <div className="p-2 border-bottom"  key={index+1}>
-                <CartItem key={index} id={index + 1} itemData={item} />
-              </div>
-            ))}
-            {cartLession.map((lession, index) => (
-              <div className="p-2 border-bottom"  key={index+1}>
-                <LessonItem key={index} lessionitem={lession} />
-              </div>
-              
-            ))}
-            {cartRent.map((rental, index) => (
-              <div className="p-2 border-bottom"  key={index+1}>
-                <RentItem key={index} rentalitem={rental} />
-              </div>
-            ))}
+            <div className='mt-2 itemBox'>
+              <h3 className='mb-1 ms-3 pt-2'>相機</h3>
+              {cartItems.map((item, index) => (
+                <div key={index+1}>
+                  <CartItem key={index} id={index + 1} itemData={item} />
+                </div>
+              ))}
+            </div>
+            
+            <div className='mt-2'>
+              <h3 className='mb-1 ms-3 pt-2'>課程</h3>
+              {cartLession.map((lession, index) => (
+                <div key={index+1}>
+                  <LessonItem key={index} lessionitem={lession} />
+                </div>
+              ))}
+            </div>
+
+            <div className='mt-2'>
+              <h3 className='mb-1 ms-3 pt-2'>租借</h3>
+              {cartRent.map((rental, index) => (
+                <div key={index+1}>
+                  <RentItem key={index} rentalitem={rental} />
+                </div>
+              ))}
+            </div>
+            
           </div>
           <div className="j-shoppingItemsBox d-sm-none d-block p-0 d-flex flex-grow-1 flex-column gap-3 row">
             {cartItems.map((item, index) => (
