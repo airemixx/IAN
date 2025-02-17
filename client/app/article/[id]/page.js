@@ -37,6 +37,7 @@ export default function ArticleDetail() {
   const [articleContent, setArticleContent] = useState('<p>載入中...</p>') // 新增內容 state
   const [article, setArticle] = useState(null) // 新增 article state
   const [categoryId, setCategoryId] = useState(null)
+  const [tags, setTags] = useState([])
 
   const changeFontSize = (size) => {
     setFontSize(size)
@@ -61,6 +62,7 @@ export default function ArticleDetail() {
           setImagePath(response.data.image_path)
           setArticleContent(response.data.content) // 取得文章內容
           setCategoryId(response.data.category_id) // 設定 categoryId
+          setTags(response.data.tags)
 
           return fetch(`http://localhost:8000/api/articles/categories`)
             .then((res) => {
@@ -122,12 +124,17 @@ export default function ArticleDetail() {
               content={articleContent}
               fontSize={getFontSize(fontSize)}
             />
-            <TagLikeShareBtn articleId={id}/>
+            <TagLikeShareBtn articleId={id} />
             <ReplyInput />
             <SortAllBtn />
             <ShowReply />
           </article>
-          <Aside />
+          <Aside
+            categoryId={categoryId}
+            tags={tags}
+            title={articleTitle}
+            content={articleContent}
+          />
         </div>
       </div>
       <Recommends />

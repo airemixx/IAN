@@ -12,8 +12,8 @@
   }
 
   .y-news-image {
-  width: 75px;
-  height: 75px;
+  max-width: 75px;
+  aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: 8px;
   }
