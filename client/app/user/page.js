@@ -1,10 +1,35 @@
 'use client'
 import Link from 'next/link'
 import styles from './user.module.scss'
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
 import Sidenav from './_components/Sidenav/page'
 
 export default function UserPage(props) {
+  const router = useRouter();
+  const appKey = "loginWithToken";
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState({nickname:""});
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem(appKey);
+    if (!savedToken) {
+      router.push("/login"); // 沒有 token 時跳轉到登入頁
+    } else {
+      try {
+        const decodedUser = jwtDecode(savedToken);
+        console.log(decodedUser);
+        setToken(savedToken);
+        setUser(decodedUser || {});
+      } catch (error) {
+        console.error("Token 解碼失敗", error);
+        localStorage.removeItem(appKey);
+        router.push("/login");
+      }
+    }
+  }, []);
+
   return (
     <div>
       <div className={`container py-4`}>
@@ -58,21 +83,8 @@ export default function UserPage(props) {
                         type="email"
                         className={`form-control ${styles.customInput}`}
                         disabled
-                        value={'a2825514620@gmail.com'}
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">稱謂 *</label>
-                      <input
-                        type="text"
-                        className={`form-control ${styles.customInput}`}
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">姓氏 *</label>
-                      <input
-                        type="text"
-                        className={`form-control ${styles.customInput}`}
+                        value={user?.mail || ""}
+                        readOnly
                       />
                     </div>
                     <div className="mb-3">
@@ -80,8 +92,21 @@ export default function UserPage(props) {
                       <input
                         type="text"
                         className={`form-control ${styles.customInput}`}
+                        value={user?.name || ""}
+                        onChange={(e) => setUser({ ...user, name: e.target.value })}
                       />
                     </div>
+                    <div className="mb-3">
+                      <label className="form-label">暱稱 *</label>
+                      <input
+                        type="text"
+                        className={`form-control ${styles.customInput}`}
+                        disabled
+                        value={user?.nickname || ""}
+                        readOnly
+                      />
+                    </div>
+                    
                     <div className="mb-3">
                       <label className="form-label">出生日期</label>
                       <input

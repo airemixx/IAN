@@ -2,11 +2,15 @@
 import Link from 'next/link'
 import styles from './register.module.scss'
 import React, { useState } from 'react'
+import { useRouter } from "next/navigation";
+
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     gender: '',
     firstName: '',
+    nickName: '',
     password: '',
     confirmPassword: '',
     email: '',
@@ -47,6 +51,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           account: formData.email, // 使用 email 作為帳號
           name: formData.firstName, // 只使用 firstName
+          nickname: formData.nickName,
           mail: formData.email,
           password: formData.password,
           gender: formData.gender
@@ -58,7 +63,19 @@ export default function RegisterPage() {
       if (result.status === 'success') {
         setSuccessMessage('✅ 帳戶創建成功！請登入');
         setError('');
-        setFormData({ gender: '', firstName: '', password: '', confirmPassword: '', email: '' });
+        await new Promise((resolve) => {
+          setFormData({ 
+              gender: '', 
+              firstName: '', 
+              nickName: '', 
+              password: '', 
+              confirmPassword: '', 
+              email: '' 
+          });
+          resolve();
+      });
+  
+      router.push('/login');
       } else {
         setError(`❌ ${result.message}`);
       }
@@ -108,6 +125,17 @@ export default function RegisterPage() {
               required
             />
           </div>
+          <div className="mb-3">
+            <label className={styles.formLabel} htmlFor="nickName">暱稱 *</label>
+            <input
+              type="text"
+              className={`form-control ${styles.formControl}`}
+              name="nickName"
+              value={formData.nickName}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
           <div className="mb-3">
             <label className={styles.formLabel} htmlFor="email">電子郵件 *</label>
@@ -151,7 +179,7 @@ export default function RegisterPage() {
             <label className={styles.formLabel} htmlFor="agreePrivacy">我已閱讀並同意隱私條款。</label>
           </div>
 
-          <button type="submit" className={styles.btnCustom} disabled={loading}>
+          <button type="submit" className={styles.btnCustom} disabled={loading} >
             {loading ? '註冊中...' : '建立帳戶'}
           </button>
         </form>
