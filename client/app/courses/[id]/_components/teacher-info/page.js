@@ -33,7 +33,7 @@ export default function TeacherInfo({ teacherId }) {
   if (!teacher) return <p>無法找到講師資料</p>
 
   return (
-    <section className={styles['teacher-info-container']}>
+    <section className={styles['teacher-info-container']} id="teacher-info">
       <div className={styles['section-detail-title']} data-aos="fade-right">
         <div className={styles['title-block']}></div>
         <h2>關於講師</h2>

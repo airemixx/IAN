@@ -58,7 +58,7 @@ export default function CourseRating() {
   )
 
   return (
-    <section className={styles['course-rating-container']}>
+    <section className={styles['course-rating-container']} id="course-rating">
       <div className={styles['section-detail-title']} data-aos="fade-right">
         <div className={styles['title-block']}></div>
         <h2>課程評價</h2>
@@ -83,8 +83,13 @@ export default function CourseRating() {
             <div key={rating} className={styles['progress-container']}>
               <div className={styles['count']}>{rating}</div>
               <div
-                className="progress"
-                style={{ width: '400px', height: '8px', minWidth: '50px' }}
+                className="progress "
+                style={{
+                  width: '400px',
+                  height: '8px',
+                  minWidth: '50px',
+                  backgroundColor: '#E0E0E0',
+                }}
               >
                 <div
                   className={styles['progress-bar']}
