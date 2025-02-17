@@ -6,6 +6,10 @@
   height: 100%;
 }
 
+.modal-comment {
+  margin: 1rem;
+}
+
 .comment-card-nav {
   display: flex;
   justify-content: space-between;
@@ -47,6 +51,16 @@
   -webkit-line-clamp: 2;
   text-overflow: ellipsis;
   max-height: 3rem;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 當 isExpanded 為 true 時，展開所有內容 */
+.comment-card-content .content.expanded {
+  -webkit-line-clamp: unset;
+  display: block;
+  max-height: 500px;
+  overflow: visible;
+  
 }
 
 .go-page-link {
@@ -54,12 +68,17 @@
   display: flex;
   justify-content: end;
 
+  button {
+    border: none;
+    background-color: transparent;
+  }
 }
 
-.go-page-link a {
+.show-all-btn {
   text-decoration: none;
   color: var(--secondary-color-med);
   display: flex;
+  align-items: center;
   gap: 10px;
 }
 
@@ -76,8 +95,6 @@
 /* 響應式樣式 */
 
 @media screen and (max-width: 768px) {
-  
-
   /*--- 評價 --- */
   .course-rating {
     display: block;
@@ -91,7 +108,6 @@
   .progress {
     width: 100%;
   }
-
 }
 
 @media screen and (max-width: 567px) {

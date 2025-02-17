@@ -95,7 +95,7 @@ export default function CourseRating() {
                   className={styles['progress-bar']}
                   role="progressbar"
                   style={{
-                    width: `${ratingPercentages[index]}%`, // ✅ 正確計算進度條
+                    width: `${ratingPercentages[index]}%`,
                   }}
                 ></div>
               </div>
@@ -106,13 +106,13 @@ export default function CourseRating() {
 
       {/* 評論區 - 只顯示前 4 則評論 */}
       <div className="row g-3">
-        {loading ? (
-          <p>載入中...</p>
-        ) : (
-          comments
-            .slice(0, 4)
-            .map((comment, index) => <CourseComment key={index} {...comment} />)
-        )}
+        {comments.slice(0, 4).map((comment, index) => (
+          <CourseComment
+            key={index}
+            {...comment}
+            onShowAllComments={() => setShowAllComments(true)}
+          />
+        ))}
       </div>
 
       {/* 所有評價按鈕（打開彈出視窗） */}
@@ -137,7 +137,7 @@ export default function CourseRating() {
             <h2>所有評論</h2>
             <div className={styles['modal-content']}>
               {comments.map((comment, index) => (
-                <CourseComment key={index} {...comment} />
+                <CourseComment key={index} {...comment} isModal={true} />
               ))}
             </div>
           </div>

@@ -60,49 +60,8 @@
     font-size: 15px;
   }
 }
-
-@media(max-width:390px) {
-  .container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .container .j-shoppingCartTitle {
-    font-size: 65px;
-  }
-
-  .container .j-shoppingCartBox {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .j-shoppingItemsMoblieBox {
-    width: 390px;
-  }
-
-  .j-cartItemBox {
-    width: 390px;
-    height: auto;
-  }
-
-  .j-lessonImg img {
-    width: 375px;
-  }
-
-  .footer {
-    display: block;
-  }
-
-  .copyright {
-    text-align: center;
-  }
-
-  .copyright .right-links {
-    display: none;
-  }
-
-  .copyright .right-links .copyRight {
-    display: block;
-  }
-
+@media(max-width:576px) {
+  .j-cartItem {
+    height: 20rem;
+   }
 }
