@@ -63,7 +63,15 @@ app.use('/api/users', users)
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000
+const DB_HOST = process.env.DB_HOST
+const DB_USER = process.env.DB_USER
+const DB_PASSWORD = process.env.DB_PASSWORD
+const DB_NAME = process.env.DB_NAME
+const DB_PORT = process.env.DB_PORT
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
 app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)
+  console.log(`Database host: ${DB_HOST}`)
+  console.log(`JWT secret key: ${JWT_SECRET_KEY}`)
 })

@@ -1,51 +1,55 @@
 'use client';  
 
-import React from 'react';  
-import styles from './index.module.scss'; // 導入 SCSS 模組  
+import React, { useMemo } from 'react';
+import ContentLoader from 'react-content-loader';
+import styles from './index.module.scss';
+import useArticles from '../../../../../hooks/use-article'
 
-export default function NewsCard() {  
-  const newsData = [  
-    {  
-      tag: '產品情報',  
-      title: 'Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！',  
-      image: '/images/article/course-3.jpg',  
-    },  
-    {  
-      tag: '產品情報',  
-      title: 'Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！',  
-      image: '/images/article/course-3.jpg',  
-    },  
-    {  
-      tag: '產品情報',  
-      title: 'Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！',  
-      image: '/images/article/course-3.jpg',  
-    },  
-    {  
-      tag: '產品情報',  
-      title: 'Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！',  
-      image: '/images/article/course-3.jpg',  
-    }
-  ];  
+const NewsCardLoader = () => (
+  <ContentLoader
+    speed={2}
+    width={400}
+    height={160}
+    viewBox="0 0 400 160"
+    backgroundColor="#f3f3f3"
+    foregroundColor="#ecebeb"
+  >
+    <rect x="0" y="0" rx="5" ry="5" width="75" height="75" />
+    <rect x="90" y="0" rx="5" ry="5" width="300" height="20" />
+    <rect x="90" y="30" rx="5" ry="5" width="250" height="20" />
+    <rect x="0" y="90" rx="5" ry="5" width="75" height="75" />
+    <rect x="90" y="90" rx="5" ry="5" width="300" height="20" />
+    <rect x="90" y="120" rx="5" ry="5" width="250" height="20" />
+  </ContentLoader>
+);
 
-  return (  
-    <>  
-      <ul className={`list-unstyled ${styles['y-news-list']}`}>  
-        {newsData.map((news, index) => (  
-          <li className={styles['y-news-item']} key={index}>  
-            <img  
-              src={news.image}  
-              className={`${styles['y-news-image']} me-2`}  
-              alt={news.title}  
-            />  
-            <div>  
-              <p className={styles['y-news-tag']}>{news.tag}</p>  
-              <a href="#" className={styles['y-news-title']}>  
-                {news.title}  
-              </a>  
-            </div>  
-          </li>  
-        ))}  
-      </ul>  
-    </>  
-  );  
+export default function NewsCard() {
+  const filter = useMemo(() => ({}), []);
+  const { articles, loading, error } = useArticles(filter);
+
+
+  if (loading) return <NewsCardLoader />;
+  if (error) return <p>Error!</p>;
+
+  return (
+    <>
+      <ul className={`list-unstyled ${styles['y-news-list']}`}>
+        {articles.slice(0, 4).map((article, index) => (
+          <li className={styles['y-news-item']} key={index}>
+            <img
+              src={article.image_path}
+              className={`${styles['y-news-image']} me-2`}
+              alt={article.title}
+            />
+            <div>
+              <p className={styles['y-news-tag']}>{article.category_name}</p>
+              <a href={`/article/${article.id}`} className={styles['y-news-title']}>
+                {article.title}
+              </a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
 }
