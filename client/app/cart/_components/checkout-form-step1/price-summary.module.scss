@@ -5,6 +5,7 @@
   }
   
   .j-payStep {
+    margin-top: 3.5rem;
     height: 26rem;
     padding: 60px;
     border-radius: 20px;
@@ -47,4 +48,10 @@
     }
     color: #FFF;
     font-size: 14px;
+  }
+
+  @media (max-width: 996px){
+    .j-payStep {
+      margin-top: 0;
+    }
   }
