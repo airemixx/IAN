@@ -8,7 +8,7 @@
 }
 
 .j-heightspace{
-  padding: 3.5rem;
+  padding: 3.0rem;
 }
 
 .j-shoppingCartBox {
@@ -33,26 +33,12 @@
 }
 
 @media(max-width:1400px){
-  .j-shoppingItemsBox {
-    overflow: auto;
-    height: 529px;
-  }
-
   .j-bodyHeight{
     height: auto;
   }
 }
 
-@media(max-width:1200px){
-  .j-shoppingItemsBox {
-    overflow: visible;
-    height: auto;
-  }
-}
-
-
-  
-  @media(max-width:390px) {
+@media(max-width:390px) {
     .container {
       display: flex;
       flex-direction: column;
@@ -62,9 +48,15 @@
       display: flex;
       flex-direction: column;
     }
-
+  
     .shoppingItemsMoblieBox {
       width: 390px;
+    }
+
+    .j-itemBox{
+      background-color: #003150;
+      border-radius: 20px;
+      color: #fff;
     }
 
     .j-cartItemBox {

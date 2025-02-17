@@ -109,7 +109,73 @@ export default function cartPageOne() {
         <CartTitle count={cartItems.length} />
         <div className="row d-flex justify-content-center">
           <div className="j-shoppingCartBox justify-content-between mt-4 me-4 col-sm-11 col-md-9 col-lg-6">
-            <div className="j-shoppingItemsBox d-none d-sm-block p-0">
+            <div className="j-cartItemsBox d-none d-sm-block p-0">
+              <div>
+                <input type="checkbox" name="" id="" className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"/>全選
+              </div>
+              <div className="mt-2 mb-5 j-itemBox">
+                <h3 className="mb-1 ms-3 pt-2">相機</h3>
+                {cartItems.map((item, index) => (
+                  <div
+                    className="j-input-box d-flex align-items-center"
+                    key={index + 1}
+                  >
+                    <input
+                      type="checkbox"
+                      className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
+                      id={`cartItem-${index}`}
+                    />
+                    <label
+                      htmlFor={`cartItem-${index}`}
+                      className="ms-2 d-flex flex-grow-1"
+                    >
+                      <CartItem key={index} id={index + 1} itemData={item} />
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 mb-5 j-itemBox">
+                <h3 className="mb-1 ms-3 pt-2">課程</h3>
+                {cartLession.map((lession, index) => (
+                  <div
+                    className="j-input-box d-flex align-items-center"
+                    key={index + 1}
+                  >
+                    <input
+                      type="checkbox"
+                      className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
+                      id={`lessonItem-${index}`}
+                    />
+                    <label
+                      htmlFor={`lessonItem-${index}`}
+                      className="ms-2 d-flex flex-grow-1"
+                    >
+                      <LessonItem key={index} lessionitem={lession} />
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 mb-5 j-itemBox">
+                <h3 className="mb-1 ms-3 pt-2">課程</h3>
+                {cartRent.map((rental, index) => (
+                  <div
+                    className="j-input-box d-flex align-items-center"
+                    key={index + 1}
+                  >
+                    <input
+                      type="checkbox"
+                      className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
+                      id={`rentItem-${index}`}
+                    />
+                    <RentItem key={index} rentalitem={rental} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="j-cartItemsBox d-sm-none d-block p-0">
+              <div>
+                <input type="checkbox" name="" id="" className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"/>全選
+              </div>
               <div className="mt-2 mb-5 j-itemBox">
                 <h3 className="mb-1 ms-3 pt-2">相機</h3>
                 {cartItems.map((item, index) => (
