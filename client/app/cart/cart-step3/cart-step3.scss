@@ -1,21 +1,25 @@
+nav{
+  display: flex;
+  justify-content: flex-end;
+}
+.nav-left{
+ display: none;
+}
+
 .j-itemBox{
   background-color: #003150;
   border-radius: 20px;
   color: #fff;
 }
+
 .j-bodyHeight{
-  height: '91vh'
+  height: auto;
 }
 
-.j-shoppingCartBox {
-  margin-top: 12%;
+.j-cartItemsBox {
+  margin-top: 3.7rem;
   display: flex;
   flex-direction: column;
-  
-}
-
-.j-shoppingItemsBox {
-  overflow: auto;
 }
 
 .footer-block{
@@ -43,34 +47,22 @@
   
 }
 @media (max-width: 390px) {
+  .j-cartItemsBox {
+    margin-top: 3.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
   .container {
     display: flex;
     flex-direction: column;
   }
 
-  .container .shoppingCartTitle {
-    font-size: 65px;
-  }
-
-  .container .shoppingCartBox {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .shoppingItemsMoblieBox {
-    width: 390px;
-  }
-
-  .j-cartItemBox {
-    width: 390px;
-    height: auto;
-  }
-
   .j-lessonImg img {
-    width: 375px;
+    width: auto;
   }
 
   .payStep {
-    width: 390px;
+    width: auto;
   }
 }

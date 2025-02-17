@@ -39,7 +39,8 @@
 
 .category-list:hover .circle-active,
 .category-list.active .circle-active {
-  border: 1px solid var(--secondary-color-med);
+  border: none;
+  background-color:  var(--secondary-color-med);
 }
 
 .circle-active {
