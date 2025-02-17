@@ -6,12 +6,10 @@ import styles from "./carousel.module.scss";
 export default function CarouselIndex(props) {
   
   useEffect(() => {
-    // ✅ 確保 Bootstrap JS 被載入
     import("bootstrap/dist/js/bootstrap.bundle.min.js")
       .then(() => {
-        console.log("✅ Bootstrap JS 已載入");
       })
-      .catch((err) => console.error("❌ 載入 Bootstrap JS 失敗:", err));
+      .catch((err) => console.error("載入 Bootstrap JS 失敗:", err));
   }, []);
 
   return (
