@@ -74,4 +74,7 @@ app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)
   console.log(`Database host: ${DB_HOST}`)
   console.log(`JWT secret key: ${JWT_SECRET_KEY}`)
+
 })
+
+

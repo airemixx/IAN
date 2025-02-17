@@ -228,7 +228,7 @@ export default function FilterSidebar({ onFilterChange }) {
                       <div key={subcategory.id} className="form-check">
                         <input
                           type="checkbox"
-                          id={`subcategory${subcategory.id}`}
+                          id={`subcategory_${subcategory.id}`}
                           name="subcategory_id"
                           value={subcategory.id}
                           className="form-check-input"
@@ -242,6 +242,7 @@ export default function FilterSidebar({ onFilterChange }) {
                   ) : (
                     <p>沒有品牌資料</p>
                   )}
+
                 </div>
               </div>
             </div>
@@ -315,160 +316,161 @@ export default function FilterSidebar({ onFilterChange }) {
             <button className={styles.closeBtn} onClick={toggleFilterSidebar}>✖</button>
 
             <div className="accordion">
-             <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button
-                  className={`accordion-button ${styles.accordionButton} ${expanded.includes("lens") ? "" : "collapsed"}`}
-                  type="button"
-                  onClick={() => toggleExpand("lens")}
-                >
-                  機身
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${expanded.includes("lens") ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  {filters.category.length > 0 ? (
-                    filters.category.map((category) => (
-                      <div key={category.id} className="form-check">
-                        <input
-                          type="checkbox"
-                          id={`category_${category.id}`}
-                          name="category_id"
-                          value={category.id}
-                          className="form-check-input"
-                          onChange={handleCheckboxChange}
-                        />
-                        <label htmlFor={`category_${category.id}`} className="form-check-label">
-                          {category.name}
-                        </label>
-                      </div>
-                    ))
-                  ) : (
-                    <p>沒有種類資料</p>
-                  )}
+              <div className="accordion-item">
+                <h2 className="accordion-header">
+                  <button
+                    className={`accordion-button ${styles.accordionButton} ${expanded.includes("lens") ? "" : "collapsed"}`}
+                    type="button"
+                    onClick={() => toggleExpand("lens")}
+                  >
+                    機身
+                  </button>
+                </h2>
+                <div className={`accordion-collapse ${expanded.includes("lens") ? "show" : "collapse"}`}>
+                  <div className="accordion-body">
+                    {filters.category.length > 0 ? (
+                      filters.category.map((category) => (
+                        <div key={category.id} className="form-check">
+                          <input
+                            type="checkbox"
+                            id={`category_${category.id}`}
+                            name="category_id"
+                            value={category.id}
+                            className="form-check-input"
+                            onChange={handleCheckboxChange}
+                          />
+                          <label htmlFor={`category_${category.id}`} className="form-check-label">
+                            {category.name}
+                          </label>
+                        </div>
+                      ))
+                    ) : (
+                      <p>沒有種類資料</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
               {/* 機身 (品牌篩選) */}
               <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button
-                  className={`accordion-button ${styles.accordionButton} ${expanded.includes("brand") ? "" : "collapsed"}`}
-                  type="button"
-                  onClick={() => toggleExpand("brand")}
-                >
-                  品牌
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${expanded.includes("brand") ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  {filters.brand.length > 0 ? (
-                    filters.brand.map((brand) => (
-                      <div key={brand.id} className="form-check">
-                        <input
-                          type="checkbox"
-                          id={`brand_${brand.id}`}
-                          name="brand_id"
-                          value={brand.id}
-                          className="form-check-input"
-                          onChange={handleCheckboxChange}
-                        />
-                        <label htmlFor={`brand_${brand.id}`} className="form-check-label">
-                          {brand.name}
-                        </label>
-                      </div>
-                    ))
-                  ) : (
-                    <p>沒有品牌資料</p>
-                  )}
+                <h2 className="accordion-header">
+                  <button
+                    className={`accordion-button ${styles.accordionButton} ${expanded.includes("brand") ? "" : "collapsed"}`}
+                    type="button"
+                    onClick={() => toggleExpand("brand")}
+                  >
+                    品牌
+                  </button>
+                </h2>
+                <div className={`accordion-collapse ${expanded.includes("brand") ? "show" : "collapse"}`}>
+                  <div className="accordion-body">
+                    {filters.brand.length > 0 ? (
+                      filters.brand.map((brand) => (
+                        <div key={brand.id} className="form-check">
+                          <input
+                            type="checkbox"
+                            id={`brand_${brand.id}`}
+                            name="brand_id"
+                            value={brand.id}
+                            className="form-check-input"
+                            onChange={handleCheckboxChange}
+                          />
+                          <label htmlFor={`brand_${brand.id}`} className="form-check-label">
+                            {brand.name}
+                          </label>
+                        </div>
+                      ))
+                    ) : (
+                      <p>沒有品牌資料</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
               {/* 種類 */}
               <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button
-                  className={`accordion-button ${styles.accordionButton} ${expanded.includes("subcategory") ? "" : "collapsed"}`}
-                  type="button"
-                  onClick={() => toggleExpand("subcategory")}
-                >
-                  種類
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${expanded.includes("subcategory") ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  {filters.subcategory.length > 0 ? (
-                    filters.subcategory.map((subcategory) => (
-                      <div key={subcategory.id} className="form-check">
-                        <input
-                          type="checkbox"
-                          id={`subcategory${subcategory.id}`}
-                          name="subcategory_id"
-                          value={subcategory.id}
-                          className="form-check-input"
-                          onChange={handleCheckboxChange}
-                        />
-                        <label htmlFor={`subcategory_${subcategory.id}`} className="form-check-label">
-                          {subcategory.name}
-                        </label>
-                      </div>
-                    ))
-                  ) : (
-                    <p>沒有品牌資料</p>
-                  )}
+                <h2 className="accordion-header">
+                  <button
+                    className={`accordion-button ${styles.accordionButton} ${expanded.includes("subcategory") ? "" : "collapsed"}`}
+                    type="button"
+                    onClick={() => toggleExpand("subcategory")}
+                  >
+                    種類
+                  </button>
+                </h2>
+                <div className={`accordion-collapse ${expanded.includes("subcategory") ? "show" : "collapse"}`}>
+                  <div className="accordion-body">
+                    {filters.subcategory.length > 0 ? (
+                      filters.subcategory.map((subcategory) => (
+                        <div key={subcategory.id} className="form-check">
+                          <input
+                            type="checkbox"
+                            id={`subcategory_${subcategory.id}`}  // ✅ `subcategory_` + `id`
+                            name="subcategory_id"
+                            value={subcategory.id}
+                            className="form-check-input"
+                            onChange={handleCheckboxChange}
+                          />
+                          <label htmlFor={`subcategory_${subcategory.id}`} className="form-check-label">  // ✅ 確保 `htmlFor` 與 `id` 一致
+                            {subcategory.name}
+                          </label>
+                        </div>
+                      ))
+                    ) : (
+                      <p>沒有品牌資料</p>
+                    )}
+
+                  </div>
                 </div>
               </div>
-            </div>
 
               {/* ✅ 價格篩選 */}
               <div className="accordion-item">
-              <h2 className="accordion-header">
-                <button
-                  className={`accordion-button ${styles.accordionButton} ${expanded.includes("price") ? "" : "collapsed"}`}
-                  type="button"
-                  onClick={() => toggleExpand("price")}
-                >
-                  價格
-                </button>
-              </h2>
-              <div className={`accordion-collapse ${expanded.includes("price") ? "show" : "collapse"}`}>
-                <div className="accordion-body">
-                  <div className="row align-items-center">
-                    {/* 最低價格輸入框 */}
-                    <div className="col">
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="最低價格"
-                        name="min_price"
-                        value={selectedFilters.min_price || ""}
-                        onChange={handlePriceChange}
-                      />
+                <h2 className="accordion-header">
+                  <button
+                    className={`accordion-button ${styles.accordionButton} ${expanded.includes("price") ? "" : "collapsed"}`}
+                    type="button"
+                    onClick={() => toggleExpand("price")}
+                  >
+                    價格
+                  </button>
+                </h2>
+                <div className={`accordion-collapse ${expanded.includes("price") ? "show" : "collapse"}`}>
+                  <div className="accordion-body">
+                    <div className="row align-items-center">
+                      {/* 最低價格輸入框 */}
+                      <div className="col">
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="最低價格"
+                          name="min_price"
+                          value={selectedFilters.min_price || ""}
+                          onChange={handlePriceChange}
+                        />
+                      </div>
+                      <div className="col-auto">~</div>
+                      {/* 最高價格輸入框 */}
+                      <div className="col">
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="最高價格"
+                          name="max_price"
+                          value={selectedFilters.max_price || ""}
+                          onChange={handlePriceChange}
+                        />
+                      </div>
                     </div>
-                    <div className="col-auto">~</div>
-                    {/* 最高價格輸入框 */}
-                    <div className="col">
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="最高價格"
-                        name="max_price"
-                        value={selectedFilters.max_price || ""}
-                        onChange={handlePriceChange}
-                      />
-                    </div>
-                  </div>
 
-                  {/* 確認 & 清除按鈕 */}
-                  <div className="d-flex justify-content-between mt-3">
-                    <button className="btn btn-secondary" onClick={handleClearPrice}>清除</button>
-                    <button className="btn btn-primary" onClick={handleApplyPrice}>確認</button>
+                    {/* 確認 & 清除按鈕 */}
+                    <div className="d-flex justify-content-between mt-3">
+                      <button className="btn btn-secondary" onClick={handleClearPrice}>清除</button>
+                      <button className="btn btn-primary" onClick={handleApplyPrice}>確認</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             </div>
           </aside>
         </>

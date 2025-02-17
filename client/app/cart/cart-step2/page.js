@@ -10,8 +10,8 @@ import { useEffect } from 'react'
 
 export default function cartPageTwo() {
   useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
+    require('bootstrap/dist/js/bootstrap.bundle.min.js')
+  }, [])
 
   // const cartItemsStorage = localStorage.getItem("cartItem");
   // const cartItems = JSON.parse(cartItemsStorage)
@@ -99,7 +99,7 @@ export default function cartPageTwo() {
       <div className="j-heightspace"></div>
       <div className="row d-flex justify-content-center pt-2">
         <div className="j-shoppingCartBox justify-content-between mt-4 me-xxl-2 col-sm-12 col-md-9 col-lg-7 col-xl-6 col-xxl-6">
-          <div className="j-shoppingItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
+          <div className="j-cartItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
             <div className="mt-2 mb-5 j-itemBox">
               <h3 className="mb-1 ms-3 pt-2">相機</h3>
               {cartItems.map((item, index) => (
@@ -118,6 +118,32 @@ export default function cartPageTwo() {
               ))}
             </div>
 
+            <div className="mt-2 j-itemBox">
+              <h3 className="mb-1 ms-3 pt-2">租借</h3>
+              {cartRent.map((rental, index) => (
+                <div key={index + 1}>
+                  <RentItem key={index} rentalitem={rental} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="j-cartItemsBox d-sm-none d-block p-0 d-flex flex-grow-1 flex-column">
+            <div className="mt-2 mb-5 j-itemBox">
+              <h3 className="mb-1 ms-3 pt-2">相機</h3>
+              {cartItems.map((item, index) => (
+                <div key={index + 1}>
+                  <CartItem key={index} id={index + 1} itemData={item} />
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 mb-5 j-itemBox">
+              <h3 className="mb-1 ms-3 pt-2">課程</h3>
+              {cartLession.map((lession, index) => (
+                <div key={index + 1}>
+                  <LessonItem key={index} lessionitem={lession} />
+                </div>
+              ))}
+            </div>
             <div className="mt-2 j-itemBox">
               <h3 className="mb-1 ms-3 pt-2">租借</h3>
               {cartRent.map((rental, index) => (
