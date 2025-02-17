@@ -6,6 +6,8 @@ import styles from './courses-list.module.scss'
 import StarRating from '../star-rating/page.js'
 import FavoriteButton from '../favorite-button/page'
 import Pagination from '../pagination/page.js'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 export default function CourseList({ courses }) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -110,6 +112,14 @@ export function CourseCard({ course }) {
 
   const [isFavorite, setIsFavorite] = useState(false)
   const safeImage = course.image_url || '/images/default-course.jpg'
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // 動畫持續時間 (毫秒)
+      once: true, // 滾動一次後不會再次觸發動畫
+      offset: 100, // 滾動多少距離開始動畫
+    })
+  }, [])
 
   return (
     <div className="col-lg-3 col-sm-6 col-12" data-aos="fade-up">

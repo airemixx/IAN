@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import styles from './teacher-info.module.scss'
+import { FaChevronRight } from 'react-icons/fa'
 
 export default function TeacherInfo({ teacherId }) {
   const [teacher, setTeacher] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false) // 控制彈出視窗
 
   useEffect(() => {
     if (!teacherId) return
@@ -28,6 +30,7 @@ export default function TeacherInfo({ teacherId }) {
         setLoading(false)
       })
   }, [teacherId])
+
   console.log('📌 TeacherInfo 接收到的 teacherId:', teacherId)
   if (loading) return <p>載入中...</p>
   if (!teacher) return <p>無法找到講師資料</p>
@@ -79,13 +82,43 @@ export default function TeacherInfo({ teacherId }) {
           <div className={styles['line']}></div>
           <p>{teacher.bio}</p>
           <div className={styles['go-page-link']}>
-            <a href={`/teacher/${teacher.id}`}>
+            {/* 點擊開啟彈出視窗 */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className={styles['open-modal-btn']}
+            >
               前往講師頁面
-              <img src="/images/icon/arrow-right.svg" alt="" />
-            </a>
+             <FaChevronRight size={10} />
+            </button>
           </div>
         </div>
       </div>
+
+      {/* 彈出視窗 */}
+      {isModalOpen && (
+        <div className={styles['modal-overlay']}>
+          <div className={styles['modal-content']}>
+            <button
+              className={styles['close-btn']}
+              onClick={() => setIsModalOpen(false)}
+            >
+              ✖
+            </button>
+            <h2>{teacher.name}</h2>
+            <img
+              src={teacher.image || '/images/teacher/default.avif'}
+              alt={teacher.name}
+              className={styles['modal-img']}
+            />
+            <p>{teacher.bio}</p>
+            <ul>
+              <li>課程數量: {teacher.courseCount?.toLocaleString('en-US') || '0'}</li>
+              <li>文章數量: {teacher.articleCount?.toLocaleString('en-US') || '0'}</li>
+              <li>學生數量: {Number(teacher.studentCount)?.toLocaleString('en-US') || '0'}</li>
+            </ul>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

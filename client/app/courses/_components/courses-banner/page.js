@@ -1,14 +1,18 @@
 'use client'
 
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay, Navigation, Pagination } from 'swiper/modules' // ✅ 引入 Swiper 模組
+import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import styles from './courses-banner.module.scss'
-import React from 'react'
 
-export default function CoursesBanner() {
+export default function CoursesBanner({ courses }) {
+  // 過濾出精選課程
+  const featuredCourses = courses.filter(course => course.is_featured === 1)
+
+  if (featuredCourses.length === 0) return <p className="text-warning">目前沒有精選課程</p>
+
   return (
     <section className={styles['course-banner']}>
       <div className={styles['banner-title']}>
@@ -19,9 +23,9 @@ export default function CoursesBanner() {
       </div>
 
       <Swiper
-        modules={[Autoplay, Navigation, Pagination]} // ✅ 確保 Swiper 啟用 Autoplay、導航、指示點
+        modules={[Autoplay, Navigation, Pagination]}
         spaceBetween={30}
-        slidesPerView={3}
+        slidesPerView="auto"
         centeredSlides={true}
         loop={true}
         autoplay={{
@@ -30,19 +34,13 @@ export default function CoursesBanner() {
         }}
         speed={1000}
       >
-        {[
-          'course_12_1.avif',
-          'course_1_1.avif',
-          'course_2_1.avif',
-          'course_13_1.avif',
-          'course_9_1.avif',
-          'course_18_1.avif',
-        ].map((img, index) => (
-          <SwiperSlide key={index} className={styles['swiper-slide']}>
-            <a href="#">
+        {featuredCourses.map((course) => (
+          <SwiperSlide key={course.id} className={styles['swiper-slide']}>
+            <a href={`/courses/${course.id}`}>
               <img
-                src={`/images/course-cover/${img}`}
-                alt={`Course ${index + 1}`}
+                src={course.image_url || '/images/default-course.jpg'}
+                alt={course.title}
+                className={styles['course-image']}
               />
             </a>
           </SwiperSlide>
