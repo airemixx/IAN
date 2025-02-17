@@ -1,3 +1,8 @@
+.j-itemBox{
+  background-color: #003150;
+  border-radius: 20px;
+  color: #fff;
+}
 .j-bodyHeight{
   height: auto;
 }
@@ -9,11 +14,6 @@
 .j-shoppingCartBox {
   display: flex;
   flex-direction: column;
-}
-
-.j-shoppingItemsBox {
-  overflow: auto;
-  height: 529px;
 }
 
 .footer-block{

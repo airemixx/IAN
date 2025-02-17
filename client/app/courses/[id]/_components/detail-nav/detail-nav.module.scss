@@ -9,6 +9,21 @@
   gap: 8px;
   font-weight: 600;
   text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  &:hover .circle {
+    border: none;
+    background-color: var(--warning-color);
+  }
+  &:hover p {
+    color: var(--warning-color);
+  }
+  &.active .circle {
+    border: none;
+    background-color: var(--warning-color);
+  }
+  &.active p {
+    color: var(--warning-color);
+  }
 }
 
 .detail-nav-link .circle {

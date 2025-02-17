@@ -32,11 +32,13 @@
   color: var(--white);
 }
 
-.category-list:hover p {
+.category-list:hover p,
+.category-list.active p {
   color: var(--secondary-color-med);
 }
 
-.category-list:hover .circle-active {
+.category-list:hover .circle-active,
+.category-list.active .circle-active {
   border: 1px solid var(--secondary-color-med);
 }
 
