@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styles from './collect.module.scss'; // 引入 CSS Modules
 import React from 'react';
 import Sidenav from '../_components/Sidenav/page';
+import FavoriteButton from "@/app/courses/_components/favorite-button/page";
 
 export default function UserPage() {
   return (
@@ -22,8 +23,8 @@ export default function UserPage() {
               {/* Card 1 */}
               <div className="col-12 col-md-6 col-lg-4">
                 <div className={`p-4 ${styles.collectionCard}`} >
-                  <div className={`mb-3 ${styles.iconFav}`}>
-                  <img src="/images/icon/favorite-btn.svg" alt="相機"  />
+                  <div className='bg-primary'>
+                  <FavoriteButton />
                   </div>
                   <img src="/images/product/zf.png" alt="相機" className="mb-3" />
                   <div className={styles.cardDivider} />

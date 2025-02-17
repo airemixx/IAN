@@ -6,9 +6,9 @@ import styles from './index.module.scss' // SCSS 模組
 export default function TitleShareFontSize({
   categoryName = '未分類',
   articleTitle = '載入中...',
-  articleSubTitle = '', // 添加 articleSubTitle prop 並設定預設值
+  articleSubTitle = '',
   createdAt = '載入中...', // 添加 createdAt prop
-  imagePath = '/images/article/gallery(1).jpg', // 添加 imagePath prop 並設定預設值
+  imagePath = '/images/article/default-Img.jpg', // 添加 imagePath prop 並設定預設值
 }) {
   const [fontSize, setFontSize] = useState('medium') // 預設字體大小
 
@@ -162,11 +162,14 @@ export default function TitleShareFontSize({
       </div>
 
       {/* 主圖片 */}
-      <img
-        src={imagePath}
-        className={`mb-4 border rounded y-img-fluid ${styles['y-container']}`}
-        alt={articleTitle}
-      />
+      {imagePath && (
+        <img
+          src={imagePath}
+          className={`mb-4 border rounded y-img-fluid ${styles['y-container']}`}
+          alt={articleTitle}
+          style={{ aspectRatio: '16 / 9', objectFit: 'cover' }}
+        />
+      )}
     </>
   )
 }
