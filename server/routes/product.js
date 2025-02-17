@@ -155,7 +155,6 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "商品未找到" });
     }
 
-    // ✅ 获取商品所有图片
     const [images] = await connection.query(
       `SELECT CONCAT('/images/product/', image_url) AS image
        FROM image
@@ -180,8 +179,8 @@ router.get("/:id", async (req, res) => {
     // ✅ 返回完整的商品数据
     res.json({
       ...rows[0],
-      images: images.map((img) => img.image), // ✅ 轉換圖片陣列格式
-      specs: specs.length > 0 ? specs : [], // ✅ 保證 specs 正確回傳
+      images: images.map((img) => img.image),
+      specs: specs.length > 0 ? specs : [],
     });
 
   } catch (error) {
@@ -203,10 +202,10 @@ router.get("/related/:brand_id/:current_id", async (req, res) => {
         CONCAT('/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image
       FROM product p
       LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
-      WHERE p.brand_id = ? AND p.id != ?  -- ✅ 排除當前產品 id
-      ORDER BY p.id ASC  -- ✅ 依據 id 排序，最新的產品優先
+      WHERE p.brand_id = ? AND p.id != ?
+      ORDER BY p.id ASC 
       LIMIT 8`,
-      [brand_id, current_id]  // ✅ 傳入兩個參數，brand_id & current_id
+      [brand_id, current_id]
     );
 
     connection.release();
@@ -217,7 +216,26 @@ router.get("/related/:brand_id/:current_id", async (req, res) => {
   }
 });
 
+router.get("/spec/:id", async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const connection = await pool.getConnection();
+    const query = "SELECT * FROM spec WHERE product_id = ?"; // ✅ 確保表格名稱正確
+    const [rows] = await connection.execute(query, [id]);
+
+    connection.release(); // ✅ 釋放連線
+
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: `❌ 找不到 product_id = ${id} 的規格` });
+    }
+
+    res.json(rows[0]); // ✅ 回傳第一筆規格數據
+  } catch (error) {
+    console.error("❌ 伺服器錯誤:", error);
+    res.status(500).json({ error: "❌ 伺服器錯誤，請檢查 API" });
+  }
+});
 
 
 export default router; 

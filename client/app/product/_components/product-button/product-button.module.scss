@@ -1,38 +1,32 @@
-/* 預設隱藏 */
 .iconcontainer {
-  position: absolute;
-  top: 0px;
-  right: -11px;
-  text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-/* 當 `isHovered` 為 true 時顯示 icon + 文字 */
-.show {
-  opacity: 1;
-  visibility: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
 }
 
 .iconCircle {
-  width: 50px;
-  height: 50px;
-  background-color: #f8f9fa;
-  border: 2px solid #ddd;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  background-color: #eee;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease-in-out;
+}
+
+// ✅ 變成已加入的樣式
+.iconCircle.added {
+  background-color: #0d2361; /* 綠色代表已加入 */
+  color: white;
 }
 
 .iconText {
   font-size: 12px;
-  color: black;
-  opacity: 1; /* 讓文字始終顯示 */
-  transition: opacity 0.3s ease;
+  margin-top: 5px;
 }
+
 
 /* ✅ 讓手機版 (小於 390px) **始終顯示** */
 @media (max-width: 391px) {
