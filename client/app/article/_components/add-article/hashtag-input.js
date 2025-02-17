@@ -1,11 +1,24 @@
-import React, { useState } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from 'react'
 import Swal from 'sweetalert2'
 import 'animate.css'
 import styles from './AddArticleModal.module.scss'
 
-export default function HashtagInput() {
+const HashtagInput = forwardRef((props, ref) => {
   const [hashtagInput, setHashtagInput] = useState('')
   const [hashtags, setHashtags] = useState([])
+
+  // 使用 useImperativeHandle 暴露 clearHashtag 函式
+  useImperativeHandle(ref, () => ({
+    clearHashtag: () => {
+      setHashtagInput('')
+      setHashtags([])
+    },
+  }))
 
   const handleInputChange = (e) => {
     setHashtagInput(e.target.value)
@@ -99,4 +112,8 @@ export default function HashtagInput() {
       </div>
     </div>
   )
-}
+})
+
+HashtagInput.displayName = 'HashtagInput' // 設置 display name
+
+export default HashtagInput

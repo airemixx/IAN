@@ -1,201 +1,289 @@
-"use client"  
-import React, { useEffect, useRef, useCallback } from 'react'  
-import dynamic from 'next/dynamic'  
-import 'bootstrap/dist/css/bootstrap.min.css'  
-import Swal from 'sweetalert2'  
-import styles from './AddArticleModal.module.scss'  
-import BackSelectTitle from './back-select-title'  
-import ImageUpdate from './imageUpdate'  
-import HashtagInput from './hashtag-input'  
-import ButtonGroup from './ButtonGroup'  
+'use client'
+import React, { useRef, useCallback, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Swal from 'sweetalert2'
+import axios from 'axios'
+import styles from './AddArticleModal.module.scss'
+import BackSelectTitle from './back-select-title'
+import ImageUpdate from './imageUpdate'
+import HashtagInput from './hashtag-input'
+import ButtonGroup from './ButtonGroup'
 
-const FroalaEditor = dynamic(() => import('./froalaEditor'), { ssr: false })  
+const FroalaEditor = dynamic(() => import('./froalaEditor'), { ssr: false })
 
-export default function AddArticleModal() {  
-  const modalRef = useRef(null)  
-  const bsModal = useRef(null)  
+export const checkRequiredFields = () => {
+  let allFilled = true
+  const errorBorder = '1px solid rgb(200, 57, 31)'
+  const defaultBorder = ''
 
-  const confirmClose = useCallback(() => {  
-    if (bsModal.current) {  
-      bsModal.current.hide()  
-    }  
-  }, [])  
+  const categorySelect = document.querySelector('select[name="文章分類"]')
+  const titleInput = document.querySelector('input[placeholder="標題 (必填)"]')
+  const imageSourceLocal = document.querySelector('#imageSourceLocal')
+  const imageUpload = document.querySelector('#imageUpload')
+  const imagePath = document.querySelector('#imagePath')
+  const editorDiv = document.querySelector('#example')
+  const editorInstance = window.editorInstance
 
-  useEffect(() => {  
-    if (typeof window === 'undefined') return  
+  // 文章分類
+  if (categorySelect && categorySelect.value === '0') {
+    categorySelect.style.border = errorBorder
+    allFilled = false
+  } else if (categorySelect) {
+    categorySelect.style.border = defaultBorder
+  }
 
-    import('bootstrap/js/dist/modal').then(({ default: Modal }) => {  
-      bsModal.current =  
-        Modal.getInstance(modalRef.current) ||  
-        new Modal(modalRef.current, {  
-          backdrop: 'static',  
-          keyboard: false  
-        })  
+  // 標題
+  if (titleInput && !titleInput.value.trim()) {
+    titleInput.style.border = errorBorder
+    allFilled = false
+  } else if (titleInput) {
+    titleInput.style.border = defaultBorder
+  }
 
-      const modalEl = modalRef.current  
+  // 圖片
+  if (imageSourceLocal && imageSourceLocal.checked) {
+    // 本地圖片：若未選取檔案，拖曳區的邊框改為 errorBorder
+    if (!imageUpload || !imageUpload.files || imageUpload.files.length === 0) {
+      if (imageUpload) imageUpload.style.border = errorBorder
+      allFilled = false
+    } else {
+      if (imageUpload) imageUpload.style.border = defaultBorder
+    }
+  } else {
+    // 圖片路徑：若未輸入內容，輸入框邊框改為 errorBorder
+    if (!imagePath || !imagePath.value.trim()) {
+      if (imagePath) imagePath.style.border = errorBorder
+      allFilled = false
+    } else {
+      if (imagePath) imagePath.style.border = defaultBorder
+    }
+  }
 
-      const handleModalShown = () => {  
-        const modalAddButton = modalEl.querySelector('.y-btn-add')  
-        if (modalAddButton) modalAddButton.disabled = true  
+  // Froala 編輯器
+  const content = editorInstance?.html.get() || ''
+  if (!content || !content.trim() || content.trim() === '<p><br></p>') {
+    if (editorDiv) editorDiv.style.border = errorBorder
+    allFilled = false
+  } else {
+    if (editorDiv) editorDiv.style.border = defaultBorder
+  }
 
-        const categorySelect = document.querySelector('select[name="文章分類"]')  
-        const titleInput = document.querySelector(  
-          'input[placeholder="標題 (必填)"]'  
-        )  
-        const imageUpload = document.querySelector('#imageUpload')  
-        const imagePath = document.querySelector('#imagePath')  
-        const editorDiv = document.querySelector('#example')  
-        const editorInstance = window.editorInstance  
+  return allFilled
+}
 
-        if (  
-          !modalAddButton ||  
-          !categorySelect ||  
-          !titleInput ||  
-          !editorDiv ||  
-          !editorInstance  
-        ) return  
+export default function AddArticleModal() {
+  const modalRef = useRef(null)
+  const bsModal = useRef(null)
+  const imageUpdateRef = useRef(null) // 新增 ImageUpdate ref
+  const [hasError, setHasError] = useState(false)
 
-        const checkRequiredFields = () => {  
-          let allFilled = true  
+  // 關閉 Modal 時，可同時重置錯誤狀態
+  const confirmClose = useCallback(() => {
+    if (bsModal.current) {
+      bsModal.current.hide()
+    }
+    setHasError(false)
+  }, [])
 
-          if (categorySelect.value === '0') {  
-            categorySelect.style.border = '1px solid red'  
-            allFilled = false  
-          } else {  
-            categorySelect.style.border = ''  
-          }  
+  // ============== 新增文章核心程式 ==============
+  const handleAddArticle = useCallback(async () => {
+    // 在 handleAddArticle 開頭呼叫 checkRequiredFields
+    const allFilled = checkRequiredFields()
 
-          if (!titleInput.value.trim()) {  
-            titleInput.style.border = '1px solid red'  
-            allFilled = false  
-          } else {  
-            titleInput.style.border = ''  
-          }  
+    if (!allFilled) {
+      setHasError(true) // 設定錯誤狀態，讓 ImageUpdate 等元件呈現錯誤樣式
+      Swal.fire({
+        icon: 'error',
+        title: '錯誤',
+        text: '請填寫所有必填欄位',
+      })
+      return
+    } else {
+      setHasError(false)
+    }
 
-          const imageSourceLocal = document.querySelector('#imageSourceLocal')  
-          if (imageSourceLocal && imageSourceLocal.checked) {  
-            if (!imageUpload || !imageUpload.files || imageUpload.files.length === 0) {  
-              if (imageUpload) imageUpload.style.border = '1px solid red'  
-              allFilled = false  
-            } else {  
-              if (imageUpload) imageUpload.style.border = ''  
-            }  
-          } else {  
-            if (!imagePath || !imagePath.value.trim()) {  
-              if (imagePath) imagePath.style.border = '1px solid red'  
-              allFilled = false  
-            } else {  
-              if (imagePath) imagePath.style.border = ''  
-            }  
-          }  
+    try {
+      // 取得表單資料…
+      const categorySelect = document.querySelector('select[name="文章分類"]')
+      const titleInput = document.querySelector(
+        'input[placeholder="標題 (必填)"]'
+      )
+      const subtitleInput = document.querySelector(
+        'input[placeholder="副標題"]'
+      )
+      const imagePathInput = document.querySelector('#imagePath')
+      const editorInstance = window.editorInstance // Froala 實例
+      const content = editorInstance ? editorInstance.html.get() : ''
 
-          const content = editorInstance.html.get()  
-          if (!content.trim() || content.trim() === '<p><br></p>') {  
-            if (editorDiv) editorDiv.style.border = '1px solid red'  
-            allFilled = false  
-          } else {  
-            if (editorDiv) editorDiv.style.border = ''  
-          }  
+      // 從 Hashtag 預覽區域收集 hashtag …
+      const hashtagEls = document.querySelectorAll('#hashtag-preview .badge')
+      const hashtags = Array.from(hashtagEls).map((el) =>
+        el.textContent.replace(/×$/, '')
+      )
 
-          return allFilled  
-        }  
+      const categoryId = categorySelect ? categorySelect.value : '0'
+      const title = titleInput ? titleInput.value.trim() : ''
+      const subtitle = subtitleInput ? subtitleInput.value.trim() : ''
+      const imagePath = imagePathInput ? imagePathInput.value.trim() : ''
 
-        const updateButtonState = () => {  
-          if (checkRequiredFields()) {  
-            modalAddButton.classList.remove('disabled')  
-            modalAddButton.disabled = false  
-          } else {  
-            modalAddButton.classList.add('disabled')  
-            modalAddButton.disabled = true  
-          }  
-        }  
+      // 驗證圖片路徑格式
+      if (imagePath && !imagePath.startsWith('https://')) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '圖片路徑必須以 https:// 開頭',
+        })
+        return
+      }
 
-        window.updateButtonState = updateButtonState  
-        updateButtonState()  
+      // 向後端送出資料
+      await axios.post('http://localhost:8000/api/articles', {
+        category: categoryId,
+        title,
+        subtitle,
+        content,
+        image_path: imagePath,
+        hashtags,
+      })
 
-        categorySelect.addEventListener('change', updateButtonState)  
-        titleInput.addEventListener('input', updateButtonState)  
-        if (imageUpload) imageUpload.addEventListener('change', updateButtonState)  
-        if (imagePath) imagePath.addEventListener('input', updateButtonState)  
-        const imageSourceLocalRadio = document.querySelector('#imageSourceLocal')  
-        const imageSourcePathRadio = document.querySelector('#imageSourcePath')  
-        if (imageSourceLocalRadio) imageSourceLocalRadio.addEventListener('change', updateButtonState)  
-        if (imageSourcePathRadio) imageSourcePathRadio.addEventListener('change', updateButtonState)  
+      // 新增成功後關閉 Modal
+      confirmClose()
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '出現問題囉，請稍後再試',
+      })
+      console.error('Error adding article:', error)
+    }
+  }, [confirmClose])
 
-        const intervalId = setInterval(updateButtonState, 100)  
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    import('bootstrap/js/dist/modal').then(({ default: Modal }) => {
+      bsModal.current =
+        Modal.getInstance(modalRef.current) ||
+        new Modal(modalRef.current, {
+          backdrop: 'static',
+          keyboard: false,
+        })
 
-        modalEl.addEventListener('hidden.bs.modal', () => {  
-          clearInterval(intervalId)  
-        })  
-      }  
+      const modalEl = modalRef.current
 
-      modalEl.addEventListener('shown.bs.modal', handleModalShown)  
+      const handleModalHidden = () => {
+        // 清除表單欄位內容及錯誤樣式
+        const categorySelect = document.querySelector('select[name="文章分類"]')
+        const titleInput = document.querySelector(
+          'input[placeholder="標題 (必填)"]'
+        )
+        const subtitleInput = document.querySelector(
+          'input[placeholder="副標題"]'
+        )
+        const imageUpload = document.querySelector('#imageUpload')
+        const imagePath = document.querySelector('#imagePath')
+        const editorDiv = document.querySelector('#example')
 
-      // 監聽 backdrop 點擊事件  
-      modalEl.addEventListener('click', (event) => {  
-        // 檢查點擊的目標是否為modal的背景區域  
-        if (event.target === modalEl) {  
-          Swal.fire({  
-            title: '尚未儲存完畢，是否確認離開？',  
-            icon: 'warning',  
-            showCancelButton: true,  
-            confirmButtonText: '確認',  
+        if (categorySelect) categorySelect.value = '0'
+        if (titleInput) titleInput.value = ''
+        if (subtitleInput) subtitleInput.value = ''
+        if (imageUpload) imageUpload.value = ''
+        if (imagePath) imagePath.value = ''
+
+        if (window.editorInstance) {
+          window.editorInstance.html.set('')
+        }
+
+        // 呼叫 ImageUpdate 的 clearImagePreview 來重置狀態（包含 radio）
+        if (imageUpdateRef.current) {
+          imageUpdateRef.current.clearImagePreview()
+        }
+
+        ;[
+          categorySelect,
+          titleInput,
+          subtitleInput,
+          imageUpload,
+          imagePath,
+          editorDiv,
+        ].forEach((el) => {
+          if (el) el.style.border = ''
+        })
+
+        // 清除錯誤狀態
+        setHasError(false)
+      }
+
+      modalEl.addEventListener('hidden.bs.modal', handleModalHidden)
+
+      // backdrop 點擊事件處理記得保持不變…
+      modalEl.addEventListener('click', (event) => {
+        if (event.target === modalEl) {
+          Swal.fire({
+            title: '尚未儲存完畢，是否確認離開？',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '確認',
             cancelButtonText: '取消',
             customClass: {
               confirmButton: `${styles['btn-sweetalert']} btn`,
               cancelButton: `${styles['btn-sweetalert-2']} btn`,
-              
+            },
+          }).then((result) => {
+            if (result.isConfirmed) {
+              confirmClose()
             }
-          }).then((result) => {  
-            if (result.isConfirmed) {  
-              confirmClose() // 確認關閉 modal  
-            }  
-          })  
-        }  
-      })  
+          })
+        }
+      })
 
-      return () => {  
-        modalEl.removeEventListener('shown.bs.modal', handleModalShown)  
-        modalEl.removeEventListener('click', () => {}); // 清除 click 事件  
-      }  
-    })  
-  }, [confirmClose])  
+      return () => {
+        modalEl.removeEventListener('hidden.bs.modal', handleModalHidden)
+        modalEl.removeEventListener('click', () => {})
+      }
+    })
+  }, [confirmClose])
 
-  return (  
-    <>  
-      <button  
-        type="button"  
-        className={`btn ${styles['add-article-btn']} mt-5`}  
-        onClick={() => {  
-          if (bsModal.current) {  
-            bsModal.current.show()  
-          }  
-        }}  
-      >  
-        <i className="fa-solid fa-plus me-1"></i>新增文章  
-      </button>  
-      <div  
-        ref={modalRef}  
-        className="modal fade"  
-        id="addArticleModal"  
-        tabIndex="-1"  
-        aria-labelledby="addArticleModalLabel"  
-        aria-hidden="true"  
-      >  
-        <div className="modal-dialog modal-dialog-centered modal-xl">  
-          <div className={`modal-content ${styles['modal-content']}`}>  
-            <div className="modal-body">  
-              <div className="container">  
-                <BackSelectTitle confirmClose={confirmClose} />  
-                <ImageUpdate />  
-                <FroalaEditor />  
-                <HashtagInput />  
-                <ButtonGroup confirmClose={confirmClose} />  
-              </div>  
-            </div>  
-          </div>  
-        </div>  
-      </div>  
-    </>  
-  )  
+  return (
+    <>
+      <button
+        type="button"
+        className={`btn ${styles['add-article-btn']} mt-5`}
+        onClick={() => {
+          if (bsModal.current) {
+            bsModal.current.show()
+          }
+        }}
+      >
+        <i className="fa-solid fa-plus me-1"></i>新增文章
+      </button>
+
+      <div
+        ref={modalRef}
+        className="modal fade"
+        id="addArticleModal"
+        tabIndex="-1"
+        aria-labelledby="addArticleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered modal-xl">
+          <div className={`modal-content ${styles['modal-content']}`}>
+            <div className="modal-body">
+              <div className="container">
+                <BackSelectTitle confirmClose={confirmClose} />
+                {/* 傳入 ref 到 ImageUpdate */}
+                <ImageUpdate ref={imageUpdateRef} hasError={hasError} />
+                <FroalaEditor />
+                <HashtagInput />
+                <ButtonGroup
+                  confirmClose={confirmClose}
+                  onAddArticle={handleAddArticle}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  )
 }

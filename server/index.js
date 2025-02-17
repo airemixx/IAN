@@ -12,9 +12,10 @@ import path from 'path'
 import coursesRouter from './routes/courses.js'
 import teachersRouter from './routes/teachers.js'
 import productRoutes from './routes/product.js'
-import rentalRouter from './routes//rental.js';
+import rentalRouter from './routes//rental.js'
 import cartRouter from './routes/cart.js'
 import articleRoutes from './routes/article.js'
+import users from './routes/users.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -39,7 +40,8 @@ const corsOptions = {
 // )
 
 app.use(cors(corsOptions)) // 允許跨域請求
-app.use(express.json()) // 解析 JSON 格式的請求
+app.use(express.json({ limit: '150mb' })) // 解析 JSON 格式的請求
+app.use(express.urlencoded({ extended: true, limit: '150mb' }))
 
 // 設定 API 路由
 app.get('/', (req, res) => {
@@ -51,15 +53,16 @@ app.use('/api/product', productRoutes)
 app.use('/api/courses', coursesRouter)
 app.use('/api/teachers', teachersRouter)
 
-app.use('/api/rental', rentalRouter);
+app.use('/api/rental', rentalRouter)
 
 app.use('/api/cart', cartRouter)
 
 app.use('/api/articles', articleRoutes)
 
+app.use('/api/users', users)
+
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000
-
 
 app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)

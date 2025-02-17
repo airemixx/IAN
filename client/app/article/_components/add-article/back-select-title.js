@@ -1,12 +1,34 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import styles from './AddArticleModal.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios'
 
 export default function BackSelectTitle({ confirmClose }) {
+  const [categories, setCategories] = useState([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        // 改成後端路由掛載後的 URL
+        const response = await axios.get(
+          'http://localhost:8000/api/articles/categories'
+        )
+        if (response.data && response.data.data) {
+          setCategories(response.data.data)
+        } else {
+          console.error('API 回應格式錯誤:', response.data)
+        }
+      } catch (error) {
+        console.error('取得分類失敗：', error)
+      }
+    }
+    fetchCategories()
+  }, [])
+
   return (
     <div>
       {/* 返回按鈕 */}
@@ -27,9 +49,11 @@ export default function BackSelectTitle({ confirmClose }) {
         </p>
         <select name="文章分類" className="form-select me-4">
           <option value="0">選擇分類</option>
-          <option value="1">分類1</option>
-          <option value="2">分類2</option>
-          <option value="3">分類3</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
         </select>
       </div>
 
