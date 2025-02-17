@@ -37,7 +37,7 @@ export default function CourseContent() {
             <button className={styles['toggle-btn']} onClick={toggleExpand}>
               <span>{isExpanded ? '收起內容' : '更多課程內容'}</span>
               <img
-                src="/images/arrow-down-white.svg"
+                src="/images/icon/arrow-down-white.svg"
                 alt=""
                 className={isExpanded ? styles['rotate'] : ''}
               />
