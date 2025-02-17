@@ -6,14 +6,14 @@ export default function CartItem({id, itemData }) {
 
   return (
     <div className="d-flex flex-grow-1">
-      <div className={`${styles['j-cartItemBox']} mb-2 d-flex flex-grow-1`}>
+      <div className={`${styles['j-cartItemBox']} d-flex flex-grow-1`}>
         <div className={`${styles['j-cartItem']} d-flex flex-grow-1 flex-column flex-sm-column flex-xl-row align-items-center align-items-sm-center`}>
           <div className={`${styles['j-cameraImg']} m-2 `}>
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
           <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center">
             <div className={`${styles['j-content']} d-flex flex-column flex-sm-row justify-content-between align-items-center `}>
-              <div className={`${styles['j-itemDetail']} d-flex   flex-sm-column ms-sm-3 ms-xl-0`}>
+              <div className={`${styles['j-itemDetail']} d-flex flex-sm-column ms-sm-3 ms-xl-0`}>
                 <div className="ms-lg-2 ms-xl-0">
                   <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
                   <br />
@@ -33,7 +33,7 @@ export default function CartItem({id, itemData }) {
                 <p className={`${styles['j-amount-text']} mb-0 ${styles['j-publicFont']}`}>數量</p>
                 <button className={`${styles['j-decrease']} btn pb-0 ps-2 pt-0`}>-</button>
               </div>
-              <p className={`${styles['price']} me-3 `}>{price}</p>
+              <p className={`${styles['j-price']} me-3 `}>{price}</p>
             </div>
             <ProductDetails id={id} specs={specs} />
           </div>
