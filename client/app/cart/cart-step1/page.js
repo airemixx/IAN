@@ -108,7 +108,7 @@ export default function cartPageOne() {
       <div className="container j-bodyHeight">
         <CartTitle count={cartItems.length} />
         <div className="row d-flex justify-content-center">
-          <div className="j-shoppingCartBox justify-content-between mt-4 me-4 col-sm-11 col-md-9 col-lg-6">
+          <div className="j-shoppingCartBox justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-6 p-0">
             <div className="j-cartItemsBox d-none d-sm-block p-0">
               <div>
                 <input type="checkbox" name="" id="" className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"/>全選
