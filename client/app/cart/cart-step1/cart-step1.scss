@@ -1,4 +1,10 @@
-
+nav{
+  display: flex;
+  justify-content: flex-end;
+}
+.nav-left{
+ display: none;
+}
 
 .j-bodyHeight{
   height: auto;

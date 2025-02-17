@@ -7,22 +7,9 @@ import CheckoutFormStep1 from '../_components/checkout-form-step1/page'
 import CartItem from '../_components/cart-item/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function cartPageOne() {
-  useEffect(() => {
-      require("bootstrap/dist/js/bootstrap.bundle.min.js");
-    }, []);
-
-  // test()
-  // async function test(){
-  //   let api = "http://localhost:8000/api/cart";
-  //   const res =await fetch(api,{
-  //     method: "GET"
-  //   });
-  //   const result =await res.json();
-  //   console.log(result);
-  // }
   const cartItems = [
     {
       type: 'product',
@@ -103,6 +90,62 @@ export default function cartPageOne() {
       dueDate: '2024-01-14',
     },
   ]
+
+  useEffect(() => {
+    require('bootstrap/dist/js/bootstrap.bundle.min.js')
+  }, [])
+  const [checkAll, setCheckAll] = useState(false)
+  const [checkedItems, setCheckedItems] = useState({})
+  const allItems = [...cartItems, ...cartLession, ...cartRent]
+  let cartAllitem = []
+  // 全選或全不選
+  const handleCheckAll = () => {
+   
+    const newCheckedState = !checkAll
+    if(newCheckedState){
+      cartAllitem = [...allItems];
+    }
+
+    setCheckAll(newCheckedState)
+
+    // 更新所有 checkbox 的選擇狀態
+    const updatedCheckedItems = {}
+    allItems.forEach((allItems, index) => {
+      updatedCheckedItems[index] = newCheckedState
+    })
+    setCheckedItems(updatedCheckedItems)
+  }
+
+  // 單獨勾選項目
+  const handleItemChange = (index,slItem) => {
+    // let test = []
+    // test.push(slItem)
+    // console.log(test);
+    const updatedCheckedItems = {
+      ...checkedItems,
+      [index]: !checkedItems[index],
+    }
+    setCheckedItems(updatedCheckedItems)
+
+    // 如果所有 checkbox 都被選中，則 `checkAll` 也應該變成 true，否則 false
+    const allChecked = Object.values(updatedCheckedItems);
+    setCheckAll(false);
+
+    if(allChecked.length == allItems.length && allChecked.every(Boolean)){
+      setCheckAll(allChecked)
+    }
+  }
+
+  // test()
+  // async function test(){
+  //   let api = "http://localhost:8000/api/cart";
+  //   const res =await fetch(api,{
+  //     method: "GET"
+  //   });
+  //   const result =await res.json();
+  //   console.log(result);
+  // }
+
   return (
     <>
       <div className="container j-bodyHeight">
@@ -111,70 +154,96 @@ export default function cartPageOne() {
           <div className="j-shoppingCartBox justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-6 p-0">
             <div className="j-cartItemsBox d-none d-sm-block p-0">
               <div>
-                <input type="checkbox" name="" id="" className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"/>全選
+                <input
+                  type="checkbox"
+                  id="checkAll"
+                  className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
+                  checked={checkAll}
+                  onChange={handleCheckAll}
+                />
+                全選
               </div>
               <div className="mt-2 mb-5 j-itemBox">
                 <h3 className="mb-1 ms-3 pt-2">相機</h3>
                 {cartItems.map((item, index) => (
                   <div
                     className="j-input-box d-flex align-items-center"
-                    key={index + 1}
+                    key={index}
                   >
                     <input
                       type="checkbox"
                       className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
                       id={`cartItem-${index}`}
+                      checked={checkedItems[index] || false}
+                      onChange={() => handleItemChange(index,item)}
                     />
                     <label
                       htmlFor={`cartItem-${index}`}
                       className="ms-2 d-flex flex-grow-1"
                     >
-                      <CartItem key={index} id={index + 1} itemData={item} />
+                      <CartItem key={index} id={index} itemData={item} />
                     </label>
                   </div>
                 ))}
               </div>
               <div className="mt-2 mb-5 j-itemBox">
                 <h3 className="mb-1 ms-3 pt-2">課程</h3>
-                {cartLession.map((lession, index) => (
-                  <div
-                    className="j-input-box d-flex align-items-center"
-                    key={index + 1}
-                  >
-                    <input
-                      type="checkbox"
-                      className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
-                      id={`lessonItem-${index}`}
-                    />
-                    <label
-                      htmlFor={`lessonItem-${index}`}
-                      className="ms-2 d-flex flex-grow-1"
+                {cartLession.map((lession, index) => {
+                  const lessonIndex = index + cartItems.length
+                  return (
+                    <div
+                      className="j-input-box d-flex align-items-center"
+                      key={index + 1}
                     >
-                      <LessonItem key={index} lessionitem={lession} />
-                    </label>
-                  </div>
-                ))}
+                      <input
+                        type="checkbox"
+                        className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
+                        id={`lessonItem-${index}`}
+                        checked={checkedItems[lessonIndex] || false}
+                        onChange={() => handleItemChange(lessonIndex,lession)}
+                      />
+                      <label
+                        htmlFor={`lessonItem-${index}`}
+                        className="ms-2 d-flex flex-grow-1"
+                      >
+                        <LessonItem key={index} lessionitem={lession} />
+                      </label>
+                    </div>
+                  )
+                })}
               </div>
               <div className="mt-2 mb-5 j-itemBox">
-                <h3 className="mb-1 ms-3 pt-2">課程</h3>
-                {cartRent.map((rental, index) => (
-                  <div
-                    className="j-input-box d-flex align-items-center"
-                    key={index + 1}
-                  >
-                    <input
-                      type="checkbox"
-                      className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
-                      id={`rentItem-${index}`}
-                    />
-                    <RentItem key={index} rentalitem={rental} />
-                  </div>
-                ))}
+                <h3 className="mb-1 ms-3 pt-2">租借</h3>
+                {cartRent.map((rental, index) => {
+                  const rentalIndex =
+                    index + cartItems.length + cartLession.length
+                  return (
+                    <div
+                      className="j-input-box d-flex align-items-center"
+                      key={index + 1}
+                    >
+                      <input
+                        type="checkbox"
+                        className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
+                        id={`rentItem-${index}`}
+                        checked={checkedItems[rentalIndex] || false}
+                        onChange={() => handleItemChange(rentalIndex,rental)}
+                      />
+                      <RentItem key={index} rentalitem={rental} />
+                    </div>
+                  )
+                })}
               </div>
             </div>
             <div className="j-cartItemsBox d-sm-none d-block p-0">
               <div>
-                <input type="checkbox" name="" id="" className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"/>全選
+                <input
+                  type="checkbox"
+                  name=""
+                  id=""
+                  className="j-ckBox form-check-input form-check-lg shadow-sm rounded ms-2"
+                />
+                全選
               </div>
               <div className="mt-2 mb-5 j-itemBox">
                 <h3 className="mb-1 ms-3 pt-2">相機</h3>
@@ -219,7 +288,7 @@ export default function cartPageOne() {
                 ))}
               </div>
               <div className="mt-2 mb-5 j-itemBox">
-                <h3 className="mb-1 ms-3 pt-2">課程</h3>
+                <h3 className="mb-1 ms-3 pt-2">租借</h3>
                 {cartRent.map((rental, index) => (
                   <div
                     className="j-input-box d-flex align-items-center"
@@ -236,7 +305,7 @@ export default function cartPageOne() {
               </div>
             </div>
           </div>
-          <CheckoutFormStep1 />
+          <CheckoutFormStep1 slItem={cartAllitem}/>
         </div>
       </div>
     </>

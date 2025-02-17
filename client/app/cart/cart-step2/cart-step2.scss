@@ -1,3 +1,11 @@
+nav{
+  display: flex;
+  justify-content: flex-end;
+}
+.nav-left{
+ display: none;
+}
+
 .j-itemBox{
   background-color: #003150;
   border-radius: 20px;
