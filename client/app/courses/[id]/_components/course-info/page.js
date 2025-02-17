@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import styles from './course-info.module.scss'
 import FavoriteButtonG from '../favorite-button-g/page'
 
@@ -7,25 +8,25 @@ export default function CourseInfo({ course }) {
   return (
     <section className={styles['course-info-container']}>
       <div className="container">
-        {/* breadcrumb */}
+        {/* 麵包屑導航 */}
         <nav className={styles['breadcrumb']}>
           <ul className={styles['breadcrumb']}>
             <li className={styles['breadcrumb-item']}>
-              <a href="">首頁</a>
+              <Link href="/">首頁</Link>
             </li>
             <li>
               <img src="/images/icon/breadcrumb-arrow.svg" alt="" />
             </li>
             <li className={styles['breadcrumb-item']}>
-              <a href="">影像學院</a>
+              <Link href="/courses">影像學院</Link>
             </li>
             <li>
               <img src="/images/icon/breadcrumb-arrow.svg" alt="" />
             </li>
-            <li
-              className={`${styles['breadcrumb-item']} ${styles['breadcrumb-item-active']}`}
-            >
-              <a href="">商業攝影</a>
+            <li className={styles['breadcrumb-item']}>
+              <Link href={`/courses?category=${course.category}`}>
+                {course.category}
+              </Link>
             </li>
             <li>
               <img src="/images/icon/breadcrumb-arrow.svg" alt="" />
@@ -37,10 +38,11 @@ export default function CourseInfo({ course }) {
             </li>
           </ul>
         </nav>
+
         {/* 課程資訊 */}
         <div className={`row ${styles['course-info']}`}>
           <div className={`col-md-6 ${styles['course-img']}`}>
-            <img src={course.image_url}  alt="" />
+            <img src={course.image_url} alt="" />
           </div>
           <div className={`col-md-6 ${styles['course-detail']}`}>
             <h1> {course.title}</h1>

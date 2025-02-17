@@ -83,8 +83,13 @@ export default function CourseRating() {
             <div key={rating} className={styles['progress-container']}>
               <div className={styles['count']}>{rating}</div>
               <div
-                className="progress"
-                style={{ width: '400px', height: '8px', minWidth: '50px' }}
+                className="progress "
+                style={{
+                  width: '400px',
+                  height: '8px',
+                  minWidth: '50px',
+                  backgroundColor: '#E0E0E0',
+                }}
               >
                 <div
                   className={styles['progress-bar']}

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation' // ✅ 確保導入
 import styles from './course-list.module.scss'
 import CoursesBanner from './_components/courses-banner/page'
 import CoursesCategory from './_components/courses-category/page'
@@ -9,16 +10,19 @@ import CoursesFilter from './_components/courses-filter/page'
 import PopularTeacher from './_components/popular-teacher/page'
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState([]) // ✅ 儲存課程資料
-  const [filteredCourses, setFilteredCourses] = useState([]) // ✅ 篩選後的課程
-  const [selectedCategory, setSelectedCategory] = useState('所有課程') // ✅ 當前選擇的分類
+  const [courses, setCourses] = useState([])
+  const [filteredCourses, setFilteredCourses] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState('所有課程')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  const searchParams = useSearchParams()
+  const category = searchParams.get('category') || '所有課程'
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const API_URL = '/api/courses'
+        const API_URL = 'http://localhost:8000/api/courses'
         console.log('發送 API 請求:', API_URL)
 
         const res = await fetch(API_URL)
@@ -30,7 +34,7 @@ export default function CoursesPage() {
         const data = await res.json()
         console.log('API 回傳資料:', data)
         setCourses(data)
-        setFilteredCourses(data) // 預設 `filteredCourses` = `courses`
+        setFilteredCourses(data)
       } catch (err) {
         console.error('載入課程失敗:', err.message)
         setError(err.message)
@@ -40,45 +44,35 @@ export default function CoursesPage() {
     }
 
     fetchCourses()
-  }, []) // ✅ 只在頁面載入時執行
+  }, [])
 
-  // **當 category 或 courses 變更時，更新 `filteredCourses`**
   useEffect(() => {
     if (!courses || courses.length === 0) return
 
-    if (selectedCategory === '所有課程') {
+    if (selectedCategory !== category) {
+      setSelectedCategory(category)
+    }
+
+    if (category === '所有課程') {
       setFilteredCourses(courses)
     } else {
-      setFilteredCourses(
-        courses.filter((course) => course.category === selectedCategory),
-      )
+      setFilteredCourses(courses.filter((course) => course.category === category))
     }
-  }, [selectedCategory, courses])
+  }, [category, courses])
 
   return (
     <>
       <CoursesBanner courses={courses} />
-      {/* ✅ 傳遞 `setSelectedCategory`，讓分類可影響篩選 */}
-      <CoursesCategory
-        courses={courses}
-        setSelectedCategory={setSelectedCategory}
-      />
-      <CoursesBreadcumb courses={courses} />
+      <CoursesCategory selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+      <CoursesBreadcumb selectedCategory={selectedCategory} />
 
       <div className={styles['course-list-container']}>
-        <CoursesFilter
-          courses={filteredCourses}
-          setFilteredCourses={setFilteredCourses}
-        />
+        <CoursesFilter courses={filteredCourses} setFilteredCourses={setFilteredCourses} />
       </div>
 
       {loading && <p>載入中...</p>}
       {error && <p className="text-danger">{error}</p>}
-      {!loading && !error && (
-        <>
-          <PopularTeacher courses={filteredCourses} />
-        </>
-      )}
+      {!loading && !error && <PopularTeacher courses={filteredCourses} />}
     </>
   )
 }
