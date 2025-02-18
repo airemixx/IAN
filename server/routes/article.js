@@ -20,17 +20,32 @@ router.use(cors(corsOptions))
 
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
-  const { year, month, category, search } = req.query
+  const { year, month, category, search, tag } = req.query
+
   let query = `
-    SELECT a.*, c.name as category_name,
-           GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags
+    SELECT 
+      a.*,
+      c.name AS category_name,
+      GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags,
+      CASE
+        WHEN t.tag_name = ? THEN 1
+        WHEN a.title LIKE ? THEN 2
+        WHEN a.content LIKE ? THEN 3
+        ELSE 4
+      END AS relevance
     FROM article a
     LEFT JOIN article_category c ON a.category_id = c.id
     LEFT JOIN article_tags at ON a.id = at.article_id
     LEFT JOIN tag t ON at.tag_id = t.id
   `
-  const queryParams = []
+
   const conditions = []
+  // 前三個參數對應 CASE 判斷
+  const queryParams = [
+    tag || '',            // CASE WHEN t.tag_name = ?
+    `%${search || ''}%`,  // WHEN a.title LIKE ?
+    `%${search || ''}%`,  // WHEN a.content LIKE ?
+  ]
 
   if (year) {
     conditions.push('YEAR(a.created_at) = ?')
@@ -44,28 +59,33 @@ router.get('/', async (req, res) => {
     conditions.push('a.category_id = ?')
     queryParams.push(category)
   }
-  if (search) {
-    conditions.push('(a.title LIKE ? OR t.tag_name LIKE ?)')
-    queryParams.push(`%${search}%`)
-    queryParams.push(`%${search}%`)
+  // 改用搜尋條件 (非 tag 時) 搜尋 tag、標題、內文
+  if (search && !tag) {
+    conditions.push('(t.tag_name LIKE ? OR a.title LIKE ? OR a.content LIKE ?)')
+    queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`)
   }
+
   if (conditions.length > 0) {
     query += ' WHERE ' + conditions.join(' AND ')
   }
 
-  query += ' GROUP BY a.id ORDER BY a.created_at DESC'
+  // 如果是點擊 tag 搜尋，則在 HAVING 判斷該文章是否含該 tag，但保留所有 tag
+  if (tag) {
+    query += ' GROUP BY a.id HAVING FIND_IN_SET(?, tags)'
+    queryParams.push(tag)
+  } else {
+    query += ' GROUP BY a.id'
+  }
+
+  query += ' ORDER BY relevance ASC, a.created_at DESC'
 
   try {
     const [rows] = await pool.query(query, queryParams)
-    res.status(200).json({
-      status: 'success',
-      data: rows,
-      message: '取得所有文章成功',
-    })
+    res.status(200).json({ status: 'success', data: rows })
   } catch (err) {
     res.status(500).json({
       status: 'error',
-      message: err.message ? err.message : '取得文章失敗',
+      message: err.message || '取得文章失敗',
     })
   }
 })
@@ -124,6 +144,36 @@ router.get('/years', async (req, res) => {
   }
 })
 
+// 取得文章的標籤
+router.get('/:articleId/tags', async (req, res) => {
+  const { articleId } = req.params
+  console.log('Fetching tags for article:', articleId) // 加入除錯
+  try {
+    const [articleTags] = await pool.query(
+      'SELECT tag_id FROM article_tags WHERE article_id = ?',
+      [articleId]
+    )
+    console.log('articleTags:', articleTags)
+
+    if (!articleTags.length) {
+      return res.json([])
+    }
+
+    const tagIds = articleTags.map((articleTag) => articleTag.tag_id)
+    console.log('tagIds:', tagIds)
+
+    const [tags] = await pool.query(
+      'SELECT id, tag_name FROM tag WHERE id IN (?)',
+      [tagIds]
+    )
+    res.json(tags)
+  } catch (error) {
+    console.error('Error fetching tags:', error)
+    res.status(500).json({ message: 'Error fetching tags' })
+  }
+})
+
+
 // 取得指定文章
 router.get('/:id', async (req, res) => {
   try {
@@ -149,64 +199,33 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// 取得文章的標籤
-router.get('/:articleId/tags', async (req, res) => {
-  const { articleId } = req.params
-
-  try {
-    // 從 article_tags 資料表獲取與文章 ID 相關的 tag_id
-    const [articleTags] = await pool.query(
-      'SELECT tag_id FROM article_tags WHERE article_id = ?',
-      [articleId]
-    )
-
-    // 如果沒有找到任何標籤，則回傳一個空陣列
-    if (!articleTags.length) {
-      return res.json([])
-    }
-
-    // 從 tag 資料表獲取標籤名稱
-    const tagIds = articleTags.map((articleTag) => articleTag.tag_id)
-    const [tags] = await pool.query(
-      'SELECT id, tag_name FROM tag WHERE id IN (?)',
-      [tagIds]
-    )
-
-    // 回傳標籤資料
-    res.json(tags)
-  } catch (error) {
-    console.error('Error fetching tags:', error)
-    res.status(500).json({ message: 'Error fetching tags' })
-  }
-})
-
 //推送側欄文章
 router.post('/related', cors(corsOptions), async (req, res) => {
-  const { categoryId, title, content, articleId } = req.body;
-  const limit = 4; // 設定文章數量上限
+  const { categoryId, title, content, articleId } = req.body
+  const limit = 4 // 設定文章數量上限
   try {
     let query = `
       SELECT a.*, c.name as category_name
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
       WHERE 1=1
-    `;
-    let params = [];
+    `
+    let params = []
 
     // ★ 在第一個查詢就排除當前文章
     if (articleId) {
-      query += ` AND a.id != ?`;
-      params.push(parseInt(articleId, 10));
+      query += ` AND a.id != ?`
+      params.push(parseInt(articleId, 10))
     }
 
     // 1. 關鍵字條件
     if (title || content) {
-      query += ` AND (a.title LIKE ? OR a.content LIKE ?)`;
-      params.push(`%${title}%`);
-      params.push(`%${content}%`);
+      query += ` AND (a.title LIKE ? OR a.content LIKE ?)`
+      params.push(`%${title}%`)
+      params.push(`%${content}%`)
     }
 
-    let [rows] = await pool.query(query, params);
+    let [rows] = await pool.query(query, params)
 
     // 2. 推送同類別文章
     if (rows.length < limit && categoryId) {
@@ -215,24 +234,24 @@ router.post('/related', cors(corsOptions), async (req, res) => {
         FROM article a
         LEFT JOIN article_category c ON a.category_id = c.id
         WHERE a.category_id = ?
-      `;
-      let categoryParams = [categoryId];
+      `
+      let categoryParams = [categoryId]
 
       // ★ 同樣排除當前文章
       if (articleId) {
-        categoryQuery += ` AND a.id != ?`;
-        categoryParams.push(parseInt(articleId, 10));
+        categoryQuery += ` AND a.id != ?`
+        categoryParams.push(parseInt(articleId, 10))
       }
 
-      const [categoryRows] = await pool.query(categoryQuery, categoryParams);
+      const [categoryRows] = await pool.query(categoryQuery, categoryParams)
 
-      const combinedRows = [...rows];
+      const combinedRows = [...rows]
       for (const categoryRow of categoryRows) {
         if (!combinedRows.find((row) => row.id === categoryRow.id)) {
-          combinedRows.push(categoryRow);
+          combinedRows.push(categoryRow)
         }
       }
-      rows = combinedRows;
+      rows = combinedRows
     }
 
     // 3. 推送最新文章
@@ -244,29 +263,26 @@ router.post('/related', cors(corsOptions), async (req, res) => {
         WHERE a.id != ?
         ORDER BY a.created_at DESC
         LIMIT ?
-      `;
-      let latestParams = [
-        parseInt(articleId, 10),
-        limit - rows.length
-      ];
+      `
+      let latestParams = [parseInt(articleId, 10), limit - rows.length]
 
-      const [latestRows] = await pool.query(latestQuery, latestParams);
+      const [latestRows] = await pool.query(latestQuery, latestParams)
 
-      const combinedRows = [...rows];
+      const combinedRows = [...rows]
       for (const latestRow of latestRows) {
         if (!combinedRows.find((row) => row.id === latestRow.id)) {
-          combinedRows.push(latestRow);
+          combinedRows.push(latestRow)
         }
       }
-      rows = combinedRows;
+      rows = combinedRows
     }
 
-    res.json({ data: rows.slice(0, limit) });
+    res.json({ data: rows.slice(0, limit) })
   } catch (error) {
-    console.error('Error fetching related articles:', error);
-    res.status(500).json({ error: 'Error fetching related articles' });
+    console.error('Error fetching related articles:', error)
+    res.status(500).json({ error: 'Error fetching related articles' })
   }
-});
+})
 
 // 新增文章
 router.post('/', async (req, res) => {

@@ -15,6 +15,7 @@ import productRoutes from './routes/product.js'
 import rentalRouter from './routes//rental.js'
 import cartRouter from './routes/cart.js'
 import articleRoutes from './routes/article.js'
+import commentsRouter from './routes/comments.js'
 import users from './routes/users.js'
 
 // 讀取 .env 設定
@@ -23,7 +24,7 @@ dotenv.config()
 const app = express()
 const whiteList = ['http://localhost:5500', 'http://localhost:3000']
 const corsOptions = {
-  credential: true,
+  credentials: true,
   origin: (origin, callback) => {
     if (!origin || whiteList.includes(origin)) {
       callback(null, true)
@@ -58,6 +59,7 @@ app.use('/api/rental', rentalRouter)
 app.use('/api/cart', cartRouter)
 
 app.use('/api/articles', articleRoutes)
+app.use('/api/comments', commentsRouter)
 
 app.use('/api/users', users)
 
@@ -74,7 +76,4 @@ app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)
   console.log(`Database host: ${DB_HOST}`)
   console.log(`JWT secret key: ${JWT_SECRET_KEY}`)
-
 })
-
-
