@@ -30,9 +30,9 @@ export default function ComponentsCompareItem() {
         ))}
         {compareList.length < 3 &&
           Array.from({ length: 3 - compareList.length }).map((_, index) => (
-            <div key={`empty-${index}`} className={`${styles.productBox} ${styles.emptyBox}`}>
+            <Link href="/product" key={`empty-${index}`} className={`${styles.productBox} ${styles.emptyBox}`}>
               + 添加商品
-            </div>
+            </Link>
           ))}
       </div>
     </div>
