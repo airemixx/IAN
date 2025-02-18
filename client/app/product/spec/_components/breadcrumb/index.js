@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import styles from "./breadcrumb.module.scss"; // ✅ 確保正確引用 SCSS
+import styles from "./breadcrumb.module.scss";
 
 export default function BreadcrumbIndex() {
     return (

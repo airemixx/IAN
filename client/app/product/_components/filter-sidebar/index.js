@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "./filter-sidebar.module.scss"; // 確保 Bootstrap 樣式
+import styles from "./filter-sidebar.module.scss";
 
 export default function FilterSidebar({ onFilterChange }) {
   const [filters, setFilters] = useState({ brand: [], category: [], subcategory: [], });
@@ -14,11 +14,10 @@ export default function FilterSidebar({ onFilterChange }) {
     max_price: ""
   });
 
-  const [isMobile, setIsMobile] = useState(false); // 🔹 判斷是否為手機版
-  const [isFilterVisible, setIsFilterVisible] = useState(false); // 🔹 控制側邊欄顯示
-  const [isFilterButtonHidden, setIsFilterButtonHidden] = useState(false); // 🔹 控制按鈕是否隱藏
+  const [isMobile, setIsMobile] = useState(false);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [isFilterButtonHidden, setIsFilterButtonHidden] = useState(false);
 
-  // 🔹 檢測是否為手機版
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth <= 390);
@@ -29,7 +28,6 @@ export default function FilterSidebar({ onFilterChange }) {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  // 🔹 監聽滾動事件，當 `footer` 進入畫面時隱藏篩選按鈕
   useEffect(() => {
     const footer = document.getElementById("footer");
 
@@ -59,7 +57,6 @@ export default function FilterSidebar({ onFilterChange }) {
         if (!response.ok) throw new Error("HTTP 錯誤 " + response.status);
         const data = await response.json();
 
-        console.log("取得篩選條件:", data);
         if (!data.brand || !data.category || !data.subcategory) {
           throw new Error("API 回應格式錯誤");
         }
@@ -411,7 +408,7 @@ export default function FilterSidebar({ onFilterChange }) {
                             className="form-check-input"
                             onChange={handleCheckboxChange}
                           />
-                          <label htmlFor={`subcategory_${subcategory.id}`} className="form-check-label">  // ✅ 確保 `htmlFor` 與 `id` 一致
+                          <label htmlFor={`subcategory_${subcategory.id}`} className="form-check-label">
                             {subcategory.name}
                           </label>
                         </div>
