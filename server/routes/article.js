@@ -20,7 +20,7 @@ router.use(cors(corsOptions))
 
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
-  const { year, month, category, search } = req.query
+  const { year, month, category, search, tag } = req.query
   let query = `
     SELECT a.*, c.name as category_name,
            GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags
@@ -44,11 +44,20 @@ router.get('/', async (req, res) => {
     conditions.push('a.category_id = ?')
     queryParams.push(category)
   }
-  if (search) {
+
+  // 如果有 tag 參數，則比對 title、subtitle、content 及 tag
+  if (tag) {
+    conditions.push(
+      '(a.title LIKE ? OR a.subtitle LIKE ? OR a.content LIKE ? OR t.tag_name LIKE ?)'
+    )
+    const tagKeyword = `%${tag}%`
+    queryParams.push(tagKeyword, tagKeyword, tagKeyword, tagKeyword)
+  } else if (search) {
+    // 保留原有搜尋邏輯
     conditions.push('(a.title LIKE ? OR t.tag_name LIKE ?)')
-    queryParams.push(`%${search}%`)
-    queryParams.push(`%${search}%`)
+    queryParams.push(`%${search}%`, `%${search}%`)
   }
+
   if (conditions.length > 0) {
     query += ' WHERE ' + conditions.join(' AND ')
   }
@@ -182,31 +191,31 @@ router.get('/:articleId/tags', async (req, res) => {
 
 //推送側欄文章
 router.post('/related', cors(corsOptions), async (req, res) => {
-  const { categoryId, title, content, articleId } = req.body;
-  const limit = 4; // 設定文章數量上限
+  const { categoryId, title, content, articleId } = req.body
+  const limit = 4 // 設定文章數量上限
   try {
     let query = `
       SELECT a.*, c.name as category_name
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
       WHERE 1=1
-    `;
-    let params = [];
+    `
+    let params = []
 
     // ★ 在第一個查詢就排除當前文章
     if (articleId) {
-      query += ` AND a.id != ?`;
-      params.push(parseInt(articleId, 10));
+      query += ` AND a.id != ?`
+      params.push(parseInt(articleId, 10))
     }
 
     // 1. 關鍵字條件
     if (title || content) {
-      query += ` AND (a.title LIKE ? OR a.content LIKE ?)`;
-      params.push(`%${title}%`);
-      params.push(`%${content}%`);
+      query += ` AND (a.title LIKE ? OR a.content LIKE ?)`
+      params.push(`%${title}%`)
+      params.push(`%${content}%`)
     }
 
-    let [rows] = await pool.query(query, params);
+    let [rows] = await pool.query(query, params)
 
     // 2. 推送同類別文章
     if (rows.length < limit && categoryId) {
@@ -215,24 +224,24 @@ router.post('/related', cors(corsOptions), async (req, res) => {
         FROM article a
         LEFT JOIN article_category c ON a.category_id = c.id
         WHERE a.category_id = ?
-      `;
-      let categoryParams = [categoryId];
+      `
+      let categoryParams = [categoryId]
 
       // ★ 同樣排除當前文章
       if (articleId) {
-        categoryQuery += ` AND a.id != ?`;
-        categoryParams.push(parseInt(articleId, 10));
+        categoryQuery += ` AND a.id != ?`
+        categoryParams.push(parseInt(articleId, 10))
       }
 
-      const [categoryRows] = await pool.query(categoryQuery, categoryParams);
+      const [categoryRows] = await pool.query(categoryQuery, categoryParams)
 
-      const combinedRows = [...rows];
+      const combinedRows = [...rows]
       for (const categoryRow of categoryRows) {
         if (!combinedRows.find((row) => row.id === categoryRow.id)) {
-          combinedRows.push(categoryRow);
+          combinedRows.push(categoryRow)
         }
       }
-      rows = combinedRows;
+      rows = combinedRows
     }
 
     // 3. 推送最新文章
@@ -244,29 +253,26 @@ router.post('/related', cors(corsOptions), async (req, res) => {
         WHERE a.id != ?
         ORDER BY a.created_at DESC
         LIMIT ?
-      `;
-      let latestParams = [
-        parseInt(articleId, 10),
-        limit - rows.length
-      ];
+      `
+      let latestParams = [parseInt(articleId, 10), limit - rows.length]
 
-      const [latestRows] = await pool.query(latestQuery, latestParams);
+      const [latestRows] = await pool.query(latestQuery, latestParams)
 
-      const combinedRows = [...rows];
+      const combinedRows = [...rows]
       for (const latestRow of latestRows) {
         if (!combinedRows.find((row) => row.id === latestRow.id)) {
-          combinedRows.push(latestRow);
+          combinedRows.push(latestRow)
         }
       }
-      rows = combinedRows;
+      rows = combinedRows
     }
 
-    res.json({ data: rows.slice(0, limit) });
+    res.json({ data: rows.slice(0, limit) })
   } catch (error) {
-    console.error('Error fetching related articles:', error);
-    res.status(500).json({ error: 'Error fetching related articles' });
+    console.error('Error fetching related articles:', error)
+    res.status(500).json({ error: 'Error fetching related articles' })
   }
-});
+})
 
 // 新增文章
 router.post('/', async (req, res) => {
