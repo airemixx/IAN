@@ -15,8 +15,9 @@ export default function ProductCard({ product }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="position-relative">
-        <div className="position-absolute top-0 end-0 p-2 z-3">
-          <CompareButton product={product} />
+        {/* ✅ 這邊將 `isHovered` 傳遞給 CompareButton */}
+        <div className={`position-absolute top-0 end-0 p-2 z-3 ${isHovered ? styles.showCompare : styles.hideCompare}`}>
+          <CompareButton product={product} isHovered={isHovered} />
         </div>
 
         <Link href={`/product/${product.id}`} className="stretched-link" aria-label={`查看 ${product.name} 的詳細資訊`} />
@@ -30,7 +31,7 @@ export default function ProductCard({ product }) {
           <h5 className={`card-title ${styles.productTitle}`}>{product.name}</h5>
           <p className={`card-text ${styles.cardText}`}>NT. {product.price.toLocaleString()}</p>
           <div className="d-flex justify-content-center">
-            <CartButton isHovered={isHovered} />
+          <CartButton product={product} /> {/* ✅ 傳遞 `product` 進 `CartButton` */}
           </div>
         </div>
       </div>

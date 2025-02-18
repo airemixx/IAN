@@ -87,10 +87,10 @@ export default function Header({ searchOpen, setSearchOpen }) {
         <nav>
           <ul className="nav-left">
             <li>
-              <a href="#">首頁</a>
+              <Link href="/">首頁</Link>
             </li>
             <li className="product-item">
-              <a href="#">產品系列</a>
+            <Link href="/product">產品系列</Link>
               <div className="hover-gap" />
               {/* 透明的緩衝區域 */}
               <ul className="pd-dropdown">
