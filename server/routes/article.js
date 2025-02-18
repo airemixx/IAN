@@ -144,6 +144,36 @@ router.get('/years', async (req, res) => {
   }
 })
 
+// 取得文章的標籤
+router.get('/:articleId/tags', async (req, res) => {
+  const { articleId } = req.params
+  console.log('Fetching tags for article:', articleId) // 加入除錯
+  try {
+    const [articleTags] = await pool.query(
+      'SELECT tag_id FROM article_tags WHERE article_id = ?',
+      [articleId]
+    )
+    console.log('articleTags:', articleTags)
+
+    if (!articleTags.length) {
+      return res.json([])
+    }
+
+    const tagIds = articleTags.map((articleTag) => articleTag.tag_id)
+    console.log('tagIds:', tagIds)
+
+    const [tags] = await pool.query(
+      'SELECT id, tag_name FROM tag WHERE id IN (?)',
+      [tagIds]
+    )
+    res.json(tags)
+  } catch (error) {
+    console.error('Error fetching tags:', error)
+    res.status(500).json({ message: 'Error fetching tags' })
+  }
+})
+
+
 // 取得指定文章
 router.get('/:id', async (req, res) => {
   try {
@@ -166,37 +196,6 @@ router.get('/:id', async (req, res) => {
       status: 'error',
       message: err.message ? err.message : '連結伺服器錯誤',
     })
-  }
-})
-
-// 取得文章的標籤
-router.get('/:articleId/tags', async (req, res) => {
-  const { articleId } = req.params
-
-  try {
-    // 從 article_tags 資料表獲取與文章 ID 相關的 tag_id
-    const [articleTags] = await pool.query(
-      'SELECT tag_id FROM article_tags WHERE article_id = ?',
-      [articleId]
-    )
-
-    // 如果沒有找到任何標籤，則回傳一個空陣列
-    if (!articleTags.length) {
-      return res.json([])
-    }
-
-    // 從 tag 資料表獲取標籤名稱
-    const tagIds = articleTags.map((articleTag) => articleTag.tag_id)
-    const [tags] = await pool.query(
-      'SELECT id, tag_name FROM tag WHERE id IN (?)',
-      [tagIds]
-    )
-
-    // 回傳標籤資料
-    res.json(tags)
-  } catch (error) {
-    console.error('Error fetching tags:', error)
-    res.status(500).json({ message: 'Error fetching tags' })
   }
 })
 
