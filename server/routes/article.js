@@ -70,6 +70,23 @@ router.get('/', async (req, res) => {
   }
 })
 
+// 取得最新文章
+router.get('/latest', cors(corsOptions), async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT a.*, c.name as category_name
+      FROM article a
+      LEFT JOIN article_category c ON a.category_id = c.id
+      ORDER BY a.created_at DESC
+      LIMIT 4
+    `)
+    res.json({ data: rows })
+  } catch (error) {
+    console.error('Error fetching latest articles:', error)
+    res.status(500).json({ error: 'Error fetching latest articles' })
+  }
+})
+
 // 取得所有文章分類
 router.get('/categories', async (req, res) => {
   try {
@@ -131,6 +148,125 @@ router.get('/:id', async (req, res) => {
     })
   }
 })
+
+// 取得文章的標籤
+router.get('/:articleId/tags', async (req, res) => {
+  const { articleId } = req.params
+
+  try {
+    // 從 article_tags 資料表獲取與文章 ID 相關的 tag_id
+    const [articleTags] = await pool.query(
+      'SELECT tag_id FROM article_tags WHERE article_id = ?',
+      [articleId]
+    )
+
+    // 如果沒有找到任何標籤，則回傳一個空陣列
+    if (!articleTags.length) {
+      return res.json([])
+    }
+
+    // 從 tag 資料表獲取標籤名稱
+    const tagIds = articleTags.map((articleTag) => articleTag.tag_id)
+    const [tags] = await pool.query(
+      'SELECT id, tag_name FROM tag WHERE id IN (?)',
+      [tagIds]
+    )
+
+    // 回傳標籤資料
+    res.json(tags)
+  } catch (error) {
+    console.error('Error fetching tags:', error)
+    res.status(500).json({ message: 'Error fetching tags' })
+  }
+})
+
+//推送側欄文章
+router.post('/related', cors(corsOptions), async (req, res) => {
+  const { categoryId, title, content, articleId } = req.body;
+  const limit = 4; // 設定文章數量上限
+  try {
+    let query = `
+      SELECT a.*, c.name as category_name
+      FROM article a
+      LEFT JOIN article_category c ON a.category_id = c.id
+      WHERE 1=1
+    `;
+    let params = [];
+
+    // ★ 在第一個查詢就排除當前文章
+    if (articleId) {
+      query += ` AND a.id != ?`;
+      params.push(parseInt(articleId, 10));
+    }
+
+    // 1. 關鍵字條件
+    if (title || content) {
+      query += ` AND (a.title LIKE ? OR a.content LIKE ?)`;
+      params.push(`%${title}%`);
+      params.push(`%${content}%`);
+    }
+
+    let [rows] = await pool.query(query, params);
+
+    // 2. 推送同類別文章
+    if (rows.length < limit && categoryId) {
+      let categoryQuery = `
+        SELECT a.*, c.name as category_name
+        FROM article a
+        LEFT JOIN article_category c ON a.category_id = c.id
+        WHERE a.category_id = ?
+      `;
+      let categoryParams = [categoryId];
+
+      // ★ 同樣排除當前文章
+      if (articleId) {
+        categoryQuery += ` AND a.id != ?`;
+        categoryParams.push(parseInt(articleId, 10));
+      }
+
+      const [categoryRows] = await pool.query(categoryQuery, categoryParams);
+
+      const combinedRows = [...rows];
+      for (const categoryRow of categoryRows) {
+        if (!combinedRows.find((row) => row.id === categoryRow.id)) {
+          combinedRows.push(categoryRow);
+        }
+      }
+      rows = combinedRows;
+    }
+
+    // 3. 推送最新文章
+    if (rows.length < limit) {
+      let latestQuery = `
+        SELECT a.*, c.name as category_name
+        FROM article a
+        LEFT JOIN article_category c ON a.category_id = c.id
+        WHERE a.id != ?
+        ORDER BY a.created_at DESC
+        LIMIT ?
+      `;
+      let latestParams = [
+        parseInt(articleId, 10),
+        limit - rows.length
+      ];
+
+      const [latestRows] = await pool.query(latestQuery, latestParams);
+
+      const combinedRows = [...rows];
+      for (const latestRow of latestRows) {
+        if (!combinedRows.find((row) => row.id === latestRow.id)) {
+          combinedRows.push(latestRow);
+        }
+      }
+      rows = combinedRows;
+    }
+
+    res.json({ data: rows.slice(0, limit) });
+  } catch (error) {
+    console.error('Error fetching related articles:', error);
+    res.status(500).json({ error: 'Error fetching related articles' });
+  }
+});
 
 // 新增文章
 router.post('/', async (req, res) => {

@@ -39,7 +39,7 @@ export default function RelatedCourses({ course }) {
   if (relatedCourses.length === 0) return <p>沒有找到相關課程</p>
 
   return (
-    <div className={styles['container']}>
+    <div className={styles['container']} id="related-courses">
       <hr />
       <div className={styles['section-detail-title']}>
         <div className={styles['title-block']}></div>

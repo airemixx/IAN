@@ -21,12 +21,15 @@ const corsOptions = {
     }
   },
 };
+
+
+
 const secretKey = process.env.JWT_SECRET_KEY;
 
 const router = express.Router();
-router.use(cors(corsOptions));
-router.use(express.json());
-router.use(express.urlencoded({ extended: true }));
+// router.use(cors(corsOptions));
+// router.use(express.json());
+// router.use(express.urlencoded({ extended: true }));
 
 
 router.get("/", async (req, res) => {
@@ -89,10 +92,10 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", upload.none(), async (req, res) => {
-  let { account, name, mail, password, gender } = req.body;  // 直接解構 gender
+  let { account, name , nickname, mail, password, gender } = req.body;  // 直接解構 gender
   console.log(req.body);
 
-  if (!account || !name || !mail || !password || !gender) {
+  if (!account || !name || !nickname || !mail || !password || !gender) {
     return res.status(400).json({
       status: "error",
       message: "請提供完整的使用者資訊，包括性別!"
@@ -110,19 +113,19 @@ router.post("/", upload.none(), async (req, res) => {
       message: "性別必須是 '先生' 或 '女士'"
     });
   }
-  const id = uuidv4();
+  // const id = uuidv4();
   const createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
   const head = await getRandomAvatar();
   const hashedPassword = await bcrypt.hash(password, 10);
-  const sql = "INSERT INTO `users` (`id`, `account`, `password`, `name`, `mail`, `head`, `gender`, `created_at`) VALUES (?,?,?,?,?,?,?,?);";
+  const sql = "INSERT INTO `users` ( `account`, `password`, `name`, `nickname`, `mail`, `head`, `gender`, `created_at`) VALUES (?,?,?,?,?,?,?,?);";
 
-  const result = await db.execute(sql, [id, account, hashedPassword, name, mail, head, gender, createdAt]);
+  const result = await db.execute(sql, [account, hashedPassword, name, nickname, mail, head, gender, createdAt]);
   console.log(result);
   
   
   res.status(201).json({
     status: "success",
-    data: {id},
+    data: {},
     message: "新增一個使用者成功"
   });
 });
@@ -195,10 +198,10 @@ router.delete("/:account", checkToken, async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
-  console.log(req.body)
+router.post("/login", upload.none(), async (req, res) => {
   const {account, password} = req.body;
-  
+  console.log("Debugging: ",account, password);
+  console.log(req.body)
   try{
     if(!account || !password) throw new Error("請提供帳號和密碼")
     
@@ -208,6 +211,7 @@ router.post("/login", async (req, res) => {
     if(rows.length == 0)  throw new Error("找不到使用者");
 
     const user = rows[0]
+    console.log(user);
     const isMatch = await bcrypt.compare(password, user.password);
     if(!isMatch) throw new Error("帳號或密碼錯誤");
 
@@ -217,6 +221,7 @@ router.post("/login", async (req, res) => {
         id: user.id,
         account: user.account,
         name: user.name,
+        nickname: user.nickname || "",
         mail: user.mail,
         head: user.head,
       },
@@ -261,6 +266,7 @@ router.post("/status", checkToken, (req, res) => {
       id: decoded.id,
       account: decoded.account,
       name: decoded.name,
+      nickname: decoded.nickname,
       mail: decoded.mail,
       head: decoded.head,
     },

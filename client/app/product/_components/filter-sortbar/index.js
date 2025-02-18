@@ -43,8 +43,6 @@ export default function FilterSortBar({ onBrandSelect, onSortChange }) {
     const newSort = event.target.value;
     setSelectedSort(newSort);
   
-    console.log("🔄 排序方式變更:", newSort);
-  
     if (onSortChange) {
       if (newSort === "") {
         onSortChange(""); // ✅ 選擇「排序」時，重置 `sort` 回到 `id`

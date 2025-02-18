@@ -58,7 +58,7 @@ export default function CourseRating() {
   )
 
   return (
-    <section className={styles['course-rating-container']}>
+    <section className={styles['course-rating-container']} id="course-rating">
       <div className={styles['section-detail-title']} data-aos="fade-right">
         <div className={styles['title-block']}></div>
         <h2>課程評價</h2>
@@ -83,14 +83,19 @@ export default function CourseRating() {
             <div key={rating} className={styles['progress-container']}>
               <div className={styles['count']}>{rating}</div>
               <div
-                className="progress"
-                style={{ width: '400px', height: '8px', minWidth: '50px' }}
+                className="progress "
+                style={{
+                  width: '400px',
+                  height: '8px',
+                  minWidth: '50px',
+                  backgroundColor: '#E0E0E0',
+                }}
               >
                 <div
                   className={styles['progress-bar']}
                   role="progressbar"
                   style={{
-                    width: `${ratingPercentages[index]}%`, // ✅ 正確計算進度條
+                    width: `${ratingPercentages[index]}%`,
                   }}
                 ></div>
               </div>
@@ -101,13 +106,13 @@ export default function CourseRating() {
 
       {/* 評論區 - 只顯示前 4 則評論 */}
       <div className="row g-3">
-        {loading ? (
-          <p>載入中...</p>
-        ) : (
-          comments
-            .slice(0, 4)
-            .map((comment, index) => <CourseComment key={index} {...comment} />)
-        )}
+        {comments.slice(0, 4).map((comment, index) => (
+          <CourseComment
+            key={index}
+            {...comment}
+            onShowAllComments={() => setShowAllComments(true)}
+          />
+        ))}
       </div>
 
       {/* 所有評價按鈕（打開彈出視窗） */}
@@ -132,7 +137,7 @@ export default function CourseRating() {
             <h2>所有評論</h2>
             <div className={styles['modal-content']}>
               {comments.map((comment, index) => (
-                <CourseComment key={index} {...comment} />
+                <CourseComment key={index} {...comment} isModal={true} />
               ))}
             </div>
           </div>

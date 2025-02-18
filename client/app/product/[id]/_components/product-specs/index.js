@@ -6,7 +6,6 @@ export default function ProductSpecs({ introduce, specs = [] }) {
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap.bundle.min")
       .then(() => {
-        console.log("✅ Bootstrap 已載入！");
       })
       .catch((error) => {
         console.error("❌ Bootstrap 載入失敗:", error);

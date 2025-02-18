@@ -8,7 +8,7 @@ export default function TitleShareFontSize({
   articleTitle = '載入中...',
   articleSubTitle = '',
   createdAt = '載入中...', // 添加 createdAt prop
-  imagePath = '/images/article/gallery(1).jpg', // 添加 imagePath prop 並設定預設值
+  imagePath = '/images/article/default-Img.jpg', // 添加 imagePath prop 並設定預設值
 }) {
   const [fontSize, setFontSize] = useState('medium') // 預設字體大小
 

@@ -1,24 +1,74 @@
-.j-bodyHeight{
-  height: 92vh;
+nav{
+  display: flex;
+  justify-content: flex-end;
 }
+.nav-left{
+ display: none;
+}
+
+.j-bodyHeight{
+  height: auto;
+}
+
 .j-shoppingCartBox {
   display: flex;
   flex-direction: column;
 }
 
-.j-shoppingItemsBox {
-  overflow: auto;
-  height: 529px;
+.j-input-box{
+  background-color: #fff;
+  border-bottom-left-radius: 18.5px;
+  border-bottom-right-radius: 18.5px;
+}
+
+.j-ckBox {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #003150;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 當 checkbox 被選取時 */
+.j-ckBox:checked {
+  background-color: #003150;
+  border-color: #003150;
+}
+
+/* 加上勾勾圖示 */
+.j-ckBox:checked::after {
+  content: '✔';
+  font-size: 18px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+
+.j-itemBox{
+  background-color: #003150;
+  border-radius: 20px;
+  color: #fff;
 }
 
 .footer-block{
   display: none;
 }
+
 .copyright {
   background-color: #f6f6f6;
   padding-right: 5%;
   padding-left: 5%;
 }
+
 .copyright-text{
   color: #000;
 }
@@ -26,53 +76,15 @@
 .copyright span {
   color: #000
 }
+
 @media(max-width:991px){
   .j-bodyHeight{
     height: auto;
   }
 }
-  // @media(max-width:390px) {
-  //   .container {
-  //     display: flex;
-  //     flex-direction: column;
-  //   }
 
-  //   .container .j-shoppingCartTitle {
-  //     font-size: 65px;
-  //   }
-
-  //   .container .j-shoppingCartBox {
-  //     display: flex;
-  //     flex-direction: column;
-  //   }
-
-  //   .j-shoppingItemsMoblieBox {
-  //     width: 390px;
-  //   }
-
-  //   .j-cartItemBox {
-  //     width: 390px;
-  //     height: auto;
-  //   }
-
-  //   .j-lessonImg img {
-  //     width: 375px;
-  //   }
-
-  //   .footer {
-  //     display: block;
-  //   }
-
-  //   .copyright {
-  //     text-align: center;
-  //   }
-
-  //   .copyright .right-links {
-  //     display: none;
-  //   }
-
-  //   .copyright .right-links .copyRight {
-  //     display: block;
-  //   }
-
-  // }
+@media(max-width:390px){
+  .j-cartItemBox{
+    width: auto;
+  }
+}

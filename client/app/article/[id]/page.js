@@ -35,6 +35,9 @@ export default function ArticleDetail() {
   const [createdAt, setCreatedAt] = useState('')
   const [imagePath, setImagePath] = useState('')
   const [articleContent, setArticleContent] = useState('<p>載入中...</p>') // 新增內容 state
+  const [article, setArticle] = useState(null) // 新增 article state
+  const [categoryId, setCategoryId] = useState(null)
+  const [tags, setTags] = useState([])
 
   const changeFontSize = (size) => {
     setFontSize(size)
@@ -52,11 +55,15 @@ export default function ArticleDetail() {
       .then((response) => {
         console.log('Article response:', response)
         if (response.data && response.data.title) {
+          setArticle(response.data) // 設定 article state
           setArticleTitle(response.data.title)
           setArticleSubTitle(response.data.subtitle || '')
           setCreatedAt(response.data.created_at)
           setImagePath(response.data.image_path)
           setArticleContent(response.data.content) // 取得文章內容
+          setCategoryId(response.data.category_id) // 設定 categoryId
+          setTags(response.data.tags)
+
           return fetch(`http://localhost:8000/api/articles/categories`)
             .then((res) => {
               if (!res.ok) {
@@ -93,10 +100,14 @@ export default function ArticleDetail() {
     <div className="bg-light headerPadding">
       <div className="d-flex flex-column min-vh-100 text-dark bg-light y-container">
         <section className="y-container title-main-img">
-          <BreadcrumbDetail
-            categoryName={categoryName}
-            articleTitle={articleTitle}
-          />
+          {/* 只有在 article 存在時才渲染 BreadcrumbDetail 組件 */}
+          {article && (
+            <BreadcrumbDetail
+              categoryName={categoryName}
+              articleTitle={article.title}
+              category_id={categoryId}
+            />
+          )}
           <TitleShareFontSize
             categoryName={categoryName}
             articleTitle={articleTitle}
@@ -109,13 +120,21 @@ export default function ArticleDetail() {
         <div className="d-flex justify-content-between">
           <article className="y-article-content">
             {/* 傳入內容至 Content 組件 */}
-            <Content content={articleContent}  fontSize={getFontSize(fontSize)}/>
-            <TagLikeShareBtn />
+            <Content
+              content={articleContent}
+              fontSize={getFontSize(fontSize)}
+            />
+            <TagLikeShareBtn articleId={id} />
             <ReplyInput />
             <SortAllBtn />
             <ShowReply />
           </article>
-          <Aside />
+          <Aside
+            categoryId={categoryId}
+            tags={tags}
+            title={articleTitle}
+            content={articleContent}
+          />
         </div>
       </div>
       <Recommends />

@@ -65,50 +65,7 @@
   }
 
   @media(max-width:390px) {
-    .container {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .container .shoppingCartTitle {
-      font-size: 65px;
-    }
-
-    .container .shoppingCartBox {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .shoppingItemsMoblieBox {
-      width: 390px;
-    }
-
-    .j-cartItemBox {
-      width: 390px;
-      height: auto;
-    }
-
-    .j-lessonImg img {
-      width: 375px;
-    }
-
     .j-payStep {
       width: 390px;
     }
-    .footer {
-      display: block;
-    }
-
-    .copyright{
-      text-align: center;
-    }
-    
-    .copyright .right-links {
-      display: none;
-    }
-
-    .copyright .right-links .copyRight {
-      display: block;
-    }
-    
   }
