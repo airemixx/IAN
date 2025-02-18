@@ -31,6 +31,51 @@
   }
 }
 
+/* 📌 讓比較按鈕變成圓形 */
+.compareButton {
+  width: 40px;  /* 設定寬度 */
+  height: 40px; /* 設定高度 */
+  border-radius: 50%; /* 讓它變成圓形 */
+  display: flex;
+  align-items: center; /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  // background-color: #1b3846; /* 設定按鈕顏色 */
+  color: #1b3846;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+
+  /* 🔹 滑鼠懸停時變化 */
+  &:hover {
+    // background-color: #1b3846;
+    transform: scale(1.1);
+    color: #1b3846;
+  }
+
+  /* 🔹 點擊時的效果 */
+  &:active {
+    transform: scale(0.95);
+  }
+
+  /* 🔹 讓數字計數顯示在右上角 */
+  position: relative;
+  
+  span {
+    position: absolute;
+    top: 0px;
+    right: -5px;
+    // background: red;
+    color: #1b3846;
+    width: 18px;
+    height: 18px;
+    // border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+
 .sortContainer {
   width: 120px;
   select {
@@ -55,6 +100,7 @@
 
 /* 📌 響應式設計 */
 @media (max-width: 391px) {
+  
   .sortContainer {
     display: none;
   }
