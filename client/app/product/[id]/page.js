@@ -22,7 +22,6 @@ export default function ProductDetailPage() {
         if (!response.ok) throw new Error("獲取商品失敗");
 
         const data = await response.json();
-        console.log("🛒 取得的商品資訊:", data);
         setProduct(data);
       } catch (error) {
         console.error("商品載入錯誤:", error);

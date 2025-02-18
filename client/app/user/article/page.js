@@ -2,9 +2,17 @@
 import Link from 'next/link';
 import styles from './article.module.scss'; // 引入 CSS Modules
 import React from 'react';
+import useAuth from '@/hooks/use-auth';
 import Sidenav from '../_components/Sidenav/page';
 
 export default function UserPage() {
+    // 使用 useAuth hook 來獲取 token、user 和 loading 狀態
+    const { token, user, loading } = useAuth();
+  
+    if (loading) {
+      return <div className="text-center mt-5">載入中...</div>;
+    }
+
   return (
     <div className={`container py-4 ${styles.container}`}>
     <div className={`row ${styles.marginTop}`}>

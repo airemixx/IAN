@@ -1,12 +1,13 @@
 // 📌 比較表格外層
 .comparisonTable {
   margin-bottom: 50px;
-  border: 1px solid red;
-
+  // border: 1px solid red;
+  // border-collapse: collapse;
+  
   // 📌 表格樣式
   th,
   td {
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
     padding: 15px;
     text-align: center;
     vertical-align: middle;
@@ -14,12 +15,12 @@
   
   th {
     text-align: center;
-    background-color: #f8f9fa;
+    // background-color: #f8f9fa;
     width: 19%;
   }
   
   td {
-    width: 24%;
+    width: 23%;
   }
 
   // 📌 響應式設計

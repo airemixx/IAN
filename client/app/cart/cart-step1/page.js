@@ -97,44 +97,45 @@ export default function cartPageOne() {
   const [checkAll, setCheckAll] = useState(false)
   const [checkedItems, setCheckedItems] = useState({})
   const allItems = [...cartItems, ...cartLession, ...cartRent]
-  let cartAllitem = []
+  const [selectedItems, setSelectedItems] = useState([]) // 用來存放選中的項目
+  
+ 
   // 全選或全不選
   const handleCheckAll = () => {
-   
-    const newCheckedState = !checkAll
-    if(newCheckedState){
-      cartAllitem = [...allItems];
-    }
+    const checkedState = !checkAll
+    setCheckAll(checkedState)
 
-    setCheckAll(newCheckedState)
+    let newSelects = checkedState ? [...allItems] : []; // 如果勾選全部，就複製所有商品，否則清空
+    let updateCheck = allItems.reduce((acc, _, index) => {
+      acc[index] = checkedState;
+      return acc;
+    }, {});
 
     // 更新所有 checkbox 的選擇狀態
-    const updatedCheckedItems = {}
-    allItems.forEach((allItems, index) => {
-      updatedCheckedItems[index] = newCheckedState
-    })
-    setCheckedItems(updatedCheckedItems)
+    setCheckedItems(updateCheck)
+    setSelectedItems(newSelects);
   }
 
   // 單獨勾選項目
-  const handleItemChange = (index,slItem) => {
-    // let test = []
-    // test.push(slItem)
-    // console.log(test);
-    const updatedCheckedItems = {
-      ...checkedItems,
-      [index]: !checkedItems[index],
+  const handleItemChange = (index, item) => {
+    const updatedCheckedItems = { ...checkedItems, [index]: !checkedItems[index] };
+    setCheckedItems(updatedCheckedItems);
+  
+    let newSelects = [...selectedItems];
+  
+    if (updatedCheckedItems[index]) {
+      newSelects.push(item);
+    } else {
+      // 根據 item 的唯一屬性來過濾，例如 type + model
+      newSelects = newSelects.filter((selected) => 
+        !(selected.type === item.type && selected.model === item.model)
+      );
     }
-    setCheckedItems(updatedCheckedItems)
-
-    // 如果所有 checkbox 都被選中，則 `checkAll` 也應該變成 true，否則 false
-    const allChecked = Object.values(updatedCheckedItems);
-    setCheckAll(false);
-
-    if(allChecked.length == allItems.length && allChecked.every(Boolean)){
-      setCheckAll(allChecked)
-    }
-  }
+  
+    setSelectedItems(newSelects);
+    setCheckAll(newSelects.length === allItems.length);
+    console.log(newSelects);
+  };
 
   // test()
   // async function test(){
@@ -193,7 +194,7 @@ export default function cartPageOne() {
                   return (
                     <div
                       className="j-input-box d-flex align-items-center"
-                      key={index + 1}
+                      key={index}
                     >
                       <input
                         type="checkbox"
@@ -220,7 +221,7 @@ export default function cartPageOne() {
                   return (
                     <div
                       className="j-input-box d-flex align-items-center"
-                      key={index + 1}
+                      key={index}
                     >
                       <input
                         type="checkbox"
@@ -229,7 +230,12 @@ export default function cartPageOne() {
                         checked={checkedItems[rentalIndex] || false}
                         onChange={() => handleItemChange(rentalIndex,rental)}
                       />
-                      <RentItem key={index} rentalitem={rental} />
+                       <label
+                        htmlFor={`rentItem-${index}`}
+                        className="ms-2 d-flex flex-grow-1"
+                      >
+                         <RentItem key={index} rentalitem={rental} />
+                      </label>
                     </div>
                   )
                 })}
@@ -305,7 +311,7 @@ export default function cartPageOne() {
               </div>
             </div>
           </div>
-          <CheckoutFormStep1 slItem={cartAllitem}/>
+          <CheckoutFormStep1 slItem={selectedItems}/>
         </div>
       </div>
     </>
