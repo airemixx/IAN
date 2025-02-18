@@ -4,11 +4,9 @@ import React from 'react'
 import styles from './index.module.scss'
 import Link from 'next/link'
 
-const ListCard = ({ article, onTagClick }) => {
-  // 使用 Set 過濾重複的標籤
-  const uniqueTags = new Set(
-    article.tags ? article.tags.split(',').map((tag) => tag.trim()) : []
-  )
+const ListCard = ({ article, onTagClick, searchTerm }) => {
+  const rawTags = article.tags ? article.tags.split(",").map(tag => tag.trim()) : []
+  const uniqueTags = Array.from(new Set(rawTags))
 
   return (
     <div className={`${styles['y-list-card-area']}`}>
@@ -39,7 +37,7 @@ const ListCard = ({ article, onTagClick }) => {
           </div>
           <div className={`${styles['y-tag-area']} mb-3`}>
             {/* 將 Set 轉換為陣列，並使用 map 渲染標籤 */}
-            {Array.from(uniqueTags).map((tag, idx) => (
+            {uniqueTags.map((tag, idx) => (
               <button key={idx} onClick={() => onTagClick(tag)}>
                 {tag}
               </button>

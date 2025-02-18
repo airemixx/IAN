@@ -33,7 +33,7 @@ export default function TagLikeShareBtnIndex({ articleId }) {
         {tags.map((tag, index) => (
           <Link
             key={index}
-            href={`/article?tag=${tag.tag_name}`}
+            href={`/article?tag=&search=%23${tag.tag_name.replace('#', '')}`}
             className="text-decoration-none"
           >
             <button className="py-sm-1 px-sm-3 ms-sm-1 fw-medium rounded-pill">

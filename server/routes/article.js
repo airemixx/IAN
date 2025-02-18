@@ -21,16 +21,31 @@ router.use(cors(corsOptions))
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
   const { year, month, category, search, tag } = req.query
+
   let query = `
-    SELECT a.*, c.name as category_name,
-           GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags
+    SELECT 
+      a.*,
+      c.name AS category_name,
+      GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags,
+      CASE
+        WHEN t.tag_name = ? THEN 1
+        WHEN a.title LIKE ? THEN 2
+        WHEN a.content LIKE ? THEN 3
+        ELSE 4
+      END AS relevance
     FROM article a
     LEFT JOIN article_category c ON a.category_id = c.id
     LEFT JOIN article_tags at ON a.id = at.article_id
     LEFT JOIN tag t ON at.tag_id = t.id
   `
-  const queryParams = []
+
   const conditions = []
+  // 前三個參數對應 CASE 判斷
+  const queryParams = [
+    tag || '',            // CASE WHEN t.tag_name = ?
+    `%${search || ''}%`,  // WHEN a.title LIKE ?
+    `%${search || ''}%`,  // WHEN a.content LIKE ?
+  ]
 
   if (year) {
     conditions.push('YEAR(a.created_at) = ?')
@@ -44,37 +59,33 @@ router.get('/', async (req, res) => {
     conditions.push('a.category_id = ?')
     queryParams.push(category)
   }
-
-  // 如果有 tag 參數，則比對 title、subtitle、content 及 tag
-  if (tag) {
-    conditions.push(
-      '(a.title LIKE ? OR a.subtitle LIKE ? OR a.content LIKE ? OR t.tag_name LIKE ?)'
-    )
-    const tagKeyword = `%${tag}%`
-    queryParams.push(tagKeyword, tagKeyword, tagKeyword, tagKeyword)
-  } else if (search) {
-    // 保留原有搜尋邏輯
-    conditions.push('(a.title LIKE ? OR t.tag_name LIKE ?)')
-    queryParams.push(`%${search}%`, `%${search}%`)
+  // 改用搜尋條件 (非 tag 時) 搜尋 tag、標題、內文
+  if (search && !tag) {
+    conditions.push('(t.tag_name LIKE ? OR a.title LIKE ? OR a.content LIKE ?)')
+    queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`)
   }
 
   if (conditions.length > 0) {
     query += ' WHERE ' + conditions.join(' AND ')
   }
 
-  query += ' GROUP BY a.id ORDER BY a.created_at DESC'
+  // 如果是點擊 tag 搜尋，則在 HAVING 判斷該文章是否含該 tag，但保留所有 tag
+  if (tag) {
+    query += ' GROUP BY a.id HAVING FIND_IN_SET(?, tags)'
+    queryParams.push(tag)
+  } else {
+    query += ' GROUP BY a.id'
+  }
+
+  query += ' ORDER BY relevance ASC, a.created_at DESC'
 
   try {
     const [rows] = await pool.query(query, queryParams)
-    res.status(200).json({
-      status: 'success',
-      data: rows,
-      message: '取得所有文章成功',
-    })
+    res.status(200).json({ status: 'success', data: rows })
   } catch (err) {
     res.status(500).json({
       status: 'error',
-      message: err.message ? err.message : '取得文章失敗',
+      message: err.message || '取得文章失敗',
     })
   }
 })
