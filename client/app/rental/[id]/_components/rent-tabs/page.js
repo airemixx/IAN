@@ -1,45 +1,72 @@
 // rent-tabs
 
-'use client';
+'use client'
 
-import { useState } from "react";
+import { useState } from 'react'
 
-export default function RentTabs() {
-  const [activeTab, setActiveTab] = useState("rental");
+export default function RentTabs({ rental }) {
+  const [activeTab, setActiveTab] = useState('rental')
 
   return (
-    <div className="mt-3">
+    <div className="mt-1">
+      {/* Tab 選單 */}
       <div className="d-flex">
         <button
-          className={`btn btn-primary btn-radius me-1 ${activeTab === "rental" ? "active" : ""}`}
-          onClick={() => setActiveTab("rental")}
+          className={`btn btn-primary btn-radius me-1 ${
+            activeTab === 'rental' ? 'active' : ''
+          }`}
+          onClick={() => setActiveTab('rental')}
         >
           租借內容
         </button>
         <button
-          className={`btn btn-primary btn-radius ${activeTab === "spec" ? "active" : ""}`}
-          onClick={() => setActiveTab("spec")}
+          className={`btn btn-primary btn-radius ${
+            activeTab === 'spec' ? 'active' : ''
+          }`}
+          onClick={() => setActiveTab('spec')}
         >
           產品規格
         </button>
       </div>
 
+      {/* Tab 內容 */}
       <div id="tabContent">
-        {activeTab === "rental" ? (
-          <div className="card card-radius">
+        {activeTab === 'rental' ? (
+          <div className="card card-radius px-2">
             <div className="card-body">
+              {/* 商品配件 (來自 API: rental.append) */}
               <h5 className="card-title fee-text">商品配件</h5>
-              <p>
-                ．64G SD 記憶卡<br/>
-                ．電池 x2<br/>
-                ．充電器<br/>
-                ．鏡頭蓋
-              </p>
+              <div className="append-grid">
+                {rental.append
+                  ? rental.append
+                      .split('\n')
+                      .reduce((acc, item, index, arr) => {
+                        if (index % 2 === 0)
+                          acc.push(arr.slice(index, index + 2))
+                        return acc
+                      }, [])
+                      .map((pair, rowIndex) => (
+                        <div key={rowIndex} className="append-row">
+                          {pair.map((item, colIndex) => (
+                            <span key={colIndex} className="append-item">
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      ))
+                  : '無配件資訊'}
+              </div>
+
+              {/* 租借時段 */}
               <div className="mt-3">
                 <h5 className="card-title fee-text">租借時段</h5>
                 <div className="m-2">
                   <label htmlFor="startDate">開始日期</label>
-                  <input type="date" id="startDate" className="form-control mb-2" />
+                  <input
+                    type="date"
+                    id="startDate"
+                    className="form-control mb-2"
+                  />
                   <label htmlFor="endDate">結束日期</label>
                   <input type="date" id="endDate" className="form-control" />
                   <div className="d-flex justify-content-end mt-3">
@@ -51,36 +78,74 @@ export default function RentTabs() {
           </div>
         ) : (
           <div className="card card-radius p-3">
+            {/* 產品規格 (根據類別不同顯示不同資訊) */}
             <table className="table">
               <tbody>
                 <tr>
                   <th className="ps-3">尺寸</th>
-                  <td>130 x 80 x 92 mm</td>
+                  <td>{rental.dimension || '無資料'}</td>
                 </tr>
                 <tr>
                   <th className="ps-3">重量</th>
-                  <td>743 g</td>
+                  <td>{rental.weight ? `${rental.weight} g` : '無資料'}</td>
                 </tr>
-                <tr>
-                  <th className="ps-3">相機類型</th>
-                  <td>背照式 CMOS 全幅相機</td>
-                </tr>
-                <tr>
-                  <th className="ps-3">適配鏡頭</th>
-                  <td>Summilux 28mm f/1.7 ASPH. (固定鏡頭)</td>
-                </tr>
-                <tr>
-                  <th className="ps-3">鏡頭類型</th>
-                  <td>廣角定焦鏡頭</td>
-                </tr>
+
+                {/* 只有當 category 為 "相機" 時顯示 */}
+                {rental.category === '相機' && (
+                  <>
+                    <tr>
+                      <th className="ps-3">相機類型</th>
+                      <td>
+                        {rental.cam_sensor || '無資料'}{' '}
+                        {rental.cam_kind || '無資料'}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="ps-3">適用鏡頭</th>
+                      <td>{rental.cam_with || '無資料'}</td>
+                    </tr>
+                  </>
+                )}
+
+                {/* 只有當 category 為 "鏡頭" 時顯示 */}
+                {rental.category === '鏡頭' && (
+                  <>
+                    <tr>
+                      <th className="ps-3">鏡頭類型</th>
+                      <td>{rental.len_kind || '無資料'}</td>
+                    </tr>
+                    <tr>
+                      <th className="ps-3">適用相機</th>
+                      <td>{rental.len_with || '無資料'}</td>
+                    </tr>
+                  </>
+                )}
+
+                {/* 只有當 category 為 "配件" 時顯示 */}
+                {rental.category === '配件' && (
+                  <>
+                    <tr>
+                      <th className="ps-3">配件類型</th>
+                      <td>{rental.acc_kind || '無資料'}</td>
+                    </tr>
+                    <tr>
+                      <th className="ps-3">適用設備</th>
+                      <td>{rental.acc_with || '無資料'}</td>
+                    </tr>
+                  </>
+                )}
+
                 <tr>
                   <th className="ps-3">產品特點</th>
                   <td>
-                    ．6000萬像素<br/>
-                    ．內建 28mm f/1.7 大光圈鏡頭<br/>
-                    ．低光表現優秀<br/>      
-                    ．8K 30p 影片錄製<br/>
-                    ．可傾斜觸控螢幕        
+                    {rental.summary
+                      ? rental.summary.split('\n').map((feature, index) => (
+                          <span key={index}>
+                            {feature}
+                            <br />
+                          </span>
+                        ))
+                      : '無產品特點'}
                   </td>
                 </tr>
               </tbody>
@@ -89,5 +154,5 @@ export default function RentTabs() {
         )}
       </div>
     </div>
-  );
+  )
 }
