@@ -7,7 +7,6 @@ import styles from "./spec-table.module.scss";
 export default function ComponentsCompareTable() {
   const { compareList, removeFromCompare } = useCompare(); // ✅ 直接取得 `compareList`
 
-  console.log("📌 `compareList` 在 `ComponentsCompareTable`:", compareList); // 🔥 檢查數據是否正確
 
   if (!compareList || compareList.length === 0) {
     return <p className={styles.noProductText}>⚠️ 目前沒有商品規格</p>;

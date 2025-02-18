@@ -1,12 +1,12 @@
 "use client";
-import styles from "./cart-button.module.scss"; // ✅ 引入 SCSS Module
+import styles from "./cart-button.module.scss";
 
 export default function CartButton({ isHovered, onClick }) {
   return (
     <button
       className={`${styles.cartButton} ${isHovered ? styles.show : ""}`}
       onClick={(e) => {
-        e.stopPropagation(); // ✅ 防止點擊事件被 `stretched-link` 截走
+        e.stopPropagation();
         onClick();
       }}
     >
