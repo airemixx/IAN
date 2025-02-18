@@ -33,7 +33,7 @@ export default function TagLikeShareBtnIndex({ articleId }) {
         {tags.map((tag, index) => (
           <Link
             key={index}
-            href={`/article?tag=${tag.tag_name}`}
+            href={`/article?tag=&search=%23${tag.tag_name.replace('#', '')}`}
             className="text-decoration-none"
           >
             <button className="py-sm-1 px-sm-3 ms-sm-1 fw-medium rounded-pill">
@@ -43,9 +43,9 @@ export default function TagLikeShareBtnIndex({ articleId }) {
         ))}
       </div>
       <div className={`${styles['y-like-comment-share-fav']} d-flex`}>
-        <button className="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+        <button className="py-sm-2 px-sm-2 d-flex align-items-center fw-medium rounded-pill">
           <img
-            src="/images/article/heart.svg"
+            src="/images/article/star-01-7E7267.svg"
             className={`me-1 ${styles['y-like-comment-share-fav-pc']}`}
             alt="Heart"
           />
@@ -58,7 +58,7 @@ export default function TagLikeShareBtnIndex({ articleId }) {
           <span className={`${styles['y-count-num']}`}>1234</span>
         </button>
 
-        <button className="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+        <button className="py-sm-2 px-sm-2 d-flex align-items-center fw-medium rounded-pill">
           <img
             src="/images/article/message-text-01.svg"
             className={`me-1 ${styles['y-like-comment-share-fav-pc']}`}
@@ -73,7 +73,7 @@ export default function TagLikeShareBtnIndex({ articleId }) {
           <span className={`${styles['y-count-num']}`}>34</span>
         </button>
 
-        <button className="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+        <button className="py-sm-2 px-sm-2 d-flex align-items-center fw-medium rounded-pill">
           <img
             src="/images/article/share.svg"
             className={`me-1 ${styles['y-like-comment-share-fav-pc']}`}
@@ -86,7 +86,7 @@ export default function TagLikeShareBtnIndex({ articleId }) {
           />
         </button>
 
-        <button className="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+        <button className="py-sm-2 px-sm-2 d-flex align-items-center fw-medium rounded-pill">
           <img
             src="/images/article/favourite.svg"
             className={`me-1 ${styles['y-like-comment-share-fav-pc']}`}

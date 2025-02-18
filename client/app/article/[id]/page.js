@@ -125,7 +125,8 @@ export default function ArticleDetail() {
               fontSize={getFontSize(fontSize)}
             />
             <TagLikeShareBtn articleId={id} />
-            <ReplyInput />
+            <ReplyInput articleId={id} parentId={null} />{' '}
+            {/*  將 id 傳遞給 ReplyInput */}
             <SortAllBtn />
             <ShowReply />
           </article>

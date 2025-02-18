@@ -1,35 +1,18 @@
 'use client'
 import Link from 'next/link'
 import styles from './passwordChange.module.scss'
+import useAuth from '@/hooks/use-auth';
 import Sidenav from '../_components/Sidenav/page'
-import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { useRouter } from "next/navigation";
+import React from "react";
+
 
 
 export default function UserPage(props) {
-  const router = useRouter();
-    const appKey = "loginWithToken";
-    const [token, setToken] = useState(null);
-    const [user, setUser] = useState({nickname:""});
+    const { token, user, loading } = useAuth();
   
-    useEffect(() => {
-      const savedToken = localStorage.getItem(appKey);
-      if (!savedToken) {
-        router.push("/login"); // 沒有 token 時跳轉到登入頁
-      } else {
-        try {
-          const decodedUser = jwtDecode(savedToken);
-          console.log(decodedUser);
-          setToken(savedToken);
-          setUser(decodedUser || {});
-        } catch (error) {
-          console.error("Token 解碼失敗", error);
-          localStorage.removeItem(appKey);
-          router.push("/login");
-        }
-      }
-    }, []);
+    if (loading) {
+      return <div className="text-center mt-5">載入中...</div>;
+    }
    
   return (
     <div className="container py-4">

@@ -1,8 +1,17 @@
 "use client";
-import React from "react";
+import {useState} from "react";
 import styles from "./product-info.module.scss";
+import CartButton from "../cart-button"; // ✅ 確保是相對路徑
+import FavoriteButton from "../favorite-button/page";
+
 
 export default function ProductInfo({ product }) {
+
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const toggleFavorite = () => {
+    setIsFavorite((prev) => !prev);
+  };
   return (
     <div className={`${styles.productInfo}`}>
       <p className={styles.brand}>{product.brand_name}</p>
@@ -12,7 +21,8 @@ export default function ProductInfo({ product }) {
 
       {/* 按鈕區域 */}
       <div className="d-flex">
-        <button className={`btn btn-primary me-2 ${styles.cartButton}`}>+加入購物車</button>
+        <CartButton product={product} />
+        <FavoriteButton productId={product.id} />
       </div>
     </div>
   );

@@ -237,7 +237,7 @@ router.post("/login", upload.none(), async (req, res) => {
     console.log(err);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"登入失"
+      message: err.message?err.message:"登入失敗"
     });
   }
 });
