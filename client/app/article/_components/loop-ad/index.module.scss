@@ -1,9 +1,28 @@
-/* 循環影片 */
-.y-loop-ad{
-  video{
+.y-loop-ad-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.y-loop-ad-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+.y-loop-ad {
+  position: relative;
+  z-index: 2;
+  video {
     max-width: 100%;
     height: auto;
     aspect-ratio: 21/5;
-    object-fit: cover;
+    object-fit: contain;
+    cursor: pointer;
   }
 }
