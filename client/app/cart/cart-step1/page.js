@@ -240,7 +240,7 @@ export default function cartPageOne() {
                 全選
               </div>
               <div className="mt-2 mb-5">
-                <h3 className="j-cateTitle mb-0 ps-3 pt-2 pb-2">相機</h3>
+                <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">相機</h3>
                 {cartItems.map((item, index) => (
                   <div
                     className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}
@@ -263,7 +263,7 @@ export default function cartPageOne() {
                 ))}
               </div>
               <div className="mt-2 mb-5">
-                <h3 className="j-cateTitle mb-0 ps-3 pt-2 pb-2">課程</h3>
+                <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">課程</h3>
                 {cartLession.map((lession, index) => {
                   const lessonIndex = index + cartItems.length
                   return (
@@ -289,7 +289,7 @@ export default function cartPageOne() {
                 })}
               </div>
               <div className="mt-2 mb-5">
-                <h3 className="j-cateTitle mb-0 ps-3 pt-2 pb-2">租借</h3>
+                <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">租借</h3>
                 {cartRent.map((rental, index) => {
                   const rentalIndex =
                     index + cartItems.length + cartLession.length

@@ -6,7 +6,7 @@ export default function CartItem({id, itemData }) {
 
   return (
     <div className="d-flex flex-grow-1">
-      <div className={`${styles['j-cartItemBox']} d-flex flex-grow-1 flex-column`}>
+      <div className="d-flex flex-grow-1 flex-column">
         <div className={`${styles['j-cartItem']} d-flex flex-grow-1 flex-column flex-sm-column flex-xl-row align-items-center align-items-sm-center`}>
           <div className={`${styles['j-cameraImg']} m-2 `}>
             <img src={image} alt={brand} className="object-fit-contain" />

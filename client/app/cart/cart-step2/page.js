@@ -14,35 +14,24 @@ export default function cartPageTwo() {
   }, [])
   const cartItems = JSON.parse(localStorage.getItem("cartItems"))
   
-  
   const cartProduct = []
-
-  const cartLession = [
-    {
-      type: 'lession',
-      image: '/images/shopping-cart-image/lesson1.png',
-      title: '旅行攝影：按下快門，用攝影書寫故事',
-      instructor: '食癮，拾影',
-      rating: '4.2',
-      price: 'NT$ 2,180',
-    },
-  ]
-
-  const cartRent = [
-    {
-      type: 'rent',
-      image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM 富士',
-      model: 'X-T5 16-50mm',
-      rentDate: '2024-01-01',
-      dueDate: '2024-01-14',
-    },
-  ]
-  let test = Object.entries(cartItems)
-  console.log( test );
-//  cartItems.map((v) => {
-//   console.log(v);
-//  })
+  const cartLession = []
+  const cartRent = []
+  
+  let test = cartItems.slItem
+  Object.values(test).map(v =>{
+    switch(v.type){
+      case 'product': 
+        cartProduct.push(v);
+        break;
+      case 'lession' :
+        cartLession.push(v);
+        break;
+      case 'rent' :
+        cartRent.push(v);
+        break;
+    }
+  })
   
   return (
     <div className="container j-bodyHeight">
@@ -51,9 +40,11 @@ export default function cartPageTwo() {
         <div className="j-shoppingCartBox justify-content-between mt-4 me-xxl-2 col-sm-12 col-md-9 col-lg-7 col-xl-6 col-xxl-6">
           <div className="j-cartItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
             <div className="mt-2 mb-5 j-itemBox">
-              <h3 className="mb-1 ms-3 pt-2">相機</h3>
+              <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">相機</h3>
               {cartProduct.map((item, index) => (
-                <div key={index + 1}>
+                <div
+                    className={`j-input-box -flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`} 
+                    key={index}>
                   <CartItem key={index} id={index + 1} itemData={item} />
                 </div>
               ))}
@@ -62,7 +53,7 @@ export default function cartPageTwo() {
             <div className="mt-2 mb-5 j-itemBox">
               <h3 className="mb-1 ms-3 pt-2">課程</h3>
               {cartLession.map((lession, index) => (
-                <div key={index + 1}>
+                <div key={index}>
                   <LessonItem key={index} lessionitem={lession} />
                 </div>
               ))}
@@ -71,7 +62,7 @@ export default function cartPageTwo() {
             <div className="mt-2 j-itemBox">
               <h3 className="mb-1 ms-3 pt-2">租借</h3>
               {cartRent.map((rental, index) => (
-                <div key={index + 1}>
+                <div key={index}>
                   <RentItem key={index} rentalitem={rental} />
                 </div>
               ))}
