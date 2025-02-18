@@ -7,6 +7,15 @@
   }
 }
 
+//圖片渲染
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+
+  &.loaded {
+    opacity: 1;
+  }
+}
 .y-user-list-profile {
   width: 35px;
   height: 35px;

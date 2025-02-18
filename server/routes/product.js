@@ -1,5 +1,21 @@
 import express from "express";
+import cors from "cors";
 import mysql from "mysql2/promise";
+import jwt from "jsonwebtoken"; // ✅ 確保用戶登入
+import dotenv from 'dotenv';
+
+dotenv.config();
+// console.log("🔹 JWT Secret Key:", process.env.JWT_SECRET_KEY);
+
+// const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsImFjY291bnQiOiJqYXlAdHNldC5jb20iLCJuYW1lIjoi5p2w5p2w5p2wIiwibmlja25hbWUiOiLmnbAiLCJtYWlsIjoiamF5QHRzZXQuY29tIiwiaGVhZCI6Imh0dHBzOi8vcmFuZG9tdXNlci5tZS9hcGkvcG9ydHJhaXRzL3dvbWVuLzg1LmpwZyIsImlhdCI6MTczOTg4NzI0MywiZXhwIjoxNzM5ODg5MDQzfQ.DBtQS_zTg3D7hKbkJNC1g5I4S2u3cn-Yc4xytbTAZMQ";
+// const secret = "liam";
+
+try {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  console.log("Token 解析成功:", decoded);
+} catch (error) {
+  console.error("Token 驗證失敗:", error);
+}
 
 const router = express.Router();
 
@@ -12,6 +28,16 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
+
+//cors設定
+const corsOptions = {
+  origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
+  credentials: true,
+  allowedHeaders: ["Authorization", "Content-Type"],
+};
+
+router.use(cors(corsOptions)); // 使用 cors 中間件
+
 
 router.get("/", async (req, res) => { 
   try {
@@ -26,19 +52,23 @@ router.get("/", async (req, res) => {
     const queryParams = [];
 
     if (brand_id) {
-      whereClause += " AND p.brand_id = ?";
-      queryParams.push(brand_id);
+      const brandIds = brand_id.split(",").map(id => Number(id));
+      whereClause += ` AND p.brand_id IN (${brandIds.map(() => "?").join(",")})`;
+      queryParams.push(...brandIds);
     }
-
+    
     if (category_id) {
-      whereClause += " AND p.category_id = ?";
-      queryParams.push(category_id);
+      const categoryIds = category_id.split(",").map(id => Number(id));
+      whereClause += ` AND p.category_id IN (${categoryIds.map(() => "?").join(",")})`;
+      queryParams.push(...categoryIds);
     }
-
+    
     if (subcategory_id) {
-      whereClause += " AND p.subcategory_id = ?";
-      queryParams.push(subcategory_id);
+      const subcategoryIds = subcategory_id.split(",").map(id => Number(id));
+      whereClause += ` AND p.subcategory_id IN (${subcategoryIds.map(() => "?").join(",")})`;
+      queryParams.push(...subcategoryIds);
     }
+    
 
    // ✅ 確保 `min_price` 和 `max_price` 只有在用戶輸入時才會加入查詢
    const minPriceNum = min_price ? Number(min_price) : null;
@@ -92,6 +122,34 @@ router.get("/", async (req, res) => {
   }
 });
 
+// 簡化測試路由
+router.get("/test", async (req, res) => {
+  try {
+    res.json({ message: "API is working!" });
+  } catch (error) {
+    console.error("測試路由錯誤:", error);
+    res.status(500).json({ error: "無法獲取測試資料", details: error.message });
+  }
+});
+
+// 新增獲取廣告的路由
+router.get("/ads", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [ads] = await connection.query(`
+      SELECT 
+        id, 
+        product_id, 
+        video_url
+      FROM ads
+    `);
+    connection.release();
+    res.json(ads);
+  } catch (error) {
+    console.error("獲取廣告錯誤:", error);
+    res.status(500).json({ error: "無法獲取廣告", details: error.message });
+  }
+});
 
 router.get("/filters", async (req, res) => { 
   try {
@@ -237,5 +295,90 @@ router.get("/spec/:id", async (req, res) => {
   }
 });
 
+// ✅ 確保請求帶有 JWT Token
+const authenticateUser = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    console.error("❌ 錯誤: 缺少 Token");
+    return res.status(401).json({ error: "未授權，請先登入" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decoded;
+    console.log("🔹 解碼後的使用者:", req.user);
+
+    next();
+  } catch (error) {
+    console.error("Token 驗證失敗:", error);
+    return res.status(403).json({ error: "無效的 Token" });
+  }
+};
+
+// ✅ 加入收藏
+router.post("/collection", authenticateUser, async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    const user_id = req.user.id;
+
+    if (!product_id) {
+      return res.status(400).json({ error: "缺少 product_id" });
+    }
+
+    console.log("🔹 接收到的收藏請求:", { user_id, product_id });
+
+    const [existing] = await pool.query(
+      "SELECT * FROM collection WHERE user_id = ? AND product_id = ?",
+      [user_id, product_id]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ message: "此商品已收藏" });
+    }
+
+    const [result] = await pool.query(
+      "INSERT INTO collection (user_id, product_id) VALUES (?, ?)",
+      [user_id, product_id]
+    );
+    
+    console.log("收藏成功:", result);
+    res.json({ message: "成功加入收藏", data: result });
+  } catch (error) {
+    console.error("收藏失敗:", error);
+    res.status(500).json({ error: "伺服器錯誤" });
+  }
+});
+
+// ✅ 確保 DELETE 請求能夠正確刪除收藏
+router.delete("/collection", authenticateUser, async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    const user_id = req.user.id;
+
+    if (!product_id) {
+      return res.status(400).json({ error: "缺少 product_id" });
+    }
+
+    console.log("🔹 刪除收藏請求:", { user_id, product_id });
+
+    // ✅ 刪除收藏
+    const [result] = await pool.query(
+      "DELETE FROM collection WHERE user_id = ? AND product_id = ?",
+      [user_id, product_id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "收藏記錄不存在" });
+    }
+
+    console.log("收藏刪除成功:", result);
+    res.json({ message: "成功取消收藏" });
+
+  } catch (error) {
+    console.error("❌ 刪除收藏失敗:", error);
+    res.status(500).json({ error: "伺服器錯誤" });
+  }
+});
 
 export default router; 

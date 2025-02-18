@@ -1,13 +1,28 @@
 .iconcontainer {
   position: absolute;
-  top: 1px;
+  top: 0;
   right: -10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
 }
 
+// ✅ 預設隱藏比較按鈕
+.hide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+// ✅ 滑鼠 hover 時才顯示比較按鈕
+.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+// ✅ 按鈕樣式
 .iconCircle {
   width: 40px;
   height: 40px;
@@ -16,12 +31,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-// ✅ 變成已加入的樣式
+// ✅ 當商品已加入比較清單時，按鈕變色
 .iconCircle.added {
-  background-color: #0d2361; /* 綠色代表已加入 */
+  background-color: #0d2361; 
   color: white;
 }
 
@@ -30,10 +45,9 @@
   margin-top: 5px;
 }
 
-
 /* ✅ 讓手機版 (小於 390px) **始終顯示** */
-// @media (max-width: 391px) {
-//   .iconcontainer {
-//     display: none;
-//   }
-// }
+@media (max-width: 391px) {
+  .iconcontainer {
+    display: none;
+  }
+}
