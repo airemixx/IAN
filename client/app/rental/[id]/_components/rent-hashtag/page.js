@@ -1,13 +1,17 @@
 // rent-hashtag
 
-export default function RentHashtags() {
-  const tags = ["輕巧", "8K錄影", "內建鏡頭", "觸控螢幕", "大光圈", "高解析度"];
-
+export default function RentHashtags({ hashtags = [] }) {
   return (
     <div className="mt-1 mb-2">
-      {tags.map((tag, index) => (
-        <span key={index} className="badge tag-bg me-1">{tag}</span>
-      ))}
+      {hashtags.length > 0 ? (
+        hashtags.map((tag, index) => (
+          <span key={index} className="badge tag-bg me-1">
+            {tag}
+          </span>
+        ))
+      ) : (
+        <span className="text-muted">無標籤</span>
+      )}
     </div>
-  );
+  )
 }
