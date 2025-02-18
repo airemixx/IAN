@@ -57,7 +57,7 @@ export default function UserPage() {
 
   // 登出處理
   const handleLogout = async () => {
-    const API = "http://localhost:3005/api/users/logout";
+    const API = "http://localhost:8000/api/users/logout";
     if (!token) return;
 
     try {
