@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mysql from "mysql2/promise";
+import jwt from "jsonwebtoken"; // ✅ 確保用戶登入
 
 const router = express.Router();
 
@@ -275,5 +276,85 @@ router.get("/spec/:id", async (req, res) => {
   }
 });
 
+// ✅ 確保請求帶有 JWT Token
+const authenticateUser = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ error: "未授權，請先登入" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ error: "無效的 Token" });
+  }
+};
+
+// ✅ 取得用戶的收藏列表
+router.get("/collection", authenticateUser, async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const user_id = req.users.id; // ✅ 取得用戶 ID
+
+    const [favorites] = await connection.query(
+      "SELECT product_id FROM collection WHERE users_id = ?",
+      [user_id]
+    );
+
+    connection.release();
+    res.json(favorites);
+  } catch (error) {
+    console.error("❌ 無法獲取收藏清單:", error);
+    res.status(500).json({ error: "伺服器錯誤" });
+  }
+});
+
+// ✅ 加入收藏
+router.post("/", authenticateUser, async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    const user_id = req.users.id; // ✅ 從 JWT 取得用戶 ID
+
+    // 檢查是否已收藏
+    const [existing] = await pool.query(
+      "SELECT * FROM collection WHERE users_id = ? AND product_id = ?",
+      [user_id, product_id]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ message: "此商品已收藏" });
+    }
+
+    await pool.query(
+      "INSERT INTO collection (users_id, product_id) VALUES (?, ?)",
+      [user_id, product_id]
+    );
+
+    res.json({ message: "成功加入收藏" });
+  } catch (error) {
+    console.error("❌ 收藏失敗:", error);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+});
+
+// ✅ 取消收藏
+router.delete("/", authenticateUser, async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    const user_id = req.users.id; // ✅ 從 JWT 取得用戶 ID
+
+    await pool.query(
+      "DELETE FROM collection WHERE users_id = ? AND product_id = ?",
+      [user_id, product_id]
+    );
+
+    res.json({ message: "已取消收藏" });
+  } catch (error) {
+    console.error("❌ 移除收藏失敗:", error);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+});
 
 export default router; 
