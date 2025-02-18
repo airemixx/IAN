@@ -18,11 +18,13 @@ export default function NewsPage() {
   const [filters, setFilters] = useState({})
   const { articles, error, loading } = useArticles(filters)
   const router = useRouter()
+  const [searchTerm, setSearchTerm] = useState('')
 
   // 當 URL 的 search 參數改變時，更新 filters
   useEffect(() => {
     const searchQuery = searchParams.get('search')
     const categoryQuery = searchParams.get('category')
+    const tagQuery = searchParams.get('tag')
 
     const newFilters = {}
 
@@ -31,6 +33,10 @@ export default function NewsPage() {
     }
     if (categoryQuery) {
       newFilters.category = categoryQuery
+    }
+    if (tagQuery) {
+      newFilters.search = tagQuery
+      setSearchTerm(tagQuery)
     }
 
     setFilters(newFilters)
@@ -51,7 +57,9 @@ export default function NewsPage() {
   }
 
   const handleTagClick = (tag) => {
-    setFilters({ ...filters, tag })
+    // 將 tag 放入 search 參數
+    handleFilterChange({ ...filters, search: tag })
+    setSearchTerm(tag)
   }
 
   useEffect(() => {
@@ -108,7 +116,7 @@ export default function NewsPage() {
         <div className="row">
           {articles.map((article) => (
             <div key={article.id} className="col-12 col-md-6 col-lg-3">
-              <ListCard article={article} onTagClick={handleTagClick} />
+              <ListCard article={article} onTagClick={handleTagClick} searchTerm={searchTerm} />
             </div>
           ))}
         </div>

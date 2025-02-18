@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import mysql from "mysql2/promise";
 import jwt from "jsonwebtoken"; // ✅ 確保用戶登入
 
@@ -13,6 +14,15 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
+
+//cors設定
+const corsOptions = {
+  origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
+  credentials: true,
+};
+
+router.use(cors(corsOptions)); // 使用 cors 中間件
+
 
 router.get("/", async (req, res) => { 
   try {
@@ -93,6 +103,34 @@ router.get("/", async (req, res) => {
   }
 });
 
+// 簡化測試路由
+router.get("/test", async (req, res) => {
+  try {
+    res.json({ message: "API is working!" });
+  } catch (error) {
+    console.error("測試路由錯誤:", error);
+    res.status(500).json({ error: "無法獲取測試資料", details: error.message });
+  }
+});
+
+// 新增獲取廣告的路由
+router.get("/ads", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [ads] = await connection.query(`
+      SELECT 
+        id, 
+        product_id, 
+        video_url
+      FROM ads
+    `);
+    connection.release();
+    res.json(ads);
+  } catch (error) {
+    console.error("獲取廣告錯誤:", error);
+    res.status(500).json({ error: "無法獲取廣告", details: error.message });
+  }
+});
 
 router.get("/filters", async (req, res) => { 
   try {
