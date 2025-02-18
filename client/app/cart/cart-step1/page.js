@@ -13,6 +13,63 @@ export default function cartPageOne() {
   const cartItems = [
     {
       type: 'product',
+      id:1,
+      image: '../images/shopping-cart-image/shoppingCartItemPhoto.png',
+      brand: 'FUJIFILM',
+      model: 'X-T5 16-50mm',
+      price: 'NT$67000',
+      specs: [
+        {
+          title: '影像規格 IMAGE SPECIFICATIONS',
+          details: [
+            { label: '有效像素', value: '2550 萬像素' },
+            { label: '感光元件像素', value: '2420 萬像素' },
+            { label: '感光元件格式', value: 'APS-C' },
+            { label: '感光元件大小', value: '22.3 x 14.9mm' },
+          ],
+        },
+        {
+          title: '觀景器 VIEWFINDER',
+          details: [
+            { label: '有效像素', value: '2550 萬像素' },
+            { label: '感光元件像素', value: '2420 萬像素' },
+            { label: '感光元件格式', value: 'APS-C' },
+            { label: '感光元件大小', value: '22.3 x 14.9mm' },
+          ],
+        },
+        {
+          title: '資料存取 DATA TRANSFER',
+          details: [
+            { label: '有效像素', value: '2550 萬像素' },
+            { label: '感光元件像素', value: '2420 萬像素' },
+            { label: '感光元件格式', value: 'APS-C' },
+            { label: '感光元件大小', value: '22.3 x 14.9mm' },
+          ],
+        },
+        {
+          title: '機身資料 PHYSICAL SPECIFICATIONS',
+          details: [
+            { label: '有效像素', value: '2550 萬像素' },
+            { label: '感光元件像素', value: '2420 萬像素' },
+            { label: '感光元件格式', value: 'APS-C' },
+            { label: '感光元件大小', value: '22.3 x 14.9mm' },
+          ],
+        },
+        {
+          title: '其它資料 OTHERS',
+          details: [
+            { label: '有效像素', value: '2550 萬像素' },
+            { label: '感光元件像素', value: '2420 萬像素' },
+            { label: '感光元件格式', value: 'APS-C' },
+            { label: '感光元件大小', value: '22.3 x 14.9mm' },
+          ],
+        },
+        // 其他規格...
+      ],
+    },
+    {
+      type: 'product',
+      id:2,
       image: '../images/shopping-cart-image/shoppingCartItemPhoto.png',
       brand: 'FUJIFILM',
       model: 'X-T5 16-50mm',
@@ -72,6 +129,16 @@ export default function cartPageOne() {
   const cartLession = [
     {
       type: 'lession',
+      id:1,
+      image: '/images/shopping-cart-image/lesson1.png',
+      title: '旅行攝影：按下快門，用攝影書寫故事',
+      instructor: '食癮，拾影',
+      rating: '4.2',
+      price: 'NT$ 2,180',
+    },
+    {
+      type: 'lession',
+      id:2,
       image: '/images/shopping-cart-image/lesson1.png',
       title: '旅行攝影：按下快門，用攝影書寫故事',
       instructor: '食癮，拾影',
@@ -83,6 +150,16 @@ export default function cartPageOne() {
   const cartRent = [
     {
       type: 'rent',
+      id:1,
+      image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
+      brand: 'FUJIFILM 富士',
+      model: 'X-T5 16-50mm',
+      rentDate: '2024-01-01',
+      dueDate: '2024-01-14',
+    },
+    {
+      type: 'rent',
+      id:2,
       image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
       brand: 'FUJIFILM 富士',
       model: 'X-T5 16-50mm',
@@ -100,42 +177,41 @@ export default function cartPageOne() {
   const [selectedItems, setSelectedItems] = useState([]) // 用來存放選中的項目
   
  
-  // 全選或全不選
+  // 全選或取消全選
   const handleCheckAll = () => {
-    const checkedState = !checkAll
-    setCheckAll(checkedState)
+    const checkState = !checkAll;
 
-    let newSelects = checkedState ? [...allItems] : []; // 如果勾選全部，就複製所有商品，否則清空
-    let updateCheck = allItems.reduce((acc, _, index) => {
-      acc[index] = checkedState;
+    // 更新所有 checkbox 的選擇狀態
+    const updateItems = allItems.reduce((acc, _, index) => {
+      acc[index] = checkState;
       return acc;
     }, {});
 
-    // 更新所有 checkbox 的選擇狀態
-    setCheckedItems(updateCheck)
-    setSelectedItems(newSelects);
-  }
+    setCheckedItems(updateItems);
 
-  // 單獨勾選項目
+    // 如果全選則複製所有項目，否則清空
+    setSelectedItems(checkState ? [...allItems] : []);
+    setCheckAll(checkState);
+  };
+
+  // 單獨勾選或取消勾選項目
   const handleItemChange = (index, item) => {
-    const updatedCheckedItems = { ...checkedItems, [index]: !checkedItems[index] };
-    setCheckedItems(updatedCheckedItems);
-  
-    let newSelects = [...selectedItems];
-  
-    if (updatedCheckedItems[index]) {
-      newSelects.push(item);
+    const updateItems = { ...checkedItems, [index]: !checkedItems[index] };
+    setCheckedItems(updateItems);
+
+    let newSelects;
+    if (updateItems[index]) {
+      newSelects = [...selectedItems, item]; // 加入選中項目
     } else {
-      // 根據 item 的唯一屬性來過濾，例如 type + model
-      newSelects = newSelects.filter((selected) => 
-        !(selected.type === item.type && selected.model === item.model)
-      );
+      newSelects = selectedItems.filter(
+        (selected) => !(selected.type === item.type && selected.id === item.id)
+      ); // 移除對應項目
     }
-  
+    console.log(newSelects);
     setSelectedItems(newSelects);
     setCheckAll(newSelects.length === allItems.length);
-    console.log(newSelects);
   };
+
 
   // test()
   // async function test(){
