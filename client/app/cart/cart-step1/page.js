@@ -96,44 +96,49 @@ export default function cartPageOne() {
   }, [])
   const [checkAll, setCheckAll] = useState(false)
   const [checkedItems, setCheckedItems] = useState({})
+  const [slItems, setSltems] = useState([])
   const allItems = [...cartItems, ...cartLession, ...cartRent]
-  let cartAllitem = []
+
   // 全選或全不選
   const handleCheckAll = () => {
-   
-    const newCheckedState = !checkAll
-    if(newCheckedState){
-      cartAllitem = [...allItems];
-    }
+    const newCkState = !checkAll
 
-    setCheckAll(newCheckedState)
+    setCheckAll(newCkState)
 
     // 更新所有 checkbox 的選擇狀態
-    const updatedCheckedItems = {}
+    const updChecked = {}
     allItems.forEach((allItems, index) => {
-      updatedCheckedItems[index] = newCheckedState
+      updChecked[index] = newCkState
     })
-    setCheckedItems(updatedCheckedItems)
+    setCheckedItems(updChecked)
   }
 
   // 單獨勾選項目
-  const handleItemChange = (index,slItem) => {
-    // let test = []
-    // test.push(slItem)
-    // console.log(test);
-    const updatedCheckedItems = {
+  const handleItemChange = (index,item) => {
+    
+    const updChecked = {
       ...checkedItems,
       [index]: !checkedItems[index],
     }
-    setCheckedItems(updatedCheckedItems)
+    setCheckedItems(updChecked)
+
+    let newSlItems = [...slItems]
+    if (updChecked[index]) {
+      newSlItems.push(item) // 勾選時加入陣列
+    } else {
+      newSlItems = newSlItems.filter((i) => i !== item) // 取消勾選時移除
+      
+    }
+    setSltems(newSlItems)
 
     // 如果所有 checkbox 都被選中，則 `checkAll` 也應該變成 true，否則 false
-    const allChecked = Object.values(updatedCheckedItems);
+    const allChecked = Object.values(updChecked);
     setCheckAll(false);
 
     if(allChecked.length == allItems.length && allChecked.every(Boolean)){
       setCheckAll(allChecked)
     }
+    console.log(newSlItems);
   }
 
   // test()
@@ -305,7 +310,7 @@ export default function cartPageOne() {
               </div>
             </div>
           </div>
-          <CheckoutFormStep1 slItem={cartAllitem}/>
+          <CheckoutFormStep1/>
         </div>
       </div>
     </>
