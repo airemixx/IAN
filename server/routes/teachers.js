@@ -29,37 +29,56 @@ router.get('/', async (req, res) => {
   }
 })
 
-// ✅ 獲取特定講師資料
-router.get("/:id", async (req, res) => {
-  const teacherId = parseInt(req.params.id, 10);
+// ✅ 獲取特定講師的資訊 + 該老師的所有課程 (包含評分)
+router.get('/:id', async (req, res) => {
+  const teacherId = parseInt(req.params.id, 10)
   if (isNaN(teacherId)) {
-    return res.status(400).json({ error: "Invalid teacher ID" });
+    return res.status(400).json({ error: 'Invalid teacher ID' })
   }
 
   try {
-    const sql = `
-      SELECT 
-        t.*, 
+    // 取得講師基本資料
+    const teacherSql = `
+      SELECT t.*, 
         (SELECT COUNT(*) FROM courses WHERE teacher_id = t.id) AS courseCount,
         (SELECT COALESCE(SUM(student_count), 0) FROM courses WHERE teacher_id = t.id) AS studentCount
       FROM teachers t
       WHERE t.id = ?
-    `;
+    `
 
-    const [rows] = await pool.execute(sql, [teacherId]);
+    // 取得該老師的所有課程，並計算平均評分
+    const coursesSql = `
+      SELECT 
+        c.id, c.title, c.image_url, c.category, c.sale_price, 
+        c.student_count, c.status,
+        COALESCE(AVG(cm.rating), 0) AS rating  -- ✅ 計算該課程的平均評分
+      FROM courses c
+      LEFT JOIN comments cm ON c.id = cm.course_id  -- ✅ 連結 comments 表
+      WHERE c.teacher_id = ? AND c.status = 'published'
+      GROUP BY c.id, c.title, c.image_url, c.category, c.sale_price, c.student_count, c.status
+    `
 
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "Teacher not found" });
+    // 執行 SQL 查詢
+    const [teacherRows] = await pool.execute(teacherSql, [teacherId])
+    const [courseRows] = await pool.execute(coursesSql, [teacherId])
+
+    // 如果講師不存在
+    if (teacherRows.length === 0) {
+      return res.status(404).json({ error: 'Teacher not found' })
     }
 
-    res.json(rows[0]); // ✅ 回傳老師資訊 + 計算後的數據
+    // 合併結果
+    const teacherData = {
+      ...teacherRows[0],
+      courses: courseRows, // ✅ 加入該老師的所有課程
+    }
+
+    res.json(teacherData)
   } catch (error) {
-    console.error("❌ 獲取講師資料失敗:", error);
-    res.status(500).json({ error: "無法獲取講師資料" });
+    console.error('❌ 獲取講師資料失敗:', error)
+    res.status(500).json({ error: '無法獲取講師資料' })
   }
-});
-
-
+})
 
 // **老師登入**
 router.post('/login', async (req, res) => {

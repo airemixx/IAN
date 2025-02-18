@@ -5,6 +5,12 @@ import styles from './course-info.module.scss'
 import FavoriteButtonG from '../favorite-button-g/page'
 
 export default function CourseInfo({ course }) {
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id)
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
   return (
     <section className={styles['course-info-container']}>
       <div className="container">
@@ -46,13 +52,18 @@ export default function CourseInfo({ course }) {
           </div>
           <div className={`col-md-6 ${styles['course-detail']}`}>
             <h1> {course.title}</h1>
-            <a href="">
-              <div className={styles['course-info-teacher']}>
-                <div className={styles['teacher-img']}>
-                  <img src={course.teacher_image} alt="" />
-                </div>
-                <h3>{course.teacher_name}</h3>
+            <a
+              href="#"
+              className={styles['course-info-teacher']}
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToSection('teacher-info')
+              }}
+            >
+              <div className={styles['teacher-img']}>
+                <img src={course.teacher_image} alt="" />
               </div>
+              <h3>{course.teacher_name}</h3>
             </a>
             <p>{course.description}</p>
             <div className={styles['line']}></div>

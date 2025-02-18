@@ -2,12 +2,20 @@
 
 import { useState, useEffect } from 'react'
 import styles from './teacher-info.module.scss'
-import { FaChevronRight } from 'react-icons/fa'
+import {
+  FaChevronRight,
+  FaGlobe,
+  FaFacebook,
+  FaInstagram,
+  FaYoutube,
+} from 'react-icons/fa'
+import TeacherCoursesList from '../teacher-courses-list/page'
 
 export default function TeacherInfo({ teacherId }) {
   const [teacher, setTeacher] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [isModalOpen, setIsModalOpen] = useState(false) // 控制彈出視窗
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedTeacher, setSelectedTeacher] = useState(null)
 
   useEffect(() => {
     if (!teacherId) return
@@ -27,9 +35,22 @@ export default function TeacherInfo({ teacherId }) {
       })
       .catch((error) => {
         console.error('獲取講師資料失敗:', error)
+        setTeacher(null) // 避免 undefined
         setLoading(false)
       })
   }, [teacherId])
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';  // 禁止背景滾動
+    } else {
+      document.body.style.overflow = 'auto';  // 允許滾動
+    }
+    return () => {
+      document.body.style.overflow = 'auto';  // 彈出視窗關閉時恢復滾動
+    };
+  }, [isModalOpen]);
+  
 
   console.log('📌 TeacherInfo 接收到的 teacherId:', teacherId)
   if (loading) return <p>載入中...</p>
@@ -41,11 +62,7 @@ export default function TeacherInfo({ teacherId }) {
         <div className={styles['title-block']}></div>
         <h2>關於講師</h2>
       </div>
-      <div
-        className={styles['teacher-info']}
-        data-aos="fade-up"
-        data-aos-anchor-placement="top-bottom"
-      >
+      <div className={styles['teacher-info']} data-aos="fade-up">
         <div className={styles['teacher-info-img']}>
           <img
             src={teacher.image || '/images/teacher/default.avif'}
@@ -64,12 +81,7 @@ export default function TeacherInfo({ teacherId }) {
             </li>
             <li className={styles['data-item']}>
               <img src="/images/icon/article-icon.svg" alt="" />
-              <p>
-                {teacher.articleCount
-                  ? teacher.articleCount.toLocaleString()
-                  : '0'}{' '}
-                篇文章
-              </p>
+              <p>{teacher.articleCount?.toLocaleString() || '0'} 篇文章</p>
             </li>
             <li className={styles['data-item']}>
               <img src="/images/icon/student-icon.svg" alt="" />
@@ -82,40 +94,123 @@ export default function TeacherInfo({ teacherId }) {
           <div className={styles['line']}></div>
           <p>{teacher.bio}</p>
           <div className={styles['go-page-link']}>
-            {/* 點擊開啟彈出視窗 */}
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setSelectedTeacher(teacher) // 設定選擇的講師
+                setIsModalOpen(true)
+              }}
               className={styles['open-modal-btn']}
             >
               前往講師頁面
-             <FaChevronRight size={10} />
+              <FaChevronRight size={10} />
             </button>
           </div>
         </div>
       </div>
 
       {/* 彈出視窗 */}
-      {isModalOpen && (
-        <div className={styles['modal-overlay']}>
-          <div className={styles['modal-content']}>
+      {isModalOpen && selectedTeacher && (
+        <div className={styles['modal-overlay']} onClick={() => setIsModalOpen(false)}>
+          <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
             <button
               className={styles['close-btn']}
               onClick={() => setIsModalOpen(false)}
             >
               ✖
             </button>
-            <h2>{teacher.name}</h2>
-            <img
-              src={teacher.image || '/images/teacher/default.avif'}
-              alt={teacher.name}
-              className={styles['modal-img']}
-            />
-            <p>{teacher.bio}</p>
-            <ul>
-              <li>課程數量: {teacher.courseCount?.toLocaleString('en-US') || '0'}</li>
-              <li>文章數量: {teacher.articleCount?.toLocaleString('en-US') || '0'}</li>
-              <li>學生數量: {Number(teacher.studentCount)?.toLocaleString('en-US') || '0'}</li>
-            </ul>
+
+            <div className={styles['modal-body']}>
+              {/* 左側：講師頭像 + 社群連結 */}
+              <div className={styles['modal-left-container']}>
+                <div className={styles['modal-left']}>
+                  <div className={styles['modal-left-img']}>
+                    <img
+                      src={
+                        selectedTeacher.image || '/images/teacher/default.avif'
+                      }
+                      alt={selectedTeacher.name}
+                      className={styles['modal-img']}
+                    />
+                  </div>
+                  <h2 className={styles['teacher-name']}>
+                    {selectedTeacher.name}
+                  </h2>
+
+                  <div className={styles['social-links']}>
+                    {selectedTeacher.website && (
+                      <a
+                        href={selectedTeacher.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaGlobe />
+                      </a>
+                    )}
+                    {selectedTeacher.facebook && (
+                      <a
+                        href={selectedTeacher.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaFacebook />
+                      </a>
+                    )}
+                    {selectedTeacher.instagram && (
+                      <a
+                        href={selectedTeacher.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaInstagram />
+                      </a>
+                    )}
+                    {selectedTeacher.youtube && (
+                      <a
+                        href={selectedTeacher.youtube}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaYoutube />
+                      </a>
+                    )}
+                  </div>
+                  <hr />
+                </div>
+                <ul className={styles['modal-teacher-data']}>
+                  <li className={styles['data-item']}>
+                    <img src="/images/icon/course-icon-w.svg" alt="" />
+                    <p>
+                      {selectedTeacher.courseCount?.toLocaleString('en-US') ||
+                        '0'}{' '}
+                      堂課程
+                    </p>
+                  </li>
+                  <li className={styles['data-item']}>
+                    <img src="/images/icon/article-icon-w.svg" alt="" />
+                    <p>
+                      {selectedTeacher.articleCount?.toLocaleString() || '0'}{' '}
+                      篇文章
+                    </p>
+                  </li>
+                  <li className={styles['data-item']}>
+                    <img src="/images/icon/student-icon-w.svg" alt="" />
+                    <p>
+                      {Number(selectedTeacher.studentCount)?.toLocaleString(
+                        'en-US'
+                      ) || '0'}{' '}
+                      位學生
+                    </p>
+                  </li>
+                </ul>
+              </div>
+
+              {/* 右側：簡介 + 課程 */}
+              <div className={styles['modal-right']}>
+                <p>{selectedTeacher.bio}</p>
+                <hr className={styles['hr-line']} />
+                <TeacherCoursesList courses={selectedTeacher.courses || []} />
+              </div>
+            </div>
           </div>
         </div>
       )}

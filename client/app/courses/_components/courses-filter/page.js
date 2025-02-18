@@ -1,14 +1,17 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import styles from './courses-filter.module.scss'
 import CourseList from '../courses-list/page'
+import { FaChevronDown } from 'react-icons/fa'
 
 export default function CoursesFilter({ courses, setFilteredCourses }) {
   const [search, setSearch] = useState('')
   const [tempSearch, setTempSearch] = useState('')
   const [sort, setSort] = useState('popular')
   const [isComposing, setIsComposing] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   // 使用 useMemo 計算過濾結果
   const filtered = useMemo(() => {
@@ -19,7 +22,7 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
       result = result.filter(
         (course) =>
           course.title.toLowerCase().includes(search.toLowerCase()) ||
-          course.teacher_name.toLowerCase().includes(search.toLowerCase()),
+          course.teacher_name.toLowerCase().includes(search.toLowerCase())
       )
     }
 
@@ -43,7 +46,23 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
     }
   }
 
-  // 將 filtered 直接在父組件渲染
+  const handleSortChange = (value) => {
+    setSort(value)
+    setDropdownOpen(false)
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   return (
     <section className={`container ${styles['course-list']}`}>
       <div className={styles['search-filter']}>
@@ -70,16 +89,34 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
           </button>
         </div>
 
-        <select
-          className={styles['custom-select']}
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
+        <div
+          className={`${styles['custom-dropdown']} ${
+            dropdownOpen ? styles.open : ''
+          }`}
+          ref={dropdownRef}
         >
-          <option value="popular">熱門程度優先</option>
-          <option value="new">最新上架優先</option>
-          <option value="low-price">價格低到高</option>
-          <option value="high-price">價格高到低</option>
-        </select>
+          <button
+            className={styles['dropdown-toggle']}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            {sort === 'popular'
+              ? '熱門程度優先'
+              : sort === 'new'
+              ? '最新上架優先'
+              : sort === 'low-price'
+              ? '價格低到高'
+              : '價格高到低'}
+            <FaChevronDown className={styles['arrow']} size={10} />
+          </button>
+          {dropdownOpen && (
+            <ul className={styles['dropdown-menu']}>
+              <li onClick={() => handleSortChange('popular')}>熱門程度優先</li>
+              <li onClick={() => handleSortChange('new')}>最新上架優先</li>
+              <li onClick={() => handleSortChange('low-price')}>價格低到高</li>
+              <li onClick={() => handleSortChange('high-price')}>價格高到低</li>
+            </ul>
+          )}
+        </div>
       </div>
 
       {courses.length === 0 ? (

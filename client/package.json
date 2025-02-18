@@ -16,6 +16,7 @@
     "aos": "^2.3.4",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
+    "bootstrap-select": "^1.13.18",
     "dotenv": "^16.4.7",
     "froala-editor": "^4.4.0",
     "jquery": "^3.7.1",
