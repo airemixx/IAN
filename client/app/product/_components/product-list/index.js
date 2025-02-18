@@ -33,7 +33,6 @@ export default function ProductList({ filters, sort }) {
         if (!res.ok) throw new Error("HTTP 錯誤 " + res.status);
 
         const data = await res.json();
-        console.log("📌 獲取的商品資料:", data);
         setProducts(data);
         setCurrentPage(1); // ✅ 當篩選條件改變時，回到第 1 頁
       } catch (error) {
