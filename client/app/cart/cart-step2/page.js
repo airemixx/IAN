@@ -12,67 +12,11 @@ export default function cartPageTwo() {
   useEffect(() => {
     require('bootstrap/dist/js/bootstrap.bundle.min.js')
   }, [])
+  const cartItems = JSON.parse(localStorage.getItem("cartItems"))
+  
+  
+  const cartProduct = []
 
-  // const cartItemsStorage = localStorage.getItem("cartItem");
-  // const cartItems = JSON.parse(cartItemsStorage)
-  const cartItems = [
-    {
-      type: 'product',
-      image: '../images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM',
-      model: 'X-T5 16-50mm',
-      price: 'NT$67000',
-      specs: [
-        {
-          title: '影像規格 IMAGE SPECIFICATIONS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '觀景器 VIEWFINDER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '資料存取 DATA TRANSFER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '機身資料 PHYSICAL SPECIFICATIONS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '其它資料 OTHERS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        // 其他規格...
-      ],
-    },
-    // 其他商品...
-  ]
   const cartLession = [
     {
       type: 'lession',
@@ -94,6 +38,12 @@ export default function cartPageTwo() {
       dueDate: '2024-01-14',
     },
   ]
+  let test = Object.entries(cartItems)
+  console.log( test );
+//  cartItems.map((v) => {
+//   console.log(v);
+//  })
+  
   return (
     <div className="container j-bodyHeight">
       <div className="j-heightspace"></div>
@@ -102,7 +52,7 @@ export default function cartPageTwo() {
           <div className="j-cartItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
             <div className="mt-2 mb-5 j-itemBox">
               <h3 className="mb-1 ms-3 pt-2">相機</h3>
-              {cartItems.map((item, index) => (
+              {cartProduct.map((item, index) => (
                 <div key={index + 1}>
                   <CartItem key={index} id={index + 1} itemData={item} />
                 </div>
@@ -130,7 +80,7 @@ export default function cartPageTwo() {
           <div className="j-cartItemsBox d-sm-none d-block p-0 d-flex flex-grow-1 flex-column">
             <div className="mt-2 mb-5 j-itemBox">
               <h3 className="mb-1 ms-3 pt-2">相機</h3>
-              {cartItems.map((item, index) => (
+              {cartProduct.map((item, index) => (
                 <div key={index + 1}>
                   <CartItem key={index} id={index + 1} itemData={item} />
                 </div>

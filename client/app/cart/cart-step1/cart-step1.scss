@@ -17,10 +17,13 @@ nav{
 
 .j-input-box{
   background-color: #fff;
-  border-bottom-left-radius: 18.5px;
-  border-bottom-right-radius: 18.5px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
-
+.j-nextBox{
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
 .j-ckBox {
   appearance: none;
   -webkit-appearance: none;
@@ -58,7 +61,12 @@ nav{
   border-radius: 20px;
   color: #fff;
 }
-
+.j-cateTitle{
+  background-color: #003150;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  color: #fff;
+}
 .footer-block{
   display: none;
 }

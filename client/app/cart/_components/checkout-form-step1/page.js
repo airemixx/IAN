@@ -1,7 +1,11 @@
 import styles from "./price-summary.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function CheckoutFormStep1() {
+export default function CheckoutFormStep1(slItem) {
+  function handleClick(){
+    localStorage.setItem("cartItems",JSON.stringify(slItem))
+  }
+
   return (
     <div className={`${styles['j-payStep']} col-sm-11 col-md-9 col-lg-4 col-xl-4 mb-5 ms-lg-0 d-flex flex-column align-items-center`}>
       <div className={`${styles['j-pCount']} border-bottom mb-3 d-flex flex-column gap-2`}>
@@ -44,7 +48,8 @@ export default function CheckoutFormStep1() {
         </div>
       </div>
       <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center align-self-stretch`}>
-        <button className={`${styles['j-btn']} btn text-align-center d-flex flex-grow-1 justify-content-center`}>結帳</button>
+        <button className={`${styles['j-btn']} btn text-align-center d-flex flex-grow-1 justify-content-center`}
+        onClick={handleClick}>結帳</button>
       </div>
     </div>
   );
