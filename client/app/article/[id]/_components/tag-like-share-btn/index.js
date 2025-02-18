@@ -60,21 +60,6 @@ export default function TagLikeShareBtnIndex({ articleId }) {
 
         <button className="py-sm-2 px-sm-2 d-flex align-items-center fw-medium rounded-pill">
           <img
-            src="/images/article/message-text-01.svg"
-            className={`me-1 ${styles['y-like-comment-share-fav-pc']}`}
-            alt="Message"
-          />
-          <span className={`${styles['y-count-num-pc']}`}>34</span>
-          <img
-            src="/images/article/message-text-01.svg"
-            className={`me-1 ${styles['y-like-comment-share-fav-mb']}`}
-            alt="Message"
-          />
-          <span className={`${styles['y-count-num']}`}>34</span>
-        </button>
-
-        <button className="py-sm-2 px-sm-2 d-flex align-items-center fw-medium rounded-pill">
-          <img
             src="/images/article/share.svg"
             className={`me-1 ${styles['y-like-comment-share-fav-pc']}`}
             alt="Share"
