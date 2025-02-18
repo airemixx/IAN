@@ -2,11 +2,15 @@
 import Link from "next/link";
 import styles from "./login.module.scss";
 import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
 
 export default function UserPage() {
+  const router = useRouter();
   const appKey = "loginWithToken";
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [account, setAccount] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,7 +19,7 @@ export default function UserPage() {
     const savedToken = localStorage.getItem(appKey);
     if (savedToken) {
       try {
-        const decodedUser = jwt_decode(savedToken);
+        const decodedUser = jwtDecode(savedToken);
         setToken(savedToken);
         setUser(decodedUser);
       } catch (error) {
@@ -33,7 +37,7 @@ export default function UserPage() {
       const res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ account: email, password }),  // 修正為 account
+        body: JSON.stringify({ account, password }),  // 修正為 account
       });
   
       const result = await res.json();
@@ -42,7 +46,8 @@ export default function UserPage() {
       const newToken = result.data.token;
       localStorage.setItem(appKey, newToken);
       setToken(newToken);
-      setUser(jwt_decode(newToken));
+      setUser(jwtDecode(newToken));
+      router.push("/user");
   
     } catch (err) {
       console.error(err);
@@ -52,7 +57,7 @@ export default function UserPage() {
 
   // 登出處理
   const handleLogout = async () => {
-    const API = "http://localhost:3005/api/users/logout";
+    const API = "http://localhost:8000/api/users/logout";
     if (!token) return;
 
     try {
@@ -110,7 +115,7 @@ export default function UserPage() {
 
             {/* 右側 - 登入帳戶 */}
             <div className={`col-lg-6 ${styles.box} ${styles.column} me-4`}>
-              {token ? (
+              {/* {token ? (
                 <div className="text-center">
                   <h1>歡迎, {user?.name}</h1>
                   <img src={user?.head || "/images/user/1.jpg"} alt="大頭貼" />
@@ -118,19 +123,19 @@ export default function UserPage() {
                     登出
                   </button>
                 </div>
-              ) : (
+              ) : ( */}
                 <form onSubmit={handleLogin}>
                   <div className={styles.box1}>
                     <h6>我已擁有帳戶</h6>
                   </div>
                   <div className={`${styles.box1} mb-2`}>
-                    <label className={styles.label}>電子郵件</label>
+                    <label className={styles.label}>帳號</label>
                     <input
                       className={`form-control ${styles.inputField}`}
                       type="text"
-                      placeholder="電子郵件"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="請輸入帳號"
+                      value={account}
+                      onChange={(e) => setAccount(e.target.value)}
                       required
                     />
                   </div>
@@ -146,12 +151,12 @@ export default function UserPage() {
                     />
                   </div>
                   <div className={`${styles.box1} mb-2`}>
-                    <button type="submit" className={`${styles.buttonBox} ${styles.start}`}>
+                    <button type="submit" className={`${styles.buttonBox} ${styles.start}`} >
                       登入
                     </button>
                   </div>
                 </form>
-              )}
+              {/* )} */}
             </div>
           </div>
         </div>

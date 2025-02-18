@@ -1,10 +1,17 @@
 'use client'
 import Link from 'next/link'
 import styles from './user.module.scss'
-import React from 'react'
+import React from "react";
+import useAuth from "@/hooks/use-auth";
 import Sidenav from './_components/Sidenav/page'
 
 export default function UserPage(props) {
+  const { token, user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="text-center mt-5">載入中...</div>;
+  }
+
   return (
     <div>
       <div className={`container py-4`}>
@@ -58,21 +65,8 @@ export default function UserPage(props) {
                         type="email"
                         className={`form-control ${styles.customInput}`}
                         disabled
-                        value={'a2825514620@gmail.com'}
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">稱謂 *</label>
-                      <input
-                        type="text"
-                        className={`form-control ${styles.customInput}`}
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">姓氏 *</label>
-                      <input
-                        type="text"
-                        className={`form-control ${styles.customInput}`}
+                        value={user?.mail || ""}
+                        readOnly
                       />
                     </div>
                     <div className="mb-3">
@@ -80,8 +74,21 @@ export default function UserPage(props) {
                       <input
                         type="text"
                         className={`form-control ${styles.customInput}`}
+                        value={user?.name || ""}
+                        onChange={(e) => setUser({ ...user, name: e.target.value })}
                       />
                     </div>
+                    <div className="mb-3">
+                      <label className="form-label">暱稱 *</label>
+                      <input
+                        type="text"
+                        className={`form-control ${styles.customInput}`}
+                        disabled
+                        value={user?.nickname || ""}
+                        readOnly
+                      />
+                    </div>
+                    
                     <div className="mb-3">
                       <label className="form-label">出生日期</label>
                       <input

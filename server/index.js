@@ -15,6 +15,7 @@ import productRoutes from './routes/product.js'
 import rentalRouter from './routes//rental.js'
 import cartRouter from './routes/cart.js'
 import articleRoutes from './routes/article.js'
+import commentsRouter from './routes/comments.js'
 import users from './routes/users.js'
 
 // 讀取 .env 設定
@@ -23,7 +24,7 @@ dotenv.config()
 const app = express()
 const whiteList = ['http://localhost:5500', 'http://localhost:3000']
 const corsOptions = {
-  credential: true,
+  credentials: true,
   origin: (origin, callback) => {
     if (!origin || whiteList.includes(origin)) {
       callback(null, true)
@@ -58,12 +59,21 @@ app.use('/api/rental', rentalRouter)
 app.use('/api/cart', cartRouter)
 
 app.use('/api/articles', articleRoutes)
+app.use('/api/comments', commentsRouter)
 
 app.use('/api/users', users)
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000
+const DB_HOST = process.env.DB_HOST
+const DB_USER = process.env.DB_USER
+const DB_PASSWORD = process.env.DB_PASSWORD
+const DB_NAME = process.env.DB_NAME
+const DB_PORT = process.env.DB_PORT
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
 app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)
+  console.log(`Database host: ${DB_HOST}`)
+  console.log(`JWT secret key: ${JWT_SECRET_KEY}`)
 })

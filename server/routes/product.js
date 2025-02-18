@@ -1,5 +1,7 @@
 import express from "express";
+import cors from "cors";
 import mysql from "mysql2/promise";
+import jwt from "jsonwebtoken"; // ✅ 確保用戶登入
 
 const router = express.Router();
 
@@ -12,6 +14,15 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
+
+//cors設定
+const corsOptions = {
+  origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
+  credentials: true,
+};
+
+router.use(cors(corsOptions)); // 使用 cors 中間件
+
 
 router.get("/", async (req, res) => { 
   try {
@@ -92,6 +103,34 @@ router.get("/", async (req, res) => {
   }
 });
 
+// 簡化測試路由
+router.get("/test", async (req, res) => {
+  try {
+    res.json({ message: "API is working!" });
+  } catch (error) {
+    console.error("測試路由錯誤:", error);
+    res.status(500).json({ error: "無法獲取測試資料", details: error.message });
+  }
+});
+
+// 新增獲取廣告的路由
+router.get("/ads", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [ads] = await connection.query(`
+      SELECT 
+        id, 
+        product_id, 
+        video_url
+      FROM ads
+    `);
+    connection.release();
+    res.json(ads);
+  } catch (error) {
+    console.error("獲取廣告錯誤:", error);
+    res.status(500).json({ error: "無法獲取廣告", details: error.message });
+  }
+});
 
 router.get("/filters", async (req, res) => { 
   try {
@@ -155,7 +194,6 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "商品未找到" });
     }
 
-    // ✅ 获取商品所有图片
     const [images] = await connection.query(
       `SELECT CONCAT('/images/product/', image_url) AS image
        FROM image
@@ -180,8 +218,8 @@ router.get("/:id", async (req, res) => {
     // ✅ 返回完整的商品数据
     res.json({
       ...rows[0],
-      images: images.map((img) => img.image), // ✅ 轉換圖片陣列格式
-      specs: specs.length > 0 ? specs : [], // ✅ 保證 specs 正確回傳
+      images: images.map((img) => img.image),
+      specs: specs.length > 0 ? specs : [],
     });
 
   } catch (error) {
@@ -203,10 +241,10 @@ router.get("/related/:brand_id/:current_id", async (req, res) => {
         CONCAT('/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image
       FROM product p
       LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
-      WHERE p.brand_id = ? AND p.id != ?  -- ✅ 排除當前產品 id
-      ORDER BY p.id ASC  -- ✅ 依據 id 排序，最新的產品優先
+      WHERE p.brand_id = ? AND p.id != ?
+      ORDER BY p.id ASC 
       LIMIT 8`,
-      [brand_id, current_id]  // ✅ 傳入兩個參數，brand_id & current_id
+      [brand_id, current_id]
     );
 
     connection.release();
@@ -217,7 +255,106 @@ router.get("/related/:brand_id/:current_id", async (req, res) => {
   }
 });
 
+router.get("/spec/:id", async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const connection = await pool.getConnection();
+    const query = "SELECT * FROM spec WHERE product_id = ?"; // ✅ 確保表格名稱正確
+    const [rows] = await connection.execute(query, [id]);
 
+    connection.release(); // ✅ 釋放連線
+
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: `❌ 找不到 product_id = ${id} 的規格` });
+    }
+
+    res.json(rows[0]); // ✅ 回傳第一筆規格數據
+  } catch (error) {
+    console.error("❌ 伺服器錯誤:", error);
+    res.status(500).json({ error: "❌ 伺服器錯誤，請檢查 API" });
+  }
+});
+
+// ✅ 確保請求帶有 JWT Token
+const authenticateUser = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ error: "未授權，請先登入" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ error: "無效的 Token" });
+  }
+};
+
+// ✅ 取得用戶的收藏列表
+router.get("/collection", authenticateUser, async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const user_id = req.users.id; // ✅ 取得用戶 ID
+
+    const [favorites] = await connection.query(
+      "SELECT product_id FROM collection WHERE users_id = ?",
+      [user_id]
+    );
+
+    connection.release();
+    res.json(favorites);
+  } catch (error) {
+    console.error("❌ 無法獲取收藏清單:", error);
+    res.status(500).json({ error: "伺服器錯誤" });
+  }
+});
+
+// ✅ 加入收藏
+router.post("/", authenticateUser, async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    const user_id = req.users.id; // ✅ 從 JWT 取得用戶 ID
+
+    // 檢查是否已收藏
+    const [existing] = await pool.query(
+      "SELECT * FROM collection WHERE users_id = ? AND product_id = ?",
+      [user_id, product_id]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ message: "此商品已收藏" });
+    }
+
+    await pool.query(
+      "INSERT INTO collection (users_id, product_id) VALUES (?, ?)",
+      [user_id, product_id]
+    );
+
+    res.json({ message: "成功加入收藏" });
+  } catch (error) {
+    console.error("❌ 收藏失敗:", error);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+});
+
+// ✅ 取消收藏
+router.delete("/", authenticateUser, async (req, res) => {
+  try {
+    const { product_id } = req.body;
+    const user_id = req.users.id; // ✅ 從 JWT 取得用戶 ID
+
+    await pool.query(
+      "DELETE FROM collection WHERE users_id = ? AND product_id = ?",
+      [user_id, product_id]
+    );
+
+    res.json({ message: "已取消收藏" });
+  } catch (error) {
+    console.error("❌ 移除收藏失敗:", error);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+});
 
 export default router; 

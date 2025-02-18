@@ -1,10 +1,18 @@
 'use client'
 import Link from 'next/link'
 import styles from './passwordChange.module.scss'
-import React from 'react'
+import useAuth from '@/hooks/use-auth';
 import Sidenav from '../_components/Sidenav/page'
+import React from "react";
+
+
 
 export default function UserPage(props) {
+    const { token, user, loading } = useAuth();
+  
+    if (loading) {
+      return <div className="text-center mt-5">載入中...</div>;
+    }
    
   return (
     <div className="container py-4">
