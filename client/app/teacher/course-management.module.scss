@@ -120,14 +120,13 @@
   
   .table-container .course-img {
     width: 150px;
-    height: calc(150px * 9 / 16);
-  
+    aspect-ratio: 16/9;
     overflow: hidden;
   }
   
   .course-img img {
     width: 100%;
-    height: auto;
+    aspect-ratio: 16/9;
     object-fit: cover;
     border-radius: 5px;
   }

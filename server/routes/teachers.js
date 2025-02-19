@@ -5,6 +5,9 @@ import jwt from 'jsonwebtoken'
 const router = express.Router()
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key'
 
+console.log("🚀 /api/teachers/me API 已載入");
+
+
 // 取得所有老師資料
 router.get('/', async (req, res) => {
   try {
@@ -118,33 +121,125 @@ const authMiddleware = (req, res, next) => {
   }
 }
 
-// **取得當前登入老師資訊**
-router.get('/me', authMiddleware, async (req, res) => {
-  try {
-    const [teacher] = await pool.query('SELECT * FROM teacher WHERE id = ?', [
-      req.teacherId,
-    ])
-    if (teacher.length === 0)
-      return res.status(404).json({ error: '老師不存在' })
 
-    res.json(teacher[0])
+// 取得登入老師資訊
+router.get('/me', async (req, res) => {
+  console.log("✅ /api/teachers/me 路由被請求...");
+
+  try {
+    if (!req.headers.authorization) {
+      console.log("❌ 未提供 Authorization Header");
+      return res.status(401).json({ error: '未提供驗證 token' });
+    }
+
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) {
+      console.log("❌ Token 格式錯誤");
+      return res.status(401).json({ error: 'Token 格式錯誤' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("🔹 Token 解析結果:", decoded);
+
+    if (!decoded) {
+      console.log("❌ Token 解析失敗");
+      return res.status(403).json({ error: '權限不足' });
+    }
+
+    // ✅ **修正 SQL 查詢**
+    const sql = `
+      SELECT DISTINCT c.teacher_id
+      FROM courses c
+      JOIN teachers t ON c.teacher_id = t.id
+      WHERE t.user_id = ?
+    `;
+    console.log(`📌 執行 SQL 查詢: ${sql} | user_id = ${decoded.id}`);
+
+    const [rows] = await pool.query(sql, [decoded.id]);
+    console.log("📌 SQL 查詢結果:", rows);
+
+    if (rows.length === 0) {
+      console.log("❌ 找不到對應的 teacher_id");
+      return res.status(400).json({ error: 'Invalid teacher ID' });
+    }
+
+    const teacher_id = rows[0].teacher_id;
+    console.log(`✅ 獲取的 teacher_id: ${teacher_id}`);
+
+    res.json({
+      id: decoded.id,
+      name: decoded.name,
+      level: decoded.level,
+      teacher_id, // ✅ 確保前端可以拿到 `teacher_id`
+    });
   } catch (error) {
-    res.status(500).json({ error: '無法取得老師資訊' })
+    console.error('❌ 獲取老師資訊失敗:', error);
+    res.status(500).json({ error: '無法獲取老師資訊' });
   }
-})
+});
+
+
+
+
+
+
 
 // **取得當前老師的課程**
-router.get('/me/courses', authMiddleware, async (req, res) => {
+router.get('/me/courses', async (req, res) => {
   try {
-    const [courses] = await pool.query(
-      'SELECT * FROM courses WHERE teacher_id = ?',
-      [req.teacherId]
-    )
+    if (!req.headers.authorization) {
+      return res.status(401).json({ error: '未提供驗證 token' })
+    }
+
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ error: 'Token 格式錯誤' })
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
+    console.log(`🔹 Token 解析結果:`, decoded)
+
+    if (!decoded || decoded.level !== 1) {
+      return res.status(403).json({ error: '權限不足' })
+    }
+
+    // **先查詢 `teacher_id`**
+    const sqlTeacher = `SELECT id FROM teachers WHERE user_id = ?`
+    const [teacherRows] = await pool.query(sqlTeacher, [decoded.id])
+
+    if (teacherRows.length === 0) {
+      return res.status(400).json({ error: 'Invalid teacher ID' }) // 🔴 查無 `teacher_id`
+    }
+
+    const teacherId = teacherRows[0].id
+    console.log(`🔹 獲取到的 teacherId:`, teacherId)
+
+    // **使用 `teacher_id` 查詢課程**
+    let sqlCourses = `
+      SELECT 
+        c.*,  
+        t.name AS teacher_name, 
+        t.image AS teacher_image,
+        u.level,  
+        IFNULL(AVG(cm.rating), 0) AS rating,
+        COUNT(cm.id) AS review_count
+      FROM courses c
+      LEFT JOIN teachers t ON c.teacher_id = t.id
+      LEFT JOIN users u ON t.user_id = u.id
+      LEFT JOIN comments cm ON c.id = cm.course_id
+      WHERE c.teacher_id = ?
+      GROUP BY c.id, t.id, u.level
+    `
+
+    const [courses] = await pool.query(sqlCourses, [teacherId])
+
+    console.log(`📌 獲取的課程資料:`, courses)
     res.json(courses)
   } catch (error) {
+    console.error('❌ 獲取課程失敗:', error)
     res.status(500).json({ error: '無法獲取課程' })
   }
 })
+
+
 
 // **新增課程**
 router.post('/me/courses', authMiddleware, async (req, res) => {

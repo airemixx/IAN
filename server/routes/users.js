@@ -224,6 +224,7 @@ router.post("/login", upload.none(), async (req, res) => {
         nickname: user.nickname || "",
         mail: user.mail,
         head: user.head,
+        level: user.level,
       },
       secretKey,
       { expiresIn: "30m" }
@@ -315,5 +316,8 @@ async function getRandomAvatar(){
     return "https://randomuser.me/api/portraits/men/7.jpg";
   }
 }
+
+
+
 
 export default router;
