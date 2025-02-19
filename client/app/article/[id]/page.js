@@ -8,9 +8,8 @@ import Content from './_components/content'
 import Aside from './_components/aside'
 import TagLikeShareBtn from './_components/tag-like-share-btn'
 import ReplyInput from './_components/reply-input'
-import SortAllBtn from './_components/sort-all-btn'
 import Recommends from './_components/recommends'
-import ShowReply from './_components/show-reply'
+import CommentsArea from './_components/comments-area'
 import Link from 'next/link'
 
 function getFontSize(size) {
@@ -27,6 +26,7 @@ function getFontSize(size) {
 }
 
 export default function ArticleDetail() {
+  // ...其他 state 與 useEffect 程式碼保持不變
   const { id } = useParams()
   const [fontSize, setFontSize] = useState('medium')
   const [categoryName, setCategoryName] = useState('')
@@ -34,8 +34,8 @@ export default function ArticleDetail() {
   const [articleSubTitle, setArticleSubTitle] = useState('')
   const [createdAt, setCreatedAt] = useState('')
   const [imagePath, setImagePath] = useState('')
-  const [articleContent, setArticleContent] = useState('<p>載入中...</p>') // 新增內容 state
-  const [article, setArticle] = useState(null) // 新增 article state
+  const [articleContent, setArticleContent] = useState('<p>載入中...</p>')
+  const [article, setArticle] = useState(null)
   const [categoryId, setCategoryId] = useState(null)
   const [tags, setTags] = useState([])
 
@@ -55,13 +55,13 @@ export default function ArticleDetail() {
       .then((response) => {
         console.log('Article response:', response)
         if (response.data && response.data.title) {
-          setArticle(response.data) // 設定 article state
+          setArticle(response.data)
           setArticleTitle(response.data.title)
           setArticleSubTitle(response.data.subtitle || '')
           setCreatedAt(response.data.created_at)
           setImagePath(response.data.image_path)
-          setArticleContent(response.data.content) // 取得文章內容
-          setCategoryId(response.data.category_id) // 設定 categoryId
+          setArticleContent(response.data.content)
+          setCategoryId(response.data.category_id)
           setTags(response.data.tags)
 
           return fetch(`http://localhost:8000/api/articles/categories`)
@@ -90,17 +90,10 @@ export default function ArticleDetail() {
       })
   }, [id])
 
-  const getButtonStyle = (size) => {
-    return fontSize === size
-      ? { color: '#8F8F8F', textDecoration: 'none' }
-      : { color: '#143146', textDecoration: 'underline' }
-  }
-
   return (
     <div className="bg-light headerPadding">
       <div className="d-flex flex-column min-vh-100 text-dark bg-light y-container">
         <section className="y-container title-main-img">
-          {/* 只有在 article 存在時才渲染 BreadcrumbDetail 組件 */}
           {article && (
             <BreadcrumbDetail
               categoryName={categoryName}
@@ -119,16 +112,13 @@ export default function ArticleDetail() {
 
         <div className="d-flex justify-content-between">
           <article className="y-article-content">
-            {/* 傳入內容至 Content 組件 */}
             <Content
               content={articleContent}
               fontSize={getFontSize(fontSize)}
             />
             <TagLikeShareBtn articleId={id} />
-            <ReplyInput articleId={id} parentId={null} />{' '}
-            {/*  將 id 傳遞給 ReplyInput */}
-            <SortAllBtn />
-            <ShowReply />
+            <ReplyInput articleId={id} parentId={null} />
+            <CommentsArea articleId={id} />
           </article>
           <Aside
             categoryId={categoryId}

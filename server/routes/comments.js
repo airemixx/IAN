@@ -96,4 +96,21 @@ router.post('/', upload.array('media'), async (req, res) => {
   }
 })
 
+router.get('/count', async (req, res) => {
+  const { articleId } = req.query
+  if (!articleId) {
+    return res.status(400).json({ status: 'error', message: 'articleId 為必填' })
+  }
+  try {
+    const [rows] = await pool.query(
+      'SELECT COUNT(*) as count FROM article_comments WHERE article_id = ?',
+      [articleId]
+    )
+    res.json({ count: rows[0].count })
+  } catch (err) {
+    console.error('取得留言數量錯誤：', err)
+    res.status(500).json({ status: 'error', message: '取得留言數量失敗' })
+  }
+})
+
 export default router
