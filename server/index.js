@@ -63,7 +63,7 @@ app.use('/api/cart', cartRouter)
 app.use('/api/articles', articleRoutes)
 app.use('/api/comments', commentsRouter)
 
-app.use('/api/users', usersRoutes)
+app.use('/api/users', users)
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000
