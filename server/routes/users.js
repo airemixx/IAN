@@ -134,7 +134,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
   const {account} = req.params;
   console.log(account);
   
-  const {name, password, head} = req.body;
+  const {name, password, head , birthday} = req.body;
 
   try{
     if(account != req.decoded.account) throw new Error("沒有修改權限");
@@ -155,6 +155,10 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
       updateFields.push("`password` = ?");
       const hashedPassword = await bcrypt.hash(password, 10);
       value.push(hashedPassword);
+    }
+    if(birthday){
+      updateFields.push("`birthday` = ?");
+      value.push(birthday);
     }
     value.push(account);
     const sql = `UPDATE users SET ${updateFields.join(", ")} WHERE account = ?;`;
@@ -259,6 +263,26 @@ router.post("/logout", checkToken, (req, res) => {
   });
 });
 
+router.get("/me", checkToken, async (req, res) => {
+  try {
+    const sql = "SELECT account, name, nickname, mail, head, birthday FROM users WHERE account = ?";
+    const [rows] = await db.execute(sql, [req.decoded.account]);
+
+    if (rows.length === 0) throw new Error("找不到使用者");
+
+    res.status(200).json({
+      status: "success",
+      data: rows[0], // 回傳最新使用者資料
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      status: "error",
+      message: error.message || "無法獲取使用者資訊",
+    });
+  }
+});
+
 router.post("/status", checkToken, (req, res) => {
   const {decoded} = req;
   const token = jwt.sign(
@@ -314,6 +338,8 @@ async function getRandomAvatar(){
     console.log("取得隨機照片失敗", err.message);
     return "https://randomuser.me/api/portraits/men/7.jpg";
   }
+
+  
 }
 
 export default router;

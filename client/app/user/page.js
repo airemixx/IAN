@@ -1,17 +1,83 @@
 'use client'
 import Link from 'next/link'
 import styles from './user.module.scss'
-import React from "react";
-import useAuth from "@/hooks/use-auth";
+import React, { useState, useEffect } from 'react'
+import useAuth from '@/hooks/use-auth'
 import Sidenav from './_components/Sidenav/page'
 
 export default function UserPage(props) {
-  const { token, user, loading } = useAuth();
+  const { token, user = {}, loading, setUser } = useAuth()
+  const [name, setName] = useState('')
+  const [birthday, setBirthday] = useState('')
+  const [password, setPassword] = useState('')
+  const [updating, setUpdating] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '')
+      setBirthday(user.birthday || '')
+    }
+  }, [user])
 
   if (loading) {
-    return <div className="text-center mt-5">載入中...</div>;
+    return <div className="text-center mt-5">載入中...</div>
   }
 
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/users/${user.account}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      const result = await response.json()
+      if (result.status !== 'success') throw new Error(result.message)
+
+      setUser(result.data) // ✅ 更新本地 user 狀態
+    } catch (error) {
+      console.error('取得最新資料失敗:', error)
+    }
+  }
+
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    setUpdating(true)
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/users/${user.account}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name,
+            password: password || undefined, // 不傳遞空密碼
+            birthday,
+            head: user.head,
+          }),
+        }
+      )
+
+      const result = await response.json()
+      if (result.status !== 'success') throw new Error(result.message)
+
+      alert('更新成功！')
+      await fetchUserData() // ✅ 更新本地狀態
+    } catch (error) {
+      console.error('更新失敗:', error)
+      alert('更新失敗，請稍後再試')
+    } finally {
+      setUpdating(false)
+    }
+  }
   return (
     <div>
       <div className={`container py-4`}>
@@ -40,12 +106,14 @@ export default function UserPage(props) {
               {/* 個人資料表單 */}
               <div className="col-lg-7 mb-4">
                 <div className={styles.customCard}>
-                  <form>
+                  <form onSubmit={handleUpdate}>
                     <div className="d-flex flex-column align-items-center ">
                       <div className="avatar-container mb-3">
                         <img
                           id="avatar"
-                          src="/images/user/1.jpg"
+                          src={
+                            user.head ? user.head : '/images/user/default.jpg'
+                          } // 預設圖片
                           alt="大頭貼"
                           className={styles.avatar}
                         />
@@ -65,7 +133,7 @@ export default function UserPage(props) {
                         type="email"
                         className={`form-control ${styles.customInput}`}
                         disabled
-                        value={user?.mail || ""}
+                        value={user?.mail || ''}
                         readOnly
                       />
                     </div>
@@ -74,8 +142,9 @@ export default function UserPage(props) {
                       <input
                         type="text"
                         className={`form-control ${styles.customInput}`}
-                        value={user?.name || ""}
-                        onChange={(e) => setUser({ ...user, name: e.target.value })}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
                       />
                     </div>
                     <div className="mb-3">
@@ -84,19 +153,25 @@ export default function UserPage(props) {
                         type="text"
                         className={`form-control ${styles.customInput}`}
                         disabled
-                        value={user?.nickname || ""}
+                        value={user?.nickname || ''}
                         readOnly
                       />
                     </div>
-                    
+
                     <div className="mb-3">
                       <label className="form-label">出生日期</label>
                       <input
                         type="date"
+                        value={birthday}
+                        onChange={(e) => setBirthday(e.target.value)}
                         className={`form-control ${styles.customInput}`}
                       />
                     </div>
-                    <button type="submit" className={styles.customBtn}>
+                    <button
+                      type="submit"
+                      className={styles.customBtn}
+                      disabled={updating}
+                    >
                       更新我的帳戶
                     </button>
                   </form>
