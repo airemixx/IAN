@@ -18,7 +18,8 @@ export default function cartPageTwo() {
   const cartLession = []
   const cartRent = []
   
-  let test = cartItems.slItem
+  let test = cartItems
+  console.log(test);
   Object.values(test).map(v =>{
     switch(v.type){
       case 'product': 
@@ -37,32 +38,34 @@ export default function cartPageTwo() {
     <div className="container j-bodyHeight">
       <div className="j-heightspace"></div>
       <div className="row d-flex justify-content-center pt-2">
-        <div className="j-shoppingCartBox justify-content-between mt-4 me-xxl-2 col-sm-12 col-md-9 col-lg-7 col-xl-6 col-xxl-6">
+        <div className="j-shoppingCartBox justify-content-between mt-4 me-xxl-2 col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-6">
           <div className="j-cartItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
             <div className="mt-2 mb-5 j-itemBox">
-              <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">相機</h3>
+              {cartProduct.length !=0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">相機</h3> : ''}
               {cartProduct.map((item, index) => (
                 <div
-                    className={`j-input-box -flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`} 
+                    className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`} 
                     key={index}>
-                  <CartItem key={index} id={index + 1} itemData={item} />
+                  <CartItem key={index} id={index} itemData={item} page={2}/>
                 </div>
               ))}
             </div>
 
             <div className="mt-2 mb-5 j-itemBox">
-              <h3 className="mb-1 ms-3 pt-2">課程</h3>
+              {cartLession.length !=0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">課程</h3> : ''}
               {cartLession.map((lession, index) => (
-                <div key={index}>
+                <div key={index}
+                className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}>
                   <LessonItem key={index} lessionitem={lession} />
                 </div>
               ))}
             </div>
 
             <div className="mt-2 j-itemBox">
-              <h3 className="mb-1 ms-3 pt-2">租借</h3>
+              {cartRent.length !=0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">租借</h3> : ''}
               {cartRent.map((rental, index) => (
-                <div key={index}>
+                <div key={index}
+                className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}>
                   <RentItem key={index} rentalitem={rental} />
                 </div>
               ))}

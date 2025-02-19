@@ -101,10 +101,15 @@ router.get("/", async (req, res) => {
         p.brand_id, 
         p.category_id, 
         p.subcategory_id, 
-        b.brand_name AS brand_name,  
+        b.brand_name AS brand_name,
+        s.camera_format, 
+        s.release_date,
+        s.waterproof_level,
+        s.image_stabilization,  
         CONCAT('/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image_url
       FROM product p
       LEFT JOIN brand b ON p.brand_id = b.brand_id
+      LEFT JOIN spec s ON p.id = s.product_id
       LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
       ${whereClause}
       ${orderByClause}  -- ✅ 確保正確排序
