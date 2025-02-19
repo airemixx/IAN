@@ -7,8 +7,8 @@ import styles from "./product-pagination.module.scss";
 export default function Pagination({ totalProducts, currentPage, setCurrentPage }) {
   const itemsPerPage = 12;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
-  const handlePageChange = (page, event) => {
-    event.preventDefault(); // ✅ 
+
+  const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
@@ -16,8 +16,8 @@ export default function Pagination({ totalProducts, currentPage, setCurrentPage 
 
   const generatePageNumbers = () => {
     const pages = [];
-    const maxPageButtons = 5;
-    
+    const maxPageButtons = window.innerWidth <= 391 ? 3 : 5; // ✅ 手機板顯示較少頁碼
+
     if (totalPages <= maxPageButtons) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
@@ -26,7 +26,7 @@ export default function Pagination({ totalProducts, currentPage, setCurrentPage 
       pages.push(1);
 
       if (currentPage > 3) {
-        pages.push("....");
+        pages.push("...");
       }
 
       let startPage = Math.max(2, currentPage - 1);
@@ -37,7 +37,7 @@ export default function Pagination({ totalProducts, currentPage, setCurrentPage 
       }
 
       if (currentPage < totalPages - 2) {
-        pages.push("....");
+        pages.push("...");
       }
 
       pages.push(totalPages);
@@ -47,50 +47,48 @@ export default function Pagination({ totalProducts, currentPage, setCurrentPage 
   };
 
   return (
-    <nav aria-label="Page navigation example ">
-     <ul className={`pagination d-flex justify-content-center w-100 ${styles.pagination}`}>
+    <div className={`d-flex justify-content-center ${styles.paginationContainer}`}>
+      <ul className={`pagination ${styles.pagination}`}>
 
         {/* 上一頁按鈕 */}
         <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <a
+          <button
             className={`page-link ${styles["page-link"]}`}
-            href="#"
-            aria-label="Previous"
-            onClick={(e) => handlePageChange(currentPage - 1, e)}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
           >
-            <span aria-hidden="true">«</span>
-          </a>
+            «
+          </button>
         </li>
 
+        {/* 產生頁碼 */}
         {generatePageNumbers().map((page, index) => (
           <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
             {page === "..." ? (
-              <span className="page-link">...</span>
+              <span className={`page-link ${styles["page-link"]}`}>...</span>
             ) : (
-              <a
+              <button
                 className={`page-link ${styles["page-link"]}`}
-                href="#"
-                onClick={(e) => handlePageChange(page, e)}
+                onClick={() => handlePageChange(page)}
               >
                 {page}
-              </a>
+              </button>
             )}
           </li>
         ))}
 
         {/* 下一頁按鈕 */}
         <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-          <a
+          <button
             className={`page-link ${styles["page-link"]}`}
-            href="#"
-            aria-label="Next"
-            onClick={(e) => handlePageChange(currentPage + 1, e)}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
           >
-            <span aria-hidden="true">»</span>
-          </a>
+            »
+          </button>
         </li>
+
       </ul>
-    </nav>
-    
+    </div>
   );
 }

@@ -21,6 +21,7 @@ export default function UserPage() {
         const decodedUser = jwtDecode(savedToken);
         setToken(savedToken);
         setUser(decodedUser);
+        router.push("/user");
       } catch (error) {
         console.error("Token 解碼失敗", error);
         localStorage.removeItem(appKey);
@@ -57,28 +58,6 @@ export default function UserPage() {
       } else {
         router.push("/user"); // 其他使用者導回主頁
       }
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
-    }
-  };
-
-  // 登出處理
-  const handleLogout = async () => {
-    const API = "http://localhost:8000/api/users/logout";
-    if (!token) return;
-
-    try {
-      const res = await fetch(API, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const result = await res.json();
-      if (result.status !== "success") throw new Error(result.message);
-
-      localStorage.removeItem(appKey);
-      setToken(null);
-      setUser(null);
     } catch (err) {
       console.error(err);
       alert(err.message);

@@ -1,15 +1,14 @@
 /* 確保 `carousel` 在 header 之下 */
 @media (max-width: 391px) {
-    .carousel {
-      padding-top: 80px;
-    }
+  .carousel {
+    padding-top: 80px;
+  }
 
   .carouselPrev {
     padding-top: 60px;
   }
-  
+
   .carouselNext {
     padding-top: 60px;
   }
-  }
-  
+}

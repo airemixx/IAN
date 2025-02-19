@@ -14,87 +14,26 @@ export default function cartPageThree() {
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
-
-  const cartItems = [
-    {
-      type: 'product',
-      image: '../images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM',
-      model: 'X-T5 16-50mm',
-      price: 'NT$67000',
-      specs: [
-        {
-          title: '影像規格 IMAGE SPECIFICATIONS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '觀景器 VIEWFINDER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '資料存取 DATA TRANSFER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '機身資料 PHYSICAL SPECIFICATIONS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '其它資料 OTHERS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        // 其他規格...
-      ],
-    },
-    // 其他商品...
-  ]
-
-  const cartLession = [
-    {
-      type: 'lession',
-      image: '/images/shopping-cart-image/lesson1.png',
-      title: '旅行攝影：按下快門，用攝影書寫故事',
-      instructor: '食癮，拾影',
-      rating: '4.2',
-      price: 'NT$ 2,180',
-    },
-  ]
-
-  const cartRent = [
-    {
-      type: 'rent',
-      image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM 富士',
-      model: 'X-T5 16-50mm',
-      rentDate: '2024-01-01',
-      dueDate: '2024-01-14',
-    },
-  ]
+  const cartItems = JSON.parse(localStorage.getItem("cartItems"))
+  
+  const cartProduct = []
+  const cartLession = []
+  const cartRent = []
+  
+  let test = cartItems
+  Object.values(test).map(v =>{
+    switch(v.type){
+      case 'product': 
+        cartProduct.push(v);
+        break;
+      case 'lession' :
+        cartLession.push(v);
+        break;
+      case 'rent' :
+        cartRent.push(v);
+        break;
+    }
+  })
   return (
     <div className="container j-bodyHeight">
     <div className=""></div>
@@ -102,9 +41,11 @@ export default function cartPageThree() {
         <div className="j-shoppingCartBox justify-content-center col-12 col-sm-10 col-md-10 col-lg-8 col-xl-6 col-xxl-6 mt-5">
           <div className="j-cartItemsBox d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3">
             <div className='mt-2 mb-sm-5 j-itemBox'>
-              <h3 className='mb-1 ms-3 pt-2'>相機</h3>
-              {cartItems.map((item, index) => (
-                <div key={index+1}>
+              <h3 className='j-cartTitle mb-0 ps-3 pt-2 pb-2'>相機</h3>
+              {cartProduct.map((item, index) => (
+                <div 
+                className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}
+                key={index}>
                   <CartItem key={index} id={index + 1} itemData={item} />
                 </div>
               ))}
@@ -113,7 +54,7 @@ export default function cartPageThree() {
             <div className='mb-sm-5 j-itemBox'>
               <h3 className='mb-1 ms-3 pt-2'>課程</h3>
               {cartLession.map((lession, index) => (
-                <div key={index+1}>
+                <div key={index}>
                   <LessonItem key={index} lessionitem={lession} />
                 </div>
               ))}
@@ -122,7 +63,7 @@ export default function cartPageThree() {
             <div className='j-itemBox'>
               <h3 className='mb-1 ms-3 pt-2'>租借</h3>
               {cartRent.map((rental, index) => (
-                <div key={index+1}>
+                <div key={index}>
                   <RentItem key={index} rentalitem={rental} />
                 </div>
               ))}
@@ -131,7 +72,7 @@ export default function cartPageThree() {
           <div className="j-cartItemsBox d-sm-none d-block p-0 d-flex flex-grow-1 flex-column">
             <div className='mt-2 mb-5 j-itemBox'>
               <h3 className='mb-1 ms-3 pt-2'>相機</h3>
-              {cartItems.map((item, index) => (
+              {cartProduct.map((item, index) => (
                 <div key={index+1}>
                   <CartItem key={index} id={index + 1} itemData={item} />
                 </div>

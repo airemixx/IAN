@@ -1,3 +1,20 @@
+/* 📌 放大鏡效果 */
+.zoomLens {
+  position: absolute;
+  width: 150px; /* 放大鏡大小 */
+  height: 150px;
+  border: 2px solid #ccc;
+  background-repeat: no-repeat;
+  background-size: 200%; /* 設定圖片放大比例 */
+  pointer-events: none; /* 不影響滑鼠操作 */
+  display: none; /* 預設隱藏 */
+}
+
+/* 📌 當滑鼠移動時顯示放大鏡 */
+.mainImageContainer:hover .zoomLens {
+  display: block;
+}
+
 .mainImageContainer {  /* ✅ 改成駝峰命名 */
   position: relative;
   display: flex;

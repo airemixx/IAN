@@ -10,122 +10,35 @@ import RentItem from '../_components/rental-item/page'
 import { useEffect, useState, useRef } from 'react'
 
 export default function cartPageOne() {
-  const cartItems = [
-    {
+  useEffect(() => {
+    require('bootstrap/dist/js/bootstrap.bundle.min.js')
+  }, [])
+  const cartStorage = JSON.parse(localStorage.getItem("cart"))
+  
+  const cartproduct = []
+  Object.values(cartStorage).map((v,i) => {
+    cartproduct.push({
       type: 'product',
-      id: 1,
+      id: i,
       image: '../images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM',
-      model: 'X-T5 16-50mm',
-      price: 'NT$67000',
+      brand: v.brand_name,
+      model: v.name,
+      price: v.price,
+      quantity: v.quantity,
       specs: [
         {
-          title: '影像規格 IMAGE SPECIFICATIONS',
+          title: '可用規格 SPECIFICATIONS',
           details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '觀景器 VIEWFINDER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '資料存取 DATA TRANSFER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '機身資料 PHYSICAL SPECIFICATIONS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '其它資料 OTHERS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        // 其他規格...
-      ],
-    },
-    {
-      type: 'product',
-      id: 2,
-      image: '../images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM',
-      model: 'X-T5 16-50mm',
-      price: 'NT$67000',
-      specs: [
-        {
-          title: '影像規格 IMAGE SPECIFICATIONS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '觀景器 VIEWFINDER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '資料存取 DATA TRANSFER',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '機身資料 PHYSICAL SPECIFICATIONS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        {
-          title: '其它資料 OTHERS',
-          details: [
-            { label: '有效像素', value: '2550 萬像素' },
-            { label: '感光元件像素', value: '2420 萬像素' },
-            { label: '感光元件格式', value: 'APS-C' },
-            { label: '感光元件大小', value: '22.3 x 14.9mm' },
-          ],
-        },
-        // 其他規格...
-      ],
-    },
-    // 其他商品...
-  ]
-
+            { label: 'camera_format', value: v.camera_format },
+            { label: 'image_stabilization', value: v.image_stabilization },
+            { label: 'release_date', value: v.release_date },
+            { label: 'waterproof_level', value: v.waterproof_level }
+          ]
+        }
+      ]
+    })
+  })
+  
   const cartLession = [
     {
       type: 'lession',
@@ -168,14 +81,12 @@ export default function cartPageOne() {
     },
   ]
 
-  useEffect(() => {
-    require('bootstrap/dist/js/bootstrap.bundle.min.js')
-  }, [])
+  
   
   const [checkAll, setCheckAll] = useState(false)
   const [checkedItems, setCheckedItems] = useState({})
   const [slItems, setSltems] = useState([])
-  const allItems = [...cartItems, ...cartLession, ...cartRent]
+  const allItems = [...cartproduct, ...cartLession, ...cartRent]
   const [selectedItems, setSelectedItems] = useState([]) // 用來存放選中的項目
  
   // 全選或取消全選
@@ -213,19 +124,10 @@ export default function cartPageOne() {
     setCheckAll(newSelects.length === allItems.length)
   }
   
-  // test()
-  // async function test(){
-  //   let api = "http://localhost:8000/api/cart";
-  //   const res =await fetch(api,{
-  //     method: "GET"
-  //   });
-  //   const result =await res.json();
-  //   console.log(result);
-  // }
   return (
     <>
       <div className="container j-bodyHeight">
-        <CartTitle count={cartItems.length} />
+        <CartTitle count={cartproduct.length} />
         <div className="row d-flex justify-content-center">
           <div className="j-shoppingCartBox justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-6 p-0">
             <div className="j-cartItemsBox d-none d-sm-block p-0">
@@ -241,7 +143,7 @@ export default function cartPageOne() {
               </div>
               <div className="mt-2 mb-5">
                 <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">相機</h3>
-                {cartItems.map((item, index) => (
+                {cartproduct.map((item, index) => (
                   <div
                     className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}
                     key={index}
@@ -257,7 +159,7 @@ export default function cartPageOne() {
                       htmlFor={`cartItem-${index}`}
                       className="ms-2 d-flex flex-grow-1"
                     >
-                      <CartItem key={index} id={index} itemData={item} />
+                      <CartItem key={index} id={index} itemData={item} page={1}/>
                     </label>
                   </div>
                 ))}
@@ -265,7 +167,7 @@ export default function cartPageOne() {
               <div className="mt-2 mb-5">
                 <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">課程</h3>
                 {cartLession.map((lession, index) => {
-                  const lessonIndex = index + cartItems.length
+                  const lessonIndex = index + cartproduct.length
                   return (
                     <div
                       className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}
@@ -292,7 +194,7 @@ export default function cartPageOne() {
                 <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">租借</h3>
                 {cartRent.map((rental, index) => {
                   const rentalIndex =
-                    index + cartItems.length + cartLession.length
+                    index + cartproduct.length + cartLession.length
                   return (
                     <div
                       className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}
@@ -328,7 +230,7 @@ export default function cartPageOne() {
               </div>
               <div className="mt-2 mb-5 j-itemBox">
                 <h3 className="mb-1 ms-3 pt-2">相機</h3>
-                {cartItems.map((item, index) => (
+                {cartproduct.map((item, index) => (
                   <div
                     className="j-input-box d-flex align-items-center"
                     key={index + 1}
