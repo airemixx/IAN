@@ -1,48 +1,57 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
+import Swal from "sweetalert2"; // ✅ 引入 SweetAlert2
 import styles from "./favorite-button.module.scss";
 
 export default function FavoriteButton({ productId }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const token = typeof window !== "undefined" ? localStorage.getItem("loginWithToken") : null;
 
+  // ✅ 1️⃣ 當畫面載入時，確認是否已收藏
   useEffect(() => {
-    if (!token) {
-      console.error("❌ 未登入，無法獲取收藏");
-      return;
-    }
+    if (!token) return;
 
-    async function fetchFavorites() {
+    const checkFavoriteStatus = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/collection", {
-          method: "POST",
+        const res = await fetch(`http://localhost:8000/api/product/collection/${productId}`, {
+          method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`, // ✅ 加入 Token
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
-        if (!res.ok) throw new Error("無法獲取收藏清單");
-        const data = await res.json();
-        setIsFavorite(data.some((item) => item.product_id === productId));
-      } catch (error) {
-        console.error("❌ 獲取收藏清單失敗:", error);
-      }
-    }
+        if (!res.ok) throw new Error("無法取得收藏狀態");
 
-    fetchFavorites();
+        const data = await res.json();
+        setIsFavorite(data.isFavorite); // ✅ 設定為 true or false
+      } catch (error) {
+        console.error("❌ 無法確認收藏狀態:", error);
+      }
+    };
+
+    checkFavoriteStatus();
   }, [productId, token]);
 
   const toggleFavorite = async () => {
     if (!token) {
-      alert("請先登入！");
+      Swal.fire({
+        icon: "warning",
+        title: "請先登入",
+        text: "您需要登入後才能收藏商品",
+        confirmButtonText: "前往登入",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/login"; // ✅ 按 OK 後導向登入頁面
+        }
+      });
       return;
     }
 
     try {
       const method = isFavorite ? "DELETE" : "POST";
-      const res = await fetch("http://localhost:8000/api/collection", {
+      const res = await fetch("http://localhost:8000/api/product/collection", {
         method,
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -51,10 +60,38 @@ export default function FavoriteButton({ productId }) {
         body: JSON.stringify({ product_id: productId }),
       });
 
-      if (!res.ok) throw new Error("操作收藏失敗");
-      setIsFavorite(!isFavorite);
+      if (!res.ok) {
+        const errorText = await res.text();
+        if (errorText.startsWith("<!DOCTYPE html>")) {
+          throw new Error("伺服器錯誤或 API 連結錯誤，請檢查後端");
+        }
+
+        let errorJson;
+        try {
+          errorJson = JSON.parse(errorText);
+        } catch {
+          throw new Error("API 回應格式錯誤");
+        }
+      }
+
+      // ✅ 收藏或取消收藏成功
+      setIsFavorite((prev) => !prev);
+
+      Swal.fire({
+        icon: "success",
+        title: isFavorite ? "已取消收藏" : "成功加入收藏",
+        text: isFavorite ? "商品已從收藏列表移除" : "商品已加入您的收藏",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
     } catch (error) {
       console.error("❌ 收藏錯誤:", error);
+      Swal.fire({
+        icon: "error",
+        title: "操作失敗",
+        text: error.message || "發生錯誤，請稍後再試",
+      });
     }
   };
 

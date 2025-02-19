@@ -85,17 +85,26 @@ export default function FilterSidebar({ onFilterChange }) {
   // 🔹 處理 Checkbox 變更
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
-    const updatedFilters = { ...selectedFilters };
-
-    if (checked) {
-      updatedFilters[name] = [...updatedFilters[name], value];
-    } else {
-      updatedFilters[name] = updatedFilters[name].filter((item) => item !== value);
-    }
-
-    setSelectedFilters(updatedFilters);
-    onFilterChange(updatedFilters);
+  
+    setSelectedFilters((prevFilters) => {
+      const updatedFilters = { ...prevFilters };
+  
+      if (checked) {
+        updatedFilters[name] = [...updatedFilters[name], value];
+      } else {
+        updatedFilters[name] = updatedFilters[name].filter((item) => item !== value);
+      }
+  
+      return updatedFilters;
+    });
   };
+  
+  // ✅ 确保 `onFilterChange` 只在 `selectedFilters` 更新后执行
+  useEffect(() => {
+    onFilterChange(selectedFilters);
+  }, [selectedFilters]);
+  
+  
 
   const handlePriceChange = (e) => {
     const { name, value } = e.target;

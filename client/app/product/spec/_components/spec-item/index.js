@@ -2,6 +2,7 @@
 import React from "react";
 import { useCompare } from "@/app/product/_context/CompareContext";
 import Link from "next/link"; // ✅ 引入 Link
+import CartButton from "../cart-button"; // ✅ 確保是相對路徑
 
 import styles from "./spec-item.module.scss";
 
@@ -22,7 +23,7 @@ export default function ComponentsCompareItem() {
             <img src={product.image_url} alt={product.name} />
             <h5>{product.name}</h5>
             <p>NT${product.price.toLocaleString()}</p>
-            <button className={`btn ${styles.buy}`}>加入購物車</button>
+            <CartButton product={product} />
             <button className={`btn btn-link btn-sm ${styles.remove}`} onClick={() => removeFromCompare(product.id)}>
               移除
             </button>
@@ -30,9 +31,9 @@ export default function ComponentsCompareItem() {
         ))}
         {compareList.length < 3 &&
           Array.from({ length: 3 - compareList.length }).map((_, index) => (
-            <div key={`empty-${index}`} className={`${styles.productBox} ${styles.emptyBox}`}>
+            <Link href="/product" key={`empty-${index}`} className={`${styles.productBox} ${styles.emptyBox}`}>
               + 添加商品
-            </div>
+            </Link>
           ))}
       </div>
     </div>

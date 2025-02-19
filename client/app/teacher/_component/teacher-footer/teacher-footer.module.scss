@@ -1,0 +1,19 @@
+.copyright-right-div {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .copyright-right-div a {
+    color: var(--black);
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 0.9rem;
+  }
+  .copyright-text {
+    margin: 0 10px;
+    font-size: 0.8rem;
+  }

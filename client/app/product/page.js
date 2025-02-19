@@ -40,12 +40,9 @@ export default function ProductPage() {
           <div className="col-md-3">
             <FilterSidebar onFilterChange={handleFilterChange} selectedFilters={filters} />
           </div>
-          <div className="col-md-9">
+          <div className="col-md-9 mb-5">
             <FilterSortBar onBrandSelect={handleBrandSelect} onSortChange={handleSortChange} />
             <ProductList filters={filters} />
-            <div className="d-flex justify-content-center mt-5 mb-5">
-              
-            </div>
           </div>
         </div>
       </div>

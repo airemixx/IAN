@@ -62,7 +62,7 @@ export default function CompareButton({ product, isHovered }) {
         {/* ✅ 將勾勾放到圖片的右上角 */}
         <FontAwesomeIcon icon={isInCompareList ? faCheck : faCamera} className={styles.icon} />
       </div>
-      <p className={styles.iconText}>{isInCompareList ? "已加入" : "比較"}</p>
+      <p className={styles.iconText}>{isInCompareList ? "加入" : "比較"}</p>
     </div>
   );
 }
