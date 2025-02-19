@@ -284,6 +284,22 @@ router.post('/related', cors(corsOptions), async (req, res) => {
   }
 })
 
+router.post('/like', async (req, res) => {
+  const { articleId, likeCount } = req.body
+  try {
+    const [result] = await pool.query(
+      'UPDATE article SET like_count = ? WHERE id = ?',
+      [likeCount, articleId]
+    )
+    // 可印出 result 來檢查影響的列數
+    console.log('Update result:', result)
+    res.status(200).json({ status: 'success', likeCount })
+  } catch (err) {
+    console.error('Error updating like count:', err)
+    res.status(500).json({ status: 'error', message: err.message })
+  }
+})
+
 // 新增文章
 router.post('/', async (req, res) => {
   const { category, title, subtitle, content, image_path, hashtags } = req.body

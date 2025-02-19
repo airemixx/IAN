@@ -17,6 +17,7 @@ import rentalRouter from './routes//rental.js'
 import cartRouter from './routes/cart.js'
 import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
+import likesRouter from './routes/likes.js'
 import users from './routes/users.js'
 
 // 讀取 .env 設定
@@ -62,6 +63,7 @@ app.use('/api/cart', cartRouter)
 
 app.use('/api/articles', articleRoutes)
 app.use('/api/comments', commentsRouter)
+app.use('/api/likes', likesRouter)
 
 app.use('/api/users', users)
 
