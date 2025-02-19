@@ -105,20 +105,20 @@ export default function ProductSpecs({ introduce, specs = [] }) {
                         className="accordion-button collapsed"
                         type="button"
                         data-bs-toggle="collapse"
-                        data-bs-target={`#waterproof-level-${index}`}
+                        data-bs-target={`#white_balance_settings-${index}`}
                         aria-expanded="false"
-                        aria-controls={`waterproof-level-${index}`}
+                        aria-controls={`white_balance_settings-${index}`}
                       >
-                        防水等級
+                        白平衡設定
                       </button>
                     </h2>
                     <div
-                      id={`waterproof-level-${index}`}
+                      id={`white_balance_settings-${index}`}
                       className="accordion-collapse collapse"
                       data-bs-parent="#specAccordion"
                     >
                       <div className="accordion-body">
-                        <p>{spec.waterproof_level || "無資料"}</p>
+                        <p>{spec.white_balance_settings || "無資料"}</p>
                       </div>
                     </div>
                   </div>

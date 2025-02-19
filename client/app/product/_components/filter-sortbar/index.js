@@ -4,7 +4,7 @@ import styles from "./filter-sortbar.module.scss";
 import Link from "next/link"; // ✅ 確保引入 Link
 import { useCompare } from "@/app/product/_context/CompareContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera, faCheck } from "@fortawesome/free-solid-svg-icons"; 
+import { faCamera, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 export default function FilterSortBar({ onBrandSelect, onSortChange }) {
   const [selectedBrand, setSelectedBrand] = useState("所有品牌");
@@ -79,11 +79,11 @@ export default function FilterSortBar({ onBrandSelect, onSortChange }) {
         {/* 🔹 顯示比較數量 */}
         {/* 🔹 只有當 `compareList` 不為空時才顯示數字 */}
         <Link href="/product/spec" passHref>
-  <button className={`btn ${styles.compareButton}`}>
-    <FontAwesomeIcon icon={faCamera} size="lg" />
-    {compareList.length > 0 && <span>{compareList.length}</span>}
-  </button>
-</Link>
+          <button className={`btn ${styles.compareButton}`}>
+            <FontAwesomeIcon icon={faCamera} size="lg" />
+            {compareList.length > 0 && <span>{compareList.length}</span>}
+          </button>
+        </Link>
         <div className={styles.sortContainer}>
           <select className="form-select" value={selectedSort} onChange={sortChange}>
             <option value="">排序</option>

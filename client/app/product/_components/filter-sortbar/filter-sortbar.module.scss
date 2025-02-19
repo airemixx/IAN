@@ -1,12 +1,37 @@
-/* 📌 按鈕樣式 */
-.btnOutlineSecondary {
-  border-radius: 30px;
-  padding: 6px 20px;
-  font-size: 14px;
-  margin-bottom: 20px;
-  border: 1px solid #6c757d;
-  color: #6c757d;
-  background-color: transparent;
+/* 📌 按鈕進場動畫 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 📌 下拉選單滑入動畫 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📌 比較按鈕縮放動畫 */
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .btnOutlineSecondary {
@@ -17,8 +42,8 @@
   border: 1px solid #6c757d;
   color: #6c757d;
   background-color: transparent;
+  animation: fadeIn 0.5s ease-in-out;
 
- 
   &.active {
     background-color: #1b3846 !important;
     color: white !important;
@@ -33,22 +58,22 @@
 
 /* 📌 讓比較按鈕變成圓形 */
 .compareButton {
-  width: 40px;  /* 設定寬度 */
-  height: 40px; /* 設定高度 */
-  border-radius: 50%; /* 讓它變成圓形 */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
-  align-items: center; /* 垂直置中 */
-  justify-content: center; /* 水平置中 */
-  // background-color: #1b3846; /* 設定按鈕顏色 */
+  align-items: center;
+  justify-content: center;
   color: #1b3846;
   border: none;
   transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+  animation: scaleIn 0.5s ease-in-out;
 
   /* 🔹 滑鼠懸停時變化 */
   &:hover {
-    // background-color: #1b3846;
     transform: scale(1.1);
     color: #1b3846;
+    transition: transform 0.2s ease-in-out;
   }
 
   /* 🔹 點擊時的效果 */
@@ -58,26 +83,25 @@
 
   /* 🔹 讓數字計數顯示在右上角 */
   position: relative;
-  
+
   span {
     position: absolute;
     top: 0px;
     right: -5px;
-    // background: red;
-    color: #1b3846;
+    color: #e58e41;
     width: 18px;
     height: 18px;
-    // border-radius: 50%;
     font-size: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: bold;
   }
 }
 
-
 .sortContainer {
   width: 120px;
+  animation: slideDown 0.5s ease-in-out;
   select {
     width: 100%;
     border: none;
@@ -87,10 +111,9 @@
     padding: 10px;
     box-shadow: none;
     background-color: #ffffff00;
-    appearance: none; /* ✅ 移除瀏覽器預設樣式 */
+    appearance: none;
   }
 
-  /* ✅ 移除 `focus` 時的藍色框框 */
   select:focus {
     border-color: #1b3846 !important;
     box-shadow: none !important;
@@ -100,7 +123,17 @@
 
 /* 📌 響應式設計 */
 @media (max-width: 391px) {
-  
+  .btnOutlineSecondary {
+    font-size: 14px;
+    padding: 4px 10px;
+    margin-bottom: 10px;
+  }
+
+  /* 🔹 隱藏比較按鈕 & 排序選單 */
+  .compareButton {
+    top: -30px;
+  }
+
   .sortContainer {
     display: none;
   }

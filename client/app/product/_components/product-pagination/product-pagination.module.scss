@@ -32,8 +32,15 @@
 }
 
 @media (max-width: 391px) {
+
   .pagination {
-    justify-content: center;
+    padding-top: 40px;
+  }
+
+  .page-link {
+    font-size: 14px !important; /* ✅ 讓文字變小 */
+    padding: 6px 10px !important;
   }
 }
+
 
