@@ -6,8 +6,28 @@ nav{
  display: none;
 }
 
-.j-itemBox{
+.j-cartTitle{
   background-color: #003150;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  color: #fff;
+}
+
+.j-input-box{
+  background-color: #fff;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.j-nextBox{
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.j-itemBox{
+  background-color: #f6f6f6;
   border-radius: 20px;
   color: #fff;
 }

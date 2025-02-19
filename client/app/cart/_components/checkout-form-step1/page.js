@@ -1,11 +1,24 @@
+
 import styles from "./price-summary.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from "react";
 
-export default function CheckoutFormStep1(slItem) {
-  function handleClick(){
-    localStorage.setItem("cartItems",JSON.stringify(slItem))
+export default function CheckoutFormStep1({slItem}) {
+  const [price, setPrice] = useState(0);
+  const deliverPrice = 150
+  // 計算 totalPrice
+  useEffect(() => {
+    if (slItem && Array.isArray(slItem)) {
+      const itemPrice = slItem.reduce((acc, item) => acc + (item.price || 0), 0) + deliverPrice;
+      setPrice(itemPrice);
+    }
+  }, [slItem]); // 只有當 slItem 變更時才更新 price
+
+  function handleClick() {
+    localStorage.setItem("cartItems", JSON.stringify(slItem));
+    console.log(slItem);
   }
-
+  
   return (
     <div className={`${styles['j-payStep']} col-sm-11 col-md-9 col-lg-4 col-xl-4 mb-5 ms-lg-0 d-flex flex-column align-items-center`}>
       <div className={`${styles['j-pCount']} border-bottom mb-3 d-flex flex-column gap-2`}>
@@ -36,15 +49,15 @@ export default function CheckoutFormStep1(slItem) {
         </div>
         <div className={`${styles['subTotalBox']} d-flex justify-content-between ${styles['j-publicFont']} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles['subTotal']}>小計</div>
-          <div className={styles['subPrice']}>NT$8000</div>
+          <div className={styles['subPrice']}>NT${price}</div>
         </div>
         <div className={`${styles['freightBox']} d-flex justify-content-between ${styles['j-publicFont']} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles['freight']}>運費</div>
-          <div className={styles['freightPrice']}>NT$8000</div>
+          <div className={styles['freightPrice']}>NT${deliverPrice}</div>
         </div>
         <div className={`${styles['totalPriceBox']} d-flex justify-content-between ${styles['j-publicFont']} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles['total']}>總額</div>
-          <div className={styles['totalPrice']}>NT$8000</div>
+          <div className={styles['totalPrice']}>NT${price}</div>
         </div>
       </div>
       <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center align-self-stretch`}>

@@ -56,33 +56,6 @@ export default function TitleShareFontSize({
             <p className="mb-0 y-article-date">{formatDate(createdAt)}</p>
           </div>
         </div>
-        <div className={styles['y-share-icon']}>
-          分享：
-          <a className="mx-sm-1" href="#">
-            <img src="/images/article/fb-icon.svg" alt="Facebook" />
-          </a>
-          <a className="mx-sm-1" href="#">
-            <img src="/images/article/x-twittwr-icon.svg" alt="Twitter" />
-          </a>
-          <a className="mx-sm-1" href="#">
-            <img src="/images/article/link-icon.svg" alt="Link" />
-          </a>
-        </div>
-        <div className={styles['y-share-icon-mb']}>
-          分享：
-          <a className="mx-sm-1" href="#">
-            <img src="/images/article/fb-icon-mb.svg" alt="Facebook Mobile" />
-          </a>
-          <a className="mx-sm-1" href="#">
-            <img
-              src="/images/article/x-twittwr-icon-mb.svg"
-              alt="Twitter Mobile"
-            />
-          </a>
-          <a className="mx-sm-1" href="#">
-            <img src="/images/article/link-icon-mb.svg" alt="Link Mobile" />
-          </a>
-        </div>
       </div>
 
       {/* 主標題 */}
