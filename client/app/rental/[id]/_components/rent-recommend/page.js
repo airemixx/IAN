@@ -11,26 +11,18 @@ const RentPagination = dynamic(() => import('../rent-pagination/page'), {
   ssr: false,
 })
 
-export default function RentRecommend() {
-  const [rentalData, setRentalData] = useState([])
+export default function RentRecommend({ recommendations = [] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [itemsPerPage, setItemsPerPage] = useState(3)
 
   useEffect(() => {
-    fetch('/json/rental/rental-list.json')
-      .then((response) => response.json())
-      .then((data) => setRentalData(data))
-      .catch((error) => console.error('❌ 無法載入商品資料:', error))
-  }, [])
-
-  useEffect(() => {
     const updateItemsPerPage = () => {
       if (window.innerWidth < 768) {
-        setItemsPerPage(1) // sm (小螢幕)
+        setItemsPerPage(1) // 小螢幕
       } else if (window.innerWidth < 992) {
-        setItemsPerPage(2) // md (中螢幕)
+        setItemsPerPage(2) // 中螢幕
       } else {
-        setItemsPerPage(3) // 預設大螢幕
+        setItemsPerPage(3) // 大螢幕
       }
     }
 
@@ -40,7 +32,13 @@ export default function RentRecommend() {
     return () => window.removeEventListener('resize', updateItemsPerPage)
   }, [])
 
-  const visibleItems = rentalData.slice(
+  // 確保 recommendations 存在
+  if (!recommendations || recommendations.length === 0) {
+    return <p className="text-center mt-3">❌ 沒有推薦商品</p>
+  }
+
+  // 計算目前頁面的推薦商品
+  const visibleItems = recommendations.slice(
     currentIndex,
     currentIndex + itemsPerPage
   )
@@ -52,7 +50,7 @@ export default function RentRecommend() {
         <RentPagination
           currentIndex={currentIndex}
           setCurrentIndex={setCurrentIndex}
-          totalItems={rentalData.length}
+          totalItems={recommendations.length}
           itemsPerPage={itemsPerPage}
         />
       </div>

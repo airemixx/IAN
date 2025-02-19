@@ -26,21 +26,21 @@
     background-color: #143146;
     border-color: #143146;
     box-shadow: 0 0 0 0.25rem rgba(35, 66, 90, 0.5);
-  } 
+  }
 }
 
-.accordion-button{
+.accordion-button {
   background-color: #143146 !important;
   color: #fff !important;
   border: none !important;
   box-shadow: none !important;
 }
-.accordion-button::after{ 
+.accordion-button::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 5.646a.5.5 0 0 1 .708 0L8 11.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important;
 }
 
-.accordion-button:not(.collapsed){
-  background-color: #23425A !important;
+.accordion-button:not(.collapsed) {
+  background-color: #23425a !important;
   color: #f6f7f8 !important;
   border: none !important;
   box-shadow: none !important;
@@ -110,12 +110,12 @@ a {
 
 // 分頁
 .page-link {
-  width: 45px;  
+  width: 45px;
   text-align: center;
-  border: none !important;  
-  border-radius: 0 !important;  
-  color: #777676 !important;  
-  border-bottom: 2px solid #777676 !important;  
+  border: none !important;
+  border-radius: 0 !important;
+  color: #777676 !important;
+  border-bottom: 2px solid #777676 !important;
   background-color: transparent !important;
   &:hover,
   &:focus,
@@ -123,8 +123,8 @@ a {
   &:active:focus,
   &:active:hover {
     box-shadow: none;
-    color: #252525 !important;  
-    border-bottom: 2px solid #252525 !important;  
+    color: #252525 !important;
+    border-bottom: 2px solid #252525 !important;
     background-color: transparent !important;
   }
 }
