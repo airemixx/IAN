@@ -11,22 +11,20 @@ import RentReviews from '../rent-reviews/page'
 import RentRecommend from '../rent-recommend/page'
 
 export default function RentDetail() {
-  const { id } = useParams() // ✅ 取得商品 ID
+  const { id } = useParams()
   const [rental, setRental] = useState(null)
+  const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log('前端接收到的 rental:', rental) // ✅ 確保 API 回傳的資料
-  }, [rental])
-
-  useEffect(() => {
-    if (!id) return // 確保 ID 存在
+    if (!id) return
 
     fetch(`http://localhost:8000/api/rental/${id}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
           setRental(data.data)
+          setRecommendations(data.recommendations) // ✅ 取得推薦商品
         } else {
           console.error('商品資料加載失敗:', data.error)
         }
@@ -46,23 +44,27 @@ export default function RentDetail() {
     <div className="container">
       <main>
         <div className="row">
-          {/* Pictur Section */}
           <div className="col-lg-7">
-            <RentPicture images={rental.images} /> {/* ✅ 確保圖片正確傳遞 */}
+            <RentPicture images={rental.images} />
           </div>
 
-          {/* Rental Details */}
           <div className="col-lg-5">
-            <RentTabs rental={rental} /> {/* ✅ 傳遞完整的 rental 資料 */}
-            <RentHashtag hashtags={rental.hashtags} />{' '}
-            {/* ✅ 確保標籤正確傳遞 */}
-            <RentReviews rentalId={rental.id} /> {/* ✅ 傳遞商品 ID */}
+            <h2>
+              {rental.brand || '無資料'} {rental.name || '無資料'}
+            </h2>
+            <p className="fee-text h4 ms-2 mt-2">
+              NT$ {rental.fee ? rental.fee.toLocaleString() : '無資料'}/ 天
+            </p>
+            <RentTabs rental={rental} />
+            <RentHashtag hashtags={rental.hashtags} />
+            <RentReviews rentalId={rental.id} />
           </div>
         </div>
       </main>
-      {/* Recommend */}
+
+      {/* ✅ 直接將推薦商品傳遞到 RentRecommend */}
       <div className="col-lg-12 col-xl-10 mx-auto my-4">
-        <RentRecommend rentalId={rental.id} /> {/* ✅ 傳遞商品 ID */}
+        <RentRecommend recommendations={recommendations} />
       </div>
     </div>
   )
