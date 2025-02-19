@@ -39,14 +39,14 @@ const corsOptions = {
 router.use(cors(corsOptions)); // 使用 cors 中間件
 
 
-router.get("/", async (req, res) => { 
+router.get("/", async (req, res) => {
   try {
     const connection = await pool.getConnection();
-    
+
     // 取得查詢參數
-    const { brand_id, category_id, subcategory_id,min_price, max_price, sort } = req.query;
-    
-    
+    const { brand_id, category_id, subcategory_id, min_price, max_price, sort } = req.query;
+
+
     // 構建 SQL 查詢條件
     let whereClause = "WHERE 1=1";
     const queryParams = [];
@@ -56,42 +56,42 @@ router.get("/", async (req, res) => {
       whereClause += ` AND p.brand_id IN (${brandIds.map(() => "?").join(",")})`;
       queryParams.push(...brandIds);
     }
-    
+
     if (category_id) {
       const categoryIds = category_id.split(",").map(id => Number(id));
       whereClause += ` AND p.category_id IN (${categoryIds.map(() => "?").join(",")})`;
       queryParams.push(...categoryIds);
     }
-    
+
     if (subcategory_id) {
       const subcategoryIds = subcategory_id.split(",").map(id => Number(id));
       whereClause += ` AND p.subcategory_id IN (${subcategoryIds.map(() => "?").join(",")})`;
       queryParams.push(...subcategoryIds);
     }
-    
 
-   // ✅ 確保 `min_price` 和 `max_price` 只有在用戶輸入時才會加入查詢
-   const minPriceNum = min_price ? Number(min_price) : null;
-   const maxPriceNum = max_price ? Number(max_price) : null;
 
-   if (!isNaN(minPriceNum) && minPriceNum !== null) {
-     whereClause += " AND p.price >= ?";
-     queryParams.push(minPriceNum);
-   }
+    // ✅ 確保 `min_price` 和 `max_price` 只有在用戶輸入時才會加入查詢
+    const minPriceNum = min_price ? Number(min_price) : null;
+    const maxPriceNum = max_price ? Number(max_price) : null;
 
-   if (!isNaN(maxPriceNum) && maxPriceNum !== null) {
-     whereClause += " AND p.price <= ?";
-     queryParams.push(maxPriceNum);
-   }
+    if (!isNaN(minPriceNum) && minPriceNum !== null) {
+      whereClause += " AND p.price >= ?";
+      queryParams.push(minPriceNum);
+    }
+
+    if (!isNaN(maxPriceNum) && maxPriceNum !== null) {
+      whereClause += " AND p.price <= ?";
+      queryParams.push(maxPriceNum);
+    }
 
     // ✅ 設定排序條件
-     // ✅ 預設排序為 `id` 升序
-     let orderByClause = "ORDER BY p.id ASC";
-     if (sort === "price_asc") {
-       orderByClause = "ORDER BY p.price ASC";
-     } else if (sort === "price_desc") {
-       orderByClause = "ORDER BY p.price DESC";
-     }
+    // ✅ 預設排序為 `id` 升序
+    let orderByClause = "ORDER BY p.id ASC";
+    if (sort === "price_asc") {
+      orderByClause = "ORDER BY p.price ASC";
+    } else if (sort === "price_desc") {
+      orderByClause = "ORDER BY p.price DESC";
+    }
     // 執行 SQL 查詢
     const [rows] = await connection.query(`
       SELECT 
@@ -120,7 +120,7 @@ router.get("/", async (req, res) => {
     // 🔍 確保 API 回傳了 `image_url`
     console.log("📌 取得的產品資料:", rows);
 
-    res.json(rows); 
+    res.json(rows);
   } catch (error) {
     console.error("獲取商品錯誤:", error);
     res.status(500).json({ error: "無法獲取商品", details: error.message });
@@ -156,16 +156,16 @@ router.get("/ads", async (req, res) => {
   }
 });
 
-router.get("/filters", async (req, res) => { 
+router.get("/filters", async (req, res) => {
   try {
     const connection = await pool.getConnection();
-    
+
     const [brand] = await connection.query(`SELECT brand_id AS id, brand_name AS name FROM brand`);
     const [category] = await connection.query(`SELECT category_id AS id, category_name AS name FROM category`);
     const [subcategory] = await connection.query(`SELECT subcategory_id AS id, name AS name FROM subcategory`);
-    
+
     connection.release();
-    
+
     res.json({
       brand,
       category,
@@ -185,7 +185,7 @@ router.get("/brand", async (req, res) => {
 
     connection.release();
 
-    res.json(brand); 
+    res.json(brand);
   } catch (error) {
     console.error("取得品牌時發生錯誤:", error);
     res.status(500).json({ error: "伺服器錯誤", details: error.message });
@@ -225,17 +225,18 @@ router.get("/:id", async (req, res) => {
       [id]
     );
 
-      // ✅ 3️⃣ 單獨查詢 `specs`
-      const [specs] = await connection.query(
-        `SELECT 
+    // ✅ 3️⃣ 單獨查詢 `specs`
+    const [specs] = await connection.query(
+      `SELECT 
            camera_format, 
            release_date,
            waterproof_level,
-          image_stabilization
+          image_stabilization,
+          white_balance_settings
          FROM spec
          WHERE product_id = ?`,
-        [id]
-      );
+      [id]
+    );
 
     connection.release();
 
@@ -290,13 +291,13 @@ router.get("/spec/:id", async (req, res) => {
     connection.release(); // ✅ 釋放連線
 
     if (!rows || rows.length === 0) {
-      return res.status(404).json({ error: `❌ 找不到 product_id = ${id} 的規格` });
+      return res.status(404).json({ error: `找不到 product_id = ${id} 的規格` });
     }
 
     res.json(rows[0]); // ✅ 回傳第一筆規格數據
   } catch (error) {
-    console.error("❌ 伺服器錯誤:", error);
-    res.status(500).json({ error: "❌ 伺服器錯誤，請檢查 API" });
+    console.error("伺服器錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤，請檢查 API" });
   }
 });
 
@@ -305,7 +306,7 @@ const authenticateUser = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    console.error("❌ 錯誤: 缺少 Token");
+    console.error("錯誤: 缺少 Token");
     return res.status(401).json({ error: "未授權，請先登入" });
   }
 
@@ -321,7 +322,7 @@ const authenticateUser = (req, res, next) => {
   }
 };
 
-// ✅ 加入收藏
+// 加入收藏
 router.post("/collection", authenticateUser, async (req, res) => {
   try {
     const { product_id } = req.body;
@@ -346,7 +347,7 @@ router.post("/collection", authenticateUser, async (req, res) => {
       "INSERT INTO collection (user_id, product_id) VALUES (?, ?)",
       [user_id, product_id]
     );
-    
+
     console.log("收藏成功:", result);
     res.json({ message: "成功加入收藏", data: result });
   } catch (error) {
@@ -355,7 +356,7 @@ router.post("/collection", authenticateUser, async (req, res) => {
   }
 });
 
-// ✅ 確保 DELETE 請求能夠正確刪除收藏
+// 確保 DELETE 請求能夠正確刪除收藏
 router.delete("/collection", authenticateUser, async (req, res) => {
   try {
     const { product_id } = req.body;
@@ -381,9 +382,27 @@ router.delete("/collection", authenticateUser, async (req, res) => {
     res.json({ message: "成功取消收藏" });
 
   } catch (error) {
-    console.error("❌ 刪除收藏失敗:", error);
+    console.error("刪除收藏失敗:", error);
     res.status(500).json({ error: "伺服器錯誤" });
   }
 });
+
+router.get("/collection/:productId", authenticateUser, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.id;
+
+    const [result] = await pool.query(
+      "SELECT * FROM collection WHERE user_id = ? AND product_id = ?",
+      [userId, productId]
+    );
+
+    res.json({ isFavorite: result.length > 0 });
+  } catch (error) {
+    console.error("獲取收藏狀態失敗:", error);
+    res.status(500).json({ error: "伺服器錯誤" });
+  }
+});
+
 
 export default router; 

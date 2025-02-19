@@ -61,17 +61,11 @@ export default function ProductList({ filters, sort }) {
           <p className={styles.noProductText}>目前沒有商品</p>
         )}
       </div>
-
-      {/* ✅ 只有當 `totalPages > 1` 才顯示 Pagination */}
-      {/* ✅ 包裹 Pagination 讓它能在小螢幕正確顯示 */}
-{totalPages > 1 && (
-  <div className="container">
-    <div className="d-flex justify-content-center mt-4">
-      <Pagination totalProducts={products.length} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-    </div>
-  </div>
-)}
-
+      {totalPages > 1 && (
+        <div className={`container ${styles.container}`}>
+            <Pagination totalProducts={products.length} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        </div>
+      )}
     </div>
   );
 }

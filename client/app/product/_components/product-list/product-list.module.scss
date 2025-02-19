@@ -1,6 +1,7 @@
 /* 📌 主要容器 */
 .container {
-  max-width: 1440px;
+  min-height: 100px; /* ✅ 確保 `container` 至少有 100px 高度 */
+  // background-color: red;
 }
 
 /* 📌 卡片樣式 */
@@ -132,6 +133,12 @@
 @media (max-width: 391px) {
   .breadcrumb {
     display: none;
+  }
+
+  .pagination {
+    display: flex !important;
+    justify-content: center !important;
+    min-height: 50px;
   }
 
   .card {
