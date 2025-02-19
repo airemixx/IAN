@@ -21,22 +21,20 @@ export default function CourseManagement() {
       try {
         const token = localStorage.getItem('loginWithToken');
         if (!token) {
-          console.error("❌ 沒有找到 Token，請確認是否已登入");
+          console.log("❌ 沒有找到 Token，請確認是否已登入");
           return;
         }
   
-        console.log("🔹 送出 API 請求: /api/teachers/me");
-  
+        console.log("📌 正在發送請求到 /api/teachers/me...");
         const res = await fetch("http://localhost:8000/api/teachers/me", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` }
         });
   
-        console.log(`📌 API 回應狀態碼:`, res.status);
-  
+        console.log("📌 API 回應狀態:", res.status);
         if (!res.ok) throw new Error(`API 錯誤: ${res.status}`);
   
         const data = await res.json();
-        console.log("✅ 獲取的 user 資料:", data);
+        console.log("✅ 取得使用者資訊:", data);
         setUser(data);
       } catch (error) {
         console.error("❌ 獲取使用者失敗:", error);
@@ -45,7 +43,6 @@ export default function CourseManagement() {
   
     fetchUser();
   }, []);
-  
   
   
 
@@ -117,7 +114,7 @@ export default function CourseManagement() {
       <div className={styles['center-content']}>
         <div className={styles['nav-bar']}>
           <h1>課程管理中心</h1>
-          <p>您好，{user?.name || '老師'}！歡迎來到您的專屬教學平台，立即規劃並管理您的課程吧!</p>
+          <p>您好，{user?.name}老師！歡迎來到您的專屬教學平台，立即規劃並管理您的課程吧！</p>
         </div>
 
         <div className={styles['control-btns']}>

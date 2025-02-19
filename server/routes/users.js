@@ -245,7 +245,7 @@ router.post("/login", upload.none(), async (req, res) => {
         level: user.level,
       },
       secretKey,
-      { expiresIn: "30m" }
+      { expiresIn: "7d" }
     );
     res.status(200).json({
       status: "success",
@@ -310,7 +310,7 @@ router.post("/status", checkToken, (req, res) => {
       head: decoded.head,
     },
     secretKey,
-    { expiresIn: "30m" }
+    { expiresIn: "7d" }
   );
   res.json({
     status: "success",

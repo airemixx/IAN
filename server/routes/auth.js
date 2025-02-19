@@ -33,7 +33,7 @@ router.post("/login", async (req, res) => {
         level: user.level, // ✅ 傳回 level
       },
       secretKey,
-      { expiresIn: "30m" }
+      { expiresIn: "7d" }
     );
 
     res.status(200).json({
