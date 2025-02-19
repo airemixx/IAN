@@ -14,8 +14,10 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
     email: '',
+    avatar: null,
   });
 
+  const [avatarPreview, setAvatarPreview] = useState('/uploads/users.webp') // 預設大頭貼
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,6 +28,15 @@ export default function RegisterPage() {
       ...formData,
       [e.target.name]: e.target.value, // 改用 name 屬性
     });
+  };
+
+  // 處理圖片選擇 & 預覽
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, avatar: file }); // 儲存檔案
+      setAvatarPreview(URL.createObjectURL(file)); // 預覽圖片
+    }
   };
 
   // 提交表單
@@ -43,19 +54,23 @@ export default function RegisterPage() {
     setSuccessMessage('');
 
     try {
+      // 用 FormData 處理檔案上傳
+      const formDataToSend = new FormData();
+      formDataToSend.append('account', formData.email); // 使用 email 作為帳號
+      formDataToSend.append('name', formData.firstName);
+      formDataToSend.append('nickname', formData.nickName);
+      formDataToSend.append('mail', formData.email);
+      formDataToSend.append('password', formData.password);
+      formDataToSend.append('gender', formData.gender);
+
+      // 如果有選擇圖片，就加入 FormData
+      if (formData.avatar) {
+        formDataToSend.append('avatar', formData.avatar);
+      }
+
       const response = await fetch('http://localhost:8000/api/users', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          account: formData.email, // 使用 email 作為帳號
-          name: formData.firstName, // 只使用 firstName
-          nickname: formData.nickName,
-          mail: formData.email,
-          password: formData.password,
-          gender: formData.gender
-        }),
+        body: formDataToSend,
       });
 
       const result = await response.json();
@@ -65,17 +80,20 @@ export default function RegisterPage() {
         setError('');
         await new Promise((resolve) => {
           setFormData({ 
-              gender: '', 
-              firstName: '', 
-              nickName: '', 
-              password: '', 
-              confirmPassword: '', 
-              email: '' 
+            gender: '', 
+            firstName: '', 
+            nickName: '', 
+            password: '', 
+            confirmPassword: '', 
+            email: '', 
+            avatar: null,
           });
+          setAvatarPreview('/images/user/default.jpg');
+          alert('✅ 帳戶創建成功！請登入');
           resolve();
-      });
-  
-      router.push('/login');
+        });
+
+        router.push('/login');
       } else {
         setError(`❌ ${result.message}`);
       }
@@ -86,21 +104,34 @@ export default function RegisterPage() {
     }
   };
 
+
   return (
     <div className={`container ${styles.container1}`}>
       <div className={styles.formBox}>
         <h2 className="text-center">建立帳戶</h2>
-        <p className="text-center">
+        <p className="text-center mb-4">
           映相坊邀請您進入非凡世界，提供豐富的作品、文章資訊和服務。
         </p>
 
         {/* 顯示錯誤或成功訊息 */}
         {error && <div className="alert alert-danger">{error}</div>}
-        {successMessage && <div className="alert alert-success">{successMessage}</div>}
+        {successMessage && (
+          <div className="alert alert-success">{successMessage}</div>
+        )}
 
         <form onSubmit={handleRegister}>
+          {/* 大頭貼上傳 */}
+          <div className="mb-3 text-center">
+            <div className="avatar-container mb-3">
+              <img id="avatar" src={avatarPreview} alt="大頭貼" className={styles.avatar} />
+            </div>
+            <input type="file" accept="image/*" onChange={handleFileChange} />
+          </div>
+
           <div className="mb-3">
-            <label className={styles.formLabel} htmlFor="gender">稱謂 *</label>
+            <label className={styles.formLabel} htmlFor="gender">
+              稱謂 *
+            </label>
             <select
               name="gender"
               className={`form-control ${styles.formControl}`}
@@ -108,14 +139,18 @@ export default function RegisterPage() {
               onChange={handleChange}
               required
             >
-              <option value="" disabled>請選擇</option>
+              <option value="" disabled>
+                請選擇
+              </option>
               <option value="先生">先生</option>
               <option value="女士">女士</option>
             </select>
           </div>
 
           <div className="mb-3">
-            <label className={styles.formLabel} htmlFor="firstName">名字 *</label>
+            <label className={styles.formLabel} htmlFor="firstName">
+              名字 *
+            </label>
             <input
               type="text"
               className={`form-control ${styles.formControl}`}
@@ -126,7 +161,9 @@ export default function RegisterPage() {
             />
           </div>
           <div className="mb-3">
-            <label className={styles.formLabel} htmlFor="nickName">暱稱 *</label>
+            <label className={styles.formLabel} htmlFor="nickName">
+              暱稱 *
+            </label>
             <input
               type="text"
               className={`form-control ${styles.formControl}`}
@@ -138,7 +175,9 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-3">
-            <label className={styles.formLabel} htmlFor="email">電子郵件 *</label>
+            <label className={styles.formLabel} htmlFor="email">
+              電子郵件 *
+            </label>
             <input
               type="email"
               className={`form-control ${styles.formControl}`}
@@ -151,7 +190,9 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-3">
-            <label className={styles.formLabel} htmlFor="password">密碼 *</label>
+            <label className={styles.formLabel} htmlFor="password">
+              密碼 *
+            </label>
             <input
               type="password"
               className={`form-control ${styles.formControl}`}
@@ -163,7 +204,9 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-3">
-            <label className={styles.formLabel} htmlFor="confirmPassword">確認您的密碼 *</label>
+            <label className={styles.formLabel} htmlFor="confirmPassword">
+              確認您的密碼 *
+            </label>
             <input
               type="password"
               className={`form-control ${styles.formControl}`}
@@ -175,11 +218,18 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-3 form-check">
-            <input type="checkbox" className="form-check-input" id="agreePrivacy" required />
-            <label className={styles.formLabel} htmlFor="agreePrivacy">我已閱讀並同意隱私條款。</label>
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="agreePrivacy"
+              required
+            />
+            <label className={styles.formLabel} htmlFor="agreePrivacy">
+              我已閱讀並同意隱私條款。
+            </label>
           </div>
 
-          <button type="submit" className={styles.btnCustom} disabled={loading} >
+          <button type="submit" className={styles.btnCustom} disabled={loading}>
             {loading ? '註冊中...' : '建立帳戶'}
           </button>
         </form>
@@ -189,5 +239,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

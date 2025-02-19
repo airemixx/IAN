@@ -1,14 +1,43 @@
-.y-comment-area{
-    border-radius: 25px;
-    input{
-        width: 100%;
-        border: none;
-    }
+.y-comment-area {
+  border-radius: 25px;
+  input {
+    width: 100%;
+    border: none;
+  }
 }
-.y-comment-area-icons{
-        button{
-        width: 100%;
-        background-color: #ffffff00;
-        border: none;
+.y-comment-area-icons {
+  button {
+    width: 100%;
+    background-color: #ffffff00;
+    border: 1px solid #ffffff00;
+  }
+
+  .imageup-icon {
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      content: url('/images/article/imageup-g.svg');
     }
+
+    &.active {
+      transform: scale(1.2);
+      content: url('/images/article/imageup-w.svg');
+    }
+  }
+
+  button:nth-child(2) img {
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      content: url('/images/article/gif-icon-g.svg');
+    }
+
+    &.active {
+      transform: scale(1.2);
+      content: url('/images/article/gif-icon-w.svg');
+    }
+  }
 }
+

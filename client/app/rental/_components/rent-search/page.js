@@ -1,6 +1,6 @@
 // rent-search
 
-'use client';
+'use client'
 
 export default function RentSearch({ searchQuery, setSearchQuery, onSearch }) {
   return (
@@ -17,5 +17,5 @@ export default function RentSearch({ searchQuery, setSearchQuery, onSearch }) {
         <img src={`/images/icon/search.svg`} alt="搜尋" />
       </button>
     </div>
-  );
+  )
 }
