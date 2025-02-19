@@ -1,3 +1,20 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-in-out forwards;
+}
+
+
 /* 📌 卡片樣式 */
 .card {
 
@@ -18,13 +35,6 @@
     color: gray;
     margin-top: -30px;
   }
-  
-  // button {
-  //   background-color: #e08534;
-  //   opacity: 0;
-  //   visibility: hidden;
-  //   transition: opacity 0.3s ease, visibility 0.3s ease;
-  // }
   
   &:hover button {
     opacity: 1;
@@ -78,6 +88,15 @@
 
     &:hover {
       box-shadow: none !important;
+    }
+
+    .productTitle {
+      color: #1b3846;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .cardText {
+      font-size: 14px;
     }
   }
 }
