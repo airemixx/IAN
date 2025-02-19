@@ -3,11 +3,11 @@
 import React, { useState, useCallback, useRef } from 'react'
 import axios from 'axios'
 import { GiphyFetch } from '@giphy/js-fetch-api'
-import { Grid, SearchBar } from '@giphy/react-components'
+import { Grid } from '@giphy/react-components'
 import styles from './index.module.scss'
 
 // 初始化 GiphyFetch 實例
-const gf = new GiphyFetch('6Jxrd3sSeXRfaOs952JGsXJYC5uIASsC') // 替換為你的 Giphy API Key
+const gf = new GiphyFetch('6Jxrd3sSeXRfaOs952JGsXJYC5uIASsC')
 
 // 錯誤邊界組件
 class ErrorBoundary extends React.Component {
@@ -49,6 +49,8 @@ export default function ReplyInput({ articleId, parentId }) {
   const [previews, setPreviews] = useState([]) // 圖片和 GIF 預覽
   const [showGifPicker, setShowGifPicker] = useState(false) // 是否顯示 GIF 選擇器
   const [searchTerm, setSearchTerm] = useState('') // GIF 搜尋用的關鍵字
+  const [isHovered, setIsHovered] = useState(false) // 新增 hover state
+  const [isSent, setIsSent] = useState(false) // 是否已送出
   const fileInputRef = useRef(null) // 文件上傳輸入框的參考引用
   const userId = 1 // 預設用戶 ID（可以改為動態獲取登入使用者資訊）
 
@@ -92,26 +94,64 @@ export default function ReplyInput({ articleId, parentId }) {
   }
 
   // 留言送出
-  const handleSubmit = async () => {
-    if (!comment.trim()) return
+// 留言送出
+const handleSubmit = async () => {
+  if (
+    !comment.trim() &&
+    !(fileInputRef.current && fileInputRef.current.files.length > 0) &&
+    !(previews.length && previews[0].type === 'gif')
+  )
+    return
 
-    try {
-      const response = await axios.post(
-        'http://localhost:8000/api/comments',
-        {
-          content: comment,
-          articleId: articleId,
-          userId: userId,
-          parentId: parentId,
-        },
-        { withCredentials: true }
-      )
-      console.log('留言新增成功：', response.data)
-      setComment('')
-    } catch (error) {
-      console.error('留言送出失敗：', error)
+  const formData = new FormData()
+  formData.append('content', comment)
+  formData.append('articleId', articleId)
+  formData.append('userId', userId)
+  formData.append('parentId', parentId || '')
+
+  if (fileInputRef.current && fileInputRef.current.files.length > 0) {
+    for (const file of fileInputRef.current.files) {
+      formData.append('media', file)
     }
+  } else if (previews.length && previews[0].type === 'gif') {
+    formData.append('gifUrl', previews[0].url)
   }
+
+  try {
+    const response = await axios.post(
+      'http://localhost:8000/api/comments',
+      formData,
+      {
+        withCredentials: true,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    )
+    console.log('留言新增成功：', response.data)
+    // 清空留言及附件預覽
+    setComment('')
+    setPreviews([])
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+    // 執行送出成功後按鈕放大效果
+    setIsSent(true)
+    setTimeout(() => setIsSent(false), 300)
+  } catch (error) {
+    console.error('留言送出失敗：', error)
+  }
+}
+
+  // 根據是否有文字或預覽判定是否可發送
+  const isReadyToSend = comment.trim().length > 0 || previews.length > 0
+
+  // 設定發送按鈕圖示，條件為是否可發送以及是否 hover
+  const sendIcon = isReadyToSend
+    ? isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended.svg'
+    : isHovered
+    ? '/images/article/sended-hover.svg'
+    : '/images/article/sended-black.svg'
 
   // GEO API 請求搜尋 GIF
   const searchGifs = useCallback(
@@ -177,8 +217,14 @@ export default function ReplyInput({ articleId, parentId }) {
               className={showGifPicker ? styles.active : ''}
             />
           </button>
-          <button className="p-1" onClick={handleSubmit}>
-            <img src="/images/article/send-01.svg" alt="發送" />
+          <button
+            className="p-1 sendIcon"
+            style={{ transition: 'transform 0.3s ease', transform: isSent ? 'scale(1.5)' : 'scale(1)' }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={handleSubmit}
+          >
+            <img src={sendIcon} alt="發送" />
           </button>
         </div>
       </div>
@@ -244,15 +290,16 @@ export default function ReplyInput({ articleId, parentId }) {
               type="text"
               value={searchTerm}
               placeholder="搜尋 GIF"
+              className="mb-2 border border-dark py-2 rounded ps-2"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div
               style={{
                 position: 'relative',
-                width: '800px', // 固定寬度
-                height: '600px', // 固定高度
-                overflowY: 'auto', // 捲動
-                overflowX: 'hidden', // 隱藏水平捲軸
+                width: '800px',
+                height: '600px',
+                overflowY: 'auto',
+                overflowX: 'hidden',
               }}
             >
               <Grid

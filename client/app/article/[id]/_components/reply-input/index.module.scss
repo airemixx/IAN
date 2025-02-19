@@ -9,8 +9,9 @@
   button {
     width: 100%;
     background-color: #ffffff00;
-    border: none;
+    border: 1px solid #ffffff00;
   }
+
   .imageup-icon {
     transition: transform 0.3s ease;
 
@@ -30,12 +31,13 @@
 
     &:hover {
       transform: scale(1.1);
-      content: url('/images/article/gif-icon-g.svg'); /* Replace with your hover SVG */
+      content: url('/images/article/gif-icon-g.svg');
     }
 
     &.active {
       transform: scale(1.2);
-      content: url('/images/article/gif-icon-w.svg'); /* Replace with your focus SVG */
+      content: url('/images/article/gif-icon-w.svg');
     }
   }
 }
+
