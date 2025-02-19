@@ -130,6 +130,12 @@ export default function ReplyInput({ articleId, parentId }) {
     [searchTerm]
   )
 
+  function handleSearch() {
+    // 直接呼叫 this.searchGifs 相關邏輯
+    console.log('執行搜尋邏輯：', searchTerm)
+    // 或者 setGifResult(...) 執行 UI 更新等
+  }
+
   return (
     <div
       className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}
@@ -234,24 +240,33 @@ export default function ReplyInput({ articleId, parentId }) {
       {showGifPicker && (
         <div style={{ width: '100%', marginTop: '1rem' }}>
           <ErrorBoundary>
-            <SearchBar
+            <input
+              type="text"
+              value={searchTerm}
               placeholder="搜尋 GIF"
-              onSearch={(value) => {
-                if (typeof value === 'string') {
-                  setSearchTerm(value.trim())
-                } else {
-                  console.error('SearchBar received invalid value:', value)
-                  setSearchTerm('')
-                }
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <div
+              style={{
+                position: 'relative',
+                width: '800px', // 固定寬度
+                height: '600px', // 固定高度
+                overflowY: 'auto', // 捲動
+                overflowX: 'hidden', // 隱藏水平捲軸
               }}
-            />
-            <Grid
-              fetchGifs={searchGifs}
-              width={800}
-              columns={3}
-              gutter={6}
-              onGifClick={handleGifSelect}
-            />
+            >
+              <Grid
+                fetchGifs={searchGifs}
+                key={searchTerm} // 讓 searchTerm 改變時強制重新渲染
+                width={800} // 與父層寬度一致
+                columns={3}
+                gutter={6}
+                onGifClick={(gif, e) => {
+                  e.preventDefault() // 避免導到外部網頁
+                  handleGifSelect(gif)
+                }}
+              />
+            </div>
           </ErrorBoundary>
         </div>
       )}
