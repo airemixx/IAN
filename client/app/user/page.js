@@ -14,10 +14,11 @@ export default function UserPage(props) {
 
   useEffect(() => {
     if (user) {
-      setName(user.name || '')
-      setBirthday(user.birthday || '')
+      console.log("生日資料:", user.birthday); // ✅ 確保生日有正確讀取
+      setName(user.name || '');
+      setBirthday(user.birthday); // ✅ 這裡應該已經是 YYYY-MM-DD
     }
-  }, [user])
+  }, [user]);
 
   if (loading) {
     return <div className="text-center mt-5">載入中...</div>
@@ -44,10 +45,36 @@ export default function UserPage(props) {
     }
   }
 
-  const handleUpdate = async (e) => {
-    e.preventDefault()
-    setUpdating(true)
+  //上傳圖片函式
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
+    const formData = new FormData();
+    formData.append("avatar", file);
+    formData.append("account", user.account); // 傳遞帳號，讓後端知道要更新誰
+
+    try {
+      const response = await fetch("http://localhost:8000/api/users/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.status !== "success") throw new Error(result.message);
+
+      // ✅ 更新 user.head，讓前端立即顯示新頭像
+      setUser({ ...user, head: result.imageUrl });
+    } catch (error) {
+      console.error("圖片上傳失敗:", error);
+      alert("圖片上傳失敗，請稍後再試");
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setUpdating(true);
+  
     try {
       const response = await fetch(
         `http://localhost:8000/api/users/${user.account}`,
@@ -60,24 +87,27 @@ export default function UserPage(props) {
           body: JSON.stringify({
             name,
             password: password || undefined, // 不傳遞空密碼
-            birthday,
+            birthday, // 確保格式是 YYYY-MM-DD
             head: user.head,
           }),
         }
-      )
-
-      const result = await response.json()
-      if (result.status !== 'success') throw new Error(result.message)
-
-      alert('更新成功！')
-      await fetchUserData() // ✅ 更新本地狀態
+      );
+  
+      const result = await response.json();
+      if (result.status !== 'success') throw new Error(result.message);
+  
+      alert('更新成功！');
+  
+      // ✅ 直接更新 user 狀態，避免 UI 延遲
+      await fetchUserData(); 
     } catch (error) {
-      console.error('更新失敗:', error)
-      alert('更新失敗，請稍後再試')
+      console.error('更新失敗:', error);
+      alert('更新失敗，請稍後再試');
     } finally {
-      setUpdating(false)
+      setUpdating(false);
     }
-  }
+  };
+  
   return (
     <div>
       <div className={`container py-4`}>
@@ -111,9 +141,7 @@ export default function UserPage(props) {
                       <div className="avatar-container mb-3">
                         <img
                           id="avatar"
-                          src={
-                            user.head ? user.head : '/images/user/default.jpg'
-                          } // 預設圖片
+                          src={user.head ? user.head : "/uploads/users.webp"} // ✅ 使用相對路徑
                           alt="大頭貼"
                           className={styles.avatar}
                         />
@@ -124,6 +152,7 @@ export default function UserPage(props) {
                           id="fileInput"
                           className="fileInput"
                           accept="image/*"
+                          onChange={handleImageUpload} // ✅ 綁定上傳函式
                         />
                       </div>
                     </div>
@@ -162,9 +191,9 @@ export default function UserPage(props) {
                       <label className="form-label">出生日期</label>
                       <input
                         type="date"
-                        value={birthday}
-                        onChange={(e) => setBirthday(e.target.value)}
-                        className={`form-control ${styles.customInput}`}
+                        value={birthday || ""} // ✅ `YYYY-MM-DD` 格式
+                        onChange={(e) => setBirthday(e.target.value)} // ✅ 確保不會帶時間
+                        className="form-control"
                       />
                     </div>
                     <button
