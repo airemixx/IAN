@@ -12,7 +12,7 @@ export default function RentTabs({ rental }) {
       {/* Tab 選單 */}
       <div className="d-flex">
         <button
-          className={`btn btn-primary btn-radius me-1 ${
+          className={`btn btn-primary btn-tab-radius me-1 ${
             activeTab === 'rental' ? 'active' : ''
           }`}
           onClick={() => setActiveTab('rental')}
@@ -20,7 +20,7 @@ export default function RentTabs({ rental }) {
           租借內容
         </button>
         <button
-          className={`btn btn-primary btn-radius ${
+          className={`btn btn-primary btn-tab-radius ${
             activeTab === 'spec' ? 'active' : ''
           }`}
           onClick={() => setActiveTab('spec')}
@@ -70,7 +70,9 @@ export default function RentTabs({ rental }) {
                   <label htmlFor="endDate">結束日期</label>
                   <input type="date" id="endDate" className="form-control" />
                   <div className="d-flex justify-content-end mt-3">
-                    <button className="btn btn-primary">立即租借</button>
+                    <button className="btn btn-primary btn-radius">
+                      立即租借
+                    </button>
                   </div>
                 </div>
               </div>
