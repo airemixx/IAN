@@ -9,20 +9,17 @@
   transition: opacity 0.3s ease-in-out;
 }
 
-// ✅ 預設隱藏比較按鈕
 .hide {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-// ✅ 滑鼠 hover 時才顯示比較按鈕
 .show {
   opacity: 1;
   visibility: visible;
 }
 
-// ✅ 按鈕樣式
 .iconCircle {
   width: 40px;
   height: 40px;
@@ -34,9 +31,8 @@
   transition: all 0.3s ease-in-out;
 }
 
-// ✅ 當商品已加入比較清單時，按鈕變色
 .iconCircle.added {
-  background-color: #0d2361; 
+  background-color: #0d2361;
   color: white;
 }
 

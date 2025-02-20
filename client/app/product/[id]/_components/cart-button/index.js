@@ -1,5 +1,5 @@
 "use client";
-import Swal from "sweetalert2"; // ✅ 引入 SweetAlert2
+import Swal from "sweetalert2";
 import styles from "./cart-button.module.scss";
 
 export default function CartButton({ product }) {
@@ -17,7 +17,7 @@ export default function CartButton({ product }) {
         cancelButtonText: "取消",
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = "/login"; // ✅ 按 OK 後導向登入頁面
+          window.location.href = "/login";
         }
       });
       return;
@@ -33,8 +33,7 @@ export default function CartButton({ product }) {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-    console.log(cart);
-    // ✅ 使用 SweetAlert2 顯示成功提示
+    
     Swal.fire({
       icon: "success",
       title: "已加入購物車！",

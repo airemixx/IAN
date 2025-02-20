@@ -1,15 +1,15 @@
 "use client";
 
 import React from "react";
-import { useCompare } from "@/app/product/_context/CompareContext"; // ✅ 引入 `useCompare`
+import { useCompare } from "@/app/product/_context/CompareContext";
 import styles from "./spec-table.module.scss";
 
 export default function ComponentsCompareTable() {
-  const { compareList, removeFromCompare } = useCompare(); // ✅ 直接取得 `compareList`
+  const { compareList, removeFromCompare } = useCompare();
 
 
   if (!compareList || compareList.length === 0) {
-    return <p className={styles.noProductText}>⚠️ 目前沒有商品規格</p>;
+    return <p className={styles.noProductText}>目前沒有商品規格</p>;
   }
 
   const filledCompareList = [...compareList, ...Array(3 - compareList.length).fill(null)].slice(0, 3);

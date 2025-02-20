@@ -7,24 +7,24 @@ import CarouselIndex from "./_components/carousel";
 import BreadcrumbIndex from "./_components/breadcrumb";
 
 export default function ProductPage() {
-  const [filters, setFilters] = useState({ brand_id: [], category_id: [], subcategory_id: [], sort: "", }); // ✅ 狀態管理篩選條件
+  const [filters, setFilters] = useState({ brand_id: [], category_id: [], subcategory_id: [], sort: "", });
 
-  // ✅ 修正 handleFilterChange
+  // 修正 handleFilterChange
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
 
-  // ✅ 處理品牌篩選（來自排序欄）
+  // 處理品牌篩選（來自排序欄）
   const handleBrandSelect = (selectedBrand) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      brand_id: selectedBrand.brand_id, // ✅ 確保 `brand_id` 是陣列
+      brand_id: selectedBrand.brand_id,
     }));
   };
 
-  // ✅ 處理排序變更
+  // 處理排序變更
   const handleSortChange = (newSort) => {
-    console.log("✅ 更新 sort:", newSort);
+    console.log("更新 sort:", newSort);
     setFilters((prevFilters) => ({
       ...prevFilters,
       sort: newSort,

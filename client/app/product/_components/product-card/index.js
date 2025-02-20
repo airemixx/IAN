@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import CompareButton from "../product-button"; 
+import CompareButton from "../product-button";
 import CartButton from "../cart-button";
 import styles from "./product-card.module.scss";
 
-export default function ProductCard({ product }) { 
+export default function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -15,7 +15,6 @@ export default function ProductCard({ product }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="position-relative">
-        {/* ✅ 這邊將 `isHovered` 傳遞給 CompareButton */}
         <div className={`position-absolute top-0 end-0 p-2 z-3 ${isHovered ? styles.showCompare : styles.hideCompare}`}>
           <CompareButton product={product} isHovered={isHovered} />
         </div>
@@ -31,7 +30,7 @@ export default function ProductCard({ product }) {
           <h5 className={`card-title ${styles.productTitle}`}>{product.name}</h5>
           <p className={`card-text ${styles.cardText}`}>NT. {product.price.toLocaleString()}</p>
           <div className="d-flex justify-content-center">
-          <CartButton product={product} /> {/* ✅ 傳遞 `product` 進 `CartButton` */}
+            <CartButton product={product} />
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation"; // ✅ 確保正確獲取 params
+import { useParams } from "next/navigation";
 import ImageGallery from "./_components/image-gallery";
 import ProductInfo from "./_components/product-info";
 import ProductSpecs from "./_components/product-specs";
@@ -9,15 +9,15 @@ import BreadcrumbIndex from "./_components/breadcrumb";
 import "../css/product-list.css";
 
 export default function ProductDetailPage() {
-  const params = useParams(); // ✅ 取得 params 物件
-  const id = params?.id; // ✅ 確保 `id` 存在
+  const params = useParams();
+  const id = params?.id;
 
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
     async function fetchProduct() {
       try {
-        if (!id) return; // 確保 id 存在
+        if (!id) return;
         const response = await fetch(`http://localhost:8000/api/product/${id}`);
         if (!response.ok) throw new Error("獲取商品失敗");
 

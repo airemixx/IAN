@@ -1,26 +1,25 @@
 .cartButton {
-    margin-top: 10px;
-    background-color: #E58E41;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    padding: 3px 15px;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    color: white;
-    z-index: 1; /* ✅ 增加層級，讓它高於 stretched-link */
-    width: 40%;
-    height: 35px;
-  }
-  
-  /* ✅ 當 `isHovered` 為 true 時顯示按鈕 */
-  .show {
-    opacity: 1;
-    visibility: visible;
-  }
+  margin-top: 10px;
+  background-color: #e58e41;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 3px 15px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  color: white;
+  z-index: 1;
+  width: 40%;
+  height: 35px;
+}
 
-  @media (max-width: 391px) {
-    .cartButton {
-      width: 60%;
-    }
+.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 391px) {
+  .cartButton {
+    width: 60%;
+    margin-left: 50px;
   }
-  
+}
