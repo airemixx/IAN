@@ -32,8 +32,8 @@
 }
 .y-reply-img img{
   border-radius: 5px;
-  width: 35%;
-  aspect-ratio: 16/9;
+  width: 100%;
+  aspect-ratio: 1/1;
 }
 .y-reply-time-like button{
   border: none;
@@ -75,6 +75,16 @@
 }
 .reply-text{
   color: #1E3C54;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.8s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
 }
 
 @media screen and (max-width: 390px){

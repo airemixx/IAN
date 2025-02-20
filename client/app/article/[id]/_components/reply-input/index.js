@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import axios from 'axios'
 import { GiphyFetch } from '@giphy/js-fetch-api'
 import { Grid } from '@giphy/react-components'
@@ -44,8 +44,8 @@ class ErrorBoundary extends React.Component {
 }
 
 // 主組件
-export default function ReplyInput({ articleId, parentId, onCommentSubmitted }) {
-  const [comment, setComment] = useState('') // 留言文字
+export default function ReplyInput({ articleId, parentId, onCommentSubmitted, replyTo }) {
+  const [comment, setComment] = useState(replyTo || '') // 留言文字
   const [previews, setPreviews] = useState([]) // 圖片和 GIF 預覽
   const [showGifPicker, setShowGifPicker] = useState(false) // 是否顯示 GIF 選擇器
   const [searchTerm, setSearchTerm] = useState('') // GIF 搜尋用的關鍵字
@@ -53,6 +53,11 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted }) 
   const [isSent, setIsSent] = useState(false) // 是否已送出
   const fileInputRef = useRef(null) // 文件上傳輸入框的參考引用
   const userId = 1 // 預設用戶 ID（可以改為動態獲取登入使用者資訊）
+
+  // 如果父層切換了 replyTo，需要同步更新
+  useEffect(() => {
+    setComment(replyTo || '')
+  }, [replyTo])
 
   // 文件改變
   const handleFileChange = (e) => {
@@ -188,6 +193,10 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted }) 
           if (e.key === 'Enter') {
             handleSubmit()
           }
+        }}
+        style={{
+          // 若文字開頭為 '@' 則設定 fontWeight 
+          fontWeight: comment.trim().startsWith('@') ? 700 : 'normal'
         }}
       />
       <input
@@ -363,7 +372,7 @@ export function NestedReplyInput({ articleId, parentId, onCommentSubmitted }) {
     <div className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}>
       <input
         type="text"
-        placeholder="請輸入回覆中的回覆"
+        placeholder="請輸入回覆"
         className="p-2 py-3"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
