@@ -14,7 +14,7 @@ export default function CourseManagement() {
   const [loading, setLoading] = useState(true) // ✅ 避免畫面閃爍
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1) // ✅ 初始化 `currentPage`
-  
+
   const router = useRouter()
 
   const coursesPerPage = 5
@@ -31,9 +31,12 @@ export default function CourseManagement() {
         }
 
         console.log('📌 正在發送請求到 /api/teachers/me/courses...')
-        const res = await fetch('http://localhost:8000/api/teachers/me/courses', {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch(
+          'http://localhost:8000/api/teachers/me/courses',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
 
         if (!res.ok) throw new Error(`API 錯誤: ${res.status}`)
 
@@ -52,7 +55,7 @@ export default function CourseManagement() {
           email: data[0].mail,
         })
 
-        setCourses(data) //設定課程資料
+        setCourses(data) // 設定課程資料
 
         if (data[0].level !== 1) {
           console.warn('⚠️ 只有老師能進入此頁面，跳轉到 /dashboard')
@@ -78,15 +81,22 @@ export default function CourseManagement() {
   }, [courses])
 
   // **搜尋 & 分頁**
-  const filteredCourses = courses.filter(course =>
-    course.title.includes(searchTerm) || course.category.includes(searchTerm)
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.title.includes(searchTerm) || course.category.includes(searchTerm)
   )
 
   // **如果 `filteredCourses` 為空，不計算分頁**
-  const totalPages = filteredCourses.length > 0 ? Math.ceil(filteredCourses.length / coursesPerPage) : 1
+  const totalPages =
+    filteredCourses.length > 0
+      ? Math.ceil(filteredCourses.length / coursesPerPage)
+      : 1
   const indexOfLastCourse = currentPage * coursesPerPage
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage
-  const currentCourses = filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse)
+  const currentCourses = filteredCourses.slice(
+    indexOfFirstCourse,
+    indexOfLastCourse
+  )
 
   console.log(`📌 當前顯示的課程列表:`, currentCourses)
   console.log(`📌 當前頁碼:`, currentPage, ` / 總頁數:`, totalPages)
@@ -105,7 +115,7 @@ export default function CourseManagement() {
           <h1>課程管理中心</h1>
           <p>
             您好，{user?.name}
-            老師！歡迎來到您的專屬教學平台，立即規劃並管理您的課程吧！
+            ！歡迎來到您的專屬教學平台，立即規劃並管理您的課程吧！
           </p>
         </div>
 
@@ -193,7 +203,13 @@ export default function CourseManagement() {
                     <td>{course.student_count.toLocaleString()}</td>
                     <td>
                       <div className={styles['state-circle']}>
-                        <div className={styles['state']}></div>
+                        <div
+                          className={` ${
+                            course.status === 'published'
+                              ? styles['published']
+                              : styles['draft']
+                          }`}
+                        ></div>
                         {course.status === 'published' ? '上架中' : '未上架'}
                       </div>
                     </td>

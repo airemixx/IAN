@@ -96,49 +96,65 @@ router.get('/me', async (req, res) => {
   }
 })
 
-
 // 編輯老師資料
-router.put("/me", authenticate, async (req, res) => {
-  console.log("✅ 收到更新請求 /api/teachers/me");
+router.put('/me', authenticate, async (req, res) => {
+  console.log('✅ 收到更新請求 /api/teachers/me')
 
-  const { name, email, bio, website, facebook, instagram, youtube } = req.body;
-  const userId = req.userId; // 從 Token 取得 userId
+  const { name, email, bio, website, facebook, instagram, youtube } = req.body
+  const userId = req.userId // 從 Token 取得 userId
 
-  console.log("🔍 檢查 userId:", userId);
+  console.log('🔍 檢查 userId:', userId)
   if (!userId) {
-    return res.status(401).json({ error: "未授權，請重新登入" });
+    return res.status(401).json({ error: '未授權，請重新登入' })
   }
 
-  const connection = await pool.getConnection();
+  const connection = await pool.getConnection()
   try {
-    await connection.beginTransaction(); // 開始交易
+    await connection.beginTransaction() // 開始交易
 
-    console.log("📌 更新 users 表");
-    const updateUserSql = `UPDATE users SET name = ?, mail = ? WHERE id = ?`;
-    console.log("SQL:", updateUserSql, [name, email, userId]);
-    await connection.execute(updateUserSql, [name, email, userId]);
+    console.log('📌 更新 users 表')
+    const updateUserSql = `UPDATE users SET name = ?, mail = ? WHERE id = ?`
+    console.log('SQL:', updateUserSql, [name, email, userId])
+    await connection.execute(updateUserSql, [name, email, userId])
 
-    console.log("📌 更新 teachers 表");
+    console.log('📌 更新 teachers 表')
     const updateTeacherSql = `
       UPDATE teachers 
       SET name = ?, email = ?, bio = ?, website = ?, facebook = ?, instagram = ?, youtube = ?
       WHERE user_id = ?
-    `;
-    console.log("SQL:", updateTeacherSql, [name, email, bio, website, facebook, instagram, youtube, userId]);
-    await connection.execute(updateTeacherSql, [name, email, bio, website, facebook, instagram, youtube, userId]);
+    `
+    console.log('SQL:', updateTeacherSql, [
+      name,
+      email,
+      bio,
+      website,
+      facebook,
+      instagram,
+      youtube,
+      userId,
+    ])
+    await connection.execute(updateTeacherSql, [
+      name,
+      email,
+      bio,
+      website,
+      facebook,
+      instagram,
+      youtube,
+      userId,
+    ])
 
-    await connection.commit(); // 提交變更
-    console.log("✅ 更新成功！");
-    res.json({ message: "✅ 更新成功！" });
+    await connection.commit() // 提交變更
+    console.log('✅ 更新成功！')
+    res.json({ message: '✅ 更新成功！' })
   } catch (error) {
-    await connection.rollback(); // 回滾交易（如果有錯誤）
-    console.error("❌ 更新講師資料失敗:", error);
-    res.status(500).json({ error: "無法更新講師資料", details: error.message });
+    await connection.rollback() // 回滾交易（如果有錯誤）
+    console.error('❌ 更新講師資料失敗:', error)
+    res.status(500).json({ error: '無法更新講師資料', details: error.message })
   } finally {
-    connection.release(); // 釋放連線
+    connection.release() // 釋放連線
   }
-});
-
+})
 
 // ✅ 獲取特定講師的資訊 + 該老師的所有課程(包含評分)
 router.get('/:id', async (req, res) => {
@@ -215,53 +231,48 @@ router.post('/login', async (req, res) => {
   }
 })
 
-
-
-
-
-
 // **取得當前老師的課程**
-router.get("/me/courses", async (req, res) => {
+router.get('/me/courses', async (req, res) => {
   try {
-    console.log("✅ 收到 /me/courses API 請求");
+    console.log('✅ 收到 /me/courses API 請求')
 
     // **1️⃣ 確保有 Token**
     if (!req.headers.authorization) {
-      console.log("❌ 未提供驗證 token");
-      return res.status(401).json({ error: "未提供驗證 token" });
+      console.log('❌ 未提供驗證 token')
+      return res.status(401).json({ error: '未提供驗證 token' })
     }
 
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization.split(' ')[1]
     if (!token) {
-      console.log("❌ Token 格式錯誤");
-      return res.status(401).json({ error: "Token 格式錯誤" });
+      console.log('❌ Token 格式錯誤')
+      return res.status(401).json({ error: 'Token 格式錯誤' })
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("🔹 Token 解析結果:", decoded);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
+    console.log('🔹 Token 解析結果:', decoded)
 
     // **2️⃣ 檢查是否為老師**
     if (!decoded || decoded.level !== 1) {
-      console.log("❌ 權限不足，非老師帳戶");
-      return res.status(403).json({ error: "權限不足" });
+      console.log('❌ 權限不足，非老師帳戶')
+      return res.status(403).json({ error: '權限不足' })
     }
 
     // **3️⃣ 取得 `teacher_id`**
-    const sqlTeacher = `SELECT id FROM teachers WHERE user_id = ?`;
-    const [teacherRows] = await pool.query(sqlTeacher, [decoded.id]);
+    const sqlTeacher = `SELECT id FROM teachers WHERE user_id = ?`
+    const [teacherRows] = await pool.query(sqlTeacher, [decoded.id])
 
     if (teacherRows.length === 0) {
-      console.log("❌ 找不到該老師 user_id:", decoded.id);
-      return res.status(404).json({ error: "找不到對應的老師" });
+      console.log('❌ 找不到該老師 user_id:', decoded.id)
+      return res.status(404).json({ error: '找不到對應的老師' })
     }
 
-    const teacherId = teacherRows[0].id;
-    console.log(`✅ 找到老師 ID: ${teacherId}`);
+    const teacherId = teacherRows[0].id
+    console.log(`✅ 找到老師 ID: ${teacherId}`)
 
     // **4️⃣ 查詢老師的課程**
     const sqlCourses = `
       SELECT 
-        c.id, c.title, c.image_url, c.category, c.sale_price, c.student_count, c.status,
+        c.*,
         t.name AS teacher_name, 
         t.image AS teacher_image,
         u.level,  
@@ -274,26 +285,23 @@ router.get("/me/courses", async (req, res) => {
       LEFT JOIN comments cm ON c.id = cm.course_id
       WHERE c.teacher_id = ?
       GROUP BY c.id, t.id, u.level
-    `;
+    `
 
-    const [courses] = await pool.query(sqlCourses, [teacherId]);
+    const [courses] = await pool.query(sqlCourses, [teacherId])
 
-    console.log(`📌 查詢結果，共 ${courses.length} 堂課`);
-    
+    console.log(`📌 查詢結果，共 ${courses.length} 堂課`)
+
     // **5️⃣ 如果沒有課程，回傳空陣列**
     if (courses.length === 0) {
-      console.log("⚠️ 該老師沒有課程");
-      return res.status(200).json([]);
+      console.log('⚠️ 該老師沒有課程')
+      return res.status(200).json([])
     }
 
-    res.json(courses);
+    res.json(courses)
   } catch (error) {
-    console.error("❌ 獲取課程失敗:", error);
-    res.status(500).json({ error: "無法獲取課程" });
+    console.error('❌ 獲取課程失敗:', error)
+    res.status(500).json({ error: '無法獲取課程' })
   }
-});
-
-
-
+})
 
 export default router
