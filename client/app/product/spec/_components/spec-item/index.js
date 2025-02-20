@@ -1,16 +1,15 @@
 "use client";
 import React from "react";
 import { useCompare } from "@/app/product/_context/CompareContext";
-import Link from "next/link"; // ✅ 引入 Link
-import CartButton from "../cart-button"; // ✅ 確保是相對路徑
-
+import Link from "next/link";
+import CartButton from "../cart-button";
 import styles from "./spec-item.module.scss";
 
 export default function ComponentsCompareItem() {
   const { compareList, removeFromCompare } = useCompare();
 
   if (!Array.isArray(compareList)) {
-    console.error("❌ `compareList` 不是陣列，初始化為空陣列");
+    console.error("`compareList` 不是陣列，初始化為空陣列");
     return <p className={styles.noProductText}>目前沒有商品</p>;
   }
 

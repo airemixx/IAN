@@ -392,7 +392,4 @@ function checkToken(req, res, next){
 //   }
 // }
 
-
-
-
 export default router;

@@ -2,7 +2,6 @@
   color: #fff;
   background: #23425a !important;
   border-color: #23425a !important;
-  border-radius: 50px;
   transition: opacity 0.1s;
   &:hover,
   &:focus,
@@ -11,19 +10,22 @@
   &:active:hover {
     background: #143146 !important;
     border-color: #143146 !important;
-    // border-color: #0F2D3C !important;
     opacity: 0.9 !important;
   }
 }
 
-.btn-radius {
+.btn-tab-radius {
   border-radius: 5px 5px 0 0;
 }
 
-.btn-sm-radius2 {
+.btn-sm-radius {
   width: 35px;
   height: 35px;
   border-radius: 50%;
+}
+
+.btn-radius {
+  border-radius: 50px;
 }
 
 .left-btn {

@@ -3,6 +3,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -14,14 +15,12 @@
   animation: fadeInUp 0.5s ease-in-out forwards;
 }
 
-
-/* 📌 卡片樣式 */
 .card {
 
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
   }
-  
+
   .cardText {
     color: #d0b189;
   }
@@ -35,16 +34,16 @@
     color: gray;
     margin-top: -30px;
   }
-  
+
   &:hover button {
     opacity: 1;
     visibility: visible;
   }
 
   .cardImgTop {
-    width: 100%;  
-    height: 200px; 
-    max-height: 180px; 
+    width: 100%;
+    height: 200px;
+    max-height: 180px;
     object-fit: contain;
     display: block;
     margin: 0 auto;
@@ -55,8 +54,6 @@
   padding: 0.5rem;
 }
 
-
-/* 📌 按鈕樣式 */
 .btn-outline-secondary {
   border-radius: 30px;
   padding: 6px 20px;
@@ -74,7 +71,6 @@
   }
 }
 
-/* 📌 響應式設計 */
 @media (max-width: 391px) {
   .breadcrumb {
     display: none;
@@ -95,6 +91,7 @@
       font-weight: bold;
       font-size: 14px;
     }
+
     .cardText {
       font-size: 14px;
     }

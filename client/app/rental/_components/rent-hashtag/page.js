@@ -63,7 +63,7 @@ export default function RentHashtag({ hashtags = [], onHashtagClick }) {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>全部標籤</Modal.Title>
+          <Modal.Title>點擊查詢</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {/* 📌 **標籤最多 4 個一排** */}
