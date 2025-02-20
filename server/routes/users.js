@@ -94,13 +94,13 @@ router.get("/:id", (req, res) => {
   }
 });
 
-// 確保上傳資料夾存在
-const uploadDir = "uploads/";
+const uploadDir = path.join(process.cwd(), "../client/public/uploads"); // ✅ 指定 Next.js 的 `public/`
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// `multer` 設定：檔案儲存到 `uploads/`，並以 `時間戳 + 原始檔名` 命名
+
+// `multer` 設定
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -110,6 +110,34 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
+
+// ✅ 新增上傳圖片 API
+router.post("/upload", upload.single("avatar"), async (req, res) => {
+  try {
+    if (!req.file) throw new Error("請選擇圖片");
+
+    // 取得當前登入使用者帳號
+    const { account } = req.body;
+    if (!account) throw new Error("缺少使用者帳號");
+
+    const filePath = `/uploads/${req.file.filename}`; // 存相對路徑
+    const sql = "UPDATE users SET head = ? WHERE account = ?";
+    await db.execute(sql, [filePath, account]);
+
+    res.status(200).json({
+      status: "success",
+      message: "頭像上傳成功！",
+      imageUrl: filePath,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      status: "error",
+      message: error.message || "上傳失敗",
+    });
+  }
+});
+
 
 
 // ✅ 註冊 API（允許上傳圖片）
@@ -280,14 +308,18 @@ router.post("/logout", checkToken, (req, res) => {
 
 router.get("/me", checkToken, async (req, res) => {
   try {
-    const sql = "SELECT account, name, nickname, mail, head, birthday FROM users WHERE account = ?";
+    const sql = `
+      SELECT account, name, nickname, mail, head, 
+      DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday
+      FROM users WHERE account = ?;
+    `;
     const [rows] = await db.execute(sql, [req.decoded.account]);
 
     if (rows.length === 0) throw new Error("找不到使用者");
 
     res.status(200).json({
       status: "success",
-      data: rows[0], // 回傳最新使用者資料
+      data: rows[0], // ✅ birthday 已經是 `YYYY-MM-DD`
     });
   } catch (error) {
     console.error(error);
@@ -297,6 +329,9 @@ router.get("/me", checkToken, async (req, res) => {
     });
   }
 });
+
+
+
 
 router.post("/status", checkToken, (req, res) => {
   const {decoded} = req;
@@ -356,8 +391,5 @@ function checkToken(req, res, next){
 //     return "https://randomuser.me/api/portraits/men/7.jpg";
 //   }
 // }
-
-
-
 
 export default router;

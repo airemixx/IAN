@@ -21,22 +21,84 @@ const corsOptions = {
 const router = Router()
 router.use(cors(corsOptions))
 
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 // 設定 multer storage，將檔案儲存在 images/article_com_media，檔名以當前時間命名
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../client/public/images/article_com_media'))
+    cb(
+      null,
+      path.join(__dirname, '../../client/public/images/article_com_media')
+    )
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname)
     const uniqueName = Date.now() + ext
     cb(null, uniqueName)
-  }
+  },
 })
 const upload = multer({ storage })
+
+router.get('/', async (req, res) => {
+  const { articleId } = req.query
+  if (!articleId) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'articleId 為必填參數',
+    })
+  }
+
+  try {
+    // 過濾 is_deleted 為 0 的留言，並根據 created_at 排序
+    const [rows] = await pool.query(
+      `SELECT ac.*, u.head, u.nickname, u.name,
+             GROUP_CONCAT(cm.media_url) AS media_urls,
+             GROUP_CONCAT(cm.media_type) AS media_types
+       FROM article_comments AS ac
+       LEFT JOIN users AS u ON ac.user_id = u.id
+       LEFT JOIN comments_media AS cm ON ac.id = cm.comment_id
+       WHERE ac.article_id = ? AND ac.is_deleted = 0
+       GROUP BY ac.id
+       ORDER BY ac.created_at ASC`,
+      [articleId]
+    )
+
+    const comments = rows.map((row) => {
+      return {
+        ...row,
+        media_urls: row.media_urls ? row.media_urls.split(',') : [],
+        media_types: row.media_types ? row.media_types.split(',') : [],
+      }
+    })
+
+    res.status(200).json({ comments: comments })
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message || '取得留言失敗',
+    })
+  }
+})
+
+router.get('/count', async (req, res) => {
+  const { articleId } = req.query
+  if (!articleId) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'articleId 為必填' })
+  }
+  try {
+    const [rows] = await pool.query(
+      'SELECT COUNT(*) as count FROM article_comments WHERE article_id = ?',
+      [articleId]
+    )
+    res.json({ count: rows[0].count })
+  } catch (err) {
+    console.error('取得留言數量錯誤：', err)
+    res.status(500).json({ status: 'error', message: '取得留言數量失敗' })
+  }
+})
 
 // 新增留言 API：將留言內容存入 article_comments 資料表，若有附檔則存入 comments_media
 // 接受欄位 media，可能多筆檔案
@@ -74,7 +136,11 @@ router.post('/', upload.array('media'), async (req, res) => {
         } else if (file.mimetype === 'image/gif') {
           mediaType = 'gif'
         }
-        await pool.query(insertMediaQuery, [commentId, mediaType, file.filename])
+        await pool.query(insertMediaQuery, [
+          commentId,
+          mediaType,
+          file.filename,
+        ])
       }
     } else if (gifUrl) {
       // 處理從 Giphy 選擇的 GIF
@@ -93,23 +159,6 @@ router.post('/', upload.array('media'), async (req, res) => {
       status: 'error',
       message: err.message || '新增留言失敗',
     })
-  }
-})
-
-router.get('/count', async (req, res) => {
-  const { articleId } = req.query
-  if (!articleId) {
-    return res.status(400).json({ status: 'error', message: 'articleId 為必填' })
-  }
-  try {
-    const [rows] = await pool.query(
-      'SELECT COUNT(*) as count FROM article_comments WHERE article_id = ?',
-      [articleId]
-    )
-    res.json({ count: rows[0].count })
-  } catch (err) {
-    console.error('取得留言數量錯誤：', err)
-    res.status(500).json({ status: 'error', message: '取得留言數量失敗' })
   }
 })
 

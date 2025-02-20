@@ -1,4 +1,4 @@
-/* 📌 按鈕進場動畫 */
+/* 按鈕進場動畫 */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -10,7 +10,7 @@
   }
 }
 
-/* 📌 下拉選單滑入動畫 */
+/* 下拉選單滑入動畫 */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -22,7 +22,7 @@
   }
 }
 
-/* 📌 比較按鈕縮放動畫 */
+/* 比較按鈕縮放動畫 */
 @keyframes scaleIn {
   from {
     transform: scale(0);
@@ -56,7 +56,6 @@
   }
 }
 
-/* 📌 讓比較按鈕變成圓形 */
 .compareButton {
   width: 40px;
   height: 40px;
@@ -69,19 +68,17 @@
   transition: background-color 0.3s ease, transform 0.2s ease-in-out;
   animation: scaleIn 0.5s ease-in-out;
 
-  /* 🔹 滑鼠懸停時變化 */
   &:hover {
     transform: scale(1.1);
     color: #1b3846;
     transition: transform 0.2s ease-in-out;
   }
 
-  /* 🔹 點擊時的效果 */
   &:active {
     transform: scale(0.95);
   }
 
-  /* 🔹 讓數字計數顯示在右上角 */
+  /* 讓數字計數顯示在右上角 */
   position: relative;
 
   span {
@@ -121,7 +118,6 @@
   }
 }
 
-/* 📌 響應式設計 */
 @media (max-width: 391px) {
   .btnOutlineSecondary {
     font-size: 14px;
@@ -129,7 +125,6 @@
     margin-bottom: 10px;
   }
 
-  /* 🔹 隱藏比較按鈕 & 排序選單 */
   .compareButton {
     top: -30px;
   }

@@ -4,12 +4,10 @@ import React, { useState, useEffect } from 'react'
 import NewsCard from '../news-card'
 import AdCard from '../ad-card'
 import style from './index.module.scss'
-import { useParams } from 'next/navigation';
 
-export default function Aside({ categoryId, title, content }) {
+function AsideComponent({ categoryId, title, content, articleId }) {
+  // 接收 articleId prop
   const [relatedArticles, setRelatedArticles] = useState([])
-  const params = useParams();
-  const articleId = params.id;
 
   useEffect(() => {
     const fetchRelatedArticles = async () => {
@@ -65,3 +63,7 @@ export default function Aside({ categoryId, title, content }) {
     </>
   )
 }
+
+const Aside = React.memo(AsideComponent)
+
+export default Aside
