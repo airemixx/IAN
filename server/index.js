@@ -63,6 +63,7 @@ app.use('/api/cart', cartRouter)
 
 app.use('/api/articles', articleRoutes)
 app.use('/api/comments', commentsRouter)
+app.use('/api/article_comments', commentsRouter)
 app.use('/api/likes', likesRouter)
 
 app.use('/api/users', users)

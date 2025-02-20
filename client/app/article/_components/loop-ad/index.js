@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 export default function LoopAd() {
   const videoRef = useRef(null)
+  const backgroundRef = useRef(null)
   const [thumbnail, setThumbnail] = useState(null)
   const [ads, setAds] = useState([]) // 儲存廣告資料陣列
   const [currentAdIndex, setCurrentAdIndex] = useState(0) // 目前顯示的廣告索引
@@ -35,20 +36,24 @@ export default function LoopAd() {
     if (!ads[currentAdIndex]) return
     const video = videoRef.current
     if (video) {
-      const seekHandler = () => {
-        console.log('Seeked event triggered')
-        video.removeEventListener('seeked', seekHandler)
-        const canvas = document.createElement('canvas')
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-        const dataUrl = canvas.toDataURL('image/jpeg')
-        console.log('Thumbnail generated:', dataUrl)
-        setThumbnail(dataUrl)
+      const onLoadedMetadata = () => {
+        video.removeEventListener('loadedmetadata', onLoadedMetadata)
+        const seekHandler = () => {
+          console.log('Seeked event triggered')
+          video.removeEventListener('seeked', seekHandler)
+          const canvas = document.createElement('canvas')
+          canvas.width = video.videoWidth
+          canvas.height = video.videoHeight
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          const dataUrl = canvas.toDataURL('image/jpeg')
+          console.log('Thumbnail generated:', dataUrl)
+          setThumbnail(dataUrl)
+        }
+        video.addEventListener('seeked', seekHandler)
+        video.currentTime = 8
       }
-      video.addEventListener('seeked', seekHandler)
-      video.currentTime = 8
+      video.addEventListener('loadedmetadata', onLoadedMetadata)
     }
   }
 
@@ -66,7 +71,7 @@ export default function LoopAd() {
 
   // 無論 ads 是否有資料都呼叫以下 Hooks
   const currentAd = ads.length > 0 ? ads[currentAdIndex] : {}
-  
+
   const handleVideoEnded = useCallback(() => {
     // 影片播完切換到下一個廣告，播到最後再循環回第一個
     setCurrentAdIndex((prevIndex) => (prevIndex + 1) % (ads.length || 1))
@@ -78,6 +83,51 @@ export default function LoopAd() {
     }
   }, [currentAdIndex])
 
+  useEffect(() => {
+    const setBackgroundHeight = () => {
+      if (videoRef.current && backgroundRef.current) {
+        const videoHeight = videoRef.current.offsetHeight
+        setTimeout(() => {
+          backgroundRef.current.style.height = `${videoHeight}px`
+        }, 0)
+      }
+    }
+
+    // 初始設定
+    setBackgroundHeight()
+
+    // 監聽視窗大小變化，以便在響應式佈局中更新高度
+    window.addEventListener('resize', setBackgroundHeight)
+
+    // 清除監聽器
+    return () => {
+      window.removeEventListener('resize', setBackgroundHeight)
+    }
+  }, [])
+
+  useEffect(() => {
+    const setContainerHeight = () => {
+      if (videoRef.current) {
+        const videoHeight = videoRef.current.offsetHeight
+        // 直接操作 DOM 元素設定高度
+        document.querySelector(
+          `.${style['y-loop-ad-container']}`
+        ).style.height = `${videoHeight}px`
+      }
+    }
+
+    // 初始設定
+    setContainerHeight()
+
+    // 監聽視窗大小變化，以便在響應式佈局中更新高度
+    window.addEventListener('resize', setContainerHeight)
+
+    // 清除監聽器
+    return () => {
+      window.removeEventListener('resize', setContainerHeight)
+    }
+  }, [])
+
   return (
     <div className={style['y-loop-ad-container']}>
       {ads.length === 0 ? (
@@ -86,18 +136,18 @@ export default function LoopAd() {
         <>
           <div
             className={style['y-loop-ad-background']}
+            ref={backgroundRef} // 取得背景元素的引用
             style={
               thumbnail
-                ? { backgroundImage: `url(${thumbnail})`, filter: 'blur(11px)' }
+                ? { backgroundImage: `url(${thumbnail})`, filter: 'blur(8px)' }
                 : {}
             }
           ></div>
           <div className={style['y-loop-ad']} onClick={handleAdClick}>
             <video
-              ref={videoRef}
+              ref={videoRef} // 取得影片元素的引用
               autoPlay
               muted
-              onLoadedData={generateThumbnail}
               onEnded={handleVideoEnded}
             >
               {currentAd?.video_url && (
