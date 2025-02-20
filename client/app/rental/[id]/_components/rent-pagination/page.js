@@ -1,3 +1,5 @@
+// rent-pagination
+
 'use client'
 
 import { useEffect } from 'react'
@@ -9,10 +11,8 @@ export default function RentPagination({
   totalItems = 0,
   itemsPerPage = 3,
 }) {
-  // 當 totalItems 為 0，隱藏 Pagination
   if (totalItems === 0) return null
 
-  // 確保狀態變更有反應
   useEffect(() => {
     console.log('Updated currentIndex:', currentIndex)
     console.log('RentPagination -> totalItems:', totalItems)
@@ -28,7 +28,10 @@ export default function RentPagination({
   const handleNext = () => {
     if (currentIndex + itemsPerPage < totalItems) {
       setCurrentIndex((prev) =>
-        Math.min(totalItems - itemsPerPage, prev + itemsPerPage)
+        Math.min(
+          prev + itemsPerPage,
+          totalItems - (totalItems % itemsPerPage || itemsPerPage)
+        )
       )
       console.log('Next Clicked:', currentIndex + itemsPerPage)
     }

@@ -11,13 +11,14 @@ export default function ProductDetails({ id, specs = [] }) {
                 className={`accordion-button ${style['j-accBtn']} collapsed focus-ring focus-ring-light`}
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target={`#panelsStayOpen-collapse${index}`}
+                data-bs-target={`#panelsStayOpen-collapse${id}-${index}
+                `}
               >
                 {spec.title}
               </button>
             </h2>
             <div
-              id={`panelsStayOpen-collapse${index}`}
+              id={`panelsStayOpen-collapse${id}-${index}`}
               className="accordion-collapse collapse"
             >
               <div className={`accordion-body ${style['j-accBody']} d-flex`}>

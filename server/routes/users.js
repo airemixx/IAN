@@ -6,10 +6,13 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import db from "../db.js";
+import fs from "fs";
+import path from "path";
 
 const portNum = 3005;
 
-const upload = multer();
+
+
 const whiteList = ["http://localhost:5500", "http://localhost:8000", "http://localhost:3000"];
 const corsOptions = {
   credentials: true,
@@ -91,50 +94,60 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.post("/", upload.none(), async (req, res) => {
-  let { account, name , nickname, mail, password, gender } = req.body;  // 直接解構 gender
-  console.log(req.body);
+// 確保上傳資料夾存在
+const uploadDir = "uploads/";
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-  if (!account || !name || !nickname || !mail || !password || !gender) {
-    return res.status(400).json({
-      status: "error",
-      message: "請提供完整的使用者資訊，包括性別!"
-    });
-  }
-
-  // 轉換性別成 `0`（先生）或 `1`（女士）
-  if (gender === "先生") {
-    gender = 0;
-  } else if (gender === "女士") {
-    gender = 1;
-  } else {
-    return res.status(400).json({
-      status: "error",
-      message: "性別必須是 '先生' 或 '女士'"
-    });
-  }
-  // const id = uuidv4();
-  const createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
-  const head = await getRandomAvatar();
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const sql = "INSERT INTO `users` ( `account`, `password`, `name`, `nickname`, `mail`, `head`, `gender`, `created_at`) VALUES (?,?,?,?,?,?,?,?);";
-
-  const result = await db.execute(sql, [account, hashedPassword, name, nickname, mail, head, gender, createdAt]);
-  console.log(result);
-  
-  
-  res.status(201).json({
-    status: "success",
-    data: {},
-    message: "新增一個使用者成功"
-  });
+// `multer` 設定：檔案儲存到 `uploads/`，並以 `時間戳 + 原始檔名` 命名
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
 });
+const upload = multer({ storage });
+
+
+// ✅ 註冊 API（允許上傳圖片）
+router.post("/", upload.single("avatar"), async (req, res) => {
+  try {
+    let { account, name, nickname, mail, password, gender } = req.body;
+    const avatar = req.file ? req.file.filename : "users.webp"; // 若沒上傳圖片，使用預設圖片
+
+    if (!account || !name || !nickname || !mail || !password || !gender) {
+      return res.status(400).json({ status: "error", message: "請提供完整的使用者資訊！" });
+    }
+
+    // 轉換性別為 `0`（先生）或 `1`（女士）
+    gender = gender === "先生" ? 0 : gender === "女士" ? 1 : null;
+    if (gender === null) return res.status(400).json({ status: "error", message: "性別格式錯誤" });
+
+    const createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // 設定 `head` 為上傳的圖片路徑
+    const head = `/uploads/${avatar}`;
+
+    const sql = "INSERT INTO `users` (account, password, name, nickname, mail, head, gender, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    await db.execute(sql, [account, hashedPassword, name, nickname, mail, head, gender, createdAt]);
+
+    res.status(201).json({ status: "success", message: "帳號註冊成功！", avatarUrl: head });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", message: "註冊失敗" });
+  }
+});
+
 
 router.put("/:account", checkToken, upload.none(), async (req, res) => {
   const {account} = req.params;
   console.log(account);
   
-  const {name, password, head} = req.body;
+  const {name, password, head , birthday} = req.body;
 
   try{
     if(account != req.decoded.account) throw new Error("沒有修改權限");
@@ -155,6 +168,10 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
       updateFields.push("`password` = ?");
       const hashedPassword = await bcrypt.hash(password, 10);
       value.push(hashedPassword);
+    }
+    if(birthday){
+      updateFields.push("`birthday` = ?");
+      value.push(birthday);
     }
     value.push(account);
     const sql = `UPDATE users SET ${updateFields.join(", ")} WHERE account = ?;`;
@@ -216,6 +233,7 @@ router.post("/login", upload.none(), async (req, res) => {
     if(!isMatch) throw new Error("帳號或密碼錯誤");
 
     console.log("JWT Secret Key:", secretKey); // 檢查是否有讀取到 Secret Key
+    
     const token = jwt.sign(
       {
         id: user.id,
@@ -224,9 +242,10 @@ router.post("/login", upload.none(), async (req, res) => {
         nickname: user.nickname || "",
         mail: user.mail,
         head: user.head,
+        level: user.level,
       },
       secretKey,
-      { expiresIn: "30m" }
+      { expiresIn: "7d" }
     );
     res.status(200).json({
       status: "success",
@@ -259,6 +278,26 @@ router.post("/logout", checkToken, (req, res) => {
   });
 });
 
+router.get("/me", checkToken, async (req, res) => {
+  try {
+    const sql = "SELECT account, name, nickname, mail, head, birthday FROM users WHERE account = ?";
+    const [rows] = await db.execute(sql, [req.decoded.account]);
+
+    if (rows.length === 0) throw new Error("找不到使用者");
+
+    res.status(200).json({
+      status: "success",
+      data: rows[0], // 回傳最新使用者資料
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      status: "error",
+      message: error.message || "無法獲取使用者資訊",
+    });
+  }
+});
+
 router.post("/status", checkToken, (req, res) => {
   const {decoded} = req;
   const token = jwt.sign(
@@ -271,7 +310,7 @@ router.post("/status", checkToken, (req, res) => {
       head: decoded.head,
     },
     secretKey,
-    { expiresIn: "30m" }
+    { expiresIn: "7d" }
   );
   res.json({
     status: "success",
@@ -303,17 +342,22 @@ function checkToken(req, res, next){
   });
 }
 
-async function getRandomAvatar(){
-  const api = "https://randomuser.me/api";
-  try{
-    const res = await fetch(api);
-    if(!res.ok) throw new Error("伺服器掛了T_T");
-    const result = await res.json();
-    return result.results[0].picture.large;
-  }catch(err){
-    console.log("取得隨機照片失敗", err.message);
-    return "https://randomuser.me/api/portraits/men/7.jpg";
-  }
-}
+
+
+// async function getRandomAvatar(){
+//   const api = "https://randomuser.me/api";
+//   try{
+//     const res = await fetch(api);
+//     if(!res.ok) throw new Error("伺服器掛了T_T");
+//     const result = await res.json();
+//     return result.results[0].picture.large;
+//   }catch(err){
+//     console.log("取得隨機照片失敗", err.message);
+//     return "https://randomuser.me/api/portraits/men/7.jpg";
+//   }
+// }
+
+
+
 
 export default router;

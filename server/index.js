@@ -14,11 +14,13 @@ import teachersRouter from './routes/teachers.js'
 import authRouter from "./routes/auth.js";
 import productRoutes from './routes/product.js'
 import rentalRouter from './routes//rental.js'
-import cartRouter from './routes/cart.js'
+import ecpayRouter from './routes/ecpay-test-only.js'
 import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
 import likesRouter from './routes/likes.js'
 import users from './routes/users.js'
+
+
 
 // 讀取 .env 設定
 dotenv.config()
@@ -42,6 +44,7 @@ const corsOptions = {
 //   express.static(path.join(process.cwd(), 'public/images/product'))
 // )
 
+
 app.use(cors(corsOptions)) // 允許跨域請求
 app.use(express.json({ limit: '150mb' })) // 解析 JSON 格式的請求
 app.use(express.urlencoded({ extended: true, limit: '150mb' }))
@@ -59,7 +62,7 @@ app.use("/api/auth", authRouter);
 
 app.use('/api/rental', rentalRouter)
 
-app.use('/api/cart', cartRouter)
+app.use('/api/ecpay-test-only', ecpayRouter)
 
 app.use('/api/articles', articleRoutes)
 app.use('/api/comments', commentsRouter)
@@ -67,6 +70,7 @@ app.use('/api/article_comments', commentsRouter)
 app.use('/api/likes', likesRouter)
 
 app.use('/api/users', users)
+
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000

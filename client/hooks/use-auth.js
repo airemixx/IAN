@@ -31,5 +31,5 @@ export default function useAuth() {
     setLoading(false);
   }, []);
 
-  return { token, user, loading };
+  return { token, user, setUser, loading };
 }
