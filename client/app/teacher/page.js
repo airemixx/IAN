@@ -1,38 +1,109 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from './course-management.module.scss'
-import { FaBars, FaList, FaSearch, FaPlusSquare, FaTrash } from 'react-icons/fa'
-import { FiEdit } from 'react-icons/fi'
-import { FiTrash2 } from "react-icons/fi";
+import { FaBars, FaList, FaSearch, FaPlusSquare } from 'react-icons/fa'
+import { FiEdit, FiTrash2 } from 'react-icons/fi'
+import Pagination from '../courses/_components/pagination/page'
+import Link from 'next/link'
 
 export default function CourseManagement() {
+  const [user, setUser] = useState(null) // ✅ 儲存使用者資訊
+  const [courses, setCourses] = useState([]) // ✅ 儲存課程列表
+  const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const courses = [
-    {
-      id: 1,
-      title: '旅行攝影：按下快門，用攝影書寫故事',
-      category: '影像創作',
-      date: '2025-01-13',
-      price: '1,980',
-      sales: '$2,256,843',
-      students: '532人',
-      image: '/images/course-cover/course_9_1.avif',
-      status: '上架中',
-    },
-    {
-      id: 2,
-      title: '旅行攝影：按下快門，用攝影書寫故事',
-      category: '影像創作',
-      date: '2025-01-13',
-      price: '1,980',
-      sales: '$2,256,843',
-      students: '532人',
-      image: '/images/course-cover/course_9_1.avif',
-      status: '上架中',
-    },
-  ]
+  const coursesPerPage = 5
+
+  // **檢查 LocalStorage 是否有 Token**
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('loginWithToken');
+        if (!token) {
+          console.log("❌ 沒有找到 Token，請確認是否已登入");
+          return;
+        }
+  
+        console.log("📌 正在發送請求到 /api/teachers/me...");
+        const res = await fetch("http://localhost:8000/api/teachers/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+  
+        console.log("📌 API 回應狀態:", res.status);
+        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`);
+  
+        const data = await res.json();
+        console.log("✅ 取得使用者資訊:", data);
+        setUser(data);
+      } catch (error) {
+        console.error("❌ 獲取使用者失敗:", error);
+      }
+    };
+  
+    fetchUser();
+  }, []);
+  
+  
+
+  useEffect(() => {
+    if (!user || !user.id) {
+      console.log("⏳ user 尚未設置，等待使用者資訊載入...");
+      return;
+    }
+  
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem('loginWithToken');
+        if (!token) return;
+  
+        const userLevel = Number(user?.level);
+        let apiUrl = userLevel === 1
+          ? `http://localhost:8000/api/teachers/me/courses`
+          : `http://localhost:8000/api/courses`;
+  
+        console.log(`🚀 發送 API 請求至:`, apiUrl);
+        
+        const res = await fetch(apiUrl, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+  
+        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`);
+  
+        const data = await res.json();
+        console.log('📌 獲取的課程:', data);
+        setCourses(data);
+      } catch (error) {
+        console.error('❌ 獲取課程失敗:', error);
+      }
+    };
+  
+    fetchCourses();
+  }, [user]);
+  
+  
+
+  useEffect(() => {
+    console.log(`📌 目前的 courses:`, courses)
+    if (courses.length > 0) setCurrentPage(1)
+  }, [courses])
+
+  // **搜尋 & 分頁**
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.title.includes(searchTerm) || course.category.includes(searchTerm)
+  )
+
+  const totalPages = Math.ceil(filteredCourses.length / coursesPerPage)
+  const indexOfLastCourse = currentPage * coursesPerPage
+  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage
+  const currentCourses = filteredCourses.slice(
+    indexOfFirstCourse,
+    indexOfLastCourse
+  )
+
+  console.log(`📌 當前顯示的課程列表:`, currentCourses)
+  console.log(`📌 當前頁碼:`, currentPage, ` / 總頁數:`, totalPages)
 
   return (
     <>
@@ -40,25 +111,21 @@ export default function CourseManagement() {
         <FaBars />
       </button>
 
-      {/* 📌 主要內容區域 */}
       <div className={styles['center-content']}>
-        {/* 🔹 標題區 */}
         <div className={styles['nav-bar']}>
           <h1>課程管理中心</h1>
-          <p>您好，Ada！歡迎來到您的專屬教學平台，立即規劃並管理您的課程吧!</p>
+          <p>您好，{user?.name}老師！歡迎來到您的專屬教學平台，立即規劃並管理您的課程吧！</p>
         </div>
 
-        {/* 🔹 控制按鈕 */}
         <div className={styles['control-btns']}>
           <div className={styles['btns-left']}>
-            {/* 篩選按鈕 */}
             <div className={styles['filter']}>
-              <a href="">
+              <a href="#">
                 <FaList />
                 <p>篩選</p>
               </a>
             </div>
-            {/* 搜尋欄位 */}
+
             <div className={styles['course-search']}>
               <input
                 className={styles['search-input']}
@@ -73,16 +140,14 @@ export default function CourseManagement() {
             </div>
           </div>
 
-          {/* 新增課程 */}
           <div className={styles['add']}>
-            <a href="">
+            <a href="#">
               <FaPlusSquare />
               <p>新增課程</p>
             </a>
           </div>
         </div>
 
-        {/* 🔹 課程列表 Table */}
         <div className={styles['table-container']}>
           <table>
             <thead>
@@ -100,37 +165,66 @@ export default function CourseManagement() {
               </tr>
             </thead>
             <tbody>
-              {courses.map((course) => (
-                <tr key={course.id}>
-                  <td className={styles['course-img']}>
-                    <img src={course.image} alt={course.title} />
-                  </td>
-                  <td>{course.title}</td>
-                  <td>{course.category}</td>
-                  <td>{course.date}</td>
-                  <td>{course.price}</td>
-                  <td>{course.sales}</td>
-                  <td>{course.students}</td>
-                  <td>
-                    <div className={styles['state-circle']}>
-                      <div className={styles['state']}></div>
-                      {course.status}
-                    </div>
-                  </td>
-                  <td>
-                    <button className={styles['edit-btn']}>
-                      <FiEdit />
-                    </button>
-                  </td>
-                  <td>
-                    <button className={styles['delete-btn']}>
-                    <FiTrash2 />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {currentCourses.map((course) => {
+                console.log(`📌 顯示課程:`, course)
+                const safeImage = course.image_url
+                  ? course.image_url
+                  : `/uploads/course-cover/${course.image_url}` ||
+                    '/images/course-cover/default-course.jpg'
+                return (
+                  <tr key={course.id}>
+                    <td className={styles['course-img']}>
+                      <Link href={`/courses/${course.id}`}>
+                        <img
+                          src={safeImage}
+                          alt={course.title}
+                          className="img-fluid"
+                        />
+                      </Link>
+                    </td>
+                    <td>{course.title}</td>
+                    <td>{course.category}</td>
+                    <td>
+                      {new Date(course.created_at).toLocaleDateString('zh-TW', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      })}
+                    </td>
+                    <td>{course.sale_price.toLocaleString()}</td>
+                    <td>
+                      NT$
+                      {(
+                        course.sale_price * course.student_count
+                      ).toLocaleString()}
+                    </td>
+                    <td>{course.student_count.toLocaleString()}</td>
+                    <td>
+                      <div className={styles['state-circle']}>
+                        <div className={styles['state']}></div>
+                        {course.status === 'published' ? '上架中' : '未上架'}
+                      </div>
+                    </td>
+                    <td>
+                      <button className={styles['edit-btn']}>
+                        <FiEdit />
+                      </button>
+                    </td>
+                    <td>
+                      <button className={styles['delete-btn']}>
+                        <FiTrash2 />
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </>

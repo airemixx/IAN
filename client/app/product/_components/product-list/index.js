@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import ProductCard from "../product-card";
-import Pagination from "../product-pagination"; // ✅ 引入 Pagination
+import Pagination from "../product-pagination";
 import styles from "./product-list.module.scss";
 
 export default function ProductList({ filters, sort }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1); // ✅ 追蹤當前頁數
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage = 12; // ✅ 每頁顯示 12 項商品
+  const itemsPerPage = 12;
 
   useEffect(() => {
     async function fetchProducts() {
@@ -34,7 +34,7 @@ export default function ProductList({ filters, sort }) {
 
         const data = await res.json();
         setProducts(data);
-        setCurrentPage(1); // ✅ 當篩選條件改變時，回到第 1 頁
+        setCurrentPage(1);
       } catch (error) {
         console.error("獲取商品時發生錯誤:", error);
       } finally {
@@ -47,10 +47,9 @@ export default function ProductList({ filters, sort }) {
 
   if (loading) return <p className={styles.loadingText}>載入中...</p>;
 
-  // ✅ 計算當前頁面要顯示的商品
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
-  const totalPages = Math.ceil(products.length / itemsPerPage); // ✅ 計算總頁數
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   return (
     <div>
@@ -63,7 +62,7 @@ export default function ProductList({ filters, sort }) {
       </div>
       {totalPages > 1 && (
         <div className={`container ${styles.container}`}>
-            <Pagination totalProducts={products.length} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+          <Pagination totalProducts={products.length} currentPage={currentPage} setCurrentPage={setCurrentPage} />
         </div>
       )}
     </div>

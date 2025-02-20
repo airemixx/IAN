@@ -16,7 +16,7 @@ export default function Pagination({ totalProducts, currentPage, setCurrentPage 
 
   const generatePageNumbers = () => {
     const pages = [];
-    const maxPageButtons = window.innerWidth <= 391 ? 3 : 5; // ✅ 手機板顯示較少頁碼
+    const maxPageButtons = window.innerWidth <= 391 ? 3 : 5; //手機板顯示較少頁碼
 
     if (totalPages <= maxPageButtons) {
       for (let i = 1; i <= totalPages; i++) {

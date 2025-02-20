@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import styles from "./carousel.module.scss";
 
 export default function CarouselIndex(props) {
-  
+
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap.bundle.min.js")
       .then(() => {

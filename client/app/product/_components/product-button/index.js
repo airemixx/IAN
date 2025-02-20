@@ -23,7 +23,7 @@ export default function CompareButton({ product, isHovered }) {
         timer: 1500,
         showConfirmButton: false,
         customClass: {
-          popup: styles.sweetAlertPopup, // ✅ 使用 SCSS 調整彈窗樣式
+          popup: styles.sweetAlertPopup,
         },
       });
     } else {
@@ -46,7 +46,7 @@ export default function CompareButton({ product, isHovered }) {
           timer: 1500,
           showConfirmButton: false,
           customClass: {
-            popup: styles.sweetAlertPopup, // ✅ SCSS 調整彈窗
+            popup: styles.sweetAlertPopup,
           },
         });
       }
@@ -55,11 +55,10 @@ export default function CompareButton({ product, isHovered }) {
 
   return (
     <div className={`${styles.iconcontainer} ${isHovered ? styles.show : styles.hide}`}>
-      <div 
-        className={`${styles.iconCircle} ${isInCompareList ? styles.added : ""}`} 
+      <div
+        className={`${styles.iconCircle} ${isInCompareList ? styles.added : ""}`}
         onClick={handleCompareClick}
       >
-        {/* ✅ 將勾勾放到圖片的右上角 */}
         <FontAwesomeIcon icon={isInCompareList ? faCheck : faCamera} className={styles.icon} />
       </div>
       <p className={styles.iconText}>{isInCompareList ? "加入" : "比較"}</p>

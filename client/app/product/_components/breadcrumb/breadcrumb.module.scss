@@ -1,23 +1,19 @@
-/* ✅ 修正 Breadcrumb 樣式 */
 .breadcrumb {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-  }
-  
-  /* ✅ 連結樣式 */
-  .breadcrumbLink {
-    text-decoration: none;
-    color: #8F8F8F;
-  }
-  
-  /* ✅ 自定義分隔符 */
-  .breadcrumb-item + .breadcrumb-item::before {
-    content: '>';
-    color: #8F8F8F;
-    margin-right: 5px;
-    margin-left: 5px;
-  }
-  
+  list-style: none;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumbLink {
+  text-decoration: none;
+  color: #8f8f8f;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: '>';
+  color: #8f8f8f;
+  margin-right: 5px;
+  margin-left: 5px;
+}
