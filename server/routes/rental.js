@@ -3,13 +3,72 @@ import pool from '../db.js'
 
 const router = express.Router()
 
-// 獲取所有租借商品列表（包含圖片與 Hashtag）
-// 取得所有租借商品、標籤、並支援搜尋
+// 📌 **統一 API - 獲取商品資料 & 篩選選項**
 router.get('/', async (req, res) => {
   try {
-    const { query } = req.query
+    const { query, category, advanced, brands } = req.query
 
-    // 取得所有租借商品
+    // ✅ **用途篩選邏輯 (動態映射)**
+    const categoryMapping = {
+      日常攝影: {
+        hashtags: ['輕便', '4K錄影', '超廣角', '自動對焦', '多功能'],
+        types: ['APS-C相機', '標準變焦鏡頭', '廣角定焦鏡頭', '腳架', '麥克風'],
+      },
+      專業攝影: {
+        hashtags: ['高畫質', '旗艦', '高階款', '專業級', '人像'],
+        types: [
+          '全幅相機',
+          '標準定焦鏡頭',
+          '望遠變焦鏡頭',
+          '廣角定焦鏡頭',
+          '閃光燈',
+          '轉接環',
+        ],
+      },
+      影像創作: {
+        hashtags: ['Vlog', '4K錄影', '8K錄影', '音訊', '防手震'],
+        types: [
+          'APS-C相機',
+          '全幅相機',
+          '標準變焦鏡頭',
+          '廣角變焦鏡頭',
+          '麥克風',
+          '腳架',
+        ],
+      },
+      戶外運動: {
+        hashtags: ['高速快門', '連拍', '自動對焦', '防手震', '超望遠'],
+        types: ['全幅相機', '望遠變焦鏡頭', '望遠定焦鏡頭', '腳架', '閃光燈'],
+      },
+      旅遊拍攝: {
+        hashtags: ['旅行', '輕便', '熱靴', '多功能', '大光圈'],
+        types: [
+          'APS-C相機',
+          '全幅相機',
+          '廣角變焦鏡頭',
+          '標準變焦鏡頭',
+          '腳架',
+          '麥克風',
+        ],
+      },
+      產品攝影: {
+        hashtags: ['微距', '大光圈', '高階款', '高畫質', '專業級'],
+        types: [
+          '全幅相機',
+          '微距鏡頭',
+          '標準定焦鏡頭',
+          '廣角定焦鏡頭',
+          '轉接環',
+          '閃光燈',
+          '腳架',
+        ],
+      },
+    }
+
+    // ✅ **用 "全部" 作為預設選項，並動態添加 categoryMapping 中的用途分類**
+    const categoryOptions = ['全部', ...Object.keys(categoryMapping)]
+
+    // ✅ **組織商品查詢語句**
     let rentalQuery = `
       SELECT 
         r.*, 
@@ -24,10 +83,72 @@ router.get('/', async (req, res) => {
 
     let queryParams = []
 
-    // 如果有搜尋關鍵字
+    // 🔍 **搜尋功能 (支援名稱、摘要、標籤模糊搜尋)**
     if (query) {
       rentalQuery += ` AND (r.name LIKE ? OR r.summary LIKE ? OR t.tags LIKE ?) `
       queryParams.push(`%${query}%`, `%${query}%`, `%${query}%`)
+    }
+
+    // ✅ **用途 & 進階篩選邏輯 (允許交叉篩選，但不相互干擾)**
+    if (category && category !== '全部' && categoryMapping[category]) {
+      const { hashtags, types } = categoryMapping[category]
+
+      let orConditions = []
+
+      // 🟢 **Hashtag 篩選 (允許 OR 查詢)**
+      if (hashtags.length > 0) {
+        const hashtagCondition = `(${hashtags
+          .map(() => 't.tags LIKE ?')
+          .join(' OR ')})`
+        orConditions.push(hashtagCondition)
+        queryParams.push(...hashtags.map((tag) => `%${tag}%`))
+      }
+
+      // 🟢 **設備類型篩選 (允許 OR 查詢)**
+      if (types.length > 0) {
+        const typeCondition = `
+          (r.cam_kind IN (${types.map(() => '?').join(',')}) OR 
+          r.len_kind IN (${types.map(() => '?').join(',')}) OR 
+          r.acc_kind IN (${types.map(() => '?').join(',')}))`
+        orConditions.push(typeCondition)
+        queryParams.push(...types, ...types, ...types)
+      }
+
+      // 🟢 **將 Hashtags 和 Types 的條件用 OR 連接**
+      if (orConditions.length > 0) {
+        rentalQuery += ` AND (${orConditions.join(' OR ')})`
+      }
+    }
+
+    // ✅ **設備篩選 (進階篩選)**
+    if (advanced) {
+      const advancedList = Array.isArray(advanced) ? advanced : [advanced]
+      rentalQuery += ` AND (
+        r.cam_kind IN (${advancedList.map(() => '?').join(',')}) OR 
+        r.len_kind IN (${advancedList.map(() => '?').join(',')}) OR 
+        r.acc_kind IN (${advancedList.map(() => '?').join(',')})
+      ) `
+      queryParams.push(...advancedList, ...advancedList, ...advancedList)
+    }
+
+    // ✅ **品牌篩選（支援 "其他" 選項）**
+    if (brands) {
+      const brandList = Array.isArray(brands) ? brands : [brands]
+
+      if (brandList.length === 1 && brandList[0] === '其他') {
+        rentalQuery += ` AND r.brand IS NULL `
+      } else if (brandList.includes('其他')) {
+        rentalQuery += ` AND (r.brand IN (${brandList
+          .filter((b) => b !== '其他')
+          .map(() => '?')
+          .join(',')}) OR r.brand IS NULL) `
+        queryParams.push(...brandList.filter((b) => b !== '其他'))
+      } else {
+        rentalQuery += ` AND r.brand IN (${brandList
+          .map(() => '?')
+          .join(',')}) `
+        queryParams.push(...brandList)
+      }
     }
 
     rentalQuery += ` GROUP BY r.id`
@@ -43,7 +164,28 @@ router.get('/', async (req, res) => {
       `SELECT id, tags FROM rent_tags ORDER BY sequence ASC`
     )
 
-    res.json({ success: true, rentals, tags: tags || [] }) // ✅ 確保 tags 預設為 []
+    // ✅ **完整的回傳資料，包括所有前端所需的篩選選項**
+    res.json({
+      success: true,
+      rentals,
+      tags: tags || [],
+      categories: categoryOptions,
+      equipment: [
+        '全幅相機',
+        'APS-C相機',
+        '廣角變焦鏡頭',
+        '標準變焦鏡頭',
+        '望遠變焦鏡頭',
+        '廣角定焦鏡頭',
+        '標準定焦鏡頭',
+        '望遠定焦鏡頭',
+        '轉接環',
+        '閃光燈',
+        '麥克風',
+        '腳架',
+      ],
+      brands: ['Canon', 'Sony', 'Nikon', 'Leica', '其他'],
+    })
   } catch (error) {
     console.error('❌ 錯誤:', error)
     res.status(500).json({ success: false, error: '伺服器錯誤' })
