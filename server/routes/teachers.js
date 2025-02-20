@@ -140,7 +140,7 @@ router.put("/me", authenticate, async (req, res) => {
 });
 
 
-// ✅ 獲取特定講師的資訊 + 該老師的所有課程 (包含評分)
+// ✅ 獲取特定講師的資訊 + 該老師的所有課程(包含評分)
 router.get('/:id', async (req, res) => {
   const teacherId = parseInt(req.params.id, 10)
   if (isNaN(teacherId)) {

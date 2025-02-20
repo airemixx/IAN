@@ -52,7 +52,7 @@ export default function CourseManagement() {
           email: data[0].mail,
         })
 
-        setCourses(data) // ✅ 設定課程資料
+        setCourses(data) //設定課程資料
 
         if (data[0].level !== 1) {
           console.warn('⚠️ 只有老師能進入此頁面，跳轉到 /dashboard')
