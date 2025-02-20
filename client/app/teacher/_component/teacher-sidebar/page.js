@@ -13,10 +13,11 @@ export default function TeacherSidebar() {
   const [teacher, setTeacher] = useState({
     name: 'Loading...',
     email: 'Loading...',
-    image: '/images/default-avatar.jpg', // 預設大頭貼
+    image: '/images/teachers/default-avatar.jpg', // 預設大頭貼
   })
 
   useEffect(() => {
+    
     const fetchTeacherCourses = async () => {
       try {
         const token = localStorage.getItem('loginWithToken')
@@ -38,7 +39,7 @@ export default function TeacherSidebar() {
           setTeacher({
             name: data[0].teacher_name, // ✅ 修正
             email: data[0].mail, // ✅ 修正
-            image: data[0].teacher_image || '/images/default-avatar.jpg', // ✅ 預設大頭貼
+            image: data[0].teacher_image || '/images/teachers/default-avatar.jpg', // ✅ 預設大頭貼
           })
         } else {
           console.warn('⚠️ 沒有課程資料，無法獲取講師資訊')
