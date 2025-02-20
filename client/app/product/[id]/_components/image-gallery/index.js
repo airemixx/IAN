@@ -45,37 +45,35 @@ export default function ImageGallery({ productId }) {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  // ✅ 放大鏡效果
+  // 放大鏡效果
   const handleMouseMove = (e) => {
     const zoomLens = zoomLensRef.current;
     const mainImage = mainImageRef.current;
     if (!zoomLens || !mainImage) return;
-  
+
     const { left, top, width, height } = mainImage.getBoundingClientRect();
     const x = e.clientX - left;
     const y = e.clientY - top;
-  
+
     // 限制邊界，避免放大鏡超出圖片範圍
     if (x < 0 || y < 0 || x > width || y > height) {
       zoomLens.style.display = "none";
       return;
     }
-  
+
     zoomLens.style.display = "block";
     zoomLens.style.left = `${x - zoomLens.offsetWidth / 2}px`;
     zoomLens.style.top = `${y - zoomLens.offsetHeight / 2}px`;
-  
-    // ✅ 設定背景圖片（放大2倍或3倍）
-    const zoomLevel = 2;  // 🔹 放大比例
+
+    const zoomLevel = 2;  // 放大比例
     zoomLens.style.backgroundImage = `url(${images[currentIndex]})`;
     zoomLens.style.backgroundSize = `${width * zoomLevel}px ${height * zoomLevel}px`;
-  
-    // ✅ 計算正確的 `backgroundPosition`
+
     const bgX = (x / width) * 100;
     const bgY = (y / height) * 100;
     zoomLens.style.backgroundPosition = `${bgX}% ${bgY}%`;
   };
-  
+
 
   const handleMouseLeave = () => {
     if (zoomLensRef.current) {
@@ -113,7 +111,7 @@ export default function ImageGallery({ productId }) {
           className={styles.mainImage}
           alt="商品圖片"
         />
-        {/* 🔍 放大鏡效果 */}
+        {/* 放大鏡效果 */}
         <div ref={zoomLensRef} className={styles.zoomLens}></div>
 
         <span className={`${styles.arrow} ${styles.arrowLeft}`} onClick={previousImage}>

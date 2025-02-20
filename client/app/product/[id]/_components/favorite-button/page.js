@@ -1,14 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
-import Swal from "sweetalert2"; // ✅ 引入 SweetAlert2
+import Swal from "sweetalert2";
 import styles from "./favorite-button.module.scss";
 
 export default function FavoriteButton({ productId }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const token = typeof window !== "undefined" ? localStorage.getItem("loginWithToken") : null;
 
-  // ✅ 1️⃣ 當畫面載入時，確認是否已收藏
   useEffect(() => {
     if (!token) return;
 
@@ -25,9 +24,9 @@ export default function FavoriteButton({ productId }) {
         if (!res.ok) throw new Error("無法取得收藏狀態");
 
         const data = await res.json();
-        setIsFavorite(data.isFavorite); // ✅ 設定為 true or false
+        setIsFavorite(data.isFavorite);
       } catch (error) {
-        console.error("❌ 無法確認收藏狀態:", error);
+        console.error("無法確認收藏狀態:", error);
       }
     };
 
@@ -43,7 +42,7 @@ export default function FavoriteButton({ productId }) {
         confirmButtonText: "前往登入",
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = "/login"; // ✅ 按 OK 後導向登入頁面
+          window.location.href = "/login";
         }
       });
       return;
@@ -74,7 +73,6 @@ export default function FavoriteButton({ productId }) {
         }
       }
 
-      // ✅ 收藏或取消收藏成功
       setIsFavorite((prev) => !prev);
 
       Swal.fire({
@@ -86,7 +84,7 @@ export default function FavoriteButton({ productId }) {
       });
 
     } catch (error) {
-      console.error("❌ 收藏錯誤:", error);
+      console.error(" 收藏錯誤:", error);
       Swal.fire({
         icon: "error",
         title: "操作失敗",

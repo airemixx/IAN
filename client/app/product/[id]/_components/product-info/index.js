@@ -1,7 +1,7 @@
 "use client";
 import {useState} from "react";
 import styles from "./product-info.module.scss";
-import CartButton from "../cart-button"; // ✅ 確保是相對路徑
+import CartButton from "../cart-button";
 import FavoriteButton from "../favorite-button/page";
 
 
