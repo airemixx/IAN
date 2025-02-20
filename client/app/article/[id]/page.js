@@ -38,6 +38,7 @@ export default function ArticleDetail() {
   const [article, setArticle] = useState(null)
   const [categoryId, setCategoryId] = useState(null)
   const [tags, setTags] = useState([])
+  const [refreshComments, setRefreshComments] = useState(0)
 
   const changeFontSize = (size) => {
     setFontSize(size)
@@ -92,6 +93,10 @@ export default function ArticleDetail() {
 
   const memoizedTags = useMemo(() => tags, [tags])
 
+  const handleCommentSubmitted = () => {
+    setRefreshComments(prev => prev + 1)
+  }
+
   return (
     <div className="bg-light headerPadding">
       <div className="d-flex flex-column min-vh-100 text-dark bg-light y-container">
@@ -119,8 +124,8 @@ export default function ArticleDetail() {
               fontSize={getFontSize(fontSize)}
             />
             <TagLikeShareBtn articleId={id} />
-            <ReplyInput articleId={id} parentId={null} />
-            <CommentsArea articleId={id} />
+            <ReplyInput articleId={id} parentId={null} onCommentSubmitted={handleCommentSubmitted} />
+            <CommentsArea articleId={id} refreshTrigger={refreshComments} />
           </article>
           <Aside
             categoryId={categoryId}

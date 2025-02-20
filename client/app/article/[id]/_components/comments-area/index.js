@@ -6,6 +6,26 @@ import { formatDistanceToNow, format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
+import ReplyInput from '../reply-input' // 引入 ReplyInput 組件
+
+// 組織留言資料，將回覆中的回覆依照 parent_id 分組
+const organizeComments = (comments) => {
+  const topLevel = comments.filter((c) => !c.parent_id)
+  const nestedMap = {}
+  comments.forEach((c) => {
+    if (c.parent_id) {
+      if (!nestedMap[c.parent_id]) {
+        nestedMap[c.parent_id] = []
+      }
+      nestedMap[c.parent_id].push(c)
+    }
+  })
+  // 將 nested replies 嵌入對應頂層留言
+  return topLevel.map((comment) => ({
+    ...comment,
+    replies: nestedMap[comment.id] || [],
+  }))
+}
 
 // 留言項目元件
 function ReplyItem({
@@ -16,7 +36,19 @@ function ReplyItem({
   media_urls,
   media_types,
   replies,
+  likeCount: initialLikeCount, // new prop for comment like count
+  commentId, // new prop for identifying the comment
+  articleId, // ← 讓 ReplyItem 同時接收 articleId
 }) {
+  const [isLiked, setIsLiked] = useState(false)
+  const [commentLikeCount, setCommentLikeCount] = useState(initialLikeCount || 0)
+  const [isClicked, setIsClicked] = useState(false)
+  const [numVibrate, setNumVibrate] = useState(false)
+  const [showReplyInput, setShowReplyInput] = useState(false) // 新增狀態來控制是否顯示輸入框
+  // 新增 state 儲存新增的 nested replies
+  const [nestedReplies, setNestedReplies] = useState(replies || [])
+  const [showNestedReplies, setShowNestedReplies] = useState(true) // 新增 state
+
   const timeAgo = formatDistanceToNow(new Date(time), {
     locale: zhTW,
     addSuffix: true,
@@ -24,15 +56,77 @@ function ReplyItem({
 
   const formattedTime = format(new Date(time), 'yyyy/MM/dd HH:mm')
 
+  const handleLike = async () => {
+    if (isLiked) {
+      // Unlike action: decrease count and update state
+      const newCount = commentLikeCount - 1
+      setIsLiked(false)
+      setCommentLikeCount(newCount)
+      setNumVibrate(true)
+      try {
+        await fetch(`http://localhost:8000/api/likes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            likeableId: commentId, // comment id
+            likeableType: 'article_comment',
+            newLikeCount: newCount,
+            // include userId if needed
+          }),
+          credentials: 'include',
+        })
+      } catch (error) {
+        console.error('Error updating comment unlike:', error)
+      }
+    } else {
+      // Like action: increase count and update state
+      setIsLiked(true)
+      setIsClicked(true)
+      const newCount = commentLikeCount + 1
+      setCommentLikeCount(newCount)
+      setNumVibrate(true)
+      setTimeout(() => setIsClicked(false), 300)
+      try {
+        await fetch(`http://localhost:8000/api/likes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            likeableId: commentId, // comment id
+            likeableType: 'article_comment',
+            newLikeCount: newCount,
+            // include userId if needed
+          }),
+          credentials: 'include',
+        })
+      } catch (error) {
+        console.error('Error updating comment like count:', error)
+      }
+    }
+  }
+
+  const handleReplyClick = () => {
+    setShowReplyInput(!showReplyInput)
+  }
+
+  // 當 newNestedReply 送出時將其加入 nestedReplies state
+  const handleNestedReplySubmitted = (newNestedReply) => {
+    setNestedReplies((prev) => [...prev, newNestedReply])
+    setShowReplyInput(false)
+  }
+
+  const toggleNestedReplies = () => {
+    setShowNestedReplies(!showNestedReplies)
+  }
+
   return (
     <div className={`d-flex ${styles['y-reply']}`}>
-      {/* 使用者頭像 */}
+      {/* User Profile */}
       <div className={styles['y-reply-user-profile']}>
         <a href="#">
           <img src={userProfile} alt={userName} />
         </a>
       </div>
-      {/* 留言內容 */}
+      {/* Comment Content */}
       <div className={`mx-3 ${styles['y-reply-content']}`}>
         <a href="#" className="text-black text-decoration-none">
           <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
@@ -51,10 +145,10 @@ function ReplyItem({
                     src={`/images/article_com_media/${media_url}`}
                     alt="Reply attachment"
                     style={{
-                      width: '40%', // Make the image take up the full width of its container
-                      height: 'auto', // Maintain aspect ratio
-                      aspectRatio: '16 / 9', // Enforce 16:9 aspect ratio
-                      objectFit: 'cover', // Cover the container, potentially cropping the image
+                      width: '40%',
+                      height: 'auto',
+                      aspectRatio: '16 / 9',
+                      objectFit: 'cover',
                     }}
                   />
                 </div>
@@ -66,10 +160,10 @@ function ReplyItem({
                     src={`/images/article_com_media/${media_url}`}
                     controls
                     style={{
-                      width: '40%', // Make the video take up 60% of its container
-                      height: 'auto', // Maintain aspect ratio
-                      aspectRatio: '16 / 9', // Enforce 16:9 aspect ratio
-                      objectFit: 'cover', // Cover the container, potentially cropping the video
+                      width: '40%',
+                      height: 'auto',
+                      aspectRatio: '16 / 9',
+                      objectFit: 'cover',
                     }}
                   />
                 </div>
@@ -92,9 +186,7 @@ function ReplyItem({
             }
             return null
           })}
-        <div
-          className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}
-        >
+        <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
           <h6
             data-tooltip-id={`tooltip-${time}`}
             style={{ cursor: 'pointer' }}
@@ -109,29 +201,78 @@ function ReplyItem({
             style={{ backgroundColor: '#7E7267' }}
           />
           <div className="d-flex mb-like-reply">
-            <button className="ms-sm-3">
-              <img src="/images/article/thumb-up-black.svg" alt="Like" />
+            <button className="ms-sm-3" onClick={handleLike}>
+              <img
+                src={
+                  isLiked
+                    ? '/images/article/thumb-up-red.svg'
+                    : '/images/article/thumb-up-black.svg'
+                }
+                alt="Like"
+                style={{
+                  transform: isClicked ? 'scale(1.5)' : 'scale(1)',
+                  transition: 'transform 0.3s ease',
+                }}
+              />
+              <span
+                className={`${numVibrate ? styles.vibrate : ''}`}
+                onAnimationEnd={() => setNumVibrate(false)}
+                style={{ display: 'inline-block', width: '40px', textAlign: 'center' }} // 固定寬度，居中顯示
+              >
+                {commentLikeCount}
+              </span>
             </button>
             <button
               className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
+              onClick={handleReplyClick}
             >
-              <img src="/images/article/message2.svg" alt="Reply" />
-              <span className="ms-1">回覆</span>
+              <img src="/images/article/reply-origin.svg" alt="Reply" />
+              <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
             </button>
           </div>
         </div>
-        {/* 回覆中的回覆 */}
-        {replies && replies.length > 0 && (
+        {/* 顯示回覆輸入框 */}
+        {showReplyInput && (
+          <div className="mt-3" style={{ width: '850px' }}>
+            <ReplyInput
+              articleId={articleId}    // ← 傳遞正確的文章編號
+              parentId={commentId}     // ← parentId 為當前留言編號
+              onCommentSubmitted={handleNestedReplySubmitted}
+            />
+          </div>
+        )}
+        {/* Render nested replies if available */}
+        {nestedReplies && nestedReplies.length > 0 && (
           <>
             <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
-              <button>ㄧ 隱藏留言</button>
+              <button onClick={toggleNestedReplies}>
+                {showNestedReplies
+                  ? `ㄧ 隱藏留言`
+                  : `ㄧ 顯示全部(${nestedReplies.length})留言`}
+              </button>
             </div>
-            {replies.map((reply) => (
-              <NestedReplyItem key={reply.id} {...reply} />
-            ))}
-            <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
-              <button>ㄧ 隱藏留言</button>
-            </div>
+            {showNestedReplies &&
+              nestedReplies.map((reply) => {
+                if (!reply) return null
+                return (
+                  <NestedReplyItem
+                    key={reply.id}
+                    userName={reply?.nickname || reply?.name || '匿名'}
+                    userProfile={reply.head}
+                    text={reply.content}
+                    time={reply.created_at}
+                    image={reply.media_url}  // 根據實際情況設定
+                    parentId={reply.parent_id} // 傳入 parent_id
+                  />
+                )
+              })}
+            {showNestedReplies && (
+              <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
+                <button onClick={toggleNestedReplies}>
+                  ㄧ 隱藏留言
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -140,11 +281,12 @@ function ReplyItem({
 }
 
 // 回覆中的回覆元件
-function NestedReplyItem({ userName, userProfile, text, time, image }) {
+function NestedReplyItem({ userName, userProfile, text, time, image, parentId }) {
   const timeAgo = formatDistanceToNow(new Date(time), {
     locale: zhTW,
     addSuffix: true,
   })
+
   return (
     <div className="d-flex">
       {/* 使用者頭像 */}
@@ -158,6 +300,7 @@ function NestedReplyItem({ userName, userProfile, text, time, image }) {
         <a href="#" className="text-black text-decoration-none">
           <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
         </a>
+        {/* 顯示 parentId */}
         <div className={styles['y-reply-content']}>
           <p className={`mt-3 ${styles['y-reply-text']}`}>{text}</p>
         </div>
@@ -166,19 +309,15 @@ function NestedReplyItem({ userName, userProfile, text, time, image }) {
             <img src={image} alt="Reply attachment" />
           </div>
         )}
-        <div
-          className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}
-        >
+        <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
           <h6 className="my-auto me-sm-3">{timeAgo}</h6>
           <div className="d-flex mb-like-reply">
             <button className="ms-sm-3">
               <img src="/images/article/thumb-up-black.svg" alt="Like" />
             </button>
-            <button
-              className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
-            >
-              <img src="/images/article/message2.svg" alt="Reply" />
-              <span className="ms-1">回覆</span>
+            <button className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}>
+              <img src="/images/article/reply-origin.svg" alt="Reply" />
+              <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
             </button>
           </div>
         </div>
@@ -191,6 +330,7 @@ function NestedReplyItem({ userName, userProfile, text, time, image }) {
 export default function CommentsArea({
   articleId,
   commentCount: initialCount,
+  refreshTrigger,
 }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [count, setCount] = useState(initialCount ?? 0)
@@ -211,7 +351,7 @@ export default function CommentsArea({
       .catch((err) => {
         console.error('取得留言數量失敗：', err)
       })
-  }, [articleId])
+  }, [articleId, refreshTrigger])
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -223,7 +363,7 @@ export default function CommentsArea({
           throw new Error(`HTTP error! status: ${res.status}`)
         }
         const data = await res.json()
-        setComments(data.comments)
+        setComments(organizeComments(data.comments))
       } catch (error) {
         console.error('Could not fetch comments:', error)
       }
@@ -232,7 +372,7 @@ export default function CommentsArea({
     if (articleId) {
       fetchComments()
     }
-  }, [articleId])
+  }, [articleId, refreshTrigger])
 
   return (
     <div>
@@ -261,13 +401,16 @@ export default function CommentsArea({
             {comments.map((comment) => (
               <ReplyItem
                 key={comment.id}
+                articleId={articleId}               // ← 從最外層傳給 ReplyItem
+                commentId={comment.id}
                 userName={comment.nickname || comment.name}
                 userProfile={comment.head}
                 text={comment.content}
                 time={comment.created_at}
                 media_urls={comment.media_urls}
                 media_types={comment.media_types}
-                replies={[]} // Assuming replies are not directly fetched here
+                replies={comment.replies}
+                likeCount={comment.like_count}
               />
             ))}
           </div>

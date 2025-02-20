@@ -44,7 +44,7 @@ class ErrorBoundary extends React.Component {
 }
 
 // 主組件
-export default function ReplyInput({ articleId, parentId }) {
+export default function ReplyInput({ articleId, parentId, onCommentSubmitted }) {
   const [comment, setComment] = useState('') // 留言文字
   const [previews, setPreviews] = useState([]) // 圖片和 GIF 預覽
   const [showGifPicker, setShowGifPicker] = useState(false) // 是否顯示 GIF 選擇器
@@ -94,52 +94,49 @@ export default function ReplyInput({ articleId, parentId }) {
   }
 
   // 留言送出
-// 留言送出
-const handleSubmit = async () => {
-  if (
-    !comment.trim() &&
-    !(fileInputRef.current && fileInputRef.current.files.length > 0) &&
-    !(previews.length && previews[0].type === 'gif')
-  )
-    return
+  const handleSubmit = async () => {
+    if (!comment.trim() && !(fileInputRef.current && fileInputRef.current.files.length > 0) && !(previews.length && previews[0].type === 'gif'))
+      return
 
-  const formData = new FormData()
-  formData.append('content', comment)
-  formData.append('articleId', articleId)
-  formData.append('userId', userId)
-  formData.append('parentId', parentId || '')
+    const formData = new FormData()
+    formData.append('content', comment)
+    formData.append('articleId', articleId)
+    formData.append('userId', userId)
+    formData.append('parentId', parentId || '')
 
-  if (fileInputRef.current && fileInputRef.current.files.length > 0) {
-    for (const file of fileInputRef.current.files) {
-      formData.append('media', file)
-    }
-  } else if (previews.length && previews[0].type === 'gif') {
-    formData.append('gifUrl', previews[0].url)
-  }
-
-  try {
-    const response = await axios.post(
-      'http://localhost:8000/api/comments',
-      formData,
-      {
-        withCredentials: true,
-        headers: { 'Content-Type': 'multipart/form-data' },
+    if (fileInputRef.current && fileInputRef.current.files.length > 0) {
+      for (const file of fileInputRef.current.files) {
+        formData.append('media', file)
       }
-    )
-    console.log('留言新增成功：', response.data)
-    // 清空留言及附件預覽
-    setComment('')
-    setPreviews([])
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+    } else if (previews.length && previews[0].type === 'gif') {
+      formData.append('gifUrl', previews[0].url)
     }
-    // 執行送出成功後按鈕放大效果
-    setIsSent(true)
-    setTimeout(() => setIsSent(false), 300)
-  } catch (error) {
-    console.error('留言送出失敗：', error)
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/comments',
+        formData,
+        {
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      )
+      console.log('留言新增成功：', response.data)
+      // 清空留言及附件預覽
+      setComment('')
+      setPreviews([])
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      // 執行送出成功後按鈕放大效果
+      setIsSent(true)
+      setTimeout(() => setIsSent(false), 300)
+      // Call the callback to tell parent a comment was submitted
+      onCommentSubmitted && onCommentSubmitted()
+    } catch (error) {
+      console.error('留言送出失敗：', error)
+    }
   }
-}
 
   // 根據是否有文字或預覽判定是否可發送
   const isReadyToSend = comment.trim().length > 0 || previews.length > 0
@@ -150,8 +147,8 @@ const handleSubmit = async () => {
       ? '/images/article/sended-hover.svg'
       : '/images/article/sended.svg'
     : isHovered
-    ? '/images/article/sended-hover.svg'
-    : '/images/article/sended-black.svg'
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended-black.svg'
 
   // GEO API 請求搜尋 GIF
   const searchGifs = useCallback(
@@ -187,6 +184,11 @@ const handleSubmit = async () => {
         placeholder="留言"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSubmit()
+          }
+        }}
       />
       <input
         type="file"
@@ -318,6 +320,82 @@ const handleSubmit = async () => {
             </div>
           </ErrorBoundary>
         </div>
+      )}
+    </div>
+  )
+}
+
+export function NestedReplyInput({ articleId, parentId, onCommentSubmitted }) {
+  const [comment, setComment] = useState('')
+  const fileInputRef = useRef(null)
+  const userId = 1 // 這裡可改為動態取得
+
+  // 確保在送出資料中正確設定 articleId 與 parentId
+  const handleSubmit = async () => {
+    if (!comment.trim()) return
+
+    const formData = new FormData()
+    formData.append('content', comment)
+    formData.append('articleId', articleId)  // 這裡 articleId 應該來自當前文章的 id
+    formData.append('userId', userId)
+    formData.append('parentId', parentId)      // 這裡 parentId 是回覆中回覆所對應的留言 id
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/comments',
+        formData,
+        {
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      )
+
+      // 清空輸入框，並呼叫父組件的 callback
+      setComment('')
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      onCommentSubmitted && onCommentSubmitted(response.data)
+    } catch (error) {
+      console.error('Nested reply submission failed:', error)
+    }
+  }
+
+  return (
+    <div className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}>
+      <input
+        type="text"
+        placeholder="請輸入回覆中的回覆"
+        className="p-2 py-3"
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleSubmit()
+        }}
+      />
+      {/* 如果需要檔案上傳，也可以加入 <input type="file" ... /> */}
+      <button onClick={handleSubmit}>送出回覆</button>
+      {nestedReplies && nestedReplies.length > 0 && (
+        <>
+          <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
+            <button>ㄧ 隱藏留言</button>
+          </div>
+          {nestedReplies.map((reply, idx) => {
+            if (!reply) return null;
+            return (
+              <NestedReplyItem
+                key={reply.id || idx}
+                userName={reply?.nickname || reply?.name}
+                userProfile={reply?.head}
+                text={reply?.content}
+                time={reply?.created_at}
+                image={reply?.media_url}
+                parentId={reply?.parent_id}
+              />
+            )
+          })}
+          <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
+            <button>ㄧ 隱藏留言</button>
+          </div>
+        </>
       )}
     </div>
   )
