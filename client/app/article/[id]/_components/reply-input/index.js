@@ -292,6 +292,7 @@ const handleSubmit = async () => {
               placeholder="搜尋 GIF"
               className="mb-2 border border-dark py-2 rounded ps-2"
               onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '800px', margin: '0 auto', display: 'block' }}
             />
             <div
               style={{
@@ -300,6 +301,7 @@ const handleSubmit = async () => {
                 height: '600px',
                 overflowY: 'auto',
                 overflowX: 'hidden',
+                margin: '0 auto'
               }}
             >
               <Grid

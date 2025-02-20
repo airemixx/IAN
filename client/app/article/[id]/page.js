@@ -1,7 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useContext } from 'react' // Import useContext
 import BreadcrumbDetail from './_components/breadcrumb-detail'
 import TitleShareFontSize from './_components/title-share-fontSize'
 import Content from './_components/content'
@@ -90,6 +90,8 @@ export default function ArticleDetail() {
       })
   }, [id])
 
+  const memoizedTags = useMemo(() => tags, [tags])
+
   return (
     <div className="bg-light headerPadding">
       <div className="d-flex flex-column min-vh-100 text-dark bg-light y-container">
@@ -122,9 +124,10 @@ export default function ArticleDetail() {
           </article>
           <Aside
             categoryId={categoryId}
-            tags={tags}
+            tags={memoizedTags}
             title={articleTitle}
             content={articleContent}
+            articleId={id} // 將 articleId 作為 prop 傳遞
           />
         </div>
       </div>
