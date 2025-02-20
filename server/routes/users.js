@@ -242,9 +242,10 @@ router.post("/login", upload.none(), async (req, res) => {
         nickname: user.nickname || "",
         mail: user.mail,
         head: user.head,
+        level: user.level,
       },
       secretKey,
-      { expiresIn: "30m" }
+      { expiresIn: "7d" }
     );
     res.status(200).json({
       status: "success",
@@ -309,7 +310,7 @@ router.post("/status", checkToken, (req, res) => {
       head: decoded.head,
     },
     secretKey,
-    { expiresIn: "30m" }
+    { expiresIn: "7d" }
   );
   res.json({
     status: "success",
@@ -355,5 +356,8 @@ function checkToken(req, res, next){
 //     return "https://randomuser.me/api/portraits/men/7.jpg";
 //   }
 // }
+
+
+
 
 export default router;

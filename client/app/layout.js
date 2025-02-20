@@ -1,6 +1,5 @@
 'use client'
 
-// import { SessionProvider } from 'next-auth/react' // ✅ 確保有引入
 import { Noto_Sans_TC, Inter } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/globals.css'
