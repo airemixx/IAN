@@ -550,3 +550,45 @@ footer-title {
   opacity: 1 !important;
   transform: scale(1.1);
 }
+
+
+/*  全局 Toast 樣式 */
+.custom-toast-container .Toastify__toast {
+  font-family: "Arial", sans-serif;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  justify-content: flex-start
+}
+
+/*  成功類型 Toast */
+.Toastify__toast--success {
+  background: var(--primary-color) !important; 
+  color: var(--white) !important;
+}
+
+.Toastify__toast--success svg {
+  fill: var(--secondary-color-med) !important;
+}
+
+/*  錯誤類型 Toast */
+.Toastify__toast--error {
+  background: var(--warning-color) !important; 
+  color: var(--white) !important;
+}
+
+.Toastify__toast--error svg {
+  fill: var(--primary-color) !important;
+}
+
+/*  資訊類型 Toast */
+.Toastify__toast--info {
+  background: var(--secondary-color-dark) !important; 
+  color: var(--white) !important;
+}
+
+.Toastify__toast--info svg {
+  fill: var(--secondary-color-med) !important;
+}
+
+

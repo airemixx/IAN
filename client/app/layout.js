@@ -3,11 +3,13 @@
 import { Noto_Sans_TC, Inter } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/globals.css'
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import Footer from './footer'
 import Header from './header'
 import TeacherFooter from './teacher/_component/teacher-footer/page'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -20,15 +22,27 @@ const inter = Inter({
 })
 
 export default function RootLayout({ children }) {
-  const pathname = usePathname()
   const [searchOpen, setSearchOpen] = useState(false)
+  const pathname = usePathname()
 
-  // ✅ 修正：判斷 `/teacher` 或 `/teacher/...`
-  const isTeacherPage = pathname.startsWith('/teacher')
+  const isTeacherPage = useMemo(
+    () => pathname?.startsWith('/teacher'),
+    [pathname]
+  )
 
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={true}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="dark"
+        className="custom-toast-container" 
+      />
         {!isTeacherPage && (
           <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
         )}
