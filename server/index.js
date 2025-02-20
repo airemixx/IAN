@@ -14,7 +14,7 @@ import teachersRouter from './routes/teachers.js'
 import authRouter from "./routes/auth.js";
 import productRoutes from './routes/product.js'
 import rentalRouter from './routes//rental.js'
-import cartRouter from './routes/cart.js'
+import ecpayRouter from './routes/ecpay-test-only.js'
 import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
 import likesRouter from './routes/likes.js'
@@ -62,7 +62,7 @@ app.use("/api/auth", authRouter);
 
 app.use('/api/rental', rentalRouter)
 
-app.use('/api/cart', cartRouter)
+app.use('/api/ecpay-test-only', ecpayRouter)
 
 app.use('/api/articles', articleRoutes)
 app.use('/api/comments', commentsRouter)
