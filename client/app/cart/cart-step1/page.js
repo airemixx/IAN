@@ -13,11 +13,12 @@ export default function cartPageOne() {
   useEffect(() => {
     require('bootstrap/dist/js/bootstrap.bundle.min.js')
   }, [])
-  const cartStorage = JSON.parse(localStorage.getItem("cart"))
-  
-  const cartproduct = []
+  let cartStorage = JSON.parse(localStorage.getItem("cart"))
+ 
+  const cartProduct = []
+
   Object.values(cartStorage).map((v,i) => {
-    cartproduct.push({
+    cartProduct.push({
       type: 'product',
       id: i,
       image: '../images/shopping-cart-image/shoppingCartItemPhoto.png',
@@ -40,45 +41,45 @@ export default function cartPageOne() {
   })
   
   const cartLession = [
-    {
-      type: 'lession',
-      id: 1,
-      image: '/images/shopping-cart-image/lesson1.png',
-      title: '旅行攝影：按下快門，用攝影書寫故事',
-      instructor: '食癮，拾影',
-      rating: '4.2',
-      price: 'NT$ 2,180',
-    },
-    {
-      type: 'lession',
-      id: 2,
-      image: '/images/shopping-cart-image/lesson1.png',
-      title: '旅行攝影：按下快門，用攝影書寫故事',
-      instructor: '食癮，拾影',
-      rating: '4.2',
-      price: 'NT$ 2,180',
-    },
+    // {
+    //   type: 'lession',
+    //   id: 1,
+    //   image: '/images/shopping-cart-image/lesson1.png',
+    //   title: '旅行攝影：按下快門，用攝影書寫故事',
+    //   instructor: '食癮，拾影',
+    //   rating: '4.2',
+    //   price: 'NT$ 2,180',
+    // },
+    // {
+    //   type: 'lession',
+    //   id: 2,
+    //   image: '/images/shopping-cart-image/lesson1.png',
+    //   title: '旅行攝影：按下快門，用攝影書寫故事',
+    //   instructor: '食癮，拾影',
+    //   rating: '4.2',
+    //   price: 'NT$ 2,180',
+    // },
   ]
 
   const cartRent = [
-    {
-      type: 'rent',
-      id: 1,
-      image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM 富士',
-      model: 'X-T5 16-50mm',
-      rentDate: '2024-01-01',
-      dueDate: '2024-01-14',
-    },
-    {
-      type: 'rent',
-      id: 2,
-      image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
-      brand: 'FUJIFILM 富士',
-      model: 'X-T5 16-50mm',
-      rentDate: '2024-01-01',
-      dueDate: '2024-01-14',
-    },
+    // {
+    //   type: 'rent',
+    //   id: 1,
+    //   image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
+    //   brand: 'FUJIFILM 富士',
+    //   model: 'X-T5 16-50mm',
+    //   rentDate: '2024-01-01',
+    //   dueDate: '2024-01-14',
+    // },
+    // {
+    //   type: 'rent',
+    //   id: 2,
+    //   image: '/images/shopping-cart-image/shoppingCartItemPhoto.png',
+    //   brand: 'FUJIFILM 富士',
+    //   model: 'X-T5 16-50mm',
+    //   rentDate: '2024-01-01',
+    //   dueDate: '2024-01-14',
+    // },
   ]
 
   
@@ -86,7 +87,7 @@ export default function cartPageOne() {
   const [checkAll, setCheckAll] = useState(false)
   const [checkedItems, setCheckedItems] = useState({})
   const [slItems, setSltems] = useState([])
-  const allItems = [...cartproduct, ...cartLession, ...cartRent]
+  const allItems = [...cartProduct, ...cartLession, ...cartRent]
   const [selectedItems, setSelectedItems] = useState([]) // 用來存放選中的項目
  
   // 全選或取消全選
@@ -127,7 +128,7 @@ export default function cartPageOne() {
   return (
     <>
       <div className="container j-bodyHeight">
-        <CartTitle count={cartproduct.length} />
+        <CartTitle count={cartProduct.length} />
         <div className="row d-flex justify-content-center">
           <div className="j-shoppingCartBox justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-6 p-0">
             <div className="j-cartItemsBox d-none d-sm-block p-0">
@@ -142,8 +143,8 @@ export default function cartPageOne() {
                 全選
               </div>
               <div className="mt-2 mb-5">
-                <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">相機</h3>
-                {cartproduct.map((item, index) => (
+              {cartProduct.length !=0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">相機</h3> : ''}
+                {cartProduct.map((item, index) => (
                   <div
                     className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}
                     key={index}
@@ -165,7 +166,7 @@ export default function cartPageOne() {
                 ))}
               </div>
               <div className="mt-2 mb-5">
-                <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">課程</h3>
+              {cartLession.length !=0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">課程</h3> : ''}
                 {cartLession.map((lession, index) => {
                   const lessonIndex = index + cartproduct.length
                   return (
@@ -191,7 +192,7 @@ export default function cartPageOne() {
                 })}
               </div>
               <div className="mt-2 mb-5">
-                <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">租借</h3>
+              {cartRent.length !=0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">租借</h3> : ''}
                 {cartRent.map((rental, index) => {
                   const rentalIndex =
                     index + cartproduct.length + cartLession.length
@@ -230,7 +231,7 @@ export default function cartPageOne() {
               </div>
               <div className="mt-2 mb-5 j-itemBox">
                 <h3 className="mb-1 ms-3 pt-2">相機</h3>
-                {cartproduct.map((item, index) => (
+                {cartProduct.map((item, index) => (
                   <div
                     className="j-input-box d-flex align-items-center"
                     key={index + 1}

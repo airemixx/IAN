@@ -3,6 +3,13 @@
 import styles from "./shopping-cart-step3.module.scss";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
+import React, { useRef } from 'react'
+import { isDev, apiURL } from '@/config'
+import Link from 'next/link'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+// import { useAuth } from '@/hooks/use-auth'
+
 export default function CheckoutFormStep3() {
     const router = useRouter(); // 取得 Next.js router
     const [addressData, setAddressData] = useState({
@@ -22,8 +29,70 @@ export default function CheckoutFormStep3() {
         }
     }, []);
 
-    const handleSubmit = () => {
-        // router.push("/cart/cart-success"); // 導向到 cart-step2 頁面
+    // 檢查是否登入
+    // const { isAuth } = useAuth()
+    const payFormDiv = useRef(null)
+    // 建立ref，用來放置金額
+    const amountRef = useRef(null)
+    // 建立ref，用來放置商品名稱
+    const itemsRef = useRef(null)
+
+
+    const handleSubmit = async () => {
+
+        // 取得 localStorage 內的地址資料
+        const addressData = JSON.parse(localStorage.getItem("checkoutAddress")) || {};
+        const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
+        const cartItems = Object.values(cartData);
+
+        // 轉換 cartData 為適合的格式（例如商品名稱與數量）
+        const items = cartItems.map(item => `${item.brand} ${item.model} x${item.quantity}`).join(", ");
+        const amount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        console.log(items,amount);
+        try {
+            const res = await fetch(`${apiURL}/ecpay?amount=${amount}&items=${encodeURIComponent(items)}`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            });
+
+            const resData = await res.json();
+
+            if (isDev) console.log(resData);
+
+            if (resData.status === "success") {
+                // 建立付款表單
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = resData.data.action;
+
+                // 加入 ECPay API 參數
+                for (const key in resData.data.params) {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = key;
+                    input.value = resData.data.params[key];
+                    form.appendChild(input);
+                }
+
+                // 加入至畫面並提交
+                document.body.appendChild(form);
+
+                if (window.confirm("確認要導向至 ECPay 進行付款?")) {
+                    form.submit();
+                }
+            } else {
+                toast.error("付款失敗，請稍後再試！");
+            }
+        } catch (error) {
+            console.error("付款請求失敗:", error);
+            toast.error("發生錯誤，請稍後再試！");
+        }
+
+        // router.push("/cart/cart-success"); // 導向到 cart-success 頁面
     };
 
 
@@ -98,9 +167,9 @@ export default function CheckoutFormStep3() {
                 </div>
                 <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center`}>
                     <button className={`${styles['j-btn']} btn text-align-center d-flex flex-grow-1 justify-content-center`}
-                    onClick={handleSubmit}>付款</button>
+                        onClick={handleSubmit}>付款</button>
                 </div>
-            </div> 
+            </div>
         </div>
     );
 }
