@@ -51,7 +51,7 @@ function ReplyItem({
                     src={`/images/article_com_media/${media_url}`}
                     alt="Reply attachment"
                     style={{
-                      width: '100%', // Make the image take up the full width of its container
+                      width: '40%', // Make the image take up the full width of its container
                       height: 'auto', // Maintain aspect ratio
                       aspectRatio: '16 / 9', // Enforce 16:9 aspect ratio
                       objectFit: 'cover', // Cover the container, potentially cropping the image
@@ -66,7 +66,7 @@ function ReplyItem({
                     src={`/images/article_com_media/${media_url}`}
                     controls
                     style={{
-                      width: '100%', // Make the video take up the full width of its container
+                      width: '40%', // Make the video take up 60% of its container
                       height: 'auto', // Maintain aspect ratio
                       aspectRatio: '16 / 9', // Enforce 16:9 aspect ratio
                       objectFit: 'cover', // Cover the container, potentially cropping the video
@@ -81,7 +81,7 @@ function ReplyItem({
                     src={media_url}
                     alt="Reply attachment"
                     style={{
-                      width: '60%',
+                      width: '69%',
                       height: 'auto',
                       aspectRatio: '16 / 9',
                       objectFit: 'cover',
