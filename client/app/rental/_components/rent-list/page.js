@@ -19,10 +19,17 @@ export default function RentList() {
   const [totalPages, setTotalPages] = useState(1) // 總頁數
   const [sorting, setSorting] = useState('') // 排序方式（asc: 價格由低到高, desc: 由高到低）
 
+  // 📌 **篩選條件**
+  const [filters, setFilters] = useState({
+    category: '全部',
+    advanced: [],
+    brands: [],
+  })
+
   // 📌 **初始化時載入資料**
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [filters, searchQuery])
 
   // 📌 **當 `filteredRentals` 或 `itemsPerPage` 變更時，重新計算 `totalPages`**
   useEffect(() => {
@@ -51,8 +58,20 @@ export default function RentList() {
   // 📌 **從 API 獲取租借商品和標籤**
   const fetchData = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/rental`) // ✅ 確保 API 正確
+      const params = new URLSearchParams()
+
+      if (searchQuery) params.append('query', searchQuery)
+      if (filters.category && filters.category !== '全部') {
+        params.append('category', filters.category)
+      }
+      filters.advanced.forEach((adv) => params.append('advanced', adv))
+      filters.brands.forEach((brand) => params.append('brands', brand))
+
+      const res = await fetch(
+        `http://localhost:8000/api/rental?${params.toString()}`
+      )
       const data = await res.json()
+
       if (data.success) {
         setRentals(data.rentals) // 設定所有商品
         setFilteredRentals(data.rentals) // 預設顯示所有商品
@@ -66,31 +85,15 @@ export default function RentList() {
     }
   }
 
-  // 📌 **監聽 `searchQuery` 變化時執行搜尋**
-  useEffect(() => {
-    handleSearch()
-  }, [searchQuery])
-
-  // 📌 **搜尋功能（根據 `name`、`summary` 和 `hashtags` 過濾）**
-  const handleSearch = () => {
-    if (!searchQuery.trim()) {
-      setFilteredRentals(rentals) // ✅ 如果沒有輸入搜尋內容，顯示全部商品
-      return
-    }
-
-    const filtered = rentals.filter(
-      (rental) =>
-        rental.name.includes(searchQuery) || // 🔍 比對商品名稱
-        rental.summary.includes(searchQuery) || // 🔍 比對商品摘要
-        (rental.hashtags &&
-          rental.hashtags.some((tag) => tag.includes(searchQuery))) // 🔍 比對標籤
-    )
-    setFilteredRentals(filtered)
-  }
-
   // 📌 **點擊 Hashtag 時，將 Hashtag 設定為搜尋關鍵字**
   const handleHashtagClick = (tag) => {
     setSearchQuery(tag) // ✅ 點擊標籤時，觸發搜尋
+  }
+
+  // 📌 **篩選變更時處理**
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters)
+    setCurrentPage(1) // 重置到第一頁
   }
 
   // 📌 **商品排序功能**
@@ -112,7 +115,7 @@ export default function RentList() {
         <hr className="d-none d-md-block" />
         <RentSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <RentHashtag hashtags={hashtags} onHashtagClick={handleHashtagClick} />
-        <RentFilter />
+        <RentFilter onFilterChange={handleFilterChange} />
       </aside>
 
       {/* 📌 主要內容區域 */}
@@ -124,7 +127,6 @@ export default function RentList() {
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
           />
-
           <RentOrder setSorting={setSorting} />
         </div>
 

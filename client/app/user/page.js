@@ -13,10 +13,10 @@ export default function UserPage(props) {
   const [updating, setUpdating] = useState(false)
 
   useEffect(() => {
-    if (user) {
-      console.log("生日資料:", user.birthday); // ✅ 確保生日有正確讀取
+    if (user && user.birthday) {
+      console.log("📌 useEffect 內 birthday 值:", user.birthday); // 👈 確保 birthday 正確
       setName(user.name || '');
-      setBirthday(user.birthday); // ✅ 這裡應該已經是 YYYY-MM-DD
+      setBirthday(user.birthday.split("T")[0]); // 確保 `YYYY-MM-DD` 格式
     }
   }, [user]);
 
@@ -39,7 +39,10 @@ export default function UserPage(props) {
       const result = await response.json()
       if (result.status !== 'success') throw new Error(result.message)
 
-      setUser(result.data) // ✅ 更新本地 user 狀態
+        setUser(prevUser => ({
+          ...prevUser, // ✅ 保留舊資料
+          ...result.data, // ✅ 覆蓋新資料
+        }));
     } catch (error) {
       console.error('取得最新資料失敗:', error)
     }
@@ -86,27 +89,30 @@ export default function UserPage(props) {
           },
           body: JSON.stringify({
             name,
-            password: password || undefined, // 不傳遞空密碼
-            birthday, // 確保格式是 YYYY-MM-DD
+            password: password || undefined, 
+            birthday, 
             head: user.head,
           }),
         }
       );
   
       const result = await response.json();
+      console.log("更新 API 回應:", result); // ✅ Debug
+  
       if (result.status !== 'success') throw new Error(result.message);
   
-      alert('更新成功！');
+      alert("更新成功！");
   
-      // ✅ 直接更新 user 狀態，避免 UI 延遲
-      await fetchUserData(); 
+      // **直接調用 `fetchUserData()` 更新使用者資訊**
+      fetchUserData(); 
     } catch (error) {
-      console.error('更新失敗:', error);
-      alert('更新失敗，請稍後再試');
+      console.error("更新失敗:", error);
+      alert("更新失敗，請稍後再試");
     } finally {
       setUpdating(false);
     }
   };
+  
   
   return (
     <div>

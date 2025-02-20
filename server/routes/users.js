@@ -160,8 +160,8 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     // 設定 `head` 為上傳的圖片路徑
     const head = `/uploads/${avatar}`;
 
-    const sql = "INSERT INTO `users` (account, password, name, nickname, mail, head, gender, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    await db.execute(sql, [account, hashedPassword, name, nickname, mail, head, gender, createdAt]);
+    const sql = "INSERT INTO `users` (account, password, name, nickname, mail, head, gender, birthday, created_at, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    await db.execute(sql, [account, hashedPassword, name, nickname, mail, head, gender, null, createdAt, 0]);
 
     res.status(201).json({ status: "success", message: "帳號註冊成功！", avatarUrl: head });
   } catch (error) {

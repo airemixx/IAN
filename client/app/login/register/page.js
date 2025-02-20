@@ -88,7 +88,7 @@ export default function RegisterPage() {
             email: '', 
             avatar: null,
           });
-          setAvatarPreview('/images/user/default.jpg');
+          setAvatarPreview('/uploads/users.webp');
           alert('✅ 帳戶創建成功！請登入');
           resolve();
         });
