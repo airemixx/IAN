@@ -150,6 +150,14 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ status: "error", message: "請提供完整的使用者資訊！" });
     }
 
+    // 檢查帳號是否已存在
+    const checkUserSQL = "SELECT id FROM users WHERE account = ?";
+    const [existingUser] = await db.execute(checkUserSQL, [account]);
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({ status: "error", message: "此帳號已被註冊，請使用其他帳號。" });
+    }
+
     // 轉換性別為 `0`（先生）或 `1`（女士）
     gender = gender === "先生" ? 0 : gender === "女士" ? 1 : null;
     if (gender === null) return res.status(400).json({ status: "error", message: "性別格式錯誤" });
@@ -166,10 +174,9 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     res.status(201).json({ status: "success", message: "帳號註冊成功！", avatarUrl: head });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "error", message: "註冊失敗" });
+    res.status(500).json({ status: "error", message: "註冊失敗，請稍後再試。" });
   }
 });
-
 
 router.put("/:account", checkToken, upload.none(), async (req, res) => {
   const {account} = req.params;
