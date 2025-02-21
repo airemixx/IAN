@@ -2,13 +2,37 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import '@/styles/ck-custom.css'
 import styles from './course-edit.module.scss'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import '@/styles/custom.css';
 
 const editorConfig = {
+  extraPlugins: [
+    function (editor) {
+      editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        return {
+          upload: async () => {
+            const file = await loader.file
+            const formData = new FormData()
+            formData.append('upload', file)
+
+            const response = await fetch('/api/courses/upload', {
+              method: 'POST',
+              body: formData,
+            })
+
+            const data = await response.json()
+            return { default: data.url }
+          },
+        }
+      }
+    },
+  ],
+
   toolbar: [
+    'undo',
+    'redo',
     'heading',
     '|',
     'bold',
@@ -16,9 +40,8 @@ const editorConfig = {
     '|',
     'imageUpload',
     '|',
-    'undo',
-    'redo',
   ],
+
   heading: {
     options: [
       { model: 'paragraph', title: '內文', class: 'ck-heading_paragraph' },
@@ -34,9 +57,12 @@ const editorConfig = {
 
 export default function CourseEdit() {
   const searchParams = useSearchParams()
+  
   const router = useRouter()
 
   const courseId = searchParams.get('id')
+  console.log("🔍 取得的 `courseId`:", courseId);
+
   const [course, setCourse] = useState({
     title: '',
     description: '',
@@ -63,12 +89,9 @@ export default function CourseEdit() {
           return
         }
 
-        const res = await fetch(
-          `http://localhost:8000/api/courses/${courseId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
+        const res = await fetch(`/api/courses/${courseId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
 
         if (!res.ok) throw new Error(`API 錯誤: ${res.status}`)
 
@@ -92,16 +115,20 @@ export default function CourseEdit() {
 
   const handleEditorChange = (event, editor) => {
     const data = editor.getData()
+    console.log('編輯器內容變更:', data) // ✅ 確保 CKEditor 內容有變更
     setCourse((prev) => ({ ...prev, content: data }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!courseId) return
-
+    if (!courseId) {
+      console.error("❌ `courseId` 無效，請確認 URL 是否有 `id`！");
+      return;
+    }
+    console.log("🔍 送出的 `id`:", courseId);
     try {
-      const res = await fetch(`http://localhost:8000/api/courses/${courseId}`, {
-        method: 'PUT',
+      const res = await fetch(`/api/courses/${courseId}`, {
+        method: 'POST', // ✅ 改成 POST
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('loginWithToken')}`,

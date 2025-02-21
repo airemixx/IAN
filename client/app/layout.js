@@ -1,6 +1,7 @@
 'use client'
 
 import { Noto_Sans_TC, Inter } from 'next/font/google'
+import '@/styles/ck-custom.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/globals.css'
 import { useState, useEffect, useMemo } from 'react'
@@ -10,6 +11,8 @@ import Header from './header'
 import TeacherFooter from './teacher/_component/teacher-footer/page'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
