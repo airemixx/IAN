@@ -58,7 +58,7 @@ export default function CartItem({id, itemData, page }) {
           <div className={`${styles['j-cameraImg']} m-2 `}>
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
-          <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center">
+          <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center position-relative">
             <div className={`${styles['j-content']} d-flex flex-column flex-sm-row ${page == 1 ?'justify-content-between' : 'justify-content-around'} align-items-center `}>
               <div className={`${styles['j-itemDetail']} d-flex flex-sm-column ms-sm-3 ms-xl-0`}>
                 <div className="ms-lg-2 ms-xl-0">
@@ -83,6 +83,11 @@ export default function CartItem({id, itemData, page }) {
                 onClick={handleClickDec}>-</button>
               </div> : ''}
               <p className={`${styles['j-price']} me-3 `}>價格: {price}$</p>
+            </div>
+            <div className={`${styles['j-delBtn']} position-absolute`}>
+                <button className="btn">
+                ✕
+              </button>
             </div>
           </div>
         </div>
