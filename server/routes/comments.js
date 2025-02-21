@@ -50,29 +50,27 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    // 過濾 is_deleted 為 0 的留言，並根據 created_at 排序
+    // If like_count exists, sort by like_count DESC, then by created_at DESC (newest to oldest)
     const [rows] = await pool.query(
       `SELECT ac.*, u.head, u.nickname, u.name,
-             GROUP_CONCAT(cm.media_url) AS media_urls,
-             GROUP_CONCAT(cm.media_type) AS media_types
+              GROUP_CONCAT(cm.media_url) AS media_urls,
+              GROUP_CONCAT(cm.media_type) AS media_types
        FROM article_comments AS ac
        LEFT JOIN users AS u ON ac.user_id = u.id
        LEFT JOIN comments_media AS cm ON ac.id = cm.comment_id
        WHERE ac.article_id = ? AND ac.is_deleted = 0
        GROUP BY ac.id
-       ORDER BY ac.created_at ASC`,
+       ORDER BY ac.like_count DESC, ac.created_at DESC`,
       [articleId]
     )
 
-    const comments = rows.map((row) => {
-      return {
-        ...row,
-        media_urls: row.media_urls ? row.media_urls.split(',') : [],
-        media_types: row.media_types ? row.media_types.split(',') : [],
-      }
-    })
+    const comments = rows.map((row) => ({
+      ...row,
+      media_urls: row.media_urls ? row.media_urls.split(',') : [],
+      media_types: row.media_types ? row.media_types.split(',') : [],
+    }))
 
-    res.status(200).json({ comments: comments })
+    res.status(200).json({ comments })
   } catch (err) {
     res.status(500).json({
       status: 'error',
