@@ -1,26 +1,43 @@
-import React from 'react';
-import GifImage from '../gif-image';
-import styles from './index.module.scss';  // 添加這行引入 styles
+'use client';
 
-export default function MediaRenderer({ media_type, media_url, index }) {
+import React, { useState } from 'react';
+import GifImage from '../gif-image';
+import ImageModal from '../image-modal';
+import styles from './index.module.scss';
+
+export default function MediaRenderer({ media_type, media_url }) {
+  const [showModal, setShowModal] = useState(false);
+
   if (media_type === 'image') {
     return (
-      <div className={styles['y-reply-img']} key={index}>
-        <img
-          src={`/images/article_com_media/${media_url}`}
-          alt="Reply attachment"
-          style={{
-            width: '40%',
-            height: 'auto',
-            aspectRatio: '16 / 9',
-            objectFit: 'contain',
-          }}
-        />
-      </div>
+      <>
+        <div className={styles['y-reply-img']}>
+          <img
+            src={`/images/article_com_media/${media_url}`}
+            alt="Reply attachment"
+            style={{
+              width: '40%',
+              height: 'auto',
+              aspectRatio: '16 / 9',
+              objectFit: 'cover',
+              cursor: 'pointer'
+            }}
+            onClick={() => setShowModal(true)}
+          />
+        </div>
+        {showModal && (
+          <ImageModal
+            imageUrl={`/images/article_com_media/${media_url}`}
+            onClose={() => setShowModal(false)}
+          />
+        )}
+      </>
     );
-  } else if (media_type === 'video') {
+  }
+
+  if (media_type === 'video') {
     return (
-      <div className={styles['y-reply-img']} key={index}>
+      <div className={styles['y-reply-img']}>
         <video
           src={`/images/article_com_media/${media_url}`}
           controls
@@ -28,16 +45,17 @@ export default function MediaRenderer({ media_type, media_url, index }) {
             width: '40%',
             height: 'auto',
             aspectRatio: '16/9',
-            objectFit: 'cover',
+            objectFit: 'cover'
           }}
         />
       </div>
     );
-  } else if (media_type === 'gif') {
+  }
+
+  if (media_type === 'gif') {
     return (
       <div
         className={styles['y-reply-img']}
-        key={index}
         style={{
           width: '200px',
           height: '200px',
@@ -46,12 +64,13 @@ export default function MediaRenderer({ media_type, media_url, index }) {
         }}
       >
         <GifImage
-          src={media_url}
-          alt="Reply attachment"
+          src={media_url.startsWith('http') ? media_url : `/images/article_com_media/${media_url}`}
+          alt="GIF attachment"
           containerSize="200px"
         />
       </div>
     );
   }
+
   return null;
 }

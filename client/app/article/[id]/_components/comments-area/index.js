@@ -279,10 +279,13 @@ function NestedReplyItem({ userName, onReplyClick, parentId, ...props }) {
 
   const parsedTime = new Date(props.time)
   const validTime = isNaN(parsedTime.getTime()) ? new Date() : parsedTime
+
+  // 加入格式化的完整時間
   const timeAgo = formatDistanceToNow(validTime, {
     locale: zhTW,
     addSuffix: true,
   })
+  const formattedTime = format(validTime, 'yyyy/MM/dd HH:mm')
 
   // 使用與父層相同的按讚邏輯
   const handleLike = async () => {
@@ -352,64 +355,30 @@ function NestedReplyItem({ userName, onReplyClick, parentId, ...props }) {
         <div className={styles['y-reply-content']}>
           <p className={`mt-3 ${styles['y-reply-text']}`}>{props.text}</p>
         </div>
-        {/* 直接在這裡處理 media 的渲染 */}
+        {/* 修改這裡：使用 MediaRenderer 替換原本的媒體渲染邏輯 */}
         {props.media_urls &&
           props.media_urls.length > 0 &&
-          props.media_urls.map((media_url, index) => {
-            const media_type = props.media_types[index]
-            if (media_type === 'image') {
-              return (
-                <div className={styles['y-reply-img']} key={index}>
-                  <img
-                    src={`/images/article_com_media/${media_url}`}
-                    alt="Reply attachment"
-                    style={{
-                      width: '40%',
-                      height: 'auto',
-                      aspectRatio: '16 / 9',
-                      objectFit: 'contain',
-                    }}
-                  />
-                </div>
-              )
-            } else if (media_type === 'video') {
-              return (
-                <div className={styles['y-reply-img']} key={index}>
-                  <video
-                    src={`/images/article_com_media/${media_url}`}
-                    controls
-                    style={{
-                      width: '40%',
-                      height: 'auto',
-                      aspectRatio: '16/9',
-                      objectFit: 'cover',
-                    }}
-                  />
-                </div>
-              )
-            } else if (media_type === 'gif') {
-              return (
-                <div
-                  className={styles['y-reply-img']}
-                  key={index}
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <GifImage
-                    src={media_url}
-                    alt="Reply attachment"
-                    containerSize="200px"
-                  />
-                </div>
-              )
-            }
-            return null
-          })}
+          props.media_urls.map((media_url, index) => (
+            <MediaRenderer
+              key={`${props.commentId}-media-${index}`}
+              media_type={props.media_types[index]}
+              media_url={media_url}
+            />
+          ))}
         <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
-          <h6 className="my-auto me-sm-3">{timeAgo}</h6>
+          <h6
+            data-tooltip-id={`tooltip-nested-${props.time}`}
+            style={{ cursor: 'pointer' }}
+            className="my-auto me-3"
+          >
+            {timeAgo}
+          </h6>
+          <Tooltip
+            id={`tooltip-nested-${props.time}`}
+            content={formattedTime}
+            place="bottom"
+            style={{ backgroundColor: '#7E7267' }}
+          />
           <div className="d-flex mb-like-reply">
             <button className="ms-sm-3" onClick={handleLike}>
               <img
