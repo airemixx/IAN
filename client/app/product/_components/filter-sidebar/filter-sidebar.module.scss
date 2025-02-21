@@ -14,10 +14,9 @@
   top: 80px;
   height: 100vh;
   overflow-y: auto;
-  animation: fadeInLeft 0.5s ease-in-out forwards; // ✅ 進場動畫
+  animation: fadeInLeft 0.5s ease-in-out forwards; //進場動畫
 }
 
-/* 📌 篩選 & 排序樣式 */
 .filter-toggle-btn {
   position: fixed;
   bottom: 0;
@@ -45,16 +44,14 @@
 }
 
 .accordionButton:not(.collapsed) {
-  background-color: #f8f9fa !important; /* 當選單展開時的背景顏色 */
+  background-color: #f8f9fa !important;
 }
 
-/* 隱藏篩選條件和排序選單 */
 .aside-filter,
 .sort-dropdown {
   display: none;
 }
 
-/* 讓篩選條件展開時出現在按鈕上方 */
 .aside-filter.show {
   display: block;
   position: fixed;
@@ -68,7 +65,7 @@
   z-index: 1000;
 }
 
-/* 📌 手機版篩選按鈕 */
+/* 手機版篩選按鈕 */
 .filterToggleBtn {
   position: fixed;
   bottom: 20px;
@@ -88,7 +85,7 @@
   visibility: hidden;
 }
 
-/* 📌 手機版篩選側邊欄 */
+/* 手機版篩選側邊欄 */
 .mobileAsideFilter {
   position: fixed;
   top: 0px;
@@ -107,7 +104,6 @@
   width: 250px;
 }
 
-/* 📌 關閉按鈕 */
 .closeBtn {
   background: none;
   border: none;
@@ -122,4 +118,3 @@
     top: 20px;
   }
 }
-

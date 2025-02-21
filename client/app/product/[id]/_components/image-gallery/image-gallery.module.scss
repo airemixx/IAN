@@ -1,21 +1,21 @@
-/* 📌 放大鏡效果 */
+/* 放大鏡效果 */
 .zoomLens {
   position: absolute;
-  width: 150px; /* 放大鏡大小 */
+  width: 150px;
   height: 150px;
   border: 2px solid #ccc;
   background-repeat: no-repeat;
-  background-size: 200%; /* 設定圖片放大比例 */
-  pointer-events: none; /* 不影響滑鼠操作 */
-  display: none; /* 預設隱藏 */
+  background-size: 200%;
+  pointer-events: none;
+  display: none;
 }
 
-/* 📌 當滑鼠移動時顯示放大鏡 */
+/* 當滑鼠移動時顯示放大鏡 */
 .mainImageContainer:hover .zoomLens {
   display: block;
 }
 
-.mainImageContainer {  /* ✅ 改成駝峰命名 */
+.mainImageContainer {
   position: relative;
   display: flex;
   align-items: center;
@@ -24,7 +24,7 @@
   width: 362px;
   height: 362px;
 
-  .mainImage {  /* ✅ 駝峰命名 */
+  .mainImage {
     max-width: 100%;
     height: auto;
   }
@@ -37,11 +37,11 @@
     color: #143146;
     cursor: pointer;
 
-    &Left {  /* ✅ 改成駝峰命名 */
+    &Left {
       left: -40px;
     }
 
-    &Right {  /* ✅ 改成駝峰命名 */
+    &Right {
       right: -40px;
     }
   }
@@ -78,11 +78,11 @@
   }
 }
 
-.thumbnailContainer {  /* ✅ 改成駝峰命名 */
+.thumbnailContainer {
   max-width: 100px;
   margin-right: 30px;
 
-  .thumbnailImg {  /* ✅ 駝峰命名 */
+  .thumbnailImg {
     width: 68px;
     height: 57px;
     cursor: pointer;
@@ -102,7 +102,6 @@
     position: absolute;
     top: 10px;
     right: 100px;
-
   }
 
   .thumbnailContainer {
@@ -113,5 +112,6 @@
     position: relative;
     max-width: 76%;
     margin: 0 auto;
+    top: -40px;
   }
 }

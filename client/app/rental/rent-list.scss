@@ -2,7 +2,7 @@
   color: #fff;
   background: #23425a;
   border-color: #23425a;
-
+  transition: opacity 0.1s;
   &:hover,
   &:focus,
   &:active,
@@ -10,6 +10,7 @@
   &:active:hover {
     background: #143146;
     border-color: #143146;
+    opacity: 0.9 !important;
   }
 }
 

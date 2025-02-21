@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import styles from "./product-specs.module.scss"; // ✅ 正確使用 SCSS Module
+import styles from "./product-specs.module.scss";
 
 export default function ProductSpecs({ introduce, specs = [] }) {
   useEffect(() => {
@@ -13,12 +13,12 @@ export default function ProductSpecs({ introduce, specs = [] }) {
   }, []);
   return (
     <div className="mt-4">
-      {/* 🔹 手機版下拉選單 (768px 以下顯示) */}
-      <div className={`accordion d-md-none`} id="mobileIntroduce">
+     {/* 手機版下拉選單 (768px 以下顯示) */}
+     <div className={`accordion d-md-none`} id="mobileIntroduce">
         <div className="accordion-item">
           <h2 className="accordion-header" id="headingIntroduce">
             <button
-              className="accordion-button collapsed"
+              className={`accordion-button collapsed ${styles.accordionButton}`}
               type="button"
               data-bs-toggle="collapse"
               data-bs-target="#collapseIntroduce"
@@ -28,7 +28,11 @@ export default function ProductSpecs({ introduce, specs = [] }) {
               產品介紹
             </button>
           </h2>
-          <div id="collapseIntroduce" className="accordion-collapse collapse" data-bs-parent="#mobileIntroduce">
+          <div
+            id="collapseIntroduce"
+            className="accordion-collapse collapse"
+            data-bs-parent="#mobileIntroduce"
+          >
             <div className="accordion-body">
               <p>{introduce || "暫無產品介紹"}</p>
             </div>
@@ -37,7 +41,7 @@ export default function ProductSpecs({ introduce, specs = [] }) {
       </div>
 
       <div className={styles.spec}>
-        {/* 🔹 桌機版 (768px 以上顯示左側內容) */}
+        {/* 桌機版 (768px 以上顯示左側內容) */}
         <div className={styles.description}>
           <p>{introduce || "暫無產品介紹"}</p>
         </div>
@@ -48,7 +52,6 @@ export default function ProductSpecs({ introduce, specs = [] }) {
             {specs.length > 0 ? (
               specs.map((spec, index) => (
                 <div key={index}>
-                  {/* ✅ 感光元件格式 */}
                   <div className={`${styles.accordionItem}`}>
                     <h2 className={styles.accordionHeader}>
                       <button
@@ -73,7 +76,6 @@ export default function ProductSpecs({ introduce, specs = [] }) {
                     </div>
                   </div>
 
-                  {/* ✅ 推出日期 */}
                   <div className={`${styles.accordionItem}`}>
                     <h2 className={styles.accordionHeader}>
                       <button
@@ -98,7 +100,6 @@ export default function ProductSpecs({ introduce, specs = [] }) {
                     </div>
                   </div>
 
-                  {/* ✅ 防水等級 */}
                   <div className={`${styles.accordionItem}`}>
                     <h2 className={styles.accordionHeader}>
                       <button

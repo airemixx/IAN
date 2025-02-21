@@ -69,42 +69,36 @@ export default function FilterSidebar({ onFilterChange }) {
     fetchFilters();
   }, []);
 
-  // 🔹 切換展開/收合
   const toggleExpand = (section) => {
     setExpanded((prevExpanded) => {
       if (prevExpanded.includes(section)) {
-        // 🔻 如果已展開，則關閉 (從陣列中移除)
         return prevExpanded.filter(item => item !== section);
       } else {
-        // 🔺 如果未展開，則加入陣列
         return [...prevExpanded, section];
       }
     });
   };
 
-  // 🔹 處理 Checkbox 變更
+  // 處理 Checkbox 變更
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
-  
+
     setSelectedFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters };
-  
+
       if (checked) {
         updatedFilters[name] = [...updatedFilters[name], value];
       } else {
         updatedFilters[name] = updatedFilters[name].filter((item) => item !== value);
       }
-  
+
       return updatedFilters;
     });
   };
-  
-  // ✅ 确保 `onFilterChange` 只在 `selectedFilters` 更新后执行
+
   useEffect(() => {
     onFilterChange(selectedFilters);
   }, [selectedFilters]);
-  
-  
 
   const handlePriceChange = (e) => {
     const { name, value } = e.target;
@@ -114,8 +108,6 @@ export default function FilterSidebar({ onFilterChange }) {
     }));
   };
 
-
-  // 🔹 切換篩選側邊欄
   const toggleFilterSidebar = () => {
     setIsFilterVisible(!isFilterVisible);
   };
@@ -137,7 +129,6 @@ export default function FilterSidebar({ onFilterChange }) {
       max_price: "",
     });
   };
-
 
   return (
     <>
@@ -253,7 +244,7 @@ export default function FilterSidebar({ onFilterChange }) {
               </div>
             </div>
 
-            {/* ✅ 價格篩選 */}
+            {/* 價格篩選 */}
             <div className="accordion-item">
               <h2 className="accordion-header">
                 <button
@@ -305,7 +296,7 @@ export default function FilterSidebar({ onFilterChange }) {
         </aside>
       )}
 
-      {/* ✅ 手機版篩選按鈕 & 側邊欄 */}
+      {/* 手機版篩選按鈕 & 側邊欄 */}
       {isMobile && (
         <>
           {/* 🔹 篩選按鈕 */}
@@ -316,9 +307,9 @@ export default function FilterSidebar({ onFilterChange }) {
             篩選
           </button>
 
-          {/* 🔹 側邊篩選選單 */}
+          {/* 側邊篩選選單 */}
           <aside className={`${styles.mobileAsideFilter} ${isFilterVisible ? styles.show : ""}`}>
-            {/* 🔹 關閉按鈕 */}
+            {/* 關閉按鈕 */}
             <button className={styles.closeBtn} onClick={toggleFilterSidebar}>✖</button>
 
             <div className="accordion">
@@ -411,7 +402,7 @@ export default function FilterSidebar({ onFilterChange }) {
                         <div key={subcategory.id} className="form-check">
                           <input
                             type="checkbox"
-                            id={`subcategory_${subcategory.id}`}  // ✅ `subcategory_` + `id`
+                            id={`subcategory_${subcategory.id}`}
                             name="subcategory_id"
                             value={subcategory.id}
                             className="form-check-input"
@@ -430,7 +421,7 @@ export default function FilterSidebar({ onFilterChange }) {
                 </div>
               </div>
 
-              {/* ✅ 價格篩選 */}
+              {/* 價格篩選 */}
               <div className="accordion-item">
                 <h2 className="accordion-header">
                   <button

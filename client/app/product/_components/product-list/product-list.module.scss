@@ -1,10 +1,7 @@
-/* 📌 主要容器 */
 .container {
-  min-height: 100px; /* ✅ 確保 `container` 至少有 100px 高度 */
-  // background-color: red;
+  min-height: 100px;
 }
 
-/* 📌 卡片樣式 */
 .card {
   border: none;
   transition: box-shadow 0.3s ease-in-out;
@@ -36,7 +33,6 @@
   }
 }
 
-/* 📌 按鈕樣式 */
 .btn-outline-secondary {
   border-radius: 30px;
   padding: 6px 20px;
@@ -58,7 +54,6 @@
   border: none;
 }
 
-/* 📌 圖示樣式 */
 .icon-container {
   position: absolute;
   top: 10px;
@@ -96,7 +91,6 @@
   color: black;
 }
 
-/* 📌 分頁樣式 */
 .pagination {
   .page-link {
     border: none;
@@ -129,7 +123,6 @@
   }
 }
 
-/* 📌 響應式設計 */
 @media (max-width: 391px) {
   .breadcrumb {
     display: none;
@@ -161,13 +154,11 @@
     display: none !important;
   }
 
-  /* 隱藏篩選條件和排序選單 */
   .aside-filter,
   .sort-dropdown {
     display: none;
   }
 
-  /* 讓篩選條件展開時出現在按鈕上方 */
   .aside-filter.show {
     display: block;
     position: fixed;

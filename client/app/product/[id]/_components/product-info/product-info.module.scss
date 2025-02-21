@@ -1,91 +1,82 @@
-.aaa {
-  border: 1px solid red;
-}
-/* 📌 主要商品資訊 */
 .productInfo {
-    max-width: 500px;
-    margin-left: auto;
-  
+  max-width: 500px;
+  margin-left: auto;
+
+  .brand {
+    color: #8f8f8f;
+  }
+
+  .productTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #143146;
+  }
+
+  .introduce {
+    width: 300px;
+    color: #23425a;
+  }
+
+  .price {
+    font-size: 1.25rem;
+    color: #d0b088;
+    font-weight: bold;
+  }
+
+  .cartButton {
+    background-color: #1b3846;
+    width: 217px;
+    height: 43px;
+    font-weight: bold;
+    border: none;
+    transition: transform 0.2s ease;
+  }
+
+  .cartButton:active {
+    transform: scale(0.98);
+  }
+
+  .wishlistButton {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #8f8f8f;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #1b3846;
+    }
+  }
+}
+
+@media (max-width: 391px) {
+  .productInfo {
+    max-width: 100%;
+
     .brand {
-      color: #8F8F8F;
+      position: absolute;
+      top: 90px;
+      left: 10px;
+      text-align: left;
     }
-  
+
     .productTitle {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #143146;
+      position: absolute;
+      top: 130px;
+      left: 10px;
+      text-align: left;
     }
-  
-    .introduce {
-      width: 300px;
-      color: #23425A;
-    }
-  
+
     .price {
-      font-size: 1.25rem;
-      color: #D0B088;
-      font-weight: bold;
+      margin-top: -120px;
     }
-  
-    /* 📌 按鈕區域 */
+
+    .introduce {
+      display: none;
+    }
+
     .cartButton {
-      background-color: #1b3846;
-      width: 217px;
-      height: 43px;
-      font-weight: bold;
-      border: none;
-      transition: transform 0.2s ease;
-    }
-  
-    .cartButton:active {
-      transform: scale(0.98);
-    }
-  
-    /* 收藏按鈕 */
-    .wishlistButton {
-      background: transparent;
-      border: none;
-      font-size: 1.5rem;
-      color: #8F8F8F;
-      transition: color 0.3s;
-  
-      &:hover {
-        color: #1b3846;
-      }
+      margin-top: 30px;
     }
   }
-  
-  /* 📌 響應式設計 */
-  @media (max-width: 391px) {
-    .productInfo {
-    //   text-align: center;
-      max-width: 100%;
-
-      .brand {
-        position: absolute;
-        top: 90px;
-        left: 10px;
-        text-align: left;
-      }
-  
-      .productTitle {
-        position: absolute;
-        top: 130px;
-        left: 10px;
-        text-align: left;
-      }
-
-      .price {
-        margin-top: -90px;
-      }
-      
-      .introduce {
-        display: none;
-      }
-
-      .cartButton {
-        margin-top: 30px;
-      }
-    }
-  }
-  
+}

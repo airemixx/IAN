@@ -3,7 +3,6 @@
   font-weight: bold;
 }
 
-// 📌 產品比較容器
 .productContainer {
   display: flex;
   max-width: 1440px;
@@ -31,7 +30,6 @@
 
     .remove {
       color: black;
-      // text-decoration: none;
       font-weight: bold;
       cursor: pointer;
 
@@ -41,7 +39,6 @@
     }
   }
 
-  // 📌 添加商品空白區
   .emptyBox {
     border: 2px dashed #bbb;
     display: flex;
@@ -53,7 +50,6 @@
   }
 }
 
-// 📌 響應式設計
 @media (max-width: 391px) {
   .productContainer {
     margin: auto;
@@ -79,7 +75,6 @@
         color: black;
         margin-bottom: 10px;
         font-size: 12px;
-        // border: 1px solid red;
       }
     }
 
