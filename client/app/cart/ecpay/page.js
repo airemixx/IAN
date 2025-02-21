@@ -38,7 +38,7 @@ export default function EcpayPage() {
   const handleEcpay = async () => {
     // 先連到node伺服器後端，取得LINE Pay付款網址
     const res = await fetch(
-      `${apiURL}/ecpay-test-only?amount=${amountRef.current.value}&items=${itemsRef.current.value}`,
+      `${apiURL}/ecpay?amount=${amountRef.current.value}&items=${itemsRef.current.value}`,
       {
         method: 'GET',
         // 讓fetch能夠傳送cookie

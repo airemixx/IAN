@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styles from "./shopping-cart-step2.module.scss";
-import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
+import { useRouter } from "next/navigation";
 
 export default function CheckoutFormStep2() {
-    const router = useRouter(); // 取得 Next.js router
+    const router = useRouter();
     const [formData, setFormData] = useState({
         title: "",
         lastName: "",
@@ -16,18 +16,39 @@ export default function CheckoutFormStep2() {
         localPhone: "",
     });
 
+    const [errors, setErrors] = useState({}); // 用來存放錯誤訊息
+
     // 處理輸入變更
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+        // 即時移除錯誤訊息
+        setErrors({
+            ...errors,
+            [e.target.name]: ""
+        });
     };
 
-    // 儲存至 localStorage
+    // 表單驗證
+    const validateForm = () => {
+        const newErrors = {};
+        Object.keys(formData).forEach((key) => {
+            if (!formData[key].trim()) {
+                newErrors[key] = "此欄位為必填";
+            }
+        });
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    // 提交表單
     const handleSubmit = () => {
-        localStorage.setItem("buyerData", JSON.stringify(formData));
-        router.push("/cart/cart-step3"); // 導向到 cart-step3 頁面
+        if (validateForm()) {
+            localStorage.setItem("buyerData", JSON.stringify(formData));
+            router.push("/cart/cart-step3");
+        }
     };
 
     return (
@@ -51,10 +72,11 @@ export default function CheckoutFormStep2() {
                         <input
                             type="text"
                             name={field.name}
-                            className="form-control focus-ring focus-ring-light"
+                            className={`form-control focus-ring focus-ring-light ${errors[field.name] ? 'border-danger' : ''}`}
                             value={formData[field.name]}
                             onChange={handleChange}
                         />
+                        {errors[field.name] && <small className="text-danger">{errors[field.name]}</small>}
                     </div>
                 ))}
             </div>

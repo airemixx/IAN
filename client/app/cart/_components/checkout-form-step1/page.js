@@ -21,8 +21,16 @@ export default function CheckoutFormStep1({ slItem }) {
   }, [slItem]); // 只有當 slItem 變更時才更新 price
 
   function handleClick() {
-    localStorage.setItem("cartItems", JSON.stringify(slItem));
-    router.push("/cart/cart-step2"); // 導向到 cart-step2 頁面
+    if (slItem && slItem.length > 0) {
+      localStorage.setItem("cartItems", JSON.stringify(slItem));
+  
+      // 確保數據已寫入後再跳轉
+      setTimeout(() => {
+        router.push("/cart/cart-step2");
+      }, 100); // 加入微小延遲確保 localStorage 寫入完成
+    } else {
+      alert("購物車內沒有商品，請添加商品後再結帳！");
+    }
   }
 
   return (

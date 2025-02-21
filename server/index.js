@@ -55,7 +55,7 @@ app.use("/api/auth", authRouter);
 
 app.use('/api/rental', rentalRouter)
 
-app.use('/api/ecpay-test-only', ecpayRouter)
+app.use('/api/ecpay', ecpayRouter)
 
 app.use('/api/articles', articleRoutes)
 app.use('/api/comments', commentsRouter)
