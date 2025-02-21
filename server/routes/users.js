@@ -179,51 +179,66 @@ router.post("/", upload.single("avatar"), async (req, res) => {
 });
 
 router.put("/:account", checkToken, upload.none(), async (req, res) => {
-  const {account} = req.params;
+  const { account } = req.params;
   console.log(account);
   
-  const {name, password, head , birthday} = req.body;
+  const { name, password, head, birthday } = req.body;
 
-  try{
-    if(account != req.decoded.account) throw new Error("沒有修改權限");
-    // if(!name || !password || !head) throw new Error("請至少提供一個修改的內容");
+  try {
+    if (account != req.decoded.account) throw new Error("沒有修改權限");
 
     const updateFields = [];
     const value = [];
 
-    if(name){
+    if (name) {
       updateFields.push("`name` = ?");
       value.push(name);
     }
-    if(head){
+    if (head) {
       updateFields.push("`head` = ?");
       value.push(head);
     }
-    if(password){
+    if (password) {
       updateFields.push("`password` = ?");
       const hashedPassword = await bcrypt.hash(password, 10);
       value.push(hashedPassword);
     }
-    if(birthday){
+    if (birthday) {
       updateFields.push("`birthday` = ?");
       value.push(birthday);
     }
     value.push(account);
     const sql = `UPDATE users SET ${updateFields.join(", ")} WHERE account = ?;`;
-    const [result] =  await db.execute(sql, value);
+    const [result] = await db.execute(sql, value);
 
-    if(result.affectedRows == 0) throw new Error("更新失敗");
-    
+    if (result.affectedRows == 0) throw new Error("更新失敗");
+
+    // **🔹 產生新的 Token**
+    const newToken = jwt.sign(
+      {
+        id: req.decoded.id,
+        account: req.decoded.account,
+        name: name || req.decoded.name,
+        nickname: req.decoded.nickname,
+        mail: req.decoded.mail,
+        head: head || req.decoded.head,
+        level: req.decoded.level,
+      },
+      secretKey,
+      { expiresIn: "7d" }
+    );
+
     res.status(200).json({
       status: "success",
-      message: `更新特定 ID 的使用者: ${account}`
+      message: `更新成功: ${account}`,
+      token: newToken, // **回傳新的 Token**
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"修改失敗"
-    })
+      message: err.message || "修改失敗",
+    });
   }
 });
 
