@@ -26,6 +26,8 @@
   overflow: hidden;
   border-radius: 10px;
   aspect-ratio: 16 / 9;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in forwards;
 
   img {
     width: 100%;
@@ -44,6 +46,15 @@
     .favorite-icon {
       opacity: 1;
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
@@ -121,10 +132,10 @@
 
 .course-price {
   margin-top: 10px;
-  
+
   p {
     font-weight: 700;
     font-size: 1.1rem;
-    color: #996A4E;
+    color: #996a4e;
   }
 }

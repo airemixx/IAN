@@ -60,7 +60,6 @@ export default function MediaRenderer({ media_type, media_url }) {
           width: '200px',
           height: '200px',
           overflow: 'hidden',
-          borderRadius: '10px',
         }}
       >
         <GifImage
