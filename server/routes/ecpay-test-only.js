@@ -12,7 +12,7 @@ router.get('/', function (req, res) {
   const itemName =
     items.split(',').length > 1
       ? items.split(',').join('#')
-      : '線上商店購買一批'
+      : items
 
   if (isDev) console.log('amount:', amount)
   if (isDev) console.log('items:', items)
@@ -102,7 +102,7 @@ router.get('/', function (req, res) {
     Step0 = Object.entries(parameters)
       .map(([key, value]) => `${key}=${value}`)
       .join('&')
-
+    
     function DotNETURLEncode(string) {
       const list = {
         '%2D': '-',
@@ -114,12 +114,11 @@ router.get('/', function (req, res) {
         '%29': ')',
         '%20': '+',
       }
-
       Object.entries(list).forEach(([encoded, decoded]) => {
         const regex = new RegExp(encoded, 'g')
         string = string.replace(regex, decoded)
       })
-
+      
       return string
     }
 
@@ -135,17 +134,18 @@ router.get('/', function (req, res) {
     const Step4 = Step3.toLowerCase()
     const Step5 = crypto.createHash(algorithm).update(Step4).digest(digest)
     const Step6 = Step5.toUpperCase()
+  
     return Step6
   }
   const CheckMacValue = CheckMacValueGen(ParamsBeforeCMV, algorithm, digest)
 
   //五、將所有的參數製作成 payload
   const AllParams = { ...ParamsBeforeCMV, CheckMacValue }
-
+  
   // 六、製作送出畫面
   //
   // # region --- 純後端送出form的作法，可以進行簡單的測試用  ---
-  //
+  
   // const inputs = Object.entries(AllParams)
   //   .map(function (param) {
   //     return `<input name=${
@@ -153,7 +153,7 @@ router.get('/', function (req, res) {
   //     } value="${param[1].toString()}" style="display:none"><br/>`
   //   })
   //   .join('')
-  //
+  
   // const htmlContent = `
   //   <!DOCTYPE html>
   //   <html>

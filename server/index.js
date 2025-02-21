@@ -19,7 +19,7 @@ import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
 import likesRouter from './routes/likes.js'
 import users from './routes/users.js'
-
+import ordersRouter from './routes/orders.js'
 
 
 // 讀取 .env 設定
@@ -56,6 +56,7 @@ app.use("/api/auth", authRouter);
 app.use('/api/rental', rentalRouter)
 
 app.use('/api/ecpay', ecpayRouter)
+app.use('/api/orders', ordersRouter)
 
 app.use('/api/articles', articleRoutes)
 app.use('/api/comments', commentsRouter)

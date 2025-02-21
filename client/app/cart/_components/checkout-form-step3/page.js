@@ -40,18 +40,17 @@ export default function CheckoutFormStep3() {
         const cartItems = Object.values(cartData);
         const items = cartItems.map(item => `${item.brand} ${item.model} x${item.quantity}`).join(", ");
         const amount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-
+        
         try {
             const res = await fetch(`${apiURL}/${paymentMethod}?amount=${amount}&items=${encodeURIComponent(items)}`, {
                 method: "GET",
                 credentials: "include",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
             });
-
             const resData = await res.json();
 
             if (isDev) console.log(resData);
-
+            
             if (resData.status === "success") {
                 const form = document.createElement("form");
                 form.method = "POST";
@@ -62,7 +61,9 @@ export default function CheckoutFormStep3() {
                     input.type = "hidden";
                     input.name = key;
                     input.value = resData.data.params[key];
+                   
                     form.appendChild(input);
+                   
                 }
 
                 document.body.appendChild(form);
