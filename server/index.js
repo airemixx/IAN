@@ -20,7 +20,7 @@ import commentsRouter from './routes/comments.js'
 import likesRouter from './routes/likes.js'
 import users from './routes/users.js'
 import ordersRouter from './routes/orders.js'
-
+import linePayRouter from './routes/line-pay-test-only.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -56,6 +56,7 @@ app.use("/api/auth", authRouter);
 app.use('/api/rental', rentalRouter)
 
 app.use('/api/ecpay', ecpayRouter)
+app.use('/api/linePay', linePayRouter)
 app.use('/api/orders', ordersRouter)
 
 app.use('/api/articles', articleRoutes)
