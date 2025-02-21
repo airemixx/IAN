@@ -50,25 +50,37 @@
   font-size: 1rem;
 }
 
-.control-center {
+.e-control-center {
   margin-top: 5rem;
 }
-.control-center ul {
+.e-control-center ul {
   padding: 0;
 }
-.control-center li {
+.e-control-center li {
   margin: 1.5rem 0;
   list-style: none;
 }
 
-.control-center a {
+.e-control-center a {
   display: flex;
   align-items: center;
   gap: 10px;
   color: var(--gray--200);
 }
 
-.control-center a:hover {
+.e-control-center a:hover {
+  color: var(--white);
+}
+
+.e-control-center {
+  color: var(--white);
+}
+
+.active {
+  color: var(--white) ;
+}
+
+.active a {
   color: var(--white);
 }
 
@@ -77,7 +89,6 @@
   bottom: 3rem;
   display: flex;
   align-items: center;
-
   gap: 10px;
   color: var(--gray--200);
 }

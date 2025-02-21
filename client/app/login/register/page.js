@@ -113,13 +113,7 @@ export default function RegisterPage() {
           映相坊邀請您進入非凡世界，提供豐富的作品、文章資訊和服務。
         </p>
 
-        {/* 顯示錯誤或成功訊息 */}
-        {error && <div className="alert alert-danger">{error}</div>}
-        {successMessage && (
-          <div className="alert alert-success">{successMessage}</div>
-        )}
-
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleRegister} className='mb-4'>
           {/* 大頭貼上傳 */}
           <div className="mb-3 text-center">
             <div className="avatar-container mb-3">
@@ -233,6 +227,12 @@ export default function RegisterPage() {
             {loading ? '註冊中...' : '建立帳戶'}
           </button>
         </form>
+
+        {/* 顯示錯誤或成功訊息 */}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {successMessage && (
+          <div className="alert alert-success">{successMessage}</div>
+        )}
 
         <div className="text-center mt-3">
           <Link href="/login">我已擁有帳戶</Link>

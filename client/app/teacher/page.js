@@ -25,12 +25,12 @@ export default function CourseManagement() {
       try {
         const token = localStorage.getItem('loginWithToken')
         if (!token) {
-          console.log('❌ 沒有 Token，跳轉登入頁面')
+          console.log('沒有 Token，跳轉登入頁面')
           router.push('/login')
           return
         }
 
-        console.log('📌 正在發送請求到 /api/teachers/me/courses...')
+        console.log('正在發送請求到 /api/teachers/me/courses...')
         const res = await fetch(
           'http://localhost:8000/api/teachers/me/courses',
           {
