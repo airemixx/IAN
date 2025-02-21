@@ -1,7 +1,7 @@
 import express from 'express'
 import pool from '../db.js'
 import jwt from 'jsonwebtoken'
-import authMiddleware from '../middlewares.js'
+import authenticate from '../middlewares.js'
 
 const router = express.Router()
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key'
@@ -30,17 +30,16 @@ router.get('/', async (req, res) => {
   }
 })
 
+// 取得完整講師資料
 router.get('/me', async (req, res) => {
   console.log('✅ /api/teachers/me 被請求...')
 
   try {
-    // 🔹 檢查 Authorization Header
     if (!req.headers.authorization) {
       console.log('❌ 未提供 Authorization Header')
       return res.status(401).json({ error: '未提供驗證 token' })
     }
 
-    // 🔹 解析 JWT Token
     const token = req.headers.authorization.split(' ')[1]
     if (!token) {
       console.log('❌ Token 格式錯誤')
@@ -55,43 +54,109 @@ router.get('/me', async (req, res) => {
       return res.status(403).json({ error: '權限不足' })
     }
 
-    // ✅ 直接查詢 `teachers` 表，確保 `user_id` 能對應 `teacher_id`
-    console.log(`📌 正在查詢 user_id = ${decoded.id} 的 teacher_id`)
+    // ✅ 查詢 `teachers` 表，取得完整講師資料
+    console.log(`📌 正在查詢 user_id = ${decoded.id} 的講師資料`)
     const sql = `
-    SELECT t.id
-    FROM teachers t
-    JOIN courses c ON t.id = c.teacher_id
-    WHERE t.user_id = ?
-    LIMIT 1
-  `
+      SELECT t.id AS teacher_id, t.name, t.email, t.bio, t.website, 
+             t.facebook, t.instagram, t.youtube, t.image
+      FROM teachers t
+      WHERE t.user_id = ?
+      LIMIT 1
+    `
     const [rows] = await pool.query(sql, [decoded.id])
 
     console.log('📌 SQL 查詢結果:', rows)
 
-    // 🔴 **如果找不到 teacher_id，記錄錯誤**
+    // 🔴 **如果找不到講師資料**
     if (rows.length === 0) {
-      console.log(`❌ 找不到 user_id = ${decoded.id} 對應的 teacher_id`)
-      return res.status(400).json({ error: 'Invalid teacher ID' })
+      console.log(`❌ 找不到 user_id = ${decoded.id} 的講師資料`)
+      return res.status(404).json({ error: '找不到講師資料' })
     }
 
-    // ✅ 取得 `teacher_id`
-    const teacher_id = rows[0].id
-    console.log(`✅ 成功獲取 teacher_id: ${teacher_id}`)
+    // ✅ 取得講師資料
+    const teacher = rows[0]
+    console.log(`✅ 成功獲取講師資料:`, teacher)
 
-    // 🔹 回傳給前端
+    // 🔹 回傳完整的講師資訊給前端
     res.json({
-      id: decoded.id,
-      name: decoded.name,
-      level: decoded.level,
-      teacher_id, // ✅ 確保前端可以拿到 `teacher_id`
+      id: decoded.id, // 用戶 ID
+      name: teacher.name,
+      email: teacher.email,
+      bio: teacher.bio,
+      website: teacher.website,
+      facebook: teacher.facebook,
+      instagram: teacher.instagram,
+      youtube: teacher.youtube,
+      image: teacher.image || '/images/teachers/default-avatar.jpg', // 預設大頭貼
+      teacher_id: teacher.teacher_id, // 講師 ID
     })
   } catch (error) {
-    console.error('❌ 獲取老師資訊失敗:', error)
-    res.status(500).json({ error: '無法獲取老師資訊' })
+    console.error('❌ 獲取講師資訊失敗:', error)
+    res.status(500).json({ error: '無法獲取講師資訊' })
   }
 })
 
-// ✅ 獲取特定講師的資訊 + 該老師的所有課程 (包含評分)
+// 編輯老師資料
+router.put('/me', authenticate, async (req, res) => {
+  console.log('✅ 收到更新請求 /api/teachers/me')
+
+  const { name, email, bio, website, facebook, instagram, youtube } = req.body
+  const userId = req.userId // 從 Token 取得 userId
+
+  console.log('🔍 檢查 userId:', userId)
+  if (!userId) {
+    return res.status(401).json({ error: '未授權，請重新登入' })
+  }
+
+  const connection = await pool.getConnection()
+  try {
+    await connection.beginTransaction() // 開始交易
+
+    console.log('📌 更新 users 表')
+    const updateUserSql = `UPDATE users SET name = ?, mail = ? WHERE id = ?`
+    console.log('SQL:', updateUserSql, [name, email, userId])
+    await connection.execute(updateUserSql, [name, email, userId])
+
+    console.log('📌 更新 teachers 表')
+    const updateTeacherSql = `
+      UPDATE teachers 
+      SET name = ?, email = ?, bio = ?, website = ?, facebook = ?, instagram = ?, youtube = ?
+      WHERE user_id = ?
+    `
+    console.log('SQL:', updateTeacherSql, [
+      name,
+      email,
+      bio,
+      website,
+      facebook,
+      instagram,
+      youtube,
+      userId,
+    ])
+    await connection.execute(updateTeacherSql, [
+      name,
+      email,
+      bio,
+      website,
+      facebook,
+      instagram,
+      youtube,
+      userId,
+    ])
+
+    await connection.commit() // 提交變更
+    console.log('✅ 更新成功！')
+    res.json({ message: '✅ 更新成功！' })
+  } catch (error) {
+    await connection.rollback() // 回滾交易（如果有錯誤）
+    console.error('❌ 更新講師資料失敗:', error)
+    res.status(500).json({ error: '無法更新講師資料', details: error.message })
+  } finally {
+    connection.release() // 釋放連線
+  }
+})
+
+// ✅ 獲取特定講師的資訊 + 該老師的所有課程(包含評分)
 router.get('/:id', async (req, res) => {
   const teacherId = parseInt(req.params.id, 10)
   if (isNaN(teacherId)) {
@@ -166,42 +231,48 @@ router.post('/login', async (req, res) => {
   }
 })
 
-
-
-
-
-
 // **取得當前老師的課程**
 router.get('/me/courses', async (req, res) => {
   try {
+    console.log('✅ 收到 /me/courses API 請求')
+
+    // **1️⃣ 確保有 Token**
     if (!req.headers.authorization) {
+      console.log('❌ 未提供驗證 token')
       return res.status(401).json({ error: '未提供驗證 token' })
     }
 
     const token = req.headers.authorization.split(' ')[1]
-    if (!token) return res.status(401).json({ error: 'Token 格式錯誤' })
+    if (!token) {
+      console.log('❌ Token 格式錯誤')
+      return res.status(401).json({ error: 'Token 格式錯誤' })
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
+    console.log('🔹 Token 解析結果:', decoded)
 
+    // **2️⃣ 檢查是否為老師**
     if (!decoded || decoded.level !== 1) {
+      console.log('❌ 權限不足，非老師帳戶')
       return res.status(403).json({ error: '權限不足' })
     }
 
-    // **先查詢 `teacher_id`**
+    // **3️⃣ 取得 `teacher_id`**
     const sqlTeacher = `SELECT id FROM teachers WHERE user_id = ?`
     const [teacherRows] = await pool.query(sqlTeacher, [decoded.id])
 
     if (teacherRows.length === 0) {
-      return res.status(400).json({ error: 'Invalid teacher ID' }) 
+      console.log('❌ 找不到該老師 user_id:', decoded.id)
+      return res.status(404).json({ error: '找不到對應的老師' })
     }
 
     const teacherId = teacherRows[0].id
-    console.log(`🔹 獲取到的 teacherId:`, teacherId)
+    console.log(`✅ 找到老師 ID: ${teacherId}`)
 
-    // **使用 `teacher_id` 查詢課程**
-    let sqlCourses = `
+    // **4️⃣ 查詢老師的課程**
+    const sqlCourses = `
       SELECT 
-        c.*,  
+        c.*,
         t.name AS teacher_name, 
         t.image AS teacher_image,
         u.level,  
@@ -218,7 +289,14 @@ router.get('/me/courses', async (req, res) => {
 
     const [courses] = await pool.query(sqlCourses, [teacherId])
 
-    console.log(`📌 獲取的課程資料:`, courses)
+    console.log(`📌 查詢結果，共 ${courses.length} 堂課`)
+
+    // **5️⃣ 如果沒有課程，回傳空陣列**
+    if (courses.length === 0) {
+      console.log('⚠️ 該老師沒有課程')
+      return res.status(200).json([])
+    }
+
     res.json(courses)
   } catch (error) {
     console.error('❌ 獲取課程失敗:', error)
@@ -226,9 +304,4 @@ router.get('/me/courses', async (req, res) => {
   }
 })
 
-
-console.log(
-  '📌 掛載的 API 路由:',
-  router.stack.map((layer) => layer.route?.path)
-)
 export default router
