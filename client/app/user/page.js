@@ -27,31 +27,35 @@ export default function UserPage(props) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/users/${user.account}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-
-      const result = await response.json()
-      if (result.status !== 'success') throw new Error(result.message)
-
-        console.log("📌 取得的 user 資料:", result.data);
-        
-        setToken(token);
-
-        setUser(prevUser => ({
-          ...prevUser, // ✅ 保留舊資料
-          ...result.data, // ✅ 覆蓋新資料
-        }));
+      const response = await fetch(`http://localhost:8000/api/users/me`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const result = await response.json();
+      if (result.status !== 'success') throw new Error(result.message);
+  
+      console.log("📌 取得的 user 資料:", result.data);
+  
+      // 🔥 **步驟 1：如果後端有提供新 Token，就更新**
+      if (result.token) {
+        console.log("✅ 從 API 取得新 Token:", result.token);
+        localStorage.setItem("loginWithToken", result.token);
+        setToken(result.token);
+      }
+  
+      // 🔥 **步驟 2：更新使用者資訊**
+      setUser(prevUser => ({
+        ...prevUser, 
+        ...result.data, 
+      }));
     } catch (error) {
-      console.error('取得最新資料失敗:', error)
+      console.error('❌ 取得最新資料失敗:', error);
     }
-  }
+  };
+  
 
   //上傳圖片函式
   const handleImageUpload = async (e) => {
@@ -94,24 +98,36 @@ export default function UserPage(props) {
           },
           body: JSON.stringify({
             name,
-            password: password || undefined, 
-            birthday, 
+            password: password || undefined,
+            birthday,
             head: user.head,
           }),
         }
       );
   
       const result = await response.json();
-      console.log("更新 API 回應:", result); // ✅ Debug
+      console.log("📌 更新 API 回應:", result);
   
       if (result.status !== 'success') throw new Error(result.message);
   
       alert("更新成功！");
   
-      // **直接調用 `fetchUserData()` 更新使用者資訊**
-      await fetchUserData(); 
+      // 🔥 **步驟 1：檢查後端是否提供新的 Token**
+      if (result.token) {
+        console.log("✅ 從 API 取得新 Token:", result.token);
+  
+        // **更新 localStorage & useAuth 狀態**
+        localStorage.setItem("loginWithToken", result.token);
+        setToken(result.token);
+      }
+  
+      // 🔥 **步驟 2：重新獲取使用者資訊**
+      await fetchUserData();
+  
+      // 🔥 **步驟 3：導向 `/user` 頁面**
+      window.location.href = "/user";
     } catch (error) {
-      console.error("更新失敗:", error);
+      console.error("❌ 更新失敗:", error);
       alert("更新失敗，請稍後再試");
     } finally {
       setUpdating(false);
