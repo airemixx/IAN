@@ -14,37 +14,31 @@ const corsOptions = {
 router.use(cors(corsOptions)); // 使用 cors 中間件
 
 router.post("/", async (req,res) => {
-    const { MerchantTradeNo, TradeAmt, TradeDate, PaymentDate, PaymentType, RtnCode, RtnMsg, cartItems } = req.body;
-
-    try {
-      // 儲存訂單到 MySQL
-    const [result] = await pool.execute(
-        "INSERT INTO orders (order_number, amount, trade_date, payment_date, payment_type, message) VALUES (?, ?, ?, ?, ?, ?)",
-        [
-          MerchantTradeNo,
-          TradeAmt,
-          TradeDate,
-          PaymentDate,
-          PaymentType,
-          RtnMsg,
-        ]
-      );
   
-      const orderId = result.insertId; // 取得訂單的 ID
+    // const { merchantTradeNo, tradeAmount, tradeDate, paymentDate, paymentType, rtnCode, rtnMsg, cartItems } = req.body;
+    // console.log(cartItems);
+    // try {
+    //   // 儲存訂單到 MySQL
+    // const [result] = await pool.execute(
+    //     "INSERT INTO orders (name, category_id, brand_id, courses_id	, rental_id, price, amount) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    //     [
+    //       cartItems.model,
+    //       cartItems.id,
+    //       1,
+    //       1,
+    //       1,
+    //       cartItems.price,
+    //       cartItems.quantity
+    //     ]
+    //   );
   
-      // 儲存訂單明細
-      for (const item of cartItems) {
-        await pool.execute(
-          "INSERT INTO order_items (order_id, product_name, quantity, price) VALUES (?, ?, ?, ?)",
-          [orderId, item.model, item.quantity, item.price]
-        );
-      }
+     
   
-      res.status(201).json({ success: true, message: "訂單儲存成功", orderId });
-    } catch (error) {
-      console.error("訂單儲存失敗:", error);
-      res.status(500).json({ success: false, message: "訂單儲存失敗", error });
-    }
+    //   res.status(201).json({ success: true, message: "訂單儲存成功", result });
+    // } catch (error) {
+    //   console.error("訂單儲存失敗:", error);
+    //   res.status(500).json({ success: false, message: "訂單儲存失敗", error });
+    // }
 });
 
 export default router
