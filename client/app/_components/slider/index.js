@@ -1,32 +1,35 @@
 'use client'
 
-import { Splide, SplideSlide } from '@splidejs/react-splide'
-import '@splidejs/react-splide/css'
-import styles from './Slider.module.scss'  // 引入 CSS 檔案
+import { useState, useEffect } from 'react'
+import styles from './Slider.module.scss'
+
+const images = [
+  "images/HomePage-images/SC1.jpg",
+  "images/HomePage-images/Leica_M11_Glossy_home_3840x2160.jpg.webp",
+]
 
 export default function SliderIndex() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <Splide options={{ type: 'loop', perPage: 1, autoplay: true }}>
-      <SplideSlide className={styles.slideContainer}>
-        <div className={styles.slideContent}>
-          <img 
-            src="images/HomePage-images/SC1.jpg" 
-            alt="Leica Q3 43 相機" 
-            className={styles.slideImage}
-          />
-          <button className={styles.slideButton}>探索詳情</button>
-        </div>
-      </SplideSlide>
-      <SplideSlide className={styles.slideContainer}>
-        <div className={styles.slideContent}>
-          <img 
-            src="images/HomePage-images/Leica_M11_Glossy_home_3840x2160.jpg.webp" 
-            alt="Leica M11 Glossy 相機" 
-            className={styles.slideImage}
-          />
-          <button className={styles.slideButton}>探索詳情</button>
-        </div>
-      </SplideSlide>
-    </Splide>
+    <div className={styles.sliderContainer}>
+      {images.map((img, index) => (
+        <img
+          key={index}
+          src={img}
+          className={`${styles.slideImage} ${index === currentIndex ? styles.active : ""}`}
+          alt={`Slide ${index + 1}`}
+        />
+      ))}
+      <button className={styles.slideButton}>探索詳情</button>
+    </div>
   )
 }
