@@ -8,12 +8,13 @@ import CartItem from '../_components/cart-item/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
 import { useEffect, useState, useRef } from 'react'
+import { redirect } from 'next/navigation'
 
 export default function cartPageOne() {
   useEffect(() => {
     require('bootstrap/dist/js/bootstrap.bundle.min.js')
   }, [])
-  let cartStorage = JSON.parse(localStorage.getItem("cart"))
+  let cartStorage = JSON.parse(localStorage.getItem("cart")) || [];
  
   const cartProduct = []
 
@@ -124,10 +125,11 @@ export default function cartPageOne() {
     setSelectedItems(newSelects)
     setCheckAll(newSelects.length === allItems.length)
   }
-  
+  const isCartEmpty = Object.keys(cartStorage).length === 0;
   return (
     <>
-      <div className="container j-bodyHeight">
+    {isCartEmpty ? redirect('/cart/cart-empty') :
+    <div className="container j-bodyHeight">
         <CartTitle count={cartProduct.length} />
         <div className="row d-flex justify-content-center">
           <div className="j-shoppingCartBox justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-6 p-0">
@@ -291,7 +293,8 @@ export default function cartPageOne() {
           </div>
           <CheckoutFormStep1 slItem={selectedItems} />
         </div>
-      </div>
+      </div>}
+      
     </>
   )
 }
