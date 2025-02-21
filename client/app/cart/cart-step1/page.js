@@ -197,7 +197,7 @@ export default function cartPageOne() {
               {cartRent.length !=0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">租借</h3> : ''}
                 {cartRent.map((rental, index) => {
                   const rentalIndex =
-                    index + cartproduct.length + cartLession.length
+                    index + cartProduct.length + cartLession.length
                   return (
                     <div
                       className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : "" }`}
