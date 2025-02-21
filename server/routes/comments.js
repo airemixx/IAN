@@ -103,7 +103,6 @@ router.get('/count', async (req, res) => {
 router.post('/', upload.array('media'), async (req, res) => {
   let { content, articleId, userId, parentId, gifUrl } = req.body
 
-  // 若未傳入 userId，預設使用 users 資料表裡的 id = 1
   if (!userId) {
     userId = 1
   }
@@ -116,7 +115,7 @@ router.post('/', upload.array('media'), async (req, res) => {
   }
 
   try {
-    // 先將留言新增到 article_comments 中
+    // 新增留言
     const [result] = await pool.query(
       `INSERT INTO article_comments (article_id, content, user_id, parent_id, created_at)
        VALUES (?, ?, ?, ?, NOW())`,
@@ -124,7 +123,7 @@ router.post('/', upload.array('media'), async (req, res) => {
     )
     const commentId = result.insertId
 
-    // 若有檔案附加，依檔案類型將資料都寫入 comments_media
+    // 處理附檔與 GIF
     if (req.files && req.files.length > 0) {
       const insertMediaQuery = `INSERT INTO comments_media (comment_id, media_type, media_url) VALUES (?, ?, ?)`
       for (const file of req.files) {
@@ -141,15 +140,32 @@ router.post('/', upload.array('media'), async (req, res) => {
         ])
       }
     } else if (gifUrl) {
-      // 處理從 Giphy 選擇的 GIF
       const insertMediaQuery = `INSERT INTO comments_media (comment_id, media_type, media_url) VALUES (?, ?, ?)`
       await pool.query(insertMediaQuery, [commentId, 'gif', gifUrl])
     }
 
+    // 重新查詢該留言資料，並 JOIN 使用者與媒體資料
+    const [rows] = await pool.query(
+      `SELECT ac.*, u.head, u.nickname, u.name,
+              GROUP_CONCAT(cm.media_url) AS media_urls,
+              GROUP_CONCAT(cm.media_type) AS media_types
+       FROM article_comments AS ac
+       LEFT JOIN users AS u ON ac.user_id = u.id
+       LEFT JOIN comments_media AS cm ON ac.id = cm.comment_id
+       WHERE ac.id = ?
+       GROUP BY ac.id
+       ORDER BY ac.created_at DESC`,
+      [commentId]
+    )
+    const newComment = rows[0]
+    // 轉換 media 欄位為陣列
+    newComment.media_urls = newComment.media_urls ? newComment.media_urls.split(',') : []
+    newComment.media_types = newComment.media_types ? newComment.media_types.split(',') : []
+
     res.status(201).json({
       status: 'success',
       message: '留言新增成功',
-      commentId: commentId,
+      ...newComment,
     })
   } catch (err) {
     console.error('新增留言錯誤：', err)

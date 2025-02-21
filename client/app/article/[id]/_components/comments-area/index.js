@@ -134,7 +134,7 @@ function ReplyItem({
 
   // 當 newNestedReply 送出時將其加入 nestedReplies state
   const handleNestedReplySubmitted = (newNestedReply) => {
-    setNestedReplies((prev) => [...prev, newNestedReply])
+    setNestedReplies((prev) => [newNestedReply, ...prev])
     setShowReplyInput(false)
   }
 
@@ -237,16 +237,15 @@ function ReplyItem({
               </button>
             </div>
             {showNestedReplies &&
-              nestedReplies.map((reply) => {
+              nestedReplies.map((reply, idx) => {
                 if (!reply) return null
                 return (
                   <NestedReplyItem
-                    key={reply.id}
+                    key={reply.id || idx}
                     userName={reply?.nickname || reply?.name}
                     userProfile={reply.head}
                     text={reply.content}
                     time={reply.created_at}
-                    // 修改這裡，傳遞完整陣列而不是只取第一個
                     media_urls={reply.media_urls}
                     media_types={reply.media_types}
                     parentId={reply.parent_id}
@@ -278,7 +277,9 @@ function NestedReplyItem({ userName, onReplyClick, parentId, ...props }) {
   const [isClicked, setIsClicked] = useState(false)
   const [numVibrate, setNumVibrate] = useState(false)
 
-  const timeAgo = formatDistanceToNow(new Date(props.time), {
+  const parsedTime = new Date(props.time)
+  const validTime = isNaN(parsedTime.getTime()) ? new Date() : parsedTime
+  const timeAgo = formatDistanceToNow(validTime, {
     locale: zhTW,
     addSuffix: true,
   })
