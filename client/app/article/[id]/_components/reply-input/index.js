@@ -100,24 +100,31 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
 
   // 留言送出
   const handleSubmit = async () => {
-    if (!comment.trim() && !(fileInputRef.current && fileInputRef.current.files.length > 0) && !(previews.length && previews[0].type === 'gif'))
-      return
-
-    const formData = new FormData()
-    formData.append('content', comment)
-    formData.append('articleId', articleId)
-    formData.append('userId', userId)
-    formData.append('parentId', parentId || '')
-
-    if (fileInputRef.current && fileInputRef.current.files.length > 0) {
-      for (const file of fileInputRef.current.files) {
-        formData.append('media', file)
-      }
-    } else if (previews.length && previews[0].type === 'gif') {
-      formData.append('gifUrl', previews[0].url)
-    }
+    // 如果沒有文字內容且沒有檔案，則不處理
+    if (!comment.trim() && previews.length === 0) return;
 
     try {
+      const formData = new FormData();
+      formData.append('content', comment);
+      formData.append('articleId', articleId);
+      formData.append('userId', userId);
+      formData.append('parentId', parentId || '');
+
+      // 處理預覽中的媒體檔案
+      if (previews.length > 0) {
+        const preview = previews[0]; // 因為我們限制只能上傳一個檔案
+        if (preview.type === 'gif') {
+          // 如果是 GIF，傳送 URL
+          formData.append('gifUrl', preview.url);
+        } else {
+          // 如果是圖片或影片，傳送檔案
+          const file = fileInputRef.current.files[0];
+          if (file) {
+            formData.append('media', file);
+          }
+        }
+      }
+
       const response = await axios.post(
         'http://localhost:8000/api/comments',
         formData,
@@ -125,23 +132,25 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
           withCredentials: true,
           headers: { 'Content-Type': 'multipart/form-data' },
         }
-      )
-      console.log('留言新增成功：', response.data)
-      // 清空留言及附件預覽
-      setComment('')
-      setPreviews([])
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
+      );
+
+      console.log('留言新增成功：', response.data);
+
+      // 清空輸入框及附件預覽
+      setComment('');
+      setPreviews([]);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+
       // 執行送出成功後按鈕放大效果
-      setIsSent(true)
-      setTimeout(() => setIsSent(false), 300)
-      // Call the callback to tell parent a comment was submitted
-      onCommentSubmitted && onCommentSubmitted()
+      setIsSent(true);
+      setTimeout(() => setIsSent(false), 300);
+
+      // 傳回新留言資料給父層
+      onCommentSubmitted && onCommentSubmitted(response.data);
     } catch (error) {
-      console.error('留言送出失敗：', error)
+      console.error('留言送出失敗：', error);
     }
-  }
+  };
 
   // 根據是否有文字或預覽判定是否可發送
   const isReadyToSend = comment.trim().length > 0 || previews.length > 0
@@ -391,7 +400,7 @@ export function NestedReplyInput({ articleId, parentId, onCommentSubmitted }) {
             if (!reply) return null;
             return (
               <NestedReplyItem
-                key={reply.id || idx}
+                key={`nested-${reply.id}-${idx}`}
                 userName={reply?.nickname || reply?.name}
                 userProfile={reply?.head}
                 text={reply?.content}

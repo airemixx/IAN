@@ -219,6 +219,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
         id: req.decoded.id,
         account: req.decoded.account,
         name: name || req.decoded.name,
+        password: req.decoded.password,
         nickname: req.decoded.nickname,
         mail: req.decoded.mail,
         head: head || req.decoded.head,

@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import NewsCard from '../news-card'
 import AdCard from '../ad-card'
+import RecommendedProducts from '../recommended-products'
 import style from './index.module.scss'
 
-function AsideComponent({ categoryId, title, content, articleId }) {
+function AsideComponent({ categoryId, title, subtitle, content, articleId }) {
   // 接收 articleId prop
   const [relatedArticles, setRelatedArticles] = useState([])
 
@@ -22,7 +23,7 @@ function AsideComponent({ categoryId, title, content, articleId }) {
             categoryId: categoryId,
             title: title,
             content: content,
-            articleId: articleId, // 傳遞文章 ID
+            articleId: articleId,
           }),
         })
         if (!response.ok) {
@@ -51,17 +52,18 @@ function AsideComponent({ categoryId, title, content, articleId }) {
           </div>
           <NewsCard articles={relatedArticles} />
         </div>
-        <div className="mb-4 title">
+        {/* <div className="mb-4 title">
           <div className={style['y-title-line']} />
           <h3 className="mb-3" style={{ fontSize: 18, fontWeight: 500 }}>
             本文推薦
           </h3>
           <div className={style['y-title-line']} />
-        </div>
-        <AdCard />
+        </div> */}
+        {/* 自動搜尋推薦產品 */}
+        <RecommendedProducts articleId={articleId} title={title} subtitle={subtitle} content={content} />
       </aside>
     </>
-  )
+  );
 }
 
 const Aside = React.memo(AsideComponent)

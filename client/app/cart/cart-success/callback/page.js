@@ -7,48 +7,52 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./cart-success.scss";
 import { CheckCircle } from "react-bootstrap-icons";
-import axios from 'axios';
 
 export default function ECPayCallback() {
     // 取得網址參數，例如: ?RtnCode=xxxxxx
   const searchParams = useSearchParams();
-  const [orderStatus, setOrderStatus] = useState("處理中...");
+  const [orderSaved, setOrderSaved] = useState(false); // 確認訂單是否存入
 
-  // useEffect(() => {
-  //   const sendOrderData = async () => {
-  //     try {
-  //       const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-  //       const orderData = {
-  //         MerchantTradeNo: searchParams.get('MerchantTradeNo'),
-  //         TradeAmt: searchParams.get('TradeAmt'),
-  //         TradeDate: searchParams.get('TradeDate'),
-  //         PaymentDate: searchParams.get('PaymentDate'),
-  //         PaymentType: searchParams.get('PaymentType'),
-  //         RtnCode: searchParams.get('RtnCode'),
-  //         RtnMsg: searchParams.get('RtnMsg'),
-  //         cartItems,
-  //       };
+  useEffect(() => {
+    const saveOrderToDB = async () => {
+      try {
+        // 取得網址參數
+        const orderData = {
+          merchantTradeNo: searchParams?.get('MerchantTradeNo'),
+          tradeAmount: searchParams?.get('TradeAmt'),
+          tradeDate: searchParams?.get('TradeDate'),
+          paymentDate: searchParams?.get('PaymentDate'),
+          paymentType: searchParams?.get('PaymentType'),
+          rtnCode: searchParams?.get('RtnCode'),
+          rtnMsg: searchParams?.get('RtnMsg'),
+          cartItems: JSON.parse(localStorage.getItem('cartItems') || '[]'), // 取得購物車資料
+        };
 
-  //       const response = await axios.post("/api/orders", orderData);
-  //       if (response.data.success) {
-  //         setOrderStatus("訂單已成功存入!");
-  //         localStorage.removeItem('cartItems'); // 清空購物車
-  //       } else {
-  //         setOrderStatus("訂單存入失敗...");
-  //       }
-  //     } catch (error) {
-  //       console.error("訂單存入失敗:", error);
-  //       setOrderStatus("訂單存入失敗...");
-  //     }
-  //   };
+        console.log("送出訂單資料:", orderData);
 
-  //   sendOrderData();
-  //     // const timer = setTimeout(() => {
-  //     //   window.location.href = "/"; // 替換成你的目標頁面 URL
-  //     // }, 3000);
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData),
+        });
+
+        if (response.status == 201) {
+          setOrderSaved(true);
+          console.log('訂單已成功存入資料庫');
+        } else {
+          console.error('存入失敗:', await response.text());
+        }
+      } catch (error) {
+        console.error('存入訂單時發生錯誤:', error);
+      }
+    };
+    saveOrderToDB();
+      // const timer = setTimeout(() => {
+      //   window.location.href = "/"; // 替換成你的目標頁面 URL
+      // }, 3000);
   
-  //     // return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
-  // }, []);
+      // return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
+  }, [searchParams]);
   if (isDev) console.log('RtnCode', searchParams?.get('RtnCode'))
   
   return (
