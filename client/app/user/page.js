@@ -6,20 +6,21 @@ import useAuth from '@/hooks/use-auth'
 import Sidenav from './_components/Sidenav/page'
 
 export default function UserPage(props) {
-  const { token, user = {}, loading, setUser } = useAuth()
+  const { token, user = {}, loading, setUser, setToken} = useAuth()
   const [name, setName] = useState('')
   const [birthday, setBirthday] = useState('')
   const [password, setPassword] = useState('')
   const [updating, setUpdating] = useState(false)
 
   useEffect(() => {
-    if (user && user.birthday) {
-      console.log("📌 useEffect 內 birthday 值:", user.birthday); // 👈 確保 birthday 正確
-      setName(user.name || '');
-      setBirthday(user.birthday.split("T")[0]); // 確保 `YYYY-MM-DD` 格式
+    console.log("📌 useEffect 內 user:", user); // ✅ 檢查 user 內容
+  
+    if (user && Object.keys(user).length > 0) { 
+      setName(user.name || ''); 
+      setBirthday(user.birthday ? user.birthday.split("T")[0] : ''); 
     }
-  }, [user]);
-
+  }, [user]); // ✅ 這樣當 user 變更時，name & birthday 才會更新
+  
   if (loading) {
     return <div className="text-center mt-5">載入中...</div>
   }
@@ -38,6 +39,10 @@ export default function UserPage(props) {
 
       const result = await response.json()
       if (result.status !== 'success') throw new Error(result.message)
+
+        console.log("📌 取得的 user 資料:", result.data);
+        
+        setToken(token);
 
         setUser(prevUser => ({
           ...prevUser, // ✅ 保留舊資料
@@ -104,7 +109,7 @@ export default function UserPage(props) {
       alert("更新成功！");
   
       // **直接調用 `fetchUserData()` 更新使用者資訊**
-      fetchUserData(); 
+      await fetchUserData(); 
     } catch (error) {
       console.error("更新失敗:", error);
       alert("更新失敗，請稍後再試");

@@ -6,7 +6,7 @@ export default function useAuth() {
   const router = useRouter();
   const appKey = "loginWithToken";
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState({ nickname: "" });
+  const [user, setUser] = useState({name: "", nickname: "", birthday: ""});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +30,6 @@ export default function useAuth() {
 
     setLoading(false);
   }, []);
-
-  return { token, user, setUser, loading };
+  
+  return { token, user, setUser, loading , setToken };
 }
