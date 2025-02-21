@@ -455,12 +455,13 @@ export default function CommentsArea({
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [count, setCount] = useState(initialCount ?? 0)
   const [comments, setComments] = useState([])
+  const [sortOption, setSortOption] = useState("1") // 新增排序選項預設 "1" (由新到舊)
 
   const toggleComments = () => setIsCollapsed((prev) => !prev)
 
   useEffect(() => {
     if (!articleId) return
-    // 從後端取得該文章的留言數量
+    // 取得留言數量
     fetch(`http://localhost:8000/api/comments/count?articleId=${articleId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -483,6 +484,7 @@ export default function CommentsArea({
           throw new Error(`HTTP error! status: ${res.status}`)
         }
         const data = await res.json()
+        // 先組織留言：將回覆中的回覆依照 parent_id 分組
         setComments(organizeComments(data.comments))
       } catch (error) {
         console.error('Could not fetch comments:', error)
@@ -493,6 +495,22 @@ export default function CommentsArea({
       fetchComments()
     }
   }, [articleId, refreshTrigger])
+
+  // 根據 sortOption 排序留言，回傳排序後的陣列
+  const getSortedComments = () => {
+    const sorted = [...comments]
+    if (sortOption === "1") {
+      // 由新到舊：created_at 降冪排序
+      sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    } else if (sortOption === "2") {
+      // 由舊到新：created_at 升冪排序
+      sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    } else if (sortOption === "3") {
+      // 熱門留言：like_count 降冪排序
+      sorted.sort((a, b) => (b.like_count || 0) - (a.like_count || 0))
+    }
+    return sorted
+  }
 
   return (
     <div>
@@ -511,6 +529,8 @@ export default function CommentsArea({
               id="sort-comments"
               name="sort-comments"
               className="form-select"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
             >
               <option value="1">由新到舊</option>
               <option value="2">由舊到新</option>
@@ -518,10 +538,10 @@ export default function CommentsArea({
             </select>
           </div>
           <div className="pt-3">
-            {comments.map((comment) => (
+            {getSortedComments().map((comment) => (
               <ReplyItem
                 key={comment.id}
-                articleId={articleId}               // ← 從最外層傳給 ReplyItem
+                articleId={articleId}               // 從最外層傳給 ReplyItem
                 commentId={comment.id}
                 userName={comment.nickname || comment.name}
                 userProfile={comment.head}
