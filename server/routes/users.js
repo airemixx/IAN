@@ -150,6 +150,14 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ status: "error", message: "請提供完整的使用者資訊！" });
     }
 
+    // 檢查帳號是否已存在
+    const checkUserSQL = "SELECT id FROM users WHERE account = ?";
+    const [existingUser] = await db.execute(checkUserSQL, [account]);
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({ status: "error", message: "此帳號已被註冊，請使用其他帳號。" });
+    }
+
     // 轉換性別為 `0`（先生）或 `1`（女士）
     gender = gender === "先生" ? 0 : gender === "女士" ? 1 : null;
     if (gender === null) return res.status(400).json({ status: "error", message: "性別格式錯誤" });
@@ -166,57 +174,71 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     res.status(201).json({ status: "success", message: "帳號註冊成功！", avatarUrl: head });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "error", message: "註冊失敗" });
+    res.status(500).json({ status: "error", message: "註冊失敗，請稍後再試。" });
   }
 });
 
-
 router.put("/:account", checkToken, upload.none(), async (req, res) => {
-  const {account} = req.params;
+  const { account } = req.params;
   console.log(account);
   
-  const {name, password, head , birthday} = req.body;
+  const { name, password, head, birthday } = req.body;
 
-  try{
-    if(account != req.decoded.account) throw new Error("沒有修改權限");
-    // if(!name || !password || !head) throw new Error("請至少提供一個修改的內容");
+  try {
+    if (account != req.decoded.account) throw new Error("沒有修改權限");
 
     const updateFields = [];
     const value = [];
 
-    if(name){
+    if (name) {
       updateFields.push("`name` = ?");
       value.push(name);
     }
-    if(head){
+    if (head) {
       updateFields.push("`head` = ?");
       value.push(head);
     }
-    if(password){
+    if (password) {
       updateFields.push("`password` = ?");
       const hashedPassword = await bcrypt.hash(password, 10);
       value.push(hashedPassword);
     }
-    if(birthday){
+    if (birthday) {
       updateFields.push("`birthday` = ?");
       value.push(birthday);
     }
     value.push(account);
     const sql = `UPDATE users SET ${updateFields.join(", ")} WHERE account = ?;`;
-    const [result] =  await db.execute(sql, value);
+    const [result] = await db.execute(sql, value);
 
-    if(result.affectedRows == 0) throw new Error("更新失敗");
-    
+    if (result.affectedRows == 0) throw new Error("更新失敗");
+
+    // **🔹 產生新的 Token**
+    const newToken = jwt.sign(
+      {
+        id: req.decoded.id,
+        account: req.decoded.account,
+        name: name || req.decoded.name,
+        nickname: req.decoded.nickname,
+        mail: req.decoded.mail,
+        head: head || req.decoded.head,
+        level: req.decoded.level,
+      },
+      secretKey,
+      { expiresIn: "7d" }
+    );
+
     res.status(200).json({
       status: "success",
-      message: `更新特定 ID 的使用者: ${account}`
+      message: `更新成功: ${account}`,
+      token: newToken, // **回傳新的 Token**
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"修改失敗"
-    })
+      message: err.message || "修改失敗",
+    });
   }
 });
 

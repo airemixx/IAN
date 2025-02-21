@@ -13,6 +13,15 @@
   width: 109px;
   height: 89px;
 }
+.j-increase:active, 
+.j-decrease:active,
+.j-increase:focus,
+.j-decrease:focus,
+.j-increase:not(.j-cartItem),
+.j-decrease:not(.j-cartItem){
+  border: none;
+}
+
 
 .j-detailcollapse {
   padding: 0;

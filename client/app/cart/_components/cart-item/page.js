@@ -26,10 +26,30 @@ export default function CartItem({id, itemData, page }) {
      setNewQuan((prev) => prev + 1);
    }
  
-   // **數量減少（確保不低於 1）**
    function handleClickDec() {
-     setNewQuan((prev) => (prev > 1 ? prev - 1 : 1));
-   }
+    if (newQuan === 1) {
+      const confirmDelete = window.confirm("數量為 0，是否要從購物車刪除該商品？");
+      if (confirmDelete) {
+        // 取得 localStorage 中的購物車數據
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        
+        delete cart[id]
+        let updatedCart = Object.entries(cart).filter(v => v!=null);// 過濾掉該商品
+        updatedCart = updatedCart.map(v => v[1])
+
+        console.log(updatedCart);
+        localStorage.removeItem('cart')
+        // // 轉回物件形式並更新 localStorage
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        
+        // 刷新頁面或通知父層更新購物車
+        window.location.reload();
+      }
+    } else {
+      setNewQuan((prev) => prev - 1);
+    }
+  }
+  
   
   return (
     <div className="d-flex flex-grow-1">

@@ -1,11 +1,16 @@
 "use client"
+
 import  "./shopping-cart-empty.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { redirect } from "next/navigation";
 
 export default function CartEmptyPage(){
+    let cartStorage = JSON.parse(localStorage.getItem("cart")) || {};
+    const isCartEmpty = Object.keys(cartStorage).length === 0;
     return(
+        
         <>
-             <div className="container d-xs-flex flex-sm-column pt-5">
+        {isCartEmpty ? <div className="container d-xs-flex flex-sm-column pt-5">
                 <div className="j-shoppingCartTitleBox mb-5 row justify-content-center mt-5 pt-5">
                     <div className="col-12 text-center">
                         <h1 className="j-shoppingCartTitle m-0 ">我的購物車</h1>
@@ -83,7 +88,8 @@ j-illustrateBox d-flex flex-column position-relative d-none d-sm-block col-4">
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> : redirect('/cart/cart-step1')}
+             
         </>
     )
 }

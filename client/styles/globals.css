@@ -6,6 +6,7 @@
   --primary-color-med: #23425a;
   --primary-color-lig: #5292c5;
   --warning-color: #e58e41;
+  --warning-color-dark: #ca6d1b;
   --secondary-color-dark: #807871;
   --secondary-color-med: #d0b088;
   --secondary-color-lig: #f1cf99;
@@ -107,6 +108,7 @@ nav {
   opacity: 0;
 }
 
+.nav-left > li.nav-active a,
 .nav-left > li a:hover,
 .nav-left > li:hover > a {
   color: var(--secondary-color-med);
@@ -123,6 +125,7 @@ nav {
   transition: width 0.3s ease;
 }
 
+.nav-left > li.nav-active::after,
 .nav-left > li:hover::after {
   width: 100%;
 }
@@ -549,3 +552,45 @@ footer-title {
   opacity: 1 !important;
   transform: scale(1.1);
 }
+
+
+/*  全局 Toast 樣式 */
+.custom-toast-container .Toastify__toast {
+  font-family: "Arial", sans-serif;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  justify-content: flex-start
+}
+
+/*  成功類型 Toast */
+.Toastify__toast--success {
+  background: var(--primary-color) !important; 
+  color: var(--white) !important;
+}
+
+.Toastify__toast--success svg {
+  fill: var(--secondary-color-med) !important;
+}
+
+/*  錯誤類型 Toast */
+.Toastify__toast--error {
+  background: var(--warning-color) !important; 
+  color: var(--white) !important;
+}
+
+.Toastify__toast--error svg {
+  fill: var(--primary-color) !important;
+}
+
+/*  資訊類型 Toast */
+.Toastify__toast--info {
+  background: var(--secondary-color-dark) !important; 
+  color: var(--white) !important;
+}
+
+.Toastify__toast--info svg {
+  fill: var(--secondary-color-med) !important;
+}
+
+
