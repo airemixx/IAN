@@ -32,8 +32,8 @@
 }
 .y-reply-img img{
   border-radius: 5px;
-  width: 35%;
-  aspect-ratio: 16/9;
+  width: 100%;
+  aspect-ratio: 1/1;
 }
 .y-reply-time-like button{
   border: none;
@@ -43,19 +43,49 @@
 }
 .y-reply-time-like button:focus{
   border: none;
-  background-color: #adadad;
+  background-color: #adadad00;
   border-radius: 25px;
   padding:5px 5px;
 }
 .y-btn-reply-in-reply{
   color: #000;
+  &:hover {
+    img {
+      content: url('/images/article/reply-hover.svg'); // 替換為 hover 狀態的 SVG
+    }
+    .reply-text {
+      color: #838383; // 替換為 hover 狀態的文字顏色
+    }
+  }
+
+  &:active {
+    img {
+      content: url('/images/article/reply-active.svg'); // 替換為 active 狀態的 SVG
+    }
+    .reply-text {
+      color: #7E7267; // 替換為 active 狀態的文字顏色
+    }
+  }
 }
+
 .y-hidden-reply-btn button{
   border: none;
   background-color: #ffffff00;
   color: #7E7267;
 }
+.reply-text{
+  color: #1E3C54;
+}
 
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.8s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
 
 @media screen and (max-width: 390px){
   .y-sort-dropdown{
