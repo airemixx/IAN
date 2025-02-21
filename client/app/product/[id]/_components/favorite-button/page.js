@@ -40,6 +40,8 @@ export default function FavoriteButton({ productId }) {
         title: "請先登入",
         text: "您需要登入後才能收藏商品",
         confirmButtonText: "前往登入",
+        showCancelButton: true,
+        cancelButtonText: "取消",
       }).then((result) => {
         if (result.isConfirmed) {
           window.location.href = "/login";
