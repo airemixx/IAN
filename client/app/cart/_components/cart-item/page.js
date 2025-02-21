@@ -32,16 +32,18 @@ export default function CartItem({id, itemData, page }) {
       if (confirmDelete) {
         // 取得 localStorage 中的購物車數據
         let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        
+        delete cart[id]
+        let updatedCart = Object.entries(cart).filter(v => v!=null);// 過濾掉該商品
+        updatedCart = updatedCart.map(v => v[1])
 
-        delete cart[id];
-        const updatedCart = Object.entries(cart).filter(v => v!=null);// 過濾掉該商品
         console.log(updatedCart);
         localStorage.removeItem('cart')
         // // 轉回物件形式並更新 localStorage
-        localStorage.setItem("cart", JSON.stringify(Object.fromEntries(updatedCart)));
-  
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        
         // 刷新頁面或通知父層更新購物車
-        // window.location.reload();
+        window.location.reload();
       }
     } else {
       setNewQuan((prev) => prev - 1);

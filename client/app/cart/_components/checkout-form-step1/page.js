@@ -9,12 +9,13 @@ export default function CheckoutFormStep1({ slItem }) {
   const [price, setPrice] = useState(0);
   const deliverPrice = 150;
   const router = useRouter(); // 取得 Next.js router
-
+  
   // 計算 totalPrice
   useEffect(() => {
+    
     if (slItem && Array.isArray(slItem)) {
       const itemPrice =
-        slItem.reduce((acc, item) => acc + (item.price || 0), 0) +
+        slItem.reduce((acc, item) => acc + ((item.price *item.quantity) || 0), 0) +
         deliverPrice;
       setPrice(itemPrice);
     }
