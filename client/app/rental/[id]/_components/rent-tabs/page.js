@@ -3,26 +3,25 @@
 'use client'
 
 import { useState } from 'react'
+import RentShopping from '../rent-shopping/page'
 
 export default function RentTabs({ rental }) {
-  const [activeTab, setActiveTab] = useState('rental')
+  const [activeTab, setActiveTab] = useState('rent')
 
   return (
     <div className="mt-1">
       {/* Tab 選單 */}
       <div className="d-flex">
         <button
-          className={`btn btn-primary btn-tab-radius me-1 ${
-            activeTab === 'rental' ? 'active' : ''
-          }`}
-          onClick={() => setActiveTab('rental')}
+          className={`btn btn-primary btn-tab-radius me-1 ${activeTab === 'rent' ? 'btn-active' : ''
+            }`}
+          onClick={() => setActiveTab('rent')}
         >
           租借內容
         </button>
         <button
-          className={`btn btn-primary btn-tab-radius ${
-            activeTab === 'spec' ? 'active' : ''
-          }`}
+          className={`btn btn-primary btn-tab-radius ${activeTab === 'spec' ? 'btn-active' : ''
+            }`}
           onClick={() => setActiveTab('spec')}
         >
           產品規格
@@ -31,7 +30,7 @@ export default function RentTabs({ rental }) {
 
       {/* Tab 內容 */}
       <div id="tabContent">
-        {activeTab === 'rental' ? (
+        {activeTab === 'rent' ? (
           <div className="card card-radius px-2">
             <div className="card-body">
               {/* 商品配件 (來自 API: rental.append) */}
@@ -39,43 +38,26 @@ export default function RentTabs({ rental }) {
               <div className="append-grid">
                 {rental.append
                   ? rental.append
-                      .split('\n')
-                      .reduce((acc, item, index, arr) => {
-                        if (index % 2 === 0)
-                          acc.push(arr.slice(index, index + 2))
-                        return acc
-                      }, [])
-                      .map((pair, rowIndex) => (
-                        <div key={rowIndex} className="append-row">
-                          {pair.map((item, colIndex) => (
-                            <span key={colIndex} className="append-item">
-                              {item}
-                            </span>
-                          ))}
-                        </div>
-                      ))
+                    .split('\n')
+                    .reduce((acc, item, index, arr) => {
+                      if (index % 2 === 0)
+                        acc.push(arr.slice(index, index + 2))
+                      return acc
+                    }, [])
+                    .map((pair, rowIndex) => (
+                      <div key={rowIndex} className="append-row">
+                        {pair.map((item, colIndex) => (
+                          <span key={colIndex} className="append-item">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    ))
                   : '無配件資訊'}
               </div>
 
               {/* 租借時段 */}
-              <div className="mt-3">
-                <h5 className="card-title fee-text">租借時段</h5>
-                <div className="m-2">
-                  <label htmlFor="startDate">開始日期</label>
-                  <input
-                    type="date"
-                    id="startDate"
-                    className="form-control mb-2"
-                  />
-                  <label htmlFor="endDate">結束日期</label>
-                  <input type="date" id="endDate" className="form-control" />
-                  <div className="d-flex justify-content-end mt-3">
-                    <button className="btn btn-primary btn-radius">
-                      立即租借
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <RentShopping rental={rental} />
             </div>
           </div>
         ) : (
@@ -142,11 +124,11 @@ export default function RentTabs({ rental }) {
                   <td>
                     {rental.summary
                       ? rental.summary.split('\n').map((feature, index) => (
-                          <span key={index}>
-                            {feature}
-                            <br />
-                          </span>
-                        ))
+                        <span key={index}>
+                          {feature}
+                          <br />
+                        </span>
+                      ))
                       : '無產品特點'}
                   </td>
                 </tr>
