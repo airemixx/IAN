@@ -182,7 +182,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
   const { account } = req.params;
   console.log(account);
 
-  const { name, password, head, birthday } = req.body;
+  const { name, password, head, birthday, currentPassword } = req.body;
 
   try {
     if (account != req.decoded.account) throw new Error("沒有修改權限");
@@ -199,6 +199,19 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
       value.push(head);
     }
     if (password) {
+      // 更新密碼前，必須提供並驗證原密碼
+      if (!currentPassword) throw new Error("必須提供原密碼以更新新密碼");
+      
+      // 取得目前使用者的密碼 hash
+      const [rows] = await db.execute("SELECT password FROM users WHERE account = ?", [account]);
+      if (rows.length === 0) throw new Error("找不到使用者");
+      const userHash = rows[0].password;
+      
+      // 驗證原密碼是否正確
+      const isMatch = await bcrypt.compare(currentPassword, userHash);
+      if (!isMatch) throw new Error("目前密碼不正確，請再重新輸入");
+
+      // 驗證通過後，更新新密碼（先 hash）
       updateFields.push("`password` = ?");
       const hashedPassword = await bcrypt.hash(password, 10);
       value.push(hashedPassword);

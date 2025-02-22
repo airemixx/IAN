@@ -187,8 +187,8 @@ export default function UserPage(props) {
             <div
               className={`${styles.heroSection} mb-4 p-4 d-flex flex-column justify-content-center`}
             >
-              <h6 className="text-black ms-3">獲取相機最新文章</h6>
-              <button className={styles.customBtn}>立即前往</button>
+              <h6 className="text-black ms-3">獲取相機最新消息</h6>
+              <Link href="/article"><button className={styles.customBtn}>立即前往</button></Link>
             </div>
 
             {/* 表單區域 */}

@@ -17,6 +17,7 @@ export default function UserPage(props) {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [updating, setUpdating] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(''); // 錯誤訊息 state
   
     if (loading) {
       return <div className="text-center mt-5">載入中...</div>;
@@ -25,6 +26,11 @@ export default function UserPage(props) {
     const handlePasswordChange = async (e) => {
       e.preventDefault();
       
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        alert('請填寫所有欄位');
+        return;
+      }
+
       if (newPassword !== confirmPassword) {
         alert('新密碼與確認密碼不一致');
         return;
@@ -41,7 +47,8 @@ export default function UserPage(props) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            password: newPassword, // 只更新密碼
+            currentPassword: currentPassword,
+            password: newPassword,
           }),
         }
       );
@@ -49,20 +56,25 @@ export default function UserPage(props) {
       const result = await response.json();
       console.log("📌 更新密碼 API 回應:", result);
 
-      if (result.status !== 'success') throw new Error(result.message);
+      if (result.status !== 'success') {
+        // 設定錯誤訊息，並跳出處理
+        setErrorMessage(result.message);
+        throw new Error(result.message);
+      }
 
-      alert('密碼更新成功！請使用新密碼登入');
+      alert('密碼更新成功！');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       router.push('/user');
     } catch (error) {
       console.error('❌ 更新密碼失敗:', error);
-      alert('密碼更新失敗，請稍後再試');
+      // 錯誤訊息已透過 setErrorMessage 設定
     } finally {
       setUpdating(false);
     }
   };
+
   return (
     <div className="container py-4">
       <div className={`row ${styles.marginTop}`}>
@@ -104,6 +116,13 @@ export default function UserPage(props) {
                 required
                 type="password" className={`form-control ${styles.formControl}`} />
               </div>
+
+              {/* 如果有錯誤訊息，則在按鈕上方顯示 */}
+              {errorMessage && (
+                <div className="alert alert-danger" role="alert">
+                  {errorMessage}
+                </div>
+              )}
               
               <button type="submit" className={styles.btnChange}>
                 更改我的密碼
