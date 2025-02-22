@@ -40,46 +40,44 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
+// 修改查詢，確保巢狀回覆也能取得媒體資料
 router.get('/', async (req, res) => {
-  const { articleId } = req.query
-  if (!articleId) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'articleId 為必填參數',
-    })
-  }
+  const { articleId } = req.query;
 
   try {
-    // 過濾 is_deleted 為 0 的留言，並根據 created_at 排序
     const [rows] = await pool.query(
-      `SELECT ac.*, u.head, u.nickname, u.name,
-             GROUP_CONCAT(cm.media_url) AS media_urls,
-             GROUP_CONCAT(cm.media_type) AS media_types
+      `SELECT 
+        ac.*,
+        u.head,
+        u.nickname,
+        u.name,
+        GROUP_CONCAT(DISTINCT cm.media_url) AS media_urls,
+        GROUP_CONCAT(DISTINCT cm.media_type) AS media_types
        FROM article_comments AS ac
        LEFT JOIN users AS u ON ac.user_id = u.id
        LEFT JOIN comments_media AS cm ON ac.id = cm.comment_id
        WHERE ac.article_id = ? AND ac.is_deleted = 0
        GROUP BY ac.id
-       ORDER BY ac.created_at ASC`,
+       ORDER BY ac.parent_id IS NULL DESC, ac.created_at DESC`,
       [articleId]
-    )
+    );
 
-    const comments = rows.map((row) => {
-      return {
-        ...row,
-        media_urls: row.media_urls ? row.media_urls.split(',') : [],
-        media_types: row.media_types ? row.media_types.split(',') : [],
-      }
-    })
+    // 處理每個留言的媒體資料
+    const comments = rows.map(row => ({
+      ...row,
+      media_urls: row.media_urls ? row.media_urls.split(',') : [],
+      media_types: row.media_types ? row.media_types.split(',') : []
+    }));
 
-    res.status(200).json({ comments: comments })
+    res.status(200).json({ comments });
   } catch (err) {
+    console.error('取得留言失敗：', err);
     res.status(500).json({
       status: 'error',
-      message: err.message || '取得留言失敗',
-    })
+      message: err.message || '取得留言失敗'
+    });
   }
-})
+});
 
 router.get('/count', async (req, res) => {
   const { articleId } = req.query
@@ -103,63 +101,133 @@ router.get('/count', async (req, res) => {
 // 新增留言 API：將留言內容存入 article_comments 資料表，若有附檔則存入 comments_media
 // 接受欄位 media，可能多筆檔案
 router.post('/', upload.array('media'), async (req, res) => {
-  let { content, articleId, userId, parentId, gifUrl } = req.body
+  let { content, articleId, userId, parentId, gifUrl } = req.body;
 
-  // 若未傳入 userId，預設使用 users 資料表裡的 id = 1
-  if (!userId) {
-    userId = 1
-  }
-
-  if (!content || !articleId) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'content 與 articleId 為必填項',
-    })
-  }
+  console.log('收到的請求資料：', {
+    content,
+    articleId,
+    userId,
+    parentId,
+    gifUrl,
+    files: req.files
+  });
 
   try {
-    // 先將留言新增到 article_comments 中
-    const [result] = await pool.query(
-      `INSERT INTO article_comments (article_id, content, user_id, parent_id, created_at)
-       VALUES (?, ?, ?, ?, NOW())`,
-      [articleId, content, userId, parentId || null]
-    )
-    const commentId = result.insertId
+    const connection = await pool.getConnection();
+    await connection.beginTransaction();
 
-    // 若有檔案附加，依檔案類型將資料都寫入 comments_media
-    if (req.files && req.files.length > 0) {
-      const insertMediaQuery = `INSERT INTO comments_media (comment_id, media_type, media_url) VALUES (?, ?, ?)`
-      for (const file of req.files) {
-        let mediaType = 'image'
-        if (file.mimetype.startsWith('video')) {
-          mediaType = 'video'
-        } else if (file.mimetype === 'image/gif') {
-          mediaType = 'gif'
-        }
-        await pool.query(insertMediaQuery, [
-          commentId,
-          mediaType,
-          file.filename,
-        ])
+    try {
+      // 1. 新增主留言
+      const [result] = await connection.query(
+        `INSERT INTO article_comments (article_id, content, user_id, parent_id, created_at)
+         VALUES (?, ?, ?, ?, NOW())`,
+        [articleId, content || '', userId, parentId || null]
+      );
+      const commentId = result.insertId;
+
+      // 2. 處理媒體檔案
+      if (req.files && req.files.length > 0) {
+        const file = req.files[0]; // 取第一個檔案
+        const mediaType = file.mimetype.startsWith('video/') ? 'video' :
+          file.mimetype === 'image/gif' ? 'gif' : 'image';
+
+        await connection.query(
+          `INSERT INTO comments_media (comment_id, media_type, media_url) 
+           VALUES (?, ?, ?)`,
+          [commentId, mediaType, file.filename]
+        );
       }
-    } else if (gifUrl) {
-      // 處理從 Giphy 選擇的 GIF
-      const insertMediaQuery = `INSERT INTO comments_media (comment_id, media_type, media_url) VALUES (?, ?, ?)`
-      await pool.query(insertMediaQuery, [commentId, 'gif', gifUrl])
+
+      // 3. 處理 GIF URL
+      if (gifUrl && gifUrl.trim()) {
+        await connection.query(
+          `INSERT INTO comments_media (comment_id, media_type, media_url) 
+           VALUES (?, 'gif', ?)`,
+          [commentId, gifUrl]
+        );
+      }
+
+      await connection.commit();
+
+      // 4. 回傳新增的留言資料
+      const [newComment] = await connection.query(
+        `SELECT 
+          ac.*,
+          u.head,
+          u.nickname,
+          u.name,
+          GROUP_CONCAT(DISTINCT cm.media_url) as media_urls,
+          GROUP_CONCAT(DISTINCT cm.media_type) as media_types
+         FROM article_comments ac
+         LEFT JOIN users u ON ac.user_id = u.id
+         LEFT JOIN comments_media cm ON ac.id = cm.comment_id
+         WHERE ac.id = ?
+         GROUP BY ac.id`,
+        [commentId]
+      );
+
+      // 立即更新前端顯示
+      const comment = newComment[0];
+      comment.media_urls = comment.media_urls ? comment.media_urls.split(',') : [];
+      comment.media_types = comment.media_types ? comment.media_types.split(',') : [];
+
+      res.status(201).json({
+        status: 'success',
+        message: '留言新增成功',
+        data: comment
+      });
+
+    } catch (err) {
+      await connection.rollback();
+      console.error('交易過程發生錯誤：', err);
+      throw err;
+    } finally {
+      connection.release();
     }
 
-    res.status(201).json({
-      status: 'success',
-      message: '留言新增成功',
-      commentId: commentId,
-    })
   } catch (err) {
-    console.error('新增留言錯誤：', err)
+    console.error('新增留言錯誤：', err);
     res.status(500).json({
       status: 'error',
-      message: err.message || '新增留言失敗',
-    })
+      message: err.message || '新增留言失敗'
+    });
   }
-})
+});
+
+router.post('/comments', upload.single('media'), async (req, res) => {
+  try {
+    let { content, articleId, userId, parentId } = req.body;
+    // 假設 GIF URL 透過 gifUrl 欄位傳送
+    const gifUrl = req.body.gifUrl || '';
+
+    // 若 content 為 null 或 undefined，預設為空字串
+    content = content || '';
+
+    // 檢查邏輯：如果留言內容空白，同時沒有上傳檔案／GIF，就回傳錯誤
+    if (content.trim() === '' && !req.file && !gifUrl.trim()) {
+      return res.status(400).json({ message: "請輸入留言內容或附上檔案/GIF" });
+    }
+
+    // 若 content 為空但有檔案或 GIF，則可存空字串或預設文字（依需求決定）
+    const finalContent = content.trim();
+
+    // 使用上傳的檔案或 GIF URL 作為留言的 media_url
+    const mediaUrl = req.file ? req.file.path : gifUrl;
+
+    // 儲存留言邏輯
+    const [result] = await pool.query(
+      `INSERT INTO comments (article_id, user_id, parent_id, content, media_url, created_at)
+       VALUES (?, ?, ?, ?, ?, NOW())`,
+      [articleId, userId, parentId, finalContent, mediaUrl]
+    );
+
+    return res.json({ message: "留言新增成功", commentId: result.insertId });
+  } catch (err) {
+    console.error('新增留言錯誤:', err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+
 
 export default router

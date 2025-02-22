@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/LENSTUDIO/css/header.css">
+    <link rel="stylesheet" href="/LENSTUDIO/css/footer.css">
+    <style>
+
+        /* 自訂滾動條樣式（可自行調整） */
+        ::-webkit-scrollbar {
+            width: 2px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #7e726700;
+            border-radius: 50%;
+        }
+
+        .y-container {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 15px;
+        }
+        
+        /* 麵包屑導航 */
+        .y-breadcrumb{
+          a{
+            color: #8F8F8F;
+          }
+          span{
+            color:#8F8F8F;
+          }
+          p{
+            color: #143146;
+          }
+          margin-top: 70px;
+          font-size: 16px;
+        }
+
+        /* 文章標題+主圖區 */
+        .y-tag-date{
+          margin-top: 65px;
+        }
+        .y-article-tag{
+          width: auto;
+          height: auto;
+          background-color: #7E7267;
+          color: #fff;
+          padding: 0.2rem 0.5rem !important;
+          font-size: 12px;
+        }
+        .y-share-icon-mb{
+          display: none;
+        }
+        .y-tag-date-share h1{
+          font-size: 48px;
+        }
+
+
+        /* 主內容區 */
+        .y-article-content {
+          width: 100%;
+          max-width: 1000px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            img{
+              aspect-ratio: 4/3;
+              object-fit: cover;
+            }
+          }
+        }
+
+        section h5{
+          font-size: 24px;
+        }
+
+        .y-content-image {
+          flex: 1;
+          max-width: 50%;
+        }
+
+        .y-content-text {
+          flex: 1;
+          max-width: 50%;
+        }
+
+        .y-img-fluid {
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+        }
+        .y-end-line{
+          border-bottom: 2px solid #000;
+          width: 100%;
+        }
+        
+        /* 側邊欄 */
+        aside {
+          align-self: flex-start;
+          position: sticky;
+          top:0;
+          width: 100%;
+          max-width: 390px;
+          margin: 0 auto;
+          background-color: #ffffff00;
+          height: 100vh;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+
+      /* aside title */
+      .y-title-line{
+          border-bottom: solid 2px #000;
+          margin-bottom: 20px;
+      }
+
+      .y-news-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      }
+
+      .y-news-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 20px;
+      }
+
+      .y-news-image {
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 8px;
+      }
+
+      .y-news-tag {
+      font-size: 14px;
+      font-weight: 500;
+      color: #7E7267;
+      font-weight: bold;
+      margin: 0;
+      }
+
+      .y-news-title {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.5;
+      color: #143146;
+      font-weight: normal;
+      text-decoration: none;
+      }
+
+      .y-news-title:hover {
+      color: #0056b3;
+      }
+
+      /* 廣告區 */
+      .y-ad-card {
+        margin: auto;
+        max-width: 355px;
+        background-color: #d9d9d9;
+        text-align: start;
+        padding-top: 20px;
+      }
+
+      .y-ad-card img {
+        max-width: 320px;
+        height: 300px;
+        margin: 0 auto;
+        object-fit: cover;
+        display: block;
+        background-color: #ffffff;
+      }
+
+        /* 產品信息 */
+      .y-ad-card .product-info {
+        padding: 25px;
+      }
+
+      .y-ad-card .product-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #000;
+      }
+
+      .y-ad-card .product-subtitle {
+        font-size: 16px;
+        color: #777;
+        margin-bottom: 10px;
+      }
+
+      .y-ad-card .product-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #000;
+      }
+
+      /* 按鈕樣式 */
+      .y-ad-card .buy-button {
+        width: 100%;
+        padding: 15px 0;
+        background-color: #00000000;
+        border: 5px solid #000;
+        color: #000;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      /* 標籤按讚列 */
+      .y-tag-area button{
+        background-color: #ffffff;
+        color: #000000;
+      }
+      .y-tag-area button:hover{
+        background-color: #d9d9d9;
+        color: #000;
+      }
+
+      .y-like-comment-share-fav button{
+        background-color: #ffffff00;
+        border: none;
+      }
+      .y-like-comment-share-fav-mb{
+        display: none;
+      }
+      .y-count-num{
+        display: none;
+      }
+
+      /* 留言 */
+      .y-comment-area{
+        border-radius: 25px;
+        input{
+          width: 100%;
+          border: none;
+        }
+      }
+      .y-comment-area-icons{
+        button{
+          width: 100%;
+          background-color: #ffffff00;
+          border: none;
+        }
+      }
+      .y-all-comment-btn button{
+        border: none;
+        background-color: #ffffff00;
+        color: #7E7267;
+        font-size: 16px;
+      }
+      .y-sort-dropdown{
+        select{
+          background-color: #ffffff00;
+          width: 15%;
+          border-radius: 25px;
+          border: none;
+        }
+        select:focus{
+          box-shadow: 0 0 15px #7E7267;
+          border: 2px solid #7E7267;
+        }
+      }
+
+      /* 留言顯示區 */
+      .y-reply{
+        border-top: 1px solid #000;
+        margin-top: 16px;
+        padding-top: 16px;
+      }
+      .y-reply-user-profile{
+        img{
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
+      .y-reply-img img{
+        border-radius: 5px;
+        width: 35%;
+        aspect-ratio: 16/9;
+      }
+      .y-reply-time-like button{
+        border: none;
+        background-color: #ffffff00;
+        border-radius: 25px;
+        padding:5px 5px;
+      }
+      .y-reply-time-like button:focus{
+        border: none;
+        background-color: #adadad;
+        border-radius: 25px;
+        padding:5px 5px;
+      }
+      .y-btn-reply-in-reply{
+        color: #000;
+      }
+      .y-hidden-reply-btn button{
+        border: none;
+        background-color: #ffffff00;
+        color: #7E7267;
+      }
+
+
+        /* 推薦商品區 */
+        .y-recommends-area-bg{
+          background-color: #eaeaea;
+        }
+        .y-recommends-area{
+          max-width: 1440px;
+          width: 100%;
+          margin: 0 auto;
+        }
+        .y-recommends-line{
+          width: 100%;
+          border-top: 2px solid #000000;
+        }
+        .y-card-title{
+          width: 100%;
+          button{
+            border-radius: 50px;
+            border: none;
+            background-color: #ffffff00;
+          }
+        }
+        .y-card-tag{
+          color: #8F8F8F;
+        }
+        .y-card-price{
+          color: #996A4E;
+        }
+
+        @media screen and (max-width: 390px){
+          .y-container{
+            max-width: 390px;
+            width: 100%;
+            padding: 0 32px;
+          }
+          .y-article-content{
+            flex-direction: column;
+          }
+          .y-breadcrumb{
+          margin-top: 20px;
+          font-size: 12px;
+          }
+
+          /* 文章標題+主圖區 */
+        .y-article-date{
+          font-size: 12px;
+        }
+        .y-share-icon{
+          display: none;
+        }
+        .y-share-icon-mb{
+          display: block;
+          font-size: 12px;
+          margin: 15px 0;
+        }
+        .y-tag-date-share h1{
+          font-size: 30px;
+        }
+        .y-font-size-control{
+          font-size: 12px;
+          button{
+            font-size: 12px;
+          }
+        }
+
+        /* 主內容區 */
+        .y-article-content{
+          section{
+            width: 100% !important;
+            max-width: 390px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            
+            .y-content-image {
+              max-width: 100%;
+            }
+
+            .y-content-text {
+              margin-top: 30px;
+              max-width: 100%;
+            }
+            .y-content-image-6{
+              margin-top: 30px !important;
+            }
+          }
+        }
+        .y-section-7-mb{
+          word-break: break-word;
+        }
+
+        aside{
+          display: none;
+        }
+
+        .y-tag-like-comment-share-fav-area{
+          display: block !important;
+        }
+        .y-tag-area{
+          margin-bottom: 15px;
+          button{
+            font-size: 12px;
+            padding: 0.2rem 0.5rem;
+            width: auto !important;
+            border: 1px solid #000;
+          }
+        }
+        .y-count-num{
+          font-size: 12px;
+        }
+        .y-like-comment-share-fav{
+          justify-content: space-between;
+        }
+        .y-like-comment-share-fav-pc{
+          display: none;
+        }
+        .y-count-num-pc{
+          display: none;
+        }
+        .y-like-comment-share-fav-mb{
+          display: block;
+        }
+        .y-count-num{
+          display: block;
+        }
+
+        /* 留言 */
+        .y-sort-dropdown{
+          select{
+            width: 40%;
+          }
+        }
+        .y-reply-user-profile img{
+          width: 30px;
+          height: 30px;
+        }
+        .y-reply-user-name{
+          font-size: 16px;
+        }
+        .y-reply-img img{
+          width: 100%;
+        }
+        .y-reply-time-like h6{
+          font-size: 12px;
+        }
+        .y-reply-time-like{
+          justify-content: space-between;
+        }
+        .y-btn-reply-in-reply span{
+          font-size: 12px;
+        }
+
+        /* 推薦 */
+        .y-recommends-area h2{
+          font-size: 20px;
+        }
+        .y-recommends-card-area {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+        }
+        .y-recommends-card-area .card {
+          min-width: 18rem; 
+        }
+      }
+
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 text-dark bg-light">
+<!-- 標題＋主圖區 -->
+<section class="y-container title-main-img">
+  <!-- 麵包屑 -->
+  <div class="y-breadcrumb">
+    <a href="#" class="text-decoration-none">首頁</a>
+    <span class="mx-2">&gt;</span>
+    <a href="#" class="text-decoration-none">最新消息</a>
+    <span class="mx-2">&gt;</span>
+    <a href="#" class="text-decoration-none">產品情報</a>
+    <span class="mx-2">&gt;</span>
+    <p class="text-muted">Sony α1 II 當代全能旗艦相機重磅登場</p>
+  </div>
+  <!-- 文章標題＋日期＋分享按鈕 -->
+  <div class="mb-2 y-tag-date-share d-sm-flex justify-content-between align-items-end">
+    <div class="y-tag-date d-flex align-items-center">
+      <div class="px-3 py-1 y-article-tag">產品情報</div>
+      <div class="ms-2">
+        <p class="mb-0 y-article-date">2024-12-21</p>
+      </div>
+    </div>
+    <div class="y-share-icon">
+      分享：
+      <a class="mx-sm-1" href="#"><img src="/LENSTUDIO/images/HomePage-images/fb-icon.svg"></a>
+      <a class="mx-sm-1" href="#"><img src="/LENSTUDIO/images/HomePage-images/x-twittwr-icon.svg"></a>
+      <a class="mx-sm-1" href="#"><img src="/LENSTUDIO/images/HomePage-images/link-icon.svg"></a>
+    </div>
+    <div class="y-share-icon-mb">
+      分享：
+      <a class="mx-sm-1" href="#"><img src="/LENSTUDIO/images/HomePage-images/fb-icon-mb.svg"></a>
+      <a class="mx-sm-1" href="#"><img src="/LENSTUDIO/images/HomePage-images/x-twittwr-icon-mb.svg"></a>
+      <a class="mx-sm-1" href="#"><img src="/LENSTUDIO/images/HomePage-images/link-icon-mb.svg"></a>
+    </div>
+    
+  </div>
+  <h1 class="mb-sm-4">Sony α1 II 當代全能旗艦相機重磅登場</h1>
+  <div class="mb-5 y-title-line"></div>
+  <div class="mb-4 d-flex align-items-center justify-content-between text-muted">
+        <!-- 新增使用者頭像和名稱 -->
+      <div class="d-flex align-items-center me-3">
+        <img src="/LENSTUDIO/images/HomePage-images/user (3).jpg" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+        <span class="ms-2">jumpman23</span>
+      </div>
+    <div class="y-font-size-control ms-3">
+        字級：
+        <button class="p-0 btn btn-link text-muted " onclick="changeFontSize('small')">小</button> /
+        <button class="p-0 btn btn-link text-muted " onclick="changeFontSize('medium')">中</button> /
+        <button class="p-0 btn btn-link text-muted " onclick="changeFontSize('large')">大</button>
+    </div>
+</div>
+  <img src="/LENSTUDIO/images/HomePage-images/sl3_stage_pat_domingo_3840x2160_teaser_image_new_0.jpg.webp"
+  class="mb-4 border rounded y-img-fluid"/>
+</section>
+
+<!-- 主內容區 -->
+
+<div class=" d-flex justify-content-between">
+    <!-- 文章區 -->
+    <article class="y-article-content">
+      <div>
+        <!-- 第一組 -->
+        <section class="mb-4 d-flex align-items-center" style="width: 100%; max-width: 1000px;">
+          <div>
+            <p>
+              睽違將近4年，Sony重磅推出新一代旗艦全片幅可交換鏡頭式數位相機α1 II（型號 ILCE-1M2），搭載 Sony 最新 AI 處理元件、具備5,010萬畫素感光元件、高達 30fps AF/AE 連拍[1]及抗變形快門等特點，並優化了在中、高ISO設定下的畫質純淨度。α1 II透過Sony AI 處理元件不僅支援優異的主體辨識表現，更新增了「自動」模式，可由相機自動偵測人類、動物、飛機和汽車等多元主體，優化整體拍攝體驗。此外，α1 II也繼承了α9 III的創新技術，包括最長達1秒的預拍功能[2]及機身改良的人體工學設計；重量僅約 743 克的輕巧機身，適合各種需要高機動性的專業拍攝需求；Sony α1 II結合高解析影像表現、高速效能以及卓越的對焦表現，完美定義全能旗艦的嶄新境界。
+            </p>
+          </div>
+        </section>
+
+        <!-- 第二組 -->
+        <section class="flex-row mb-4 d-flex align-items-center">
+          <div class="y-content-image">
+            <img src="/LENSTUDIO/images/HomePage-images/news (1).jpg" class="border rounded y-img-fluid" alt="Camera Showcase" />  
+          </div>
+          <div class="y-content-text ms-sm-4">
+            <h5>高解析、速度與AI對焦的完美結合</h5>
+            <p>
+              α1 II 結合全片幅 Exmor RS® 堆疊式 CMOS 感光元件與最新的 BIONZ XR® 影像處理器，可拍攝具有寬廣動態範圍的5,010萬畫素高解析度影像，即使在 APS-C 片幅裁切模式下，也能捕捉2,100萬畫素之高解析度影像。
+   
+              α1 II相機可實現最高達30fps無黑畫面的AF/AE高速連拍，且具備高達每秒 120 次計算AF/AE的驚人速度，可以高度精準對焦拍攝快速移動的物體。α1 II具備「預拍功能」可提前記錄完全按下快門前最多 1 秒的影像，拍攝過程中亦可透過「連拍加速功能」[3]暫時提高拍攝速度，不錯失稍縱即逝的精采瞬間。
+               
+              此外，最新的α1 II搭載先進 AI 處理元件，透過豐富的主體姿態與動作資料數據進行運算，除了能即時準確地判定畫⾯中人類、動物/鳥類、車/火車、飛機與昆蟲等主體，更新增「自動」模式，無需指定主體模式即可自動辨識多元拍攝目標。
+            </p>
+          </div>
+        </section>
+
+        <!-- 第三組 -->
+        <section class="flex-row-reverse mb-4 d-flex align-items-center">
+          <div class="y-content-image">
+            <img src="/LENSTUDIO/images/HomePage-images/news (2).webp" class="border rounded y-img-fluid" alt="Camera in Action" />  
+          </div>
+          <div class="y-content-text me-sm-4">
+            <h5>全面提升的影像品質與穩定拍攝系統 </h5>
+            <p>
+              為了滿足許多專業攝影師對高速動作的拍攝需求，α1 II 配備抗變形快門以減少影像失真；此外也透過更進化的規格，提升中高感光度設定下的低雜訊表現，大幅提升影像純淨度，即使針對需要高快門速度的室內運動，也能捕捉雜訊更少、背景清晰的影像。α1 II　亦配備 8.5 級 (中央)及7.0 級(邊角) [4]光學 5 軸內建影像穩定功能，並支援Steady-Shot「積極模式」[5]。，可呈現更穩定清晰的高品質影像。
+            </p>
+            <h5>專業操作與可靠性　支援高效工作流程和擴充性　影像傳輸更即時</h5>
+            <p>
+              為了滿足許多專業攝影師對高速動作的拍攝需求，α1 II 配備抗變形快門以減少影像失真；此外也透過更進化的規格，提升中高感光度設定下的低雜訊表現，大幅提升影像純淨度，即使針對需要高快門速度的室內運動，也能捕捉雜訊更少、背景清晰的影像。α1 II　亦配備 8.5 級 (中央)及7.0 級(邊角) [4]光學 5 軸內建影像穩定功能，並支援Steady-Shot「積極模式」[5]。，可呈現更穩定清晰的高品質影像。
+            </p>
+          </div>
+        </section>
+
+        <!-- 第四組 -->
+        <section class="flex-row mb-4 d-flex align-items-center">
+          <div class="pe-sm-2 y-content-image">
+            <img src="/LENSTUDIO/images/HomePage-images/news (3).webp" class="border rounded y-img-fluid" alt="Camera Accessories" />  
+          </div>
+          <div class="ps-sm-2 y-content-image y-content-image-6">
+            <img src="/LENSTUDIO/images/HomePage-images/news (3).webp" class="border rounded y-img-fluid" alt="Camera Accessories" />  
+          </div>
+        </section>
+
+        <!-- 第五組 -->
+        <section class="mb-4 d-flex align-items-center" style="width: 100%; max-width: 1000px;">
+          <div>
+            <h5>為永續性⽽打造</h5>
+            <p>  
+               Sony從產品開發、供應鏈、⽣產與包裝等產品⽣命週期都採取減少碳⾜跡的措施，α1 II部分機⾝使⽤獨家可回收塑膠SORPLAS製造，並透過使⽤再⽣能源的設備生產，以達成更友善環境的能源與資源應用。
+            </p>  
+          </div>  
+        </section>
+
+        <!-- 第六組 -->
+        <section class="flex-row mb-4 d-flex align-items-center">
+          <div class="pe-sm-2 y-content-image">
+            <img src="/LENSTUDIO/images/HomePage-images/news (1).webp" class="border rounded y-img-fluid"/>
+          </div>
+          <div class="ps-sm-2 y-content-image y-content-image-6">
+            <img src="/LENSTUDIO/images/HomePage-images/news (2).webp" class="border rounded y-img-fluid "/>
+          </div>
+        </section>
+
+        <!-- 第七組 -->
+        <section class="mb-4 d-flex align-items-center y-section-7-mb" style="width: 100%; max-width: 1000px;">
+          <div>
+            <p>
+              Sony致⼒於使⽤非塑膠性包材達到具耐震與耐撞的⽬標，並以植物性纖維製成的不織布進行產品包裝，透過全面性的考量減少對環境造成的衝擊。
+              <br>
+              <br>
+              <br>
+              全新Sony α1II全片幅相機將於2024/12/12在台上市，單機身建議售價NT$189,980；即日起至2024/12/29 前購買，並於2025/1/5前完成註冊即可獲得 Sony光影經典禮(內附α帆布袋、α相機鏡頭包布、α貼紙及 α金屬熱靴蓋套組)，更多詳細產品訊息可洽詢或全台Sony Store直營通路：SonyStore台北101直營店、Sony Store台北復興直營店、Sony Store 遠百信義直營店、Sony Store 台中直營店、Sony Store 高雄直營店、Sony客服中心（電話：4499111）以及各大消費性電子產品通路，或至Sony官方購物網站【www.sony.com.tw/store/】查詢。
+              產品連結：https://store.sony.com.tw/product/show/ILCE-1M2</p>
+          </div>
+        </section>
+      </div>
+      <div class="y-end-line"></div>
+
+      <div class="y-tag-like-comment-share-fav-area d-flex justify-content-between align-items-center">
+        <div class="y-tag-area">
+          <button class="py-sm-1 px-sm-3 fw-medium rounded-pill">＃Sony</button>
+          <button class="py-sm-1 px-sm-3 fw-medium rounded-pill">＃旗艦</button>
+        </div>
+        <div class="y-like-comment-share-fav d-flex">
+          <button class="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+            <img src="/LENSTUDIO/images/HomePage-images/heart.svg" class="me-1 y-like-comment-share-fav-pc"><span class="y-count-num-pc">1234</span>
+            <img src="/LENSTUDIO/images/HomePage-images/heart.svg" class="y-like-comment-share-fav-mb"><span class="y-count-num">1234</span>
+          </button>
+
+          <button class="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+            <img src="/LENSTUDIO/images/HomePage-images/message-text-01.svg" class="me-1 y-like-comment-share-fav-pc"><span class="y-count-num-pc">34</span>
+            <img src="/LENSTUDIO/images/HomePage-images/message-text-01.svg" class="y-like-comment-share-fav-mb"><span class="y-count-num">34</span>
+          </button>
+
+          <button class="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+            <img src="/LENSTUDIO/images/HomePage-images/share.svg" class="me-1 y-like-comment-share-fav-pc">
+            <img src="/LENSTUDIO/images/HomePage-images/share.svg" class="y-like-comment-share-fav-mb">
+          </button>
+
+          <button class="py-sm-2 px-sm-3 d-flex align-items-center fw-medium rounded-pill">
+            <img src="/LENSTUDIO/images/HomePage-images/favourite.svg" class="me-1 y-like-comment-share-fav-pc">
+            <img src="/LENSTUDIO/images/HomePage-images/favourite.svg" class="y-like-comment-share-fav-mb">
+          </button>
+        </div>
+      </div>
+
+      <!-- 留言輸入區 -->
+      <div class="p-3 bg-white border border-secondary y-comment-area">
+        <input type="text" id="comment" class="p-2 py-3" placeholder="留言" />
+        <div class="mt-2 d-flex justify-content-end y-comment-area-icons">
+          <div class="d-flex">
+            <button class="p-1">
+                <img src="/LENSTUDIO/images/HomePage-images/image-03.svg"/>
+            </button>
+            <button class="p-1">
+                <img src="/LENSTUDIO/images/HomePage-images/send-01.svg" alt="發送" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="y-all-comment-btn">
+        <button>- 全部留言 -</button>
+      </div>
+
+      <div class="y-sort-dropdown">
+        <select id="sort-comments" name="sort-comments" class="form-select">
+          <option value="1">由新到舊</option>
+          <option value="2">由舊到新</option>
+          <option value="3">熱門留言</option>
+        </select>
+      </div>
+
+      <!-- 留言顯示區 -->
+      <div class="pt-3">
+        <!-- 第一則留言 -->
+        <div class="y-reply d-flex">
+          <!-- 使用者頭像 -->
+          <div class="y-reply-user-profile">
+            <a href="#">
+              <img src="/LENSTUDIO/images/HomePage-images/user (3).jpg">
+            </a>
+          </div>
+          <!-- 留言內容 -->
+          <div class="mx-3 y-reply-content">
+            <a href="#" class="text-black text-decoration-none">
+              <h6 class="mt-2 y-reply-user-name">jumpman23</h6>
+            </a>
+            <div class="y-reply-content">
+              <p class="mt-3 y-reply-text">新機的話就Pentax17，啥濾鏡都免了如果比較尺度拉到所有相機來看，Contax T是我心目中的街拍之王</p>
+            </div>
+              <div class="y-reply-img">
+                <img src="/LENSTUDIO/images/HomePage-images/gallery (3).jpg">
+              </div>
+              <div class="mt-3 y-reply-time-like d-flex align-items-center">
+                <h6 class="my-auto me-3">10小時前</h6>
+                <div class="d-flex mb-like-reply">
+                  <button class="ms-sm-3">
+                    <img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg">
+                  </button>
+                  <button class="y-btn-reply-in-reply d-flex align-items-center ms-sm-3">
+                    <img src="/LENSTUDIO/images/HomePage-images/message2.svg"> <span class="ms-1">回覆</span>
+                  </button>
+                </div>
+              </div>
+          </div>
+        </div>
+        
+        <!-- 第二則留言 -->
+        <div class="y-reply d-flex">
+          <!-- 使用者頭像 -->
+          <div class="y-reply-user-profile">
+            <a href="#">
+              <img src="/LENSTUDIO/images/HomePage-images/user (3).jpg">
+            </a>
+          </div>
+          <!-- 留言內容 -->
+          <div class="mx-3 y-reply-content">
+            <a href="#" class="text-black text-decoration-none">
+              <h6 class="mt-2 y-reply-user-name">jumpman23</h6>
+            </a>
+            <div class="y-reply-content">
+              <p class="mt-3 y-reply-text">新機的話就Pentax17，啥濾鏡都免了如果比較尺度拉到所有相機來看，Contax T是我心目中的街拍之王</p>
+            </div>
+              <div class="y-reply-img">
+                <img src="/LENSTUDIO/images/HomePage-images/gallery (3).jpg">
+              </div>
+              <div class="mt-3 y-reply-time-like d-flex align-items-center">
+                <h6 class="my-auto me-3">10小時前</h6>
+                
+                <div class="d-flex mb-like-reply">
+                  <button class="ms-sm-3">
+                    <img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg">
+                  </button>
+                  <button class="y-btn-reply-in-reply d-flex align-items-center ms-sm-3">
+                    <img src="/LENSTUDIO/images/HomePage-images/message2.svg"> <span class="ms-1">回覆</span>
+                  </button>
+                </div>
+              </div>
+
+              
+              <!-- 回覆中的回覆 -->
+              <div class="my-3 y-hidden-reply-btn">
+                <button>ㄧ 隱藏留言</button>
+              </div>
+              
+              <div class="d-flex">
+                <!-- 使用者頭像 -->
+                <div class="y-reply-user-profile">
+                  <a href="#">
+                    <img src="/LENSTUDIO/images/HomePage-images/user (3).jpg">
+                  </a>
+                </div>
+                <!-- 留言內容 -->
+                <div class="mx-3 y-reply-content">
+                  <a href="#" class="text-black text-decoration-none">
+                    <h6 class="mt-2 y-reply-user-name">jumpman23</h6>
+                  </a>
+                  <div class="y-reply-content">
+                    <p class="mt-3 y-reply-text"><strong>@jumpman23</strong> 新機的話就Pentax17，啥濾鏡都免了如果比較尺度拉到所有相機來看，Contax T是我心目中的街拍之王</p>
+                  </div>
+                    <div class="y-reply-img">
+                      <img src="/LENSTUDIO/images/HomePage-images/gallery (3).jpg">
+                    </div>
+                    <div class="mt-3 y-reply-time-like d-flex align-items-center">
+                      <h6 class="my-auto me-sm-3">10小時前</h6>
+                      
+                      <div class="d-flex mb-like-reply">
+                        <button class="ms-sm-3">
+                          <img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg">
+                        </button>
+                        <button class="y-btn-reply-in-reply d-flex align-items-center ms-sm-3">
+                          <img src="/LENSTUDIO/images/HomePage-images/message2.svg"> <span class="ms-1">回覆</span>
+                        </button>
+                      </div>
+                    </div>
+                </div>
+              </div>
+              
+              <div class="d-flex">
+                <!-- 使用者頭像 -->
+                <div class="y-reply-user-profile">
+                  <a href="#">
+                    <img src="/LENSTUDIO/images/HomePage-images/user (3).jpg">
+                  </a>
+                </div>
+                <!-- 留言內容 -->
+                <div class="mx-3 y-reply-content">
+                  <a href="#" class="text-black text-decoration-none">
+                    <h6 class="mt-2 y-reply-user-name">jumpman23</h6>
+                  </a>
+                  <div class="y-reply-content">
+                    <p class="mt-3 y-reply-text"><strong>@jumpman23</strong> 新機的話就Pentax17，啥濾鏡都免了如果比較尺度拉到所有相機來看，Contax T是我心目中的街拍之王</p>
+                  </div>
+                    <div class="y-reply-img">
+                      <img src="/LENSTUDIO/images/HomePage-images/gallery (3).jpg">
+                    </div>
+                    <div class="mt-3 y-reply-time-like d-flex align-items-center">
+                      <h6 class="my-auto me-sm-3">10小時前</h6>
+                      
+                      <div class="d-flex mb-like-reply">
+                        <button class="ms-sm-3">
+                          <img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg">
+                        </button>
+                        <button class="y-btn-reply-in-reply d-flex align-items-center ms-sm-3">
+                          <img src="/LENSTUDIO/images/HomePage-images/message2.svg"><span class="ms-1">回覆</span>
+                        </button>
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="my-3 y-hidden-reply-btn">
+                <button>ㄧ 隱藏留言</button>
+              </div>
+          </div>
+          <!-- 回覆中的回覆END -->
+        </div>
+      </div>
+    </article>
+
+
+    <!-- 側欄: 最新消息/推薦閱讀...等 -->
+    <aside>
+      <div class="p-4 rounded">
+          <div class="mb-5 title">
+              <div class="y-title-line"></div>
+              <h3 class="mb-3" style="font-size: 18px; font-weight: 500;">延伸閱讀</h3>
+              <div class="y-title-line"></div>
+          </div>
+          <ul class="list-unstyled y-news-list">
+
+              <!-- 第一則新聞 -->
+              <li class="d-flex">
+              <img src="/LENSTUDIO/images/HomePage-images/course-3.jpg" class="y-news-image me-2">
+              <div>
+                  <p class="y-news-tag">產品情報</p>
+                  <a href="#" class="y-news-title">
+                  Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！
+                  </a>
+              </div>
+              </li>
+
+              <!-- 第二則新聞 -->
+              <li class="d-flex">
+              <img src="/LENSTUDIO/images/HomePage-images/course-3.jpg" class="y-news-image me-2">
+              <div>
+                  <p class="y-news-tag">產品情報</p>
+                  <a href="#" class="y-news-title">
+                  Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！
+                  </a>
+              </div>
+              </li>
+
+              <!-- 第三則新聞 -->
+              <li class="d-flex">
+              <img src="/LENSTUDIO/images/HomePage-images/course-3.jpg" class="y-news-image me-2">
+              <div>
+                  <p class="y-news-tag">產品情報</p>
+                  <a href="#" class="y-news-title">
+                  Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！
+                  </a>
+              </div>
+              </li>
+
+              <!-- 第四則新聞 -->
+              <li class="d-flex">
+              <img src="/LENSTUDIO/images/HomePage-images/course-3.jpg" class="y-news-image me-2">
+              <div>
+                  <p class="y-news-tag">產品情報</p>
+                  <a href="#" class="y-news-title">
+                  Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！
+                  </a>
+              </div>
+              </li>
+
+              <!-- 第五則新聞 -->
+              <li class="d-flex">
+              <img src="/LENSTUDIO/images/HomePage-images/course-3.jpg" class="y-news-image me-2">
+              <div>
+                  <p class="y-news-tag">產品情報</p>
+                  <a href="#" class="y-news-title">
+                  Leica Q3 43 評測報告 | APO 大光圈鏡頭加持，領略光影之美的魅力！
+                  </a>
+              </div>
+              </li>
+
+          </ul>
+          </div>
+
+
+          <!-- 廣告 -->
+          <div class="mb-3 y-ad-card">
+              <img src="/LENSTUDIO/images/HomePage-images/product (1).jpg">
+              <div class="product-info">
+                  <div class="product-title">Sony α1 II</div>
+                  <div class="product-subtitle">無與倫比</div>
+                  <div class="product-price">NT$189,980</div>
+              </div>
+              <button href="#" class="buy-button">BUY</button>
+            </div>
+      </aside>
+
+  </div>
+</div>
+<!-- 推薦區 -->
+<div class="y-recommends-area-bg">
+  <div class="my-5 y-container y-recommends-area">
+    <h2 class="px-4">Lenstudio Recommends</h2>
+    <div class="y-recommends-line"></div>
+    <!-- recommends-card -->
+    <div class="gap-3 y-recommends-card-area d-flex">
+      <!-- 第一個卡片 -->
+      <div class="my-4 card" style="width: 18rem;">
+          <div class="px-3 py-2 y-card-title d-flex justify-content-end">
+            <a href=""><img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg"></a>
+          </div>
+          <img class="card-img-top object-fit-cover" src="/LENSTUDIO/images/HomePage-images/product (1).png">
+          <div class="card-body">
+            <h6 class="y-card-tag">Leica 徠卡 </h6>
+            <h5 class="card-product-name">Q3 43</h5>
+            <h6 class="mt-3 y-card-price">NT$220,000</h6>
+          </div>
+      </div>
+      <!-- 第二個卡片 -->
+      <div class="my-4 card" style="width: 18rem;">
+        <div class="px-3 py-2 y-card-title d-flex justify-content-end">
+          <a href=""><img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg"></a>
+        </div>
+        <img class="card-img-top object-fit-cover" src="/LENSTUDIO/images/HomePage-images/product (1).png">
+        <div class="card-body">
+          <h6 class="y-card-tag">Leica 徠卡 </h6>
+          <h5 class="card-product-name">Q3 43</h5>
+          <h6 class="mt-3 y-card-price">NT$220,000</h6>
+        </div>
+      </div>
+      <!-- 第三個卡片 -->
+      <div class="my-4 card" style="width: 18rem;">
+        <div class="px-3 py-2 y-card-title d-flex justify-content-end">
+          <a href=""><img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg"></a>
+        </div>
+        <img class="card-img-top object-fit-cover" src="/LENSTUDIO/images/HomePage-images/product (1).png">
+        <div class="card-body">
+          <h6 class="y-card-tag">Leica 徠卡 </h6>
+          <h5 class="card-product-name">Q3 43</h5>
+          <h6 class="mt-3 y-card-price">NT$220,000</h6>
+        </div>
+      </div>
+      <!-- 第四個卡片 -->
+      <div class="my-4 card" style="width: 18rem;">
+        <div class="px-3 py-2 y-card-title d-flex justify-content-end">
+          <a href=""><img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg"></a>
+        </div>
+        <img class="card-img-top object-fit-cover" src="/LENSTUDIO/images/HomePage-images/product (1).png">
+        <div class="card-body">
+          <h6 class="y-card-tag">Leica 徠卡 </h6>
+          <h5 class="card-product-name">Q3 43</h5>
+          <h6 class="mt-3 y-card-price">NT$220,000</h6>
+        </div>
+      </div>
+      <!-- 第五個卡片 -->
+      <div class="my-4 card" style="width: 18rem;">
+        <div class="px-3 py-2 y-card-title d-flex justify-content-end">
+          <a href=""><img src="/LENSTUDIO/images/HomePage-images/heart-dark.svg"></a>
+        </div>
+        <img class="card-img-top object-fit-cover" src="/LENSTUDIO/images/HomePage-images/product (1).png">
+        <div class="card-body">
+          <h6 class="y-card-tag">Leica 徠卡 </h6>
+          <h5 class="card-product-name">Q3 43</h5>
+          <h6 class="mt-3 y-card-price">NT$220,000</h6>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+  <script>
+    //字級大小
+    let currentSize = 'medium';
+
+    function changeFontSize(size) {
+      // 移除 text-muted class
+      const buttons = document.querySelectorAll('.y-font-size-control button');
+      buttons.forEach(btn => {
+        btn.classList.remove('text-muted');
+        btn.style.removeProperty('color');
+        btn.style.color = '#143146';
+        btn.style.textDecoration = 'underline';
+      });
+      
+      // 直接設定 style 屬性
+      const clickedButton = document.querySelector(`.y-font-size-control button[onclick*="${size}"]`);
+      if (clickedButton) {
+        clickedButton.style.color = '#8F8F8F';
+        clickedButton.style.textDecoration = 'none';
+      }
+
+      // 更改字體大小
+      const paragraphs = document.querySelectorAll('article p');
+      paragraphs.forEach(p => {
+        switch(size) {
+          case 'small':
+            p.style.fontSize = '14px';
+            break;
+          case 'medium':
+            p.style.fontSize = '16px';
+            break;
+          case 'large':
+            p.style.fontSize = '18px';
+            break;
+        }
+      });
+      currentSize = size;
+    }
+
+    // 初始化時設定預設按鈕顏色
+    document.addEventListener('DOMContentLoaded', () => {
+      changeFontSize('medium');
+    });
+
+
+  </script>
+</body>

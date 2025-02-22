@@ -36,60 +36,60 @@ const router = express.Router();
 
 
 router.get("/", async (req, res) => {
-  try{
+  try {
     const [rows] = await db.execute("SELECT * FROM `users`");
     res.status(200).json({
       status: "success",
       data: rows,
       message: "取得資料成功"
     })
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"取得資料失敗"
+      message: err.message ? err.message : "取得資料失敗"
     })
   }
 });
 
 router.get("/search", async (req, res) => {
-  const {q} = req.query;
-  try{
-    if(!q) throw new Error("請提供查詢字串");
+  const { q } = req.query;
+  try {
+    if (!q) throw new Error("請提供查詢字串");
 
     const sql = "SELECT * FROM `users` WHERE account LIKE ?";
     const [rows] = await db.execute(sql, [`%${q}%`]);
-  
+
     res.status(200).json({
       status: "success",
       data: rows,
       message: `搜尋成功, 條件: ${q}`
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"搜尋失敗"
+      message: err.message ? err.message : "搜尋失敗"
     })
   }
 });
 
 router.get("/:id", (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
 
-  try{
-    if(!id) throw new Error("請提供查詢字串");
+  try {
+    if (!id) throw new Error("請提供查詢字串");
 
     res.status(200).json({
       status: "success",
       data: {},
       message: `獲取特定 ID 的使用者: ${id}`
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(404).json({
       status: "error",
-      message: err.message?err.message:"搜尋失敗"
+      message: err.message ? err.message : "搜尋失敗"
     })
   }
 });
@@ -150,118 +150,174 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ status: "error", message: "請提供完整的使用者資訊！" });
     }
 
+    // 檢查帳號是否已存在
+    const checkUserSQL = "SELECT id FROM users WHERE account = ?";
+    const [existingUser] = await db.execute(checkUserSQL, [account]);
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({ status: "error", message: "此帳號已被註冊，請使用其他帳號。" });
+    }
+
     // 轉換性別為 `0`（先生）或 `1`（女士）
     gender = gender === "先生" ? 0 : gender === "女士" ? 1 : null;
     if (gender === null) return res.status(400).json({ status: "error", message: "性別格式錯誤" });
 
     const createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     // 設定 `head` 為上傳的圖片路徑
     const head = `/uploads/${avatar}`;
 
-    const sql = "INSERT INTO `users` (account, password, name, nickname, mail, head, gender, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    await db.execute(sql, [account, hashedPassword, name, nickname, mail, head, gender, createdAt]);
+    const sql = "INSERT INTO `users` (account, password, name, nickname, mail, head, gender, birthday, created_at, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    await db.execute(sql, [account, hashedPassword, name, nickname, mail, head, gender, null, createdAt, 0]);
 
     res.status(201).json({ status: "success", message: "帳號註冊成功！", avatarUrl: head });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "error", message: "註冊失敗" });
+    res.status(500).json({ status: "error", message: "註冊失敗，請稍後再試。" });
   }
 });
 
-
 router.put("/:account", checkToken, upload.none(), async (req, res) => {
-  const {account} = req.params;
+  const { account } = req.params;
   console.log(account);
-  
-  const {name, password, head , birthday} = req.body;
 
-  try{
-    if(account != req.decoded.account) throw new Error("沒有修改權限");
-    // if(!name || !password || !head) throw new Error("請至少提供一個修改的內容");
+  const { name, password, head, birthday, currentPassword } = req.body;
+
+  try {
+    if (account != req.decoded.account) throw new Error("沒有修改權限");
 
     const updateFields = [];
     const value = [];
 
-    if(name){
+    if (name) {
       updateFields.push("`name` = ?");
       value.push(name);
     }
-    if(head){
+    if (head) {
       updateFields.push("`head` = ?");
       value.push(head);
     }
-    if(password){
+    if (password) {
+      // 更新密碼前，必須提供並驗證原密碼
+      if (!currentPassword) throw new Error("必須提供原密碼以更新新密碼");
+      
+      // 取得目前使用者的密碼 hash
+      const [rows] = await db.execute("SELECT password FROM users WHERE account = ?", [account]);
+      if (rows.length === 0) throw new Error("找不到使用者");
+      const userHash = rows[0].password;
+      
+      // 驗證原密碼是否正確
+      const isMatch = await bcrypt.compare(currentPassword, userHash);
+      if (!isMatch) throw new Error("目前密碼不正確，請再重新輸入");
+
+      // 驗證通過後，更新新密碼（先 hash）
       updateFields.push("`password` = ?");
       const hashedPassword = await bcrypt.hash(password, 10);
       value.push(hashedPassword);
     }
-    if(birthday){
+
+    let formattedBirthday = "";
+
+    if (birthday) {
+      const formattedBirthday = typeof birthday === 'string'
+        ? birthday.split('T')[0]  // 如果是字串，去掉時間部分
+        : new Date(birthday).toISOString().split('T')[0]; // 如果是日期物件，轉成 YYYY-MM-DD
       updateFields.push("`birthday` = ?");
-      value.push(birthday);
+      value.push(formattedBirthday);
     }
     value.push(account);
     const sql = `UPDATE users SET ${updateFields.join(", ")} WHERE account = ?;`;
-    const [result] =  await db.execute(sql, value);
+    const [result] = await db.execute(sql, value);
 
-    if(result.affectedRows == 0) throw new Error("更新失敗");
+    if (result.affectedRows == 0) throw new Error("更新失敗");
+
     
+    // 🔥 **步驟 1：更新後，重新從資料庫取得最新的 user 資料**
+    const getUserSql = "SELECT id, account, name, nickname, mail, head, level, DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday FROM `users` WHERE account = ?;";
+    const [userRows] = await db.execute(getUserSql, [account]);
+
+    if (userRows.length === 0) throw new Error("找不到更新後的使用者");
+
+    const updatedUser = userRows[0]; // ✅ 確保拿到最新的 `user` 資料
+    console.log("📌 更新後的最新 user 資料:", updatedUser);
+
+    // 🔥 **步驟 2：產生新的 Token，確保使用 `updatedUser` 的最新資料**
+    
+    // **🔹 產生新的 Token**
+
+    const newToken = jwt.sign(
+      {
+        id: updatedUser.id,
+        account: updatedUser.account,
+        name: updatedUser.name,
+        nickname: updatedUser.nickname,
+        mail: updatedUser.mail,
+        head: updatedUser.head,
+        level: updatedUser.level,
+        birthday: updatedUser.birthday 
+      },
+      secretKey,
+      { expiresIn: "7d" }
+    );
+
     res.status(200).json({
       status: "success",
-      message: `更新特定 ID 的使用者: ${account}`
+      message: `更新成功: ${account}`,
+      token: newToken, // ✅ 回傳最新的 Token
     });
-  }catch(err){
-    console.log(err);
+
+  } catch (err) {
+    console.error("❌ 更新錯誤:", err.message);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"修改失敗"
-    })
+      message: err.message || "修改失敗",
+    });
   }
 });
 
 router.delete("/:account", checkToken, async (req, res) => {
-  const {account} = req.params;
-  try{
-    if(account != req.decoded.account) throw new Error("沒有修改權限");
+  const { account } = req.params;
+  try {
+    if (account != req.decoded.account) throw new Error("沒有修改權限");
 
     const sql = `DELETE FROM users WHERE account = ?`;
-    const [result] =  await db.execute(sql, [account]);
-    
-    if(result.affectedRows == 0) throw new Error("刪除失敗!");
-    
+    const [result] = await db.execute(sql, [account]);
+
+    if (result.affectedRows == 0) throw new Error("刪除失敗!");
+
     res.status(200).json({
       status: "success",
       message: `刪除使用者 ${account} 成功`
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"刪除失敗"
+      message: err.message ? err.message : "刪除失敗"
     })
   }
 });
 
 router.post("/login", upload.none(), async (req, res) => {
-  const {account, password} = req.body;
-  console.log("Debugging: ",account, password);
+  const { account, password } = req.body;
+  console.log("Debugging: ", account, password);
   console.log(req.body)
-  try{
-    if(!account || !password) throw new Error("請提供帳號和密碼")
-    
+  try {
+    if (!account || !password) throw new Error("請提供帳號和密碼")
+
     const sql = "SELECT * FROM `users` WHERE account = ?;"
     const [rows] = await db.execute(sql, [account]);
 
-    if(rows.length == 0)  throw new Error("找不到使用者");
-
+    if (rows.length == 0) throw new Error("找不到使用者");
+    
     const user = rows[0]
     console.log(user);
     const isMatch = await bcrypt.compare(password, user.password);
-    if(!isMatch) throw new Error("帳號或密碼錯誤");
+    if (!isMatch) throw new Error("帳號或密碼錯誤");
 
     console.log("JWT Secret Key:", secretKey); // 檢查是否有讀取到 Secret Key
-    
+
     const token = jwt.sign(
       {
         id: user.id,
@@ -271,6 +327,13 @@ router.post("/login", upload.none(), async (req, res) => {
         mail: user.mail,
         head: user.head,
         level: user.level,
+        birthday: user.birthday
+          ? (() => {
+            const date = new Date(user.birthday);
+            date.setDate(date.getDate() + 1); // ✅ 加一天
+            return date.toISOString().split("T")[0]; // ✅ 轉回 `YYYY-MM-DD`
+          })()
+          : "",
       },
       secretKey,
       { expiresIn: "7d" }
@@ -280,11 +343,11 @@ router.post("/login", upload.none(), async (req, res) => {
       data: { token },
       message: "登入成功"
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       status: "error",
-      message: err.message?err.message:"登入失敗"
+      message: err.message ? err.message : "登入失敗"
     });
   }
 });
@@ -334,7 +397,7 @@ router.get("/me", checkToken, async (req, res) => {
 
 
 router.post("/status", checkToken, (req, res) => {
-  const {decoded} = req;
+  const { decoded } = req;
   const token = jwt.sign(
     {
       id: decoded.id,
@@ -356,19 +419,19 @@ router.post("/status", checkToken, (req, res) => {
 
 
 
-function checkToken(req, res, next){
+function checkToken(req, res, next) {
   let token = req.get("Authorization");
-  if(!token) return res.status(401).json({
+  if (!token) return res.status(401).json({
     status: "error",
     message: "無驗證資料, 請重新登入",
   })
-  if(!token.startsWith("Bearer ")) return res.status(401).json({
+  if (!token.startsWith("Bearer ")) return res.status(401).json({
     status: "error",
     message: "驗證資料錯誤, 請重新登入",
   })
   token = token.slice(7);
   jwt.verify(token, secretKey, (err, decoded) => {
-    if(err) return res.status(401).json({
+    if (err) return res.status(401).json({
       status: "error",
       message: "驗證資料失效, 請重新登入",
     })

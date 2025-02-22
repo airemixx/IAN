@@ -33,8 +33,28 @@ const NewsCardLoader = () => {
 }
 
 export default function NewsCard({ articles }) {
+  const [showLoader, setShowLoader] = useState(true)
+
+  useEffect(() => {
+    // 每次 articles 改變時都先重設 loader 狀態為 true
+    setShowLoader(true)
+    if (articles && articles.length > 0) {
+      // 延長動畫呈現 3 秒 (3000 毫秒)
+      const timer = setTimeout(() => {
+        setShowLoader(false)
+      }, 1500)
+      return () => clearTimeout(timer)
+    } else {
+      setShowLoader(false)
+    }
+  }, [articles])
+
   if (!articles || articles.length === 0) {
     return <p>No related articles found.</p>
+  }
+
+  if (showLoader) {
+    return <NewsCardLoader />
   }
 
   return (

@@ -11,6 +11,7 @@ export default function TitleShareFontSize({
   imagePath = '/images/article/default-Img.jpg', // 添加 imagePath prop 並設定預設值
 }) {
   const [fontSize, setFontSize] = useState('medium') // 預設字體大小
+  const [isImageVisible, setIsImageVisible] = useState(false);
 
   // 字體大小對應的 px 值
   const fontSizes = {
@@ -41,6 +42,32 @@ export default function TitleShareFontSize({
     const date = new Date(dateString)
     return date.toISOString().split('T')[0] // 格式化為 YYYY-MM-DD
   }
+
+  useEffect(() => {
+    // 建立 IntersectionObserver
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsImageVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px'
+      }
+    );
+
+    // 取得主圖片元素
+    const mainImage = document.querySelector(`.${styles['main-image']}`);
+    if (mainImage) {
+      observer.observe(mainImage);
+    }
+
+    return () => observer.disconnect();
+  }, [imagePath]);
 
   return (
     <>
@@ -94,9 +121,8 @@ export default function TitleShareFontSize({
         <div className="y-font-size-control ms-3">
           字級：
           <button
-            className={`p-0 btn btn-link ${
-              fontSize === 'small' ? 'text-muted' : ''
-            }`}
+            className={`p-0 btn btn-link ${fontSize === 'small' ? 'text-muted' : ''
+              }`}
             style={{
               color: fontSize === 'small' ? '#8F8F8F' : '#143146',
               textDecoration: fontSize === 'small' ? 'none' : 'underline',
@@ -107,9 +133,8 @@ export default function TitleShareFontSize({
           </button>
           /
           <button
-            className={`p-0 btn btn-link ${
-              fontSize === 'medium' ? 'text-muted' : ''
-            }`}
+            className={`p-0 btn btn-link ${fontSize === 'medium' ? 'text-muted' : ''
+              }`}
             style={{
               color: fontSize === 'medium' ? '#8F8F8F' : '#143146',
               textDecoration: fontSize === 'medium' ? 'none' : 'underline',
@@ -120,9 +145,8 @@ export default function TitleShareFontSize({
           </button>
           /
           <button
-            className={`p-0 btn btn-link ${
-              fontSize === 'large' ? 'text-muted' : ''
-            }`}
+            className={`p-0 btn btn-link ${fontSize === 'large' ? 'text-muted' : ''
+              }`}
             style={{
               color: fontSize === 'large' ? '#8F8F8F' : '#143146',
               textDecoration: fontSize === 'large' ? 'none' : 'underline',
@@ -138,7 +162,8 @@ export default function TitleShareFontSize({
       {imagePath && (
         <img
           src={imagePath}
-          className={`mb-4 border rounded y-img-fluid ${styles['y-container']}`}
+          className={`mb-4 border rounded y-img-fluid ${styles['y-container']} ${styles['main-image']
+            } ${isImageVisible ? styles['article-image-fade'] : ''}`}
           alt={articleTitle}
           style={{ aspectRatio: '16 / 9', objectFit: 'cover' }}
         />

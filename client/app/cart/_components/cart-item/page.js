@@ -26,10 +26,30 @@ export default function CartItem({id, itemData, page }) {
      setNewQuan((prev) => prev + 1);
    }
  
-   // **數量減少（確保不低於 1）**
    function handleClickDec() {
-     setNewQuan((prev) => (prev > 1 ? prev - 1 : 1));
-   }
+    if (newQuan === 1) {
+      const confirmDelete = window.confirm("數量為 0，是否要從購物車刪除該商品？");
+      if (confirmDelete) {
+        // 取得 localStorage 中的購物車數據
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        
+        delete cart[id]
+        let updatedCart = Object.entries(cart).filter(v => v!=null);// 過濾掉該商品
+        updatedCart = updatedCart.map(v => v[1])
+
+        console.log(updatedCart);
+        localStorage.removeItem('cart')
+        // // 轉回物件形式並更新 localStorage
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        
+        // 刷新頁面或通知父層更新購物車
+        window.location.reload();
+      }
+    } else {
+      setNewQuan((prev) => prev - 1);
+    }
+  }
+  
   
   return (
     <div className="d-flex flex-grow-1">
@@ -38,7 +58,7 @@ export default function CartItem({id, itemData, page }) {
           <div className={`${styles['j-cameraImg']} m-2 `}>
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
-          <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center">
+          <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center position-relative">
             <div className={`${styles['j-content']} d-flex flex-column flex-sm-row ${page == 1 ?'justify-content-between' : 'justify-content-around'} align-items-center `}>
               <div className={`${styles['j-itemDetail']} d-flex flex-sm-column ms-sm-3 ms-xl-0`}>
                 <div className="ms-lg-2 ms-xl-0">
@@ -63,6 +83,11 @@ export default function CartItem({id, itemData, page }) {
                 onClick={handleClickDec}>-</button>
               </div> : ''}
               <p className={`${styles['j-price']} me-3 `}>價格: {price}$</p>
+            </div>
+            <div className={`${styles['j-delBtn']} position-absolute`}>
+                <button className="btn">
+                ✕
+              </button>
             </div>
           </div>
         </div>

@@ -6,19 +6,46 @@ import useAuth from '@/hooks/use-auth'
 import Sidenav from './_components/Sidenav/page'
 
 export default function UserPage(props) {
-  const { token, user = {}, loading, setUser } = useAuth()
+  const { token, user = {}, loading, setUser, setToken } = useAuth()
   const [name, setName] = useState('')
   const [birthday, setBirthday] = useState('')
   const [password, setPassword] = useState('')
   const [updating, setUpdating] = useState(false)
 
   useEffect(() => {
-    if (user) {
-      console.log("生日資料:", user.birthday); // ✅ 確保生日有正確讀取
+    console.log("📌 useEffect 內 user:", user); // ✅ 檢查 user 內容
+
+    if (user && Object.keys(user).length > 0) {
       setName(user.name || '');
-      setBirthday(user.birthday); // ✅ 這裡應該已經是 YYYY-MM-DD
+
+      let birthdayFormatted = "";
+      if (user.birthday) {
+        console.log("📌 原始 user.birthday:", user.birthday, "類型:", typeof user.birthday);
+
+        if (typeof user.birthday === "string") {
+          // 可能是 "2025-02-04T16:00:00.000Z" 或 "2025-02-04"
+          birthdayFormatted = user.birthday.includes("T")
+            ? user.birthday.split("T")[0]
+            : user.birthday;
+        } else if (user.birthday instanceof Date) {
+          // 可能是 Date 物件
+          birthdayFormatted = user.birthday.toISOString().split("T")[0];
+        } else {
+          // 嘗試轉換為 Date
+          try {
+            birthdayFormatted = new Date(user.birthday).toISOString().split("T")[0];
+          } catch (error) {
+            console.error("❌ 無法解析 birthday:", user.birthday, error);
+            birthdayFormatted = "";
+          }
+        }
+      }
+
+      console.log("📌 格式化後的 birthday:", birthdayFormatted);
+      setBirthday(birthdayFormatted);
     }
-  }, [user]);
+  }, [user]); // ✅ 當 `user` 變更時，`name` 和 `birthday` 才會更新
+
 
   if (loading) {
     return <div className="text-center mt-5">載入中...</div>
@@ -26,24 +53,38 @@ export default function UserPage(props) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/users/${user.account}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      const response = await fetch(`http://localhost:8000/api/users/me`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      const result = await response.json()
-      if (result.status !== 'success') throw new Error(result.message)
+      const result = await response.json();
+      if (result.status !== 'success') throw new Error(result.message);
 
-      setUser(result.data) // ✅ 更新本地 user 狀態
+      console.log("📌 取得的 user 資料:", result.data);
+
+      // 🔥 **步驟 1：如果後端有提供新 Token，就更新**
+      if (result.token) {
+        console.log("✅ 從 API 取得新 Token:", result.token);
+        localStorage.setItem("loginWithToken", result.token);
+        setToken(result.token);
+      }
+
+      // 🔥 **步驟 2：更新使用者資訊**
+      setUser(prevUser => ({
+        ...prevUser,
+        ...result.data,
+        birthday: result.data.birthday 
+      ? result.data.birthday.split("T")[0]  // 確保 `YYYY-MM-DD`
+      : ''
+      }));
     } catch (error) {
-      console.error('取得最新資料失敗:', error)
+      console.error('❌ 取得最新資料失敗:', error);
     }
-  }
+  };
+
 
   //上傳圖片函式
   const handleImageUpload = async (e) => {
@@ -74,7 +115,7 @@ export default function UserPage(props) {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setUpdating(true);
-  
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/users/${user.account}`,
@@ -86,28 +127,47 @@ export default function UserPage(props) {
           },
           body: JSON.stringify({
             name,
-            password: password || undefined, // 不傳遞空密碼
-            birthday, // 確保格式是 YYYY-MM-DD
+            password: password || undefined,
+            birthday: birthday
+              ? (typeof birthday === "string"
+                ? birthday.split("T")[0]
+                : new Date(birthday).toISOString().split("T")[0])
+              : '',
             head: user.head,
           }),
         }
       );
-  
+
       const result = await response.json();
+      console.log("📌 更新 API 回應:", result);
+
       if (result.status !== 'success') throw new Error(result.message);
-  
-      alert('更新成功！');
-  
-      // ✅ 直接更新 user 狀態，避免 UI 延遲
-      await fetchUserData(); 
+
+      alert("更新成功！");
+
+      // 🔥 **步驟 1：檢查後端是否提供新的 Token**
+      if (result.token) {
+        console.log("✅ 從 API 取得新 Token:", result.token);
+
+        // **更新 localStorage & useAuth 狀態**
+        localStorage.setItem("loginWithToken", result.token);
+        setToken(result.token);
+      }
+
+      // 🔥 **步驟 2：重新獲取使用者資訊**
+      await fetchUserData();
+
+      // 🔥 **步驟 3：導向 `/user` 頁面**
+      window.location.href = "/user";
     } catch (error) {
-      console.error('更新失敗:', error);
-      alert('更新失敗，請稍後再試');
+      console.error("❌ 更新失敗:", error);
+      alert("更新失敗，請稍後再試");
     } finally {
       setUpdating(false);
     }
   };
-  
+
+
   return (
     <div>
       <div className={`container py-4`}>
@@ -127,8 +187,8 @@ export default function UserPage(props) {
             <div
               className={`${styles.heroSection} mb-4 p-4 d-flex flex-column justify-content-center`}
             >
-              <h6 className="text-black ms-3">獲取相機最新文章</h6>
-              <button className={styles.customBtn}>立即前往</button>
+              <h6 className="text-black ms-3">獲取相機最新消息</h6>
+              <Link href="/article"><button className={styles.customBtn}>立即前往</button></Link>
             </div>
 
             {/* 表單區域 */}

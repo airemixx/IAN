@@ -304,6 +304,34 @@ const authenticateUser = (req, res, next) => {
   }
 };
 
+router.post('/update-product-id', async (req, res) => {
+  try {
+    const { articleId } = req.body; // 前端傳入文章 ID
+    const connection = await pool.getConnection();
+
+    // 直接從文章中取得 product_id（假設文章已更新過）
+    const [articles] = await connection.query(
+      `SELECT product_id FROM article WHERE id = ? LIMIT 1`,
+      [articleId]
+    );
+
+    if (articles.length === 0) {
+      console.log("找不到該文章");
+      connection.release();
+      return res.json({ status: 'success', productId: null });
+    }
+
+    const productId = articles[0].product_id;
+    console.log("取得文章 product_id:", productId);
+
+    connection.release();
+    return res.json({ status: 'success', productId });
+  } catch (err) {
+    console.error('更新 product_id 錯誤:', err.stack);
+    return res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 // 加入收藏
 router.post("/collection", authenticateUser, async (req, res) => {
   try {
@@ -387,4 +415,4 @@ router.get("/collection/:productId", authenticateUser, async (req, res) => {
 });
 
 
-export default router; 
+export default router;
