@@ -74,23 +74,46 @@ router.get("/search", async (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
-  const {id} = req.params;
+// router.get("/:id", (req, res) => {
+//   const {id} = req.params;
 
-  try{
-    if(!id) throw new Error("請提供查詢字串");
+//   try{
+//     if(!id) throw new Error("請提供查詢字串");
+
+//     res.status(200).json({
+//       status: "success",
+//       data: {},
+//       message: `獲取特定 ID 的使用者: ${id}`
+//     });
+//   }catch(err){
+//     console.log(err);
+//     res.status(404).json({
+//       status: "error",
+//       message: err.message?err.message:"搜尋失敗"
+//     })
+//   }
+// });
+
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!id) throw new Error("請提供查詢字串");
+
+    // 只取 nickname、head，你也可以改成取更多欄位
+    const [rows] = await db.execute("SELECT nickname, name, head FROM `users` WHERE id = ?", [id]);
+    if (rows.length === 0) throw new Error("找不到使用者");
 
     res.status(200).json({
       status: "success",
-      data: {},
+      data: rows[0],
       message: `獲取特定 ID 的使用者: ${id}`
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(404).json({
       status: "error",
-      message: err.message?err.message:"搜尋失敗"
-    })
+      message: err.message ? err.message : "搜尋失敗"
+    });
   }
 });
 

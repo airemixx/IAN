@@ -20,13 +20,15 @@ router.use(cors(corsOptions))
 
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
-  const { year, month, category, search, tag } = req.query
+  const { year, month, category, search, tag, user_id } = req.query
 
   let query = `
     SELECT 
       a.*,
       c.name AS category_name,
       GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags,
+      u.nickname,
+      u.name AS author_name,
       CASE
         WHEN t.tag_name = ? THEN 1
         WHEN a.title LIKE ? THEN 2
@@ -37,6 +39,7 @@ router.get('/', async (req, res) => {
     LEFT JOIN article_category c ON a.category_id = c.id
     LEFT JOIN article_tags at ON a.id = at.article_id
     LEFT JOIN tag t ON at.tag_id = t.id
+    JOIN users u ON a.user_id = u.id
   `
 
   const conditions = []
@@ -58,6 +61,10 @@ router.get('/', async (req, res) => {
   if (category) {
     conditions.push('a.category_id = ?')
     queryParams.push(category)
+  }
+  if (user_id) {
+    conditions.push('a.user_id = ?')
+    queryParams.push(user_id)
   }
   // 改用搜尋條件 (非 tag 時) 搜尋 tag、標題、內文
   if (search && !tag) {
