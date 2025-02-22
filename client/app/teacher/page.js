@@ -214,9 +214,11 @@ export default function CourseManagement() {
                       </div>
                     </td>
                     <td>
-                      <button className={styles['edit-btn']}>
-                        <FiEdit />
-                      </button>
+                      <Link href={`/teacher/course/course-edit?id=${course.id}`}>
+                        <button className={styles['edit-btn']}>
+                          <FiEdit />
+                        </button>
+                      </Link>
                     </td>
                     <td>
                       <button className={styles['delete-btn']}>

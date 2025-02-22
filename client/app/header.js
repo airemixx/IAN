@@ -89,7 +89,7 @@ export default function Header({ searchOpen, setSearchOpen }) {
         <nav>
           <ul className="nav-left">
             <li>
-              <Link href="#">首頁</Link>
+              <Link href="/">首頁</Link>
             </li>
             <li className="product-item">
               <Link href="/product">產品系列</Link>
@@ -97,122 +97,104 @@ export default function Header({ searchOpen, setSearchOpen }) {
               {/* 透明的緩衝區域 */}
               <ul className="pd-dropdown">
                 <li className="drop-camera">
-                  <a href="#">
+                  <Link href="/product">
                     機身
                     <span className="icon">
                       <img src="/images/icon/arrow-down.svg" alt="Icon" />
                     </span>
-                  </a>
+                  </Link>
                   <ul className="camera-brands">
                     <li>
-                      <a href="#">
+                      <Link href="/product">
                         <img src="/images/canon.png" alt="Canon" />
                         <span>Canon</span>
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
+                      <Link href="/product">
                         <img src="/images/nikon.png" alt="Nikon" />
                         <span>Nikon</span>
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
+                      <Link href="/product">
                         <img src="/images/sony.png" alt="Sony" />
                         <span>Sony</span>
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
+                      <Link href="/product">
                         <img src="/images/hasselblad.png" alt="Hasselblad" />
                         <span>Hasselblad</span>
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
+                      <Link href="/product">
                         <img src="/images/leica.png" alt="Leica" />
-                      </a>
+                      </Link>
                       <span>Leica</span>
                     </li>
                   </ul>
                 </li>
                 <li className="drop-lens">
-                  <a href="#">
+                  <Link href="/product">
                     鏡頭
                     <span className="icon">
                       <img src="/images/icon/arrow-down.svg" alt="Icon" />
                     </span>
-                  </a>
+                  </Link>
                   <ul className="lens-brands">
                     <li>
-                      <a href="#">
-                        <img src="/images/canon.png" alt="Canon" />
-                        <span>Canon</span>
-                      </a>
+                      <Link href="/product">
+                        <img src="/images/product/Hasselblad_XCD_20-35mm_F3_2-4_5_E.png" alt="Canon" />
+                        <span>廣角鏡頭</span>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
-                        <img src="/images/nikon.png" alt="Nikon" />
-                        <span>Nikon</span>
-                      </a>
+                      <Link href="/product">
+                        <img src="/images/product/Leica_Noctilux-M_50_f1_2_ASPH.webp" alt="Nikon" />
+                        <span>標準鏡頭</span>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
-                        <img src="/images/sony.png" alt="Sony" />
-                        <span>Sony</span>
-                      </a>
+                      <Link href="/product">
+                        <img src="/images/product/Sony_FE_300mm_F2_8_GM_OSS.jpg" alt="Sony" />
+                        <span>長焦鏡頭</span>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
-                        <img src="/images/hasselblad.png" alt="Hasselblad" />
-                        <span>Hasselblad</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="/images/leica.png" alt="Leica" />
-                        <span>Leica</span>
-                      </a>
+                      <Link href="/product">
+                        <img src="/images/product/Nikon_NIKKOR_Z_MC_50mm_f2_8.png" alt="Hasselblad" />
+                        <span>微距鏡頭</span>
+                      </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="drop-other">
-                  <a href="#">
+                  <Link href="/product">
                     配件
                     <span className="icon">
                       <img src="/images/icon/arrow-down.svg" alt="Icon" />
                     </span>
-                  </a>
+                  </Link>
                   <ul className="other-brands">
                     <li>
-                      <a href="#">
-                        <img src="/images/canon.png" alt="Canon" />
-                        <span>Canon</span>
-                      </a>
+                      <Link href="/product">
+                        <img src="/images/product/717c4e036af74f12a02ba54701cf75ef_Battery+Pack+LP-E6P+Main+Image.png" alt="Canon" />
+                        <span>電池</span>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
-                        <img src="/images/nikon.png" alt="Nikon" />
-                        <span>Nikon</span>
-                      </a>
+                      <Link href="/product">
+                        <img src="/images/product/typeb1610385628_1592040_600x.webp" alt="Nikon" />
+                        <span>記憶卡</span>
+                      </Link>
                     </li>
                     <li>
-                      <a href="#">
-                        <img src="/images/sony.png" alt="Sony" />
-                        <span>Sony</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="/images/hasselblad.png" alt="Hasselblad" />
-                        <span>Hasselblad</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <img src="/images/leica.png" alt="Leica" />
-                        <span>Leica</span>
-                      </a>
+                      <Link href="/product">
+                        <img src="/images/product/1625829630_1642348_600x.webp" alt="Sony" />
+                        <span>背帶</span>
+                      </Link>
                     </li>
                   </ul>
                 </li>

@@ -35,3 +35,42 @@
     right: 25px;
   }
 }
+
+@media (max-width: 1200px) {
+  .iconcontainer {
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: absolute !important;
+    right: 350px;
+    top: 9px;
+    display: flex !important;
+    justify-content: center;
+    // border: 1px solid red;
+  }
+}
+
+@media (max-width: 1400px) {
+  .iconcontainer {
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: absolute !important;
+    right: 35px;
+    top: 9px;
+    display: flex !important;
+    justify-content: center;
+    // border: 1px solid red;
+  }
+}
+
+@media (max-width: 1000px) {
+  .iconcontainer {
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: absolute !important;
+    right: 70px;
+    top: 9px;
+    display: flex !important;
+    justify-content: center;
+    // border: 1px solid red;
+  }
+}

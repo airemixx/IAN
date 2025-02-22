@@ -33,6 +33,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
+      <div className="layout-container">
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -46,8 +47,9 @@ export default function RootLayout({ children }) {
         {!isTeacherPage && (
           <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
         )}
-        {children}
+        <main className="root-content">{children}</main>
         {isTeacherPage ? <TeacherFooter /> : <Footer />}
+        </div>
       </body>
     </html>
   )
