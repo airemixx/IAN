@@ -1,0 +1,52 @@
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #7e726700;
+}
+
+.article-list-card-area {
+  max-width: 700px;
+  padding-top: 0px;
+  margin: 0 auto;
+  /* 移除獨立滾動（讓整頁的 wheel 事件透過 handleWheel 處理區域內滾動），但此區域依然受 .container 的 overflow 控制 */
+}
+.article-card-1-image img {
+  max-width: 300px;
+  max-height: 450px;
+  aspect-ratio: 3/4.5;
+  object-fit: cover;
+}
+.article-card-2-image img {
+  max-width: 300px;
+  max-height: 300px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+.article-card-content {
+  max-width: 300px;
+  padding-right: 5px;
+}
+.article-card-title a {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 600;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+.article-card-category a {
+  text-decoration: none;
+  color: #7e7267;
+  font-size: 14px;
+  font-weight: 600;
+}
+.author-date-1 {
+  color: #000000;
+  font-size: 14px;
+  font-weight: 600;
+}
+.author-date-2 {
+  font-size: 14px;
+  font-weight: 500;
+}
