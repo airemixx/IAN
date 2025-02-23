@@ -43,34 +43,29 @@ export default function RentPicture({ images = [] }) {
     setMainImage(image)
   }
 
-  // 🟢 監聽滾動，根據父容器 (col-lg-5) 與頁尾動態切換 sticky 與 relative
+  // 🟢 監聽滾動，根據視窗大小與滾動位置動態切換 sticky 與 relative
   useEffect(() => {
     const handleScroll = () => {
       const pictureSection = document.querySelector('.rent-picture-container')
-      const contentSection = document.querySelector('.col-lg-5') // 抓取父元件的 col-lg-5
       const footerSection = document.querySelector('footer')
 
-      if (!pictureSection || !contentSection || !footerSection) return
+      if (!pictureSection || !footerSection) return
 
       const pictureRect = pictureSection.getBoundingClientRect()
-      const contentRect = contentSection.getBoundingClientRect()
       const footerRect = footerSection.getBoundingClientRect()
 
       const isLargeScreen = window.innerWidth >= 992
 
       if (isLargeScreen) {
-        // 🟢 Sticky 由右側內容 (col-lg-5) 高度控制，避免過早變成 relative
-        const shouldUseSticky = pictureRect.bottom <= contentRect.bottom && pictureRect.bottom < footerRect.top - 20
-
-        // 🟢 讓圖片區域高度跟隨右側內容變化
-        pictureSection.style.height = `${contentRect.height - 28}px`
+        // ✅ 只有大螢幕需要 sticky 效果
+        // 當圖片區域底部接近頁尾 (footer) 時，取消 sticky
+        const shouldUseSticky = pictureRect.bottom <= footerRect.top - 20
 
         if (shouldUseSticky !== useSticky) {
           setUseSticky(shouldUseSticky)
         }
       } else {
         setUseSticky(false) // 小螢幕保持 relative
-        pictureSection.style.height = 'auto' // 小螢幕時清除高度設置
       }
     }
 
@@ -85,10 +80,9 @@ export default function RentPicture({ images = [] }) {
     }
   }, [useSticky])
 
-
   return (
     <div className={`rent-picture-container ${useSticky ? 'sticky' : 'relative'}`}>
-      <div className="rent-picture-fixed mb-4">
+      <div className="rent-picture-fixed">
         {/* 主圖顯示區域 */}
         <div className="text-center p-card2 main-image-container">
           <img
