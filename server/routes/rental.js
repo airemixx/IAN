@@ -1,7 +1,26 @@
 import express from 'express'
 import pool from '../db.js'
+import jwt from 'jsonwebtoken'
 
 const router = express.Router()
+
+// 會員認證(回傳Token含式)
+const auth = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]
+
+  if (!token) {
+    return res.status(401).json({ success: false, error: '未授權，請先登入' })
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
+    req.user = decoded
+    next()
+  } catch (error) {
+    console.error('JWT 驗證失敗:', error.name, error.message)
+    return res.status(403).json({ success: false, error: '無效的 Token' })
+  }
+}
 
 // 📌 **統一 API - 獲取商品資料 & 篩選選項**
 router.get('/', async (req, res) => {
@@ -11,7 +30,7 @@ router.get('/', async (req, res) => {
     // ✅ **用途篩選邏輯 (動態映射)**
     const categoryMapping = {
       日常攝影: {
-        hashtags: ['輕便', '4K錄影', '超廣角', '自動對焦', '多功能'],
+        hashtags: ['輕便', '4K錄影', '超廣角', '多功能'],
         types: ['APS-C相機', '標準變焦鏡頭', '廣角定焦鏡頭', '腳架', '麥克風'],
       },
       專業攝影: {
@@ -52,7 +71,7 @@ router.get('/', async (req, res) => {
         ],
       },
       產品攝影: {
-        hashtags: ['微距', '大光圈', '高階款', '高畫質', '專業級'],
+        hashtags: ['微距', '大光圈', '高階款', '專業級'],
         types: [
           '全幅相機',
           '微距鏡頭',
@@ -250,6 +269,81 @@ router.get('/:id', async (req, res) => {
     res.json({ success: true, data: rental[0], recommendations })
   } catch (error) {
     console.error('❌ 資料庫錯誤:', error)
+    res.status(500).json({ success: false, error: '伺服器錯誤' })
+  }
+})
+
+// ✅ 新增收藏
+router.post('/collection', auth, async (req, res) => {
+  try {
+    const { rent_id } = req.body
+    const user_id = req.user.id
+
+    if (!rent_id) {
+      return res.status(400).json({ success: false, error: 'rent_id 為必填項目' })
+    }
+
+    const [existing] = await pool.query(
+      'SELECT * FROM collection WHERE user_id = ? AND rent_id = ?',
+      [user_id, rent_id]
+    )
+
+    if (existing.length > 0) {
+      return res.status(400).json({ success: false, message: '該商品已經收藏' })
+    }
+
+    await pool.query(
+      'INSERT INTO collection (user_id, rent_id, created_at) VALUES (?, ?, NOW())',
+      [user_id, rent_id]
+    )
+
+    res.json({ success: true, message: '已成功收藏租借商品' })
+  } catch (error) {
+    console.error('新增收藏錯誤:', error)
+    res.status(500).json({ success: false, error: '伺服器錯誤' })
+  }
+})
+
+// ✅ 取消收藏
+router.delete('/collection', auth, async (req, res) => {
+  try {
+    const { rent_id } = req.body
+    const user_id = req.user.id
+
+    if (!rent_id) {
+      return res.status(400).json({ success: false, error: 'rent_id 為必填項目' })
+    }
+
+    const [result] = await pool.query(
+      'DELETE FROM collection WHERE user_id = ? AND rent_id = ?',
+      [user_id, rent_id]
+    )
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, error: '收藏記錄不存在' })
+    }
+
+    res.json({ success: true, message: '成功取消收藏' })
+  } catch (error) {
+    console.error('取消收藏錯誤:', error)
+    res.status(500).json({ success: false, error: '伺服器錯誤' })
+  }
+})
+
+// ✅ 檢查是否已收藏
+router.get('/collection/:rent_id', auth, async (req, res) => {
+  try {
+    const { rent_id } = req.params
+    const user_id = req.user.id
+
+    const [result] = await pool.query(
+      'SELECT * FROM collection WHERE user_id = ? AND rent_id = ?',
+      [user_id, rent_id]
+    )
+
+    res.json({ success: true, isFavorite: result.length > 0 })
+  } catch (error) {
+    console.error('檢查收藏狀態錯誤:', error)
     res.status(500).json({ success: false, error: '伺服器錯誤' })
   }
 })
