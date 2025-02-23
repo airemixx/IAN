@@ -135,10 +135,12 @@ export default function SelectList({ onFilterChange }) {
 
   return (
     <>
+      <div className={`${styles['y-title-line']} mt-5`}></div>
       <div
-        className={`my-sm-5 ${styles['y-list-title']} d-flex justify-content-between align-items-center`}
+        className={`my-sm-3 ${styles['y-list-title']} d-flex justify-content-between align-items-center`}
       >
         <h2 className="mb-0">所有文章</h2>
+
         <button
           className="mb-0 btn rounded-pill"
           type="button"
@@ -159,7 +161,7 @@ export default function SelectList({ onFilterChange }) {
         )}
       </div>
 
-      <div className="mb-4 collapse" id="filter-collapse">
+      <div className="mb-3 collapse" id="filter-collapse">
         <div className="d-flex justify-content-between y-selection">
           <div
             className={`d-flex justify-content-start ${styles['y-collapse-area']}`}
@@ -196,6 +198,7 @@ export default function SelectList({ onFilterChange }) {
           </div>
         </div>
       </div>
+      <div className={`${styles['y-title-line']} mt-3`}></div>
     </>
   )
 }

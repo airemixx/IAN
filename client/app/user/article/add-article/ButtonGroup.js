@@ -3,7 +3,7 @@
 import React from 'react'
 import Swal from 'sweetalert2'
 import styles from './AddArticleModal.module.scss'
-import { checkRequiredFields } from './Modal' // 引入 checkRequiredFields
+import { checkRequiredFields } from './page' // 引入 checkRequiredFields
 
 export default function ButtonGroup({ confirmClose, onAddArticle }) {
   const handleValidatedAddArticle = () => {

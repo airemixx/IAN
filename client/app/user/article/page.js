@@ -3,12 +3,10 @@ import React, { useState } from 'react'
 import styles from './article.module.scss'
 import useAuth from '@/hooks/use-auth'
 import Sidenav from '../_components/Sidenav/page'
-import Modal from '../../article/_components/add-article/Modal'
 import Link from 'next/link'
 
 export default function UserPage() {
   const { token, user, loading } = useAuth()
-  const [showModal, setShowModal] = useState(false)
 
   if (loading) {
     return <div className="text-center mt-5">載入中...</div>
@@ -29,7 +27,7 @@ export default function UserPage() {
             <div className={styles.articleCard}>
               <div className="row g-0">
                 <div className="col-md-7 p-4">
-                  <h5>請問2025大家心目中的最佳街拍相機組合為何?</h5>
+                  <h4>請問2025大家心目中的最佳街拍相機組合為何?</h4>
                   <p className="text-muted mt-3">
                     哈哈哈, 2024已經快過去了, 想要請教大家此時此刻,
                     心目中最佳的2025街拍神器為何?...
@@ -42,6 +40,12 @@ export default function UserPage() {
                     />
                     <h5 className="mb-0">sweet57239</h5>
                   </div> */}
+                  <div className={`${styles['btn-date']}`}>
+                    <button className={styles['more-btn']}>
+                      <img src="/images/article/more-origin.svg" alt="" />
+                    </button>
+                    <p className=''><strong>發布時間 :</strong> 2025年2月23日 15:30</p>
+                  </div>
                 </div>
                 <div className="col-md-5 p-4">
                   <img
@@ -58,7 +62,7 @@ export default function UserPage() {
               <div className={styles.addArticleCard} style={{ cursor: 'pointer' }}>
                 <div className="text-center">
                   <div className={`${styles.addButton} mx-auto mb-3`}></div>
-                  <h5>新增文章</h5>
+                  <h5 className={styles['no-underline']}>新增文章</h5>
                 </div>
               </div>
             </Link>

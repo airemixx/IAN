@@ -11,8 +11,7 @@ import BackSelectTitle from './back-select-title'
 import ImageUpdate from './imageUpdate'
 import HashtagInput from './hashtag-input'
 import ButtonGroup from './ButtonGroup'
-import Sidenav from '../../_components/Sidenav/page'  // 新增這行引入 Sidenav
-
+import Sidenav from '../../_components/Sidenav/page'
 const FroalaEditor = dynamic(() => import('./froalaEditor'), { ssr: false })
 
 export const checkRequiredFields = () => {
@@ -144,9 +143,23 @@ export default function AddArticlePage() {
     }
   }, [confirmClose])
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '您確定要離開此頁面嗎？您所做的變更可能不會被儲存。';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    history.replaceState(null, '', window.location.pathname);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [confirmClose]);
+
   return (
     <>
-        <div className={`d-flex container py-4 ${styles.marginTop}`}>
+      <div className={`d-flex container py-4 ${styles.marginTop}`}>
         {/* 側邊選單 */}
         <Sidenav />
         <div className="container">
@@ -166,7 +179,6 @@ export default function AddArticlePage() {
             </div>
             <ButtonGroup confirmClose={confirmClose} onAddArticle={handleAddArticle} />
           </div>
-
         </div>
       </div>
     </>

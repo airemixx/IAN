@@ -21,8 +21,6 @@
   }
 }
 
-
-
 .articleCard {
   background: white;
   border-radius: 20px;
@@ -64,6 +62,18 @@
     background-color: #f8f8f8;
     transform: translateY(-5px);
   }
+}
+
+.more-btn {
+  border: none;
+  border-radius: 50px;
+  background: #fcfcfc00;
+}
+.btn-date{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 90px;
 }
 
 .addButton {

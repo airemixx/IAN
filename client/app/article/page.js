@@ -120,10 +120,10 @@ export default function NewsPage() {
   return (
     <div>
       <Breadcrumb />
-      <LoopAd />
+      {/* <LoopAd /> */}
       <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
         <h1>最新消息 News</h1>
-        <Modal />
+        {/* <Modal /> */}
       </div>
       <div className="page-container d-flex justify-content-between">
         <StickyCard className="Sticky-Card" />
