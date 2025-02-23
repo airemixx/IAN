@@ -20,13 +20,15 @@ router.use(cors(corsOptions))
 
 // 取得所有文章或篩選文章
 router.get('/', async (req, res) => {
-  const { year, month, category, search, tag } = req.query
+  const { year, month, category, search, tag, user_id } = req.query
 
   let query = `
     SELECT 
       a.*,
       c.name AS category_name,
       GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags,
+      u.nickname,
+      u.name AS author_name,
       CASE
         WHEN t.tag_name = ? THEN 1
         WHEN a.title LIKE ? THEN 2
@@ -37,6 +39,7 @@ router.get('/', async (req, res) => {
     LEFT JOIN article_category c ON a.category_id = c.id
     LEFT JOIN article_tags at ON a.id = at.article_id
     LEFT JOIN tag t ON at.tag_id = t.id
+    JOIN users u ON a.user_id = u.id
   `
 
   const conditions = []
@@ -58,6 +61,10 @@ router.get('/', async (req, res) => {
   if (category) {
     conditions.push('a.category_id = ?')
     queryParams.push(category)
+  }
+  if (user_id) {
+    conditions.push('a.user_id = ?')
+    queryParams.push(user_id)
   }
   // 改用搜尋條件 (非 tag 時) 搜尋 tag、標題、內文
   if (search && !tag) {
@@ -177,18 +184,47 @@ router.get('/:articleId/tags', async (req, res) => {
 // 取得指定文章
 router.get('/:id', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM article WHERE id = ?', [
-      req.params.id,
-    ])
+    // 修改 SQL 查詢，加入 LEFT JOIN users
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        a.*,
+        c.name AS category_name,
+        u.head AS user_head,
+        u.nickname AS user_nickname,
+        u.name AS user_name
+      FROM article a
+      LEFT JOIN article_category c ON a.category_id = c.id
+      LEFT JOIN users u ON a.user_id = u.id
+      WHERE a.id = ?
+      `,
+      [req.params.id]
+    )
+
     if (rows.length === 0) {
       return res.status(404).json({
         status: 'error',
         message: `找不到${req.params.id}文章`,
       })
     }
+
+    const article = rows[0]
+
+    // 整理回傳的使用者資料
+    const userData = {
+      head: article.user_head,
+      nickname: article.user_nickname,
+      name: article.user_name,
+    }
+
+    // 將使用者資料放入回傳的 data 中
     res.status(200).json({
       status: 'success',
-      data: rows[0],
+      data: {
+        ...article,
+        category_name: article.category_name, // 保留 category_name
+        user: userData,
+      },
       message: `取得${req.params.id}文章成功`,
     })
   } catch (err) {
@@ -199,7 +235,6 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-//推送側欄文章
 router.post('/related', cors(corsOptions), async (req, res) => {
   const { categoryId, title, content, articleId } = req.body
   const limit = 4 // 設定文章數量上限

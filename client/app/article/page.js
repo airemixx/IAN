@@ -9,23 +9,35 @@ import SelectList from './_components/select-list'
 import ListCard from './_components/list-card'
 import Pagination from './_components/Pagination'
 import '../../styles/article.css'
-import Link from 'next/link'
 import useArticles from '../../hooks/use-article'
 import Modal from './_components/add-article/Modal'
+import MasonryLayouts from './_components/masonry-layouts'
+import StickyCard from './_components/sticky-card'
 
 export default function NewsPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [filters, setFilters] = useState({})
   const { articles, error, loading } = useArticles(filters)
-  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
+
+  // 分頁相關狀態
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
+  const totalPages = articles ? Math.ceil(articles.length / itemsPerPage) : 1
+  const paginatedArticles = articles
+    ? articles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    : []
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
 
   // 當 URL 的 search 參數改變時，更新 filters
   useEffect(() => {
     const searchQuery = searchParams.get('search')
     const categoryQuery = searchParams.get('category')
     const tagQuery = searchParams.get('tag')
-
     const newFilters = {}
 
     if (searchQuery) {
@@ -38,12 +50,13 @@ export default function NewsPage() {
       newFilters.search = tagQuery
       setSearchTerm(tagQuery)
     }
-
     setFilters(newFilters)
+    setCurrentPage(1) // 每次 URL 變更時重置分頁到第一頁
   }, [searchParams])
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters)
+    setCurrentPage(1) // 重置分頁到第一頁
     // 更新 URL 參數
     const params = new URLSearchParams(searchParams)
     for (const key in newFilters) {
@@ -57,18 +70,25 @@ export default function NewsPage() {
   }
 
   const handleTagClick = (tag) => {
-    // 將 tag 放入 search 參數
     handleFilterChange({ ...filters, search: tag })
     setSearchTerm(tag)
+  }
+
+  // 搜尋功能：處理搜尋框的輸入與提交
+  const handleSearchInputChange = (e) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault()
+    handleFilterChange({ ...filters, search: searchTerm })
   }
 
   useEffect(() => {
     import('bootstrap/dist/js/bootstrap.bundle.min.js')
 
     const filterCollapse = document.querySelector('#filter-collapse')
-    const toggleButtonIcon = document.querySelector(
-      '[data-bs-target="#filter-collapse"] i'
-    )
+    const toggleButtonIcon = document.querySelector('[data-bs-target="#filter-collapse"] i')
     const clearOptionsBtn = document.querySelector('#y-clear-options-btn')
 
     if (filterCollapse && toggleButtonIcon) {
@@ -93,7 +113,6 @@ export default function NewsPage() {
         })
       }
       clearOptionsBtn.addEventListener('click', handleClear)
-
       return () => clearOptionsBtn.removeEventListener('click', handleClear)
     }
   }, [])
@@ -106,24 +125,35 @@ export default function NewsPage() {
         <h1>最新消息 News</h1>
         <Modal />
       </div>
+      <div className="page-container d-flex justify-content-between">
+        <StickyCard className="Sticky-Card" />
+        <MasonryLayouts />
+      </div>
 
       <section className="y-container">
-        <SelectList onFilterChange={handleFilterChange} />
-        {/* {loading && <p>Loading...</p>}
-      {error && <p>Error: {error.message || '出現錯誤...'}</p>} */}
+        {/* 搜尋表單 */}
+        <SelectList onFilterChange={(newFilters) => setFilters(newFilters)} />
 
         {/* 卡片區 */}
         <div className="row">
-          {articles.map((article) => (
+          {paginatedArticles.map((article) => (
             <div key={article.id} className="col-12 col-md-6 col-lg-3">
-              <ListCard article={article} onTagClick={handleTagClick} searchTerm={searchTerm} />
+              <ListCard
+                article={article}
+                onTagClick={handleTagClick}
+                searchTerm={searchTerm}
+              />
             </div>
           ))}
         </div>
 
         {/* 分頁區 */}
         <div className="d-flex justify-content-center mb-5">
-          <Pagination />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </section>
     </div>

@@ -18,7 +18,7 @@ export default function RentCard({ rental }) {
           {rental.category}
         </div>
         <div className="position-absolute top-0 end-0 state-text text-uppercase fw-bold pt-2 pe-3 rounded-start">
-          {rental.state}
+          {rental.status}
         </div>
         <div className="mt-4">
           <img

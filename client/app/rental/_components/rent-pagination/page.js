@@ -60,16 +60,7 @@ export default function RentPagination({
       ).map((page) => (
         <button
           key={page}
-          className={`page-link ${
-            currentPage === page
-              ? 'btn-primary active border-dark'
-              : 'btn-outline-primary'
-          }`}
-          style={{
-            fontWeight: currentPage === page ? 'bold' : 'normal',
-            cursor: currentPage === page ? 'default' : 'pointer',
-            color: currentPage === page ? '#252525' : 'inherit', // ✅ 當前頁數字變深色
-          }}
+          className={`page-link ${currentPage === page ? 'active-page' : ''}`}
           onClick={() => handlePageClick(page)}
         >
           {page}

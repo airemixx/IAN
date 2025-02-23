@@ -1,0 +1,83 @@
+.container {
+  max-width: 1440px;
+  // height: 1040px;
+  width: 100%;
+  margin: 0 auto;
+  // overflow: auto;
+  position: relative; /* 添加這一行 */
+  display: flex;
+  justify-content: space-between;
+}
+.card-custom {
+  width: 700px;
+  height: 1040px; /* 可根據需求調整 */
+  position: sticky;
+  top: 20px;
+  z-index: 1;
+}
+.card-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 1)
+  );
+  background-size: 100% 100%;
+  transition: background-size 0.3s ease-in-out;
+  z-index: 2;
+}
+.card-custom:hover .card-overlay {
+  background-size: 100% 120%;
+}
+.card-content {
+  position: absolute;
+  bottom: 30px;
+  left: 20px;
+  right: 20px;
+  z-index: 3;
+  color: white;
+  text-align: center;
+}
+.card-category a {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.card-title a {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #ffffff;
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+.card-author {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.card-date {
+  font-size: 0.8rem;
+  color: #ffffff;
+}
