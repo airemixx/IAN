@@ -1,0 +1,162 @@
+'use client'
+
+import React, { useRef, useCallback, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Swal from 'sweetalert2'
+import axios from 'axios'
+import { useRouter, useSearchParams } from 'next/navigation'
+import styles from '../add-article/AddArticleModal.module.scss'
+import BackSelectTitle from '../add-article/back-select-title'
+import ImageUpdate from '../add-article/imageUpdate'
+import HashtagInput from '../add-article/hashtag-input'
+import EditButtonGroup from './EditButtonGroup'
+import Sidenav from '../../_components/Sidenav/page'
+import { checkRequiredFields } from '../add-article/page'
+
+const FroalaEditor = dynamic(() => import('../add-article/froalaEditor'), { ssr: false })
+
+export default function EditArticlePage() {
+  const [hasError, setHasError] = useState(false)
+  const [articleData, setArticleData] = useState(null)
+  const imageUpdateRef = useRef(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const articleId = searchParams.get('id')
+
+  // 載入文章資料
+  useEffect(() => {
+    const fetchArticleData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/articles/${articleId}`)
+        const article = response.data.data
+        setArticleData(article)
+
+        // 填充表單
+        setTimeout(() => {
+          const categorySelect = document.querySelector('select[name="文章分類"]')
+          const titleInput = document.querySelector('input[placeholder="標題 (必填)"]')
+          const subtitleInput = document.querySelector('input[placeholder="副標題"]')
+          const imagePathInput = document.querySelector('#imagePath')
+          const imagePreview = document.querySelector('#imagePreview') // 新增：獲取預覽元素
+
+          if (categorySelect) categorySelect.value = article.category_id
+          if (titleInput) titleInput.value = article.title
+          if (subtitleInput) subtitleInput.value = article.subtitle
+
+          // 新增：設置圖片路徑和預覽
+          if (imagePathInput && article.image_path) {
+            imagePathInput.value = article.image_path
+            // 如果有預覽元素，設置預覽圖
+            if (imagePreview) {
+              imagePreview.src = article.image_path
+              imagePreview.style.display = 'block'
+            }
+          }
+
+          // 設置編輯器內容
+          if (window.editorInstance) {
+            window.editorInstance.html.set(article.content)
+          }
+        }, 0)
+      } catch (error) {
+        console.error('載入文章錯誤:', error)
+        Swal.fire({
+          icon: 'error',
+          title: '載入文章失敗',
+          text: '無法取得文章資料，請稍後再試'
+        })
+      }
+    }
+
+    if (articleId) {
+      fetchArticleData()
+    }
+  }, [articleId])
+
+  const confirmClose = useCallback(() => {
+    router.push('/user/article')
+  }, [router])
+
+  const handleUpdateArticle = useCallback(async () => {
+    const allFilled = checkRequiredFields()
+    if (!allFilled) {
+      setHasError(true)
+      Swal.fire({
+        icon: 'error',
+        title: '錯誤',
+        text: '請填寫所有必填欄位',
+      })
+      return
+    }
+
+    try {
+      const categorySelect = document.querySelector('select[name="文章分類"]')
+      const titleInput = document.querySelector('input[placeholder="標題 (必填)"]')
+      const subtitleInput = document.querySelector('input[placeholder="副標題"]')
+      const imagePathInput = document.querySelector('#imagePath')
+      const editorInstance = window.editorInstance
+      const content = editorInstance ? editorInstance.html.get() : ''
+
+      const hashtagEls = document.querySelectorAll('#hashtag-preview .badge')
+      const hashtags = Array.from(hashtagEls).map((el) =>
+        el.textContent.replace(/×$/, '')
+      )
+
+      await axios.put(`http://localhost:8000/api/articles/${articleId}`, {
+        category: categorySelect.value,
+        title: titleInput.value.trim(),
+        subtitle: subtitleInput.value.trim(),
+        content,
+        image_path: imagePathInput.value.trim(),
+        hashtags,
+      })
+
+      Swal.fire({
+        icon: 'success',
+        title: '更新成功',
+        text: '文章已成功更新'
+      }).then(() => {
+        confirmClose()
+      })
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '更新失敗，請稍後再試',
+      })
+      console.error('Error updating article:', error)
+    }
+  }, [articleId, confirmClose])
+
+  return (
+    <>
+      <div className={`d-flex container py-4 ${styles.marginTop}`}>
+        <Sidenav />
+        <div className="container">
+          <h1 className="mb-4">編輯文章</h1>
+          <div className={`container ${styles['add-article-area']}`}>
+            <BackSelectTitle confirmClose={confirmClose} />
+            <div className="my-4">
+              <ImageUpdate
+                ref={imageUpdateRef}
+                hasError={hasError}
+                initialImagePath={articleData?.image_path}
+              />
+            </div>
+            <div className="my-4">
+              <FroalaEditor />
+            </div>
+            <div className="my-4">
+              <HashtagInput />
+            </div>
+            <EditButtonGroup
+              confirmClose={confirmClose}
+              onUpdateArticle={handleUpdateArticle}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}

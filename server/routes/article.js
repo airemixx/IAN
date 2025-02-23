@@ -439,17 +439,101 @@ router.post('/', async (req, res) => {
 
 // 更新指定文章
 router.put('/:id', async (req, res) => {
+  const { category, title, subtitle, content, image_path, hashtags } = req.body
+  const articleId = req.params.id
+  let connection
+
   try {
-    //此為初步測試 實際的新增邏輯請根據需求補上，例如取得 req.body 資料
+    // 取得資料庫連線
+    connection = await pool.getConnection()
+    await connection.beginTransaction()
+
+    // 修改 HTML 內容，將白色背景改為透明
+    const transparentContent = content.replace(
+      /background-color:\s*rgb\(255,\s*255,\s*255\)/gi,
+      'background-color: transparent'
+    )
+
+    // 更新文章資料
+    const updateQuery = `
+      UPDATE article 
+      SET 
+        category_id = ?,
+        title = ?,
+        subtitle = ?,
+        content = ?,
+        image_path = ?,
+        update_time = NOW()
+      WHERE id = ?
+    `
+    await connection.query(updateQuery, [
+      category || null,
+      title || null,
+      subtitle || null,
+      transparentContent || null,
+      image_path || null,
+      articleId
+    ])
+
+    // 處理標籤
+    if (Array.isArray(hashtags)) {
+      // 先刪除該文章所有舊標籤關聯
+      await connection.query('DELETE FROM article_tags WHERE article_id = ?', [articleId])
+
+      // 新增新的標籤關聯
+      for (const tagName of hashtags) {
+        if (!tagName.trim()) continue
+
+        // 檢查標籤是否存在
+        const [existingTags] = await connection.query(
+          'SELECT id FROM tag WHERE tag_name = ?',
+          [tagName]
+        )
+
+        let tagId
+        if (existingTags.length) {
+          tagId = existingTags[0].id
+        } else {
+          // 不存在則新增標籤
+          const [tagResult] = await connection.query(
+            'INSERT INTO tag (tag_name) VALUES (?)',
+            [tagName]
+          )
+          tagId = tagResult.insertId
+        }
+
+        // 建立文章和標籤的關聯
+        await connection.query(
+          'INSERT INTO article_tags (article_id, tag_id) VALUES (?, ?)',
+          [articleId, tagId]
+        )
+      }
+    }
+
+    await connection.commit()
+
     res.status(200).json({
       status: 'success',
-      message: `更新文章ID: ${req.params.id}成功`,
+      message: `更新文章 ID: ${articleId} 成功`
     })
+
   } catch (err) {
+    if (connection) {
+      try {
+        await connection.rollback()
+      } catch (rollbackErr) {
+        console.error('回滾錯誤:', rollbackErr)
+      }
+    }
+    console.error('更新文章錯誤:', err)
     res.status(500).json({
       status: 'error',
-      message: err.message ? err.message : '更新文章失敗TAT',
+      message: err.message || '更新文章失敗'
     })
+  } finally {
+    if (connection) {
+      connection.release()
+    }
   }
 })
 
