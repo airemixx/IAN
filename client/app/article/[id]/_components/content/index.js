@@ -2,47 +2,68 @@
 
 import { useEffect, useRef } from 'react';
 import styles from './index.module.scss';
+import gsap from 'gsap';
+
+// Import the TextPlugin plugin directly from the GSAP library
+import { TextPlugin } from 'gsap/TextPlugin';
+gsap.registerPlugin(TextPlugin);
 
 export default function Content({ content, fontSize }) {
   const contentRef = useRef(null);
 
   useEffect(() => {
     if (contentRef.current) {
-      // 先更新 innerHTML
+      // First, update innerHTML
       contentRef.current.innerHTML = content;
-      // 從內容中取得所有圖片
+
+      // Animate the entire content area
+      gsap.fromTo(
+        contentRef.current,
+        {
+          y: 50,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.8,
+          ease: "power2.out",
+        }
+      );
+
+      // Get all images from the content
       const images = contentRef.current.getElementsByTagName('img');
 
-      // 建立 IntersectionObserver，當圖片進入視窗一半時觸發動畫
+      // Create IntersectionObserver to trigger animation when the image is half in view
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               const img = entry.target;
-              // 若尚未加上動畫類別，則加上動畫
+              // If the animation class hasn't been added, add it
               if (!img.classList.contains(styles['article-image-fade'])) {
                 img.classList.add(styles['article-image-fade']);
                 if (img.complete) {
                   setTimeout(() => {
                     img.classList.add(styles['loaded']);
-                  }, 1500); // 延遲800ms再加上 loaded class
+                  }, 1500); // Delay 800ms and then add the loaded class
                 } else {
                   const handleLoad = () => {
                     setTimeout(() => {
                       img.classList.add(styles['loaded']);
-                    }, 1500); // 延遲800ms再加上 loaded class
+                    }, 1500); // Delay 800ms and then add the loaded class
                     img.removeEventListener('load', handleLoad);
                   };
                   img.addEventListener('load', handleLoad);
                 }
               }
-              // 觸發動畫後停止監控該圖片
+              // Stop monitoring the image after triggering the animation
               observer.unobserve(img);
             }
           });
         },
         {
-          threshold: 0.5, // 圖片有50%進入視窗時觸發
+          threshold: 0.5, // Trigger when 50% of the image is in view
           rootMargin: '50px'
         }
       );

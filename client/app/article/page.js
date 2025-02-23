@@ -9,9 +9,10 @@ import SelectList from './_components/select-list'
 import ListCard from './_components/list-card'
 import Pagination from './_components/Pagination'
 import '../../styles/article.css'
-import Link from 'next/link'
 import useArticles from '../../hooks/use-article'
 import Modal from './_components/add-article/Modal'
+import MasonryLayouts from './_components/masonry-layouts'
+import StickyCard from './_components/sticky-card'
 
 export default function NewsPage() {
   const searchParams = useSearchParams()
@@ -60,6 +61,7 @@ export default function NewsPage() {
     // 將 tag 放入 search 參數
     handleFilterChange({ ...filters, search: tag })
     setSearchTerm(tag)
+    setSearchTerm(tag)
   }
 
   useEffect(() => {
@@ -105,6 +107,10 @@ export default function NewsPage() {
       <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
         <h1>最新消息 News</h1>
         <Modal />
+      </div>
+      <div className="page-container d-flex justify-content-between">
+        <StickyCard className="Sticky-Card"/>
+        <MasonryLayouts />
       </div>
 
       <section className="y-container">
