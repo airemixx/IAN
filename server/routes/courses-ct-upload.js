@@ -7,7 +7,7 @@ import fs from "fs/promises";
 
 
 const router = express.Router();
-const uploadDir = path.join(process.cwd(), "/public/uploads/images/course-content"); // ✅ 絕對路徑
+const uploadDir = path.join(process.cwd(), "/public/uploads/images/course-content"); 
 
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
@@ -30,8 +30,17 @@ const storage = multer.diskStorage({
   },
 });
 
+const fileFilter = (req, file, cb) => {
+  const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif", "image/avif"];
+  
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true); // ✅ 允許上傳
+  } else {
+    cb(new Error("❌ 僅支援上傳圖片格式 (JPG, PNG, GIF, AVIF)"), false);
+  }
+};
 
-const upload = multer({ storage });
+const upload = multer({ storage, fileFilter });
 
 // **圖片上傳 API**
 router.post("/", upload.single("upload"), (req, res) => {
