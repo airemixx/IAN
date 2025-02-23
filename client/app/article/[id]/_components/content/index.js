@@ -20,13 +20,13 @@ export default function Content({ content, fontSize }) {
       gsap.fromTo(
         contentRef.current,
         {
-          y: 50,
+          y: 25,
           opacity: 0,
         },
         {
           y: 0,
           opacity: 1,
-          duration: 1.8,
+          duration: 1.5,
           ease: "power2.out",
         }
       );
@@ -46,12 +46,12 @@ export default function Content({ content, fontSize }) {
                 if (img.complete) {
                   setTimeout(() => {
                     img.classList.add(styles['loaded']);
-                  }, 1500); // Delay 800ms and then add the loaded class
+                  }, 100); // Delay 800ms and then add the loaded class
                 } else {
                   const handleLoad = () => {
                     setTimeout(() => {
                       img.classList.add(styles['loaded']);
-                    }, 1500); // Delay 800ms and then add the loaded class
+                    }, 100); // Delay 800ms and then add the loaded class
                     img.removeEventListener('load', handleLoad);
                   };
                   img.addEventListener('load', handleLoad);
