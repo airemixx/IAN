@@ -24,6 +24,12 @@ export default function NewsPage() {
 
   // 分頁相關狀態
   const [currentPage, setCurrentPage] = useState(1)
+
+  useEffect(() => {
+    // 每次 filters 改變時，重置 currentPage 為 1
+    setCurrentPage(1)
+  }, [filters])
+
   const itemsPerPage = 12
   const totalPages = articles ? Math.ceil(articles.length / itemsPerPage) : 1
   const paginatedArticles = articles
@@ -128,7 +134,7 @@ export default function NewsPage() {
   }, [])
 
   return (
-    <div>
+    <div className='bg-list'>
       <Breadcrumb />
       {/* 只在沒有搜尋條件時顯示 */}
       {!hasSearch && (
@@ -136,9 +142,11 @@ export default function NewsPage() {
           <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
             <h1>最新消息 News</h1>
           </div>
-          <div className="page-container d-flex justify-content-between">
-            <StickyCard className="Sticky-Card" />
-            <MasonryLayouts />
+          <div className="bg-use">
+            <div className="page-container d-flex justify-content-between">
+              <StickyCard className="Sticky-Card" />
+              <MasonryLayouts />
+            </div>
           </div>
         </>
       )}
@@ -165,7 +173,7 @@ export default function NewsPage() {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={handlePageChange}
+            onPageChange={(page) => setCurrentPage(page)}
           />
         </div>
       </section>

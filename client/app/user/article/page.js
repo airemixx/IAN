@@ -8,6 +8,7 @@ import useAuth from '@/hooks/use-auth'
 import Sidenav from '../_components/Sidenav/page'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import UserArticleFilter from './_components/UserArticleFilter'
 
 // 格式化日期函式，格式：yyyy/mm/dd hh:mm
 function formatDate(dateString) {
@@ -49,11 +50,6 @@ export default function UserPage() {
 
   if (loading) {
     return <div className="text-center mt-5">載入中...</div>
-  }
-
-  // 如果沒有文章，也可以顯示提示
-  if (!articles.length) {
-    return <div className="container py-4">尚無文章</div>
   }
 
   // 模擬 handleEdit/handleDelete 行為
@@ -147,7 +143,7 @@ export default function UserPage() {
         <div className="col-md-9">
           <h1 className="mb-4">我的文章</h1>
           <div className="d-flex flex-column gap-4">
-            {/* 新增文章卡片，以 Link 包裹 */}
+            {/* 新增文章卡片 */}
             <Link href="/user/article/add-article" style={{ textDecoration: 'none' }}>
               <div className={styles.addArticleCard} style={{ cursor: 'pointer' }}>
                 <div className="text-center">
@@ -157,6 +153,35 @@ export default function UserPage() {
               </div>
             </Link>
 
+            {/* 多篩選功能 (UserArticleFilter) 放在新增文章區下方 */}
+            <UserArticleFilter
+              onFilterChange={(filters) => {
+                // 根據篩選條件更新文章列表
+                if (user && token) {
+                  const queryParams = new URLSearchParams()
+                  queryParams.append('user_id', user.id)
+                  if (filters.category) {
+                    queryParams.append('category', filters.category)
+                  }
+                  if (filters.year) {
+                    queryParams.append('year', filters.year)
+                  }
+                  if (filters.month) {
+                    queryParams.append('month', filters.month)
+                  }
+
+                  axios.get(`http://localhost:8000/api/articles?${queryParams}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  })
+                    .then(res => {
+                      setArticles(res.data.data || [])
+                    })
+                    .catch(error => console.error('篩選失敗：', error))
+                }
+              }}
+            />
+
+            {/* 文章列表 */}
             {articles.map((article) => {
               // 轉換 tags，若為字串則 split
               const tags = typeof article.tags === 'string' && article.tags !== ''

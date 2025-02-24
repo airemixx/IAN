@@ -136,7 +136,7 @@ function ReplyItem({
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false)
-    }, 1500)
+    }, 1000)
     return () => clearTimeout(timer)
   }, [])
 

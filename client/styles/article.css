@@ -6,6 +6,16 @@
   border-radius: 50%;
 }
 
+.bg-list{
+  background-color: #f5f5f5;
+}
+
+.bg-use{
+  background-color: #1e3c5410;
+  padding: 0 0 80px 0;
+}
+
+
 .headerPadding {
   padding-top: 80px;
 }
