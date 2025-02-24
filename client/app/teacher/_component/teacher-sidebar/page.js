@@ -14,6 +14,30 @@ import { useTeachers } from '@/hooks/use-teachers' // ✅ 使用 Context
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+const handleLogout = async (e) => {
+  e.preventDefault();
+  const API = "http://localhost:8000/api/users/logout";
+  if (!token) return;
+
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await res.json();
+    if (result.status !== "success") throw new Error(result.message);
+
+    // 清除 localStorage 與狀態
+    localStorage.removeItem(appKey);
+    setToken(null);
+    setUser(null);
+    router.push("/login");
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
+
 export default function TeacherSidebar() {
   const { teacher, fetchTeacherById } = useTeachers() // ✅ 獲取講師資料
   const pathname = usePathname()
@@ -70,16 +94,30 @@ export default function TeacherSidebar() {
                 <FaAddressBook /> 講師資料
               </Link>
             </li>
-            <li className={pathname === '/teacher'||'/teacher/course' ? styles.active : ''}>
+            <li
+              className={
+                pathname === '/teacher' ||
+                (pathname.startsWith('/teacher/course') &&
+                  pathname !== '/teacher/course/course-add')
+                  ? styles.active
+                  : ''
+              }
+            >
               <Link href="/teacher">
                 <FaChalkboard /> 我的課程
               </Link>
             </li>
-            <li>
-              <a href="">
+
+            <li
+              className={
+                pathname === '/teacher/course/course-add' ? styles.active : ''
+              }
+            >
+              <Link href="/teacher/course/course-add">
                 <FaPlusSquare /> 新增課程
-              </a>
+              </Link>
             </li>
+
             <li>
               <a href="">
                 <FaQuestionCircle /> 客服中心
@@ -89,7 +127,7 @@ export default function TeacherSidebar() {
 
           {/* 📌 登出 */}
           <div className={styles['logout']}>
-            <a href="">
+            <a href="#" >
               <FaSignOutAlt /> 登出
             </a>
           </div>

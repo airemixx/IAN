@@ -142,41 +142,45 @@ export default function CourseEdit() {
   }
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) {
-      console.log('❌ 沒有選擇任何檔案')
-      return
-    }
-
-    const formData = new FormData()
-    formData.append('upload', file)
-
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("upload", file);
+  
     try {
       const response = await fetch(
-        'http://localhost:8000/api/course-cv-upload',
+        "http://localhost:8000/api/course-cv-upload",
         {
-          method: 'POST',
+          method: "POST",
           body: formData,
         }
-      )
-
-      const contentType = response.headers.get('content-type')
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('❌ API 沒回傳 JSON，可能是 404/500 錯誤')
+      );
+  
+      // 🔹 確保 `Content-Type` 是 `application/json`
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("❌ API 沒回傳 JSON，可能是 404/500 錯誤");
       }
-
-      const data = await response.json()
-      const fullUrl = `http://localhost:8000${data.url}` // ✅ 修正 URL
-
-      console.log('✅ 圖片上傳成功，URL:', fullUrl)
-
-      // **即時更新圖片預覽**
-      setCourse((prev) => ({ ...prev, image_url: fullUrl }))
-      setPreviewImg(fullUrl)
+  
+      // ✅ 解析 JSON
+      const data = await response.json();
+      if (!data.url) {
+        throw new Error("❌ API 回傳無效的圖片 URL");
+      }
+  
+      const imageUrl = `http://localhost:8000${data.url}`;
+      console.log("✅ 圖片上傳成功，URL:", imageUrl);
+  
+      // ✅ 更新圖片預覽
+      setPreviewImg(imageUrl);
+      setCourse((prev) => ({ ...prev, image_url: imageUrl }));
     } catch (error) {
-      console.error('❌ 圖片上傳失敗:', error)
+      console.error("❌ 圖片上傳錯誤:", error);
+      alert(error.message); // 🔴 顯示錯誤訊息
     }
-  }
+  };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

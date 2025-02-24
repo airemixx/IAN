@@ -58,18 +58,22 @@
   padding-bottom: 8px;
 }
 
+.page-link{
+  all: unset;
+}
+
 .page:hover,
 .page.active {
   color: var(--black);
 }
 
-:global(button) {
+.e-button {
   all: unset;
   cursor: pointer;
 }
 
-:global(button:focus),
-:global(button:active) {
+.e-button:focus,
+.e-button:active {
   outline: none;
   box-shadow: none;
 }

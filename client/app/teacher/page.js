@@ -72,11 +72,10 @@ export default function CourseManagement() {
     fetchCoursesAndUser()
   }, []) // ✅ 只在元件掛載時執行
 
-  
   useEffect(() => {
     console.log(`📌 目前的 courses:`, courses)
     if (courses.length > 0) {
-      setCurrentPage(1) 
+      setCurrentPage(1)
     }
   }, [courses])
 
@@ -143,10 +142,10 @@ export default function CourseManagement() {
           </div>
 
           <div className={styles['add']}>
-            <a href="#">
+            <Link href="/teacher/course/course-add">
               <FaPlusSquare />
               <p>新增課程</p>
-            </a>
+            </Link>
           </div>
         </div>
 
