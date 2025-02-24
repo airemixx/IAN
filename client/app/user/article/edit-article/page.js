@@ -8,8 +8,8 @@ import axios from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import styles from '../add-article/AddArticleModal.module.scss'
 import BackSelectTitle from '../add-article/back-select-title'
-import ImageUpdate from '../add-article/imageUpdate'
-import HashtagInput from '../add-article/hashtag-input'
+import ImageUpdate from './imageUpdate'
+import EditHashtagInput from './EditHashtagInput'
 import EditButtonGroup from './EditButtonGroup'
 import Sidenav from '../../_components/Sidenav/page'
 import { checkRequiredFields } from '../add-article/page'
@@ -19,6 +19,7 @@ const FroalaEditor = dynamic(() => import('../add-article/froalaEditor'), { ssr:
 export default function EditArticlePage() {
   const [hasError, setHasError] = useState(false)
   const [articleData, setArticleData] = useState(null)
+  const [hashtags, setHashtags] = useState([])
   const imageUpdateRef = useRef(null)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -31,6 +32,11 @@ export default function EditArticlePage() {
         const response = await axios.get(`http://localhost:8000/api/articles/${articleId}`)
         const article = response.data.data
         setArticleData(article)
+
+        // 如果有 hashtags，更新 state
+        if (article.hashtags) {
+          setHashtags(article.hashtags)
+        }
 
         // 填充表單
         setTimeout(() => {
@@ -58,6 +64,9 @@ export default function EditArticlePage() {
           if (window.editorInstance) {
             window.editorInstance.html.set(article.content)
           }
+
+          // 設置 hashtags
+
         }, 0)
       } catch (error) {
         console.error('載入文章錯誤:', error)
@@ -99,8 +108,14 @@ export default function EditArticlePage() {
       const content = editorInstance ? editorInstance.html.get() : ''
 
       const hashtagEls = document.querySelectorAll('#hashtag-preview .badge')
-      const hashtags = Array.from(hashtagEls).map((el) =>
+      const updatedHashtags = Array.from(hashtagEls).map((el) =>
         el.textContent.replace(/×$/, '')
+      )
+
+      // 比較原始和更新後的 hashtags
+      const originalHashtags = articleData?.hashtags || []
+      const removedHashtags = originalHashtags.filter(
+        tag => !updatedHashtags.includes(tag)
       )
 
       await axios.put(`http://localhost:8000/api/articles/${articleId}`, {
@@ -109,7 +124,8 @@ export default function EditArticlePage() {
         subtitle: subtitleInput.value.trim(),
         content,
         image_path: imagePathInput.value.trim(),
-        hashtags,
+        hashtags: updatedHashtags,
+        removedHashtags, // 傳送被刪除的 hashtags
       })
 
       Swal.fire({
@@ -127,7 +143,7 @@ export default function EditArticlePage() {
       })
       console.error('Error updating article:', error)
     }
-  }, [articleId, confirmClose])
+  }, [articleId, confirmClose, articleData])
 
   return (
     <>
@@ -148,7 +164,10 @@ export default function EditArticlePage() {
               <FroalaEditor />
             </div>
             <div className="my-4">
-              <HashtagInput />
+              <EditHashtagInput
+                initialTags={hashtags}
+                onTagsChange={(newTags) => setHashtags(newTags)}
+              />
             </div>
             <EditButtonGroup
               confirmClose={confirmClose}

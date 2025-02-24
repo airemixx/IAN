@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import cors from 'cors'
 import mysql from 'mysql2/promise'
+import checkToken from '../middlewares.js'
 
 const pool = mysql.createPool({
   host: 'localhost',
@@ -184,7 +185,7 @@ router.get('/:articleId/tags', async (req, res) => {
 // 取得指定文章
 router.get('/:id', async (req, res) => {
   try {
-    // 修改 SQL 查詢，加入 LEFT JOIN users
+    // 修改 SQL 查詢，加入標籤查詢
     const [rows] = await pool.query(
       `
       SELECT 
@@ -192,11 +193,15 @@ router.get('/:id', async (req, res) => {
         c.name AS category_name,
         u.head AS user_head,
         u.nickname AS user_nickname,
-        u.name AS user_name
+        u.name AS user_name,
+        GROUP_CONCAT(t.tag_name) as hashtags
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
       LEFT JOIN users u ON a.user_id = u.id
+      LEFT JOIN article_tags at ON a.id = at.article_id
+      LEFT JOIN tag t ON at.tag_id = t.id
       WHERE a.id = ?
+      GROUP BY a.id
       `,
       [req.params.id]
     )
@@ -217,13 +222,17 @@ router.get('/:id', async (req, res) => {
       name: article.user_name,
     }
 
-    // 將使用者資料放入回傳的 data 中
+    // 處理標籤資料
+    const hashtags = article.hashtags ? article.hashtags.split(',') : []
+
+    // 將使用者資料和標籤放入回傳的 data 中
     res.status(200).json({
       status: 'success',
       data: {
         ...article,
-        category_name: article.category_name, // 保留 category_name
+        category_name: article.category_name,
         user: userData,
+        hashtags: hashtags
       },
       message: `取得${req.params.id}文章成功`,
     })
@@ -337,8 +346,9 @@ router.post('/like', async (req, res) => {
 
 
 // 新增文章
-router.post('/', async (req, res) => {
-  const { category, title, subtitle, content, image_path, hashtags } = req.body
+router.post('/', checkToken, async (req, res) => {
+  const { category, title, subtitle, content, image_path, hashtags, user_id } = req.body
+  const userId = req.decoded.id // 直接從 token 取得使用者 ID
 
   // 檢查圖片路徑格式（若有輸入才檢查）
   if (image_path && image_path.trim() && !image_path.startsWith('https://')) {
@@ -348,38 +358,39 @@ router.post('/', async (req, res) => {
     })
   }
 
-  let connection // 聲明 connection 變數
+  let connection
   try {
-    connection = await pool.getConnection() // 取得連線
+    connection = await pool.getConnection()
     await connection.beginTransaction()
 
-    // 修改 HTML 內容，將 background-color: rgb(255, 255, 255) 替換為 background-color: transparent
+    // 修改內容：設定背景顏色為透明
     const transparentContent = content.replace(
       /background-color:\s*rgb\(255,\s*255,\s*255\)/gi,
       'background-color: transparent'
     )
 
-    // 新增文章資料，id 為 AUTO_INCREMENT，自動產生
+    // 新增文章資料，這裡新增 user_id 欄位（資料表必須有 user_id 欄位）
     const articleQuery = `
-      INSERT INTO article (category_id, title, subtitle, content, image_path, created_at, update_time)
-      VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+      INSERT INTO article (user_id, category_id, title, subtitle, content, image_path, created_at, update_time)
+      VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
     `
     const [articleResult] = await connection.query(articleQuery, [
+      userId,
       category || null,
       title || null,
       subtitle || null,
       transparentContent || null,
       image_path || null,
     ])
-    const articleId = articleResult.insertId // 使用 LAST_INSERT_ID() 得到新文章 id
+    const articleId = articleResult.insertId
 
-    // 如果有 hashtag 資料，依序處理每個 tag
+    // 處理 hashtags
     if (Array.isArray(hashtags) && hashtags.length) {
       for (const tagNameRaw of hashtags) {
         const tagName = tagNameRaw.trim()
         if (!tagName) continue
 
-        // 檢查 tag 是否存在
+        // 檢查此 hashtag 是否已存在
         const [existingTags] = await connection.query(
           'SELECT id FROM tag WHERE tag_name = ?',
           [tagName]
@@ -389,7 +400,7 @@ router.post('/', async (req, res) => {
         if (existingTags.length) {
           tagId = existingTags[0].id
         } else {
-          // 如不存在則先寫入 tag 資料表
+          // 新增 hashtag 到 tag 資料表
           const [tagResult] = await connection.query(
             'INSERT INTO tag (tag_name) VALUES (?)',
             [tagName]
@@ -397,7 +408,7 @@ router.post('/', async (req, res) => {
           tagId = tagResult.insertId
         }
 
-        // 將新文章的 id 與 tagId 寫入 article_tag 資料表
+        // 將文章和 hashtag 關聯到 article_tags 資料表
         await connection.query(
           'INSERT INTO article_tags (article_id, tag_id) VALUES (?, ?)',
           [articleId, tagId]
@@ -418,11 +429,6 @@ router.post('/', async (req, res) => {
         await connection.rollback()
       } catch (rollbackErr) {
         console.error('Rollback 錯誤:', rollbackErr)
-        // 檢查連線是否已關閉，如果已關閉，則重新建立連線
-        if (rollbackErr.code === 'PROTOCOL_CONNECTION_LOST') {
-          console.error('資料庫連線已關閉，嘗試重新連線...')
-          connection = await pool.getConnection()
-        }
       }
     }
     console.error('Error adding article:', err)
@@ -439,7 +445,7 @@ router.post('/', async (req, res) => {
 
 // 更新指定文章
 router.put('/:id', async (req, res) => {
-  const { category, title, subtitle, content, image_path, hashtags } = req.body
+  const { category, title, subtitle, content, image_path, hashtags, removedHashtags } = req.body
   const articleId = req.params.id
   let connection
 
@@ -475,12 +481,26 @@ router.put('/:id', async (req, res) => {
       articleId
     ])
 
-    // 處理標籤
-    if (Array.isArray(hashtags)) {
-      // 先刪除該文章所有舊標籤關聯
-      await connection.query('DELETE FROM article_tags WHERE article_id = ?', [articleId])
+    // 處理被刪除的標籤
+    if (Array.isArray(removedHashtags) && removedHashtags.length > 0) {
+      // 先找出要刪除的標籤的 ID
+      const [tagsToRemove] = await connection.query(
+        'SELECT id FROM tag WHERE tag_name IN (?)',
+        [removedHashtags]
+      )
 
-      // 新增新的標籤關聯
+      if (tagsToRemove.length > 0) {
+        const tagIds = tagsToRemove.map(tag => tag.id)
+        // 刪除文章和這些標籤的關聯
+        await connection.query(
+          'DELETE FROM article_tags WHERE article_id = ? AND tag_id IN (?)',
+          [articleId, tagIds]
+        )
+      }
+    }
+
+    // 處理新的或保留的標籤
+    if (Array.isArray(hashtags)) {
       for (const tagName of hashtags) {
         if (!tagName.trim()) continue
 
@@ -502,11 +522,19 @@ router.put('/:id', async (req, res) => {
           tagId = tagResult.insertId
         }
 
-        // 建立文章和標籤的關聯
-        await connection.query(
-          'INSERT INTO article_tags (article_id, tag_id) VALUES (?, ?)',
+        // 檢查關聯是否已存在
+        const [existingRelation] = await connection.query(
+          'SELECT 1 FROM article_tags WHERE article_id = ? AND tag_id = ?',
           [articleId, tagId]
         )
+
+        // 如果關聯不存在才新增
+        if (!existingRelation.length) {
+          await connection.query(
+            'INSERT INTO article_tags (article_id, tag_id) VALUES (?, ?)',
+            [articleId, tagId]
+          )
+        }
       }
     }
 
@@ -552,5 +580,19 @@ router.delete('/:id', async (req, res) => {
     })
   }
 })
+
+router.delete('/:articleId/tags/:tagId', async (req, res) => {
+  const { articleId, tagId } = req.params;
+  try {
+    const [result] = await pool.query(
+      'DELETE FROM article_tags WHERE article_id = ? AND tag_id = ?',
+      [articleId, tagId]
+    );
+    return res.json({ status: 'success', message: '刪除成功' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: 'error', message: '刪除失敗' });
+  }
+});
 
 export default router

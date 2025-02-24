@@ -12,6 +12,7 @@ import ImageUpdate from './imageUpdate'
 import HashtagInput from './hashtag-input'
 import ButtonGroup from './ButtonGroup'
 import Sidenav from '../../_components/Sidenav/page'
+import useAuth from '@/hooks/use-auth'
 const FroalaEditor = dynamic(() => import('./froalaEditor'), { ssr: false })
 
 export const checkRequiredFields = () => {
@@ -73,6 +74,7 @@ export const checkRequiredFields = () => {
 }
 
 export default function AddArticlePage() {
+  const { user } = useAuth()
   const [hasError, setHasError] = useState(false)
   const imageUpdateRef = useRef(null)
   const router = useRouter()
