@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./shopping-cart-step3.module.scss";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { isDev, apiURL } from '@/config';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function CheckoutFormStep3() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const [loading, setLoading] = useState(true);
+    const [paymentMethod, setPaymentMethod] = useState("");
+    const [result, setResult] = useState({ returnCode: '', returnMessage: '' });
     const [addressData, setAddressData] = useState({
         name: "",
         address: "",
@@ -16,14 +20,21 @@ export default function CheckoutFormStep3() {
         phone: "",
     });
 
-    const [paymentMethod, setPaymentMethod] = useState(""); // 儲存選中的付款方式
-
     useEffect(() => {
         const savedData = localStorage.getItem("checkoutAddress");
         if (savedData) {
             setAddressData(JSON.parse(savedData));
         }
     }, []);
+
+    useEffect(() => {
+        if (searchParams?.get('transactionId') && searchParams?.get('orderId')) {
+            setLoading(true);
+            handleConfirm(searchParams.get('transactionId'));
+        } else {
+            setLoading(false);
+        }
+    }, [searchParams]);
 
     const handlePaymentChange = (method) => {
         setPaymentMethod(method); // 只能選擇一個付款方式
@@ -40,7 +51,73 @@ export default function CheckoutFormStep3() {
         const cartItems = Object.values(cartData);
         const items = cartItems.map(item => `${item.brand} ${item.model} x${item.quantity}`).join(", ");
         const amount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-        
+
+        if (paymentMethod === "linePay") {
+            goLinePay(amount, items);
+        } else if (paymentMethod === "ecpay") {
+            goECPay(amount, items);
+        }
+
+
+    };
+    const goLinePay = async (amount) => {
+        // 先連到node伺服器後端，取得LINE Pay付款網址
+        const res = await fetch(
+          `${apiURL}/linePay/reserve?amount=${amount}`,
+          {
+            method: 'GET',
+            // 讓fetch能夠傳送cookie
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          }
+        )
+    
+        const resData = await res.json()
+    
+        console.log(resData)
+    
+        if (resData.status === 'success') {
+          if (window.confirm('確認要導向至LINE Pay進行付款?')) {
+            //導向至LINE Pay付款頁面
+            window.location.href = resData.data.paymentUrl
+          }
+        } else {
+          toast.error('付款失敗')
+        }
+      }
+
+    const handleConfirm = async (transactionId) => {
+        try {
+            const res = await fetch(`${apiURL}/linePay/confirm?transactionId=${transactionId}`, {
+                method: "GET",
+                credentials: "include",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+            });
+            const resData = await res.json();
+            console.log(resData);
+
+            if (resData.status === "success") {
+                setResult(resData.data);
+                toast.success("付款成功");
+            } else {
+                toast.error("付款失敗");
+            }
+
+            setTimeout(() => {
+                setLoading(false);
+                router.replace("/line-pay");
+            }, 3000);
+        } catch (error) {
+            console.error("確認交易失敗:", error);
+            toast.error("交易確認失敗");
+            setLoading(false);
+        }
+    };
+
+    const goECPay = async (amount, items) => {
         try {
             const res = await fetch(`${apiURL}/${paymentMethod}?amount=${amount}&items=${encodeURIComponent(items)}`, {
                 method: "GET",
@@ -50,7 +127,7 @@ export default function CheckoutFormStep3() {
             const resData = await res.json();
 
             if (isDev) console.log(resData);
-            
+
             if (resData.status === "success") {
                 const form = document.createElement("form");
                 form.method = "POST";
@@ -61,9 +138,9 @@ export default function CheckoutFormStep3() {
                     input.type = "hidden";
                     input.name = key;
                     input.value = resData.data.params[key];
-                   
+
                     form.appendChild(input);
-                   
+
                 }
 
                 document.body.appendChild(form);
@@ -77,7 +154,7 @@ export default function CheckoutFormStep3() {
             console.error("付款請求失敗:", error);
             toast.error("發生錯誤，請稍後再試！");
         }
-    };
+    }
 
     return (
         <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 ms-xl-5 mt-xl-5 pt-xl-5 mt-sm-5">
@@ -127,8 +204,8 @@ export default function CheckoutFormStep3() {
                             type="radio"
                             id="linepay"
                             name="paymentMethod"
-                            checked={paymentMethod === "linepay"}
-                            onChange={() => handlePaymentChange("linepay")}
+                            checked={paymentMethod === "linePay"}
+                            onChange={() => handlePaymentChange("linePay")}
                         />
                         {/* <label className="ms-2 mb-0" htmlFor="linepay">
                             <img src="/images/shopping-cart-image/radiobutton1.svg" alt="" />
