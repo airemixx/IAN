@@ -45,6 +45,7 @@ export default function RootLayout({ children }) {
             draggable
             theme="dark"
             className="custom-toast-container"
+            style={{ marginTop: "80px" }}
           />
           {!isTeacherPage && (
             <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} />

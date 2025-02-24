@@ -21,6 +21,7 @@ export default function TeacherRootLayout({ children }) {
         theme="dark"
         className="custom-toast-container" 
       />
+      
       <AppProvider>
         <section className="center-dashboard">
           <div className="container-fluid">

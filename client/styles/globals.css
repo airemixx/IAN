@@ -587,8 +587,9 @@ footer-title {
 
 /*  成功類型 Toast */
 .Toastify__toast--success {
-  background: var(--primary-color) !important; 
+  background: var(--primary-color-med) !important; 
   color: var(--white) !important;
+  box-shadow: var(--box-shadow);
 }
 
 .Toastify__toast--success svg {

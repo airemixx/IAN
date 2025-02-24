@@ -57,7 +57,8 @@ export default function PriceFixed({ course }) {
             <img src="/images/icon/cart-btn.svg" alt="" className="hvr-icon" />
             <p>加入購物車</p>
           </button>
-          <FavoriteButtonG className={styles['favorite-btn']} />
+          <FavoriteButtonG className={styles['favorite-btn']} courseId={course.id}  />
+            
         </div>
         <div className={styles['refund']}>
           <p>30 天退款保證</p>
