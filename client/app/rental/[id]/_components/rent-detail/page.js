@@ -63,7 +63,7 @@ export default function RentDetail() {
       </main>
 
       {/* ✅ 直接將推薦商品傳遞到 RentRecommend */}
-      <div className="col-lg-12 col-xl-10 mx-auto my-4">
+      <div className="col-lg-12 col-xl-10 mx-auto mt-4">
         <RentRecommend recommendations={recommendations} />
       </div>
     </div>
