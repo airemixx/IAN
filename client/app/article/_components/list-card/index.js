@@ -43,7 +43,7 @@ const ListCard = ({ article, onTagClick, searchTerm }) => {
           onLoad={handleImageLoaded}
         />
         <div className={`px-0 card-body ${styles['y-card-body-css']}`}>
-          <div className={`mb-3 ${styles['y-article-list-tag']} d-flex justify-content-between`}>
+          <div className={`mb-1 ${styles['y-article-list-tag']} d-flex justify-content-between`}>
             <p className="mb-0">{article.category_name || '未分類'}</p>
           </div>
           <div className={`mb-5 ${styles['y-list-card-content']}`}>

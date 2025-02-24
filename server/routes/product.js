@@ -6,12 +6,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-try {
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  console.log("Token 解析成功:", decoded);
-} catch (error) {
-  console.error("Token 驗證失敗:", error);
-}
+// try {
+//   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+//   console.log("Token 解析成功:", decoded);
+// } catch (error) {
+//   console.error("Token 驗證失敗:", error);
+// }
 
 const router = express.Router();
 

@@ -20,6 +20,7 @@ const authenticate = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY); // 解析 Token
     console.log("✅ Token 解析成功:", decoded);
 
+    req.decoded = decoded; // ✅ 設定 req.decoded
     req.userId = decoded.id; // ✅ 設定 userId
     console.log("✅ 設定 req.userId:", req.userId);
 

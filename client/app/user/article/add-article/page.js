@@ -11,8 +11,8 @@ import BackSelectTitle from './back-select-title'
 import ImageUpdate from './imageUpdate'
 import HashtagInput from './hashtag-input'
 import ButtonGroup from './ButtonGroup'
-import Sidenav from '../../_components/Sidenav/page'  // 新增這行引入 Sidenav
-
+import Sidenav from '../../_components/Sidenav/page'
+import useAuth from '@/hooks/use-auth'
 const FroalaEditor = dynamic(() => import('./froalaEditor'), { ssr: false })
 
 export const checkRequiredFields = () => {
@@ -74,6 +74,7 @@ export const checkRequiredFields = () => {
 }
 
 export default function AddArticlePage() {
+  const { user, token } = useAuth()
   const [hasError, setHasError] = useState(false)
   const imageUpdateRef = useRef(null)
   const router = useRouter()
@@ -93,8 +94,6 @@ export default function AddArticlePage() {
         text: '請填寫所有必填欄位',
       })
       return
-    } else {
-      setHasError(false)
     }
 
     try {
@@ -110,12 +109,13 @@ export default function AddArticlePage() {
         el.textContent.replace(/×$/, '')
       )
 
-      const categoryId = categorySelect ? categorySelect.value : '0'
+      const category = categorySelect ? categorySelect.value : null
       const title = titleInput ? titleInput.value.trim() : ''
       const subtitle = subtitleInput ? subtitleInput.value.trim() : ''
-      const imagePath = imagePathInput ? imagePathInput.value.trim() : ''
+      const image_path = imagePathInput ? imagePathInput.value.trim() : ''
 
-      if (imagePath && !imagePath.startsWith('https://')) {
+      // 確保 image_path 格式正確
+      if (image_path && !image_path.startsWith('https://')) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -124,14 +124,24 @@ export default function AddArticlePage() {
         return
       }
 
-      await axios.post('http://localhost:8000/api/articles', {
-        category: categoryId,
-        title,
-        subtitle,
-        content,
-        image_path: imagePath,
-        hashtags,
-      })
+      // 透過 useAuth 取得 token
+      // 假設你從 useAuth hook 已取得 token
+      await axios.post(
+        'http://localhost:8000/api/articles',
+        {
+          category,
+          title,
+          subtitle,
+          content,
+          image_path,
+          hashtags,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // token 來自 useAuth 的狀態
+          },
+        }
+      )
 
       confirmClose()
     } catch (error) {
@@ -142,11 +152,25 @@ export default function AddArticlePage() {
       })
       console.error('Error adding article:', error)
     }
-  }, [confirmClose])
+  }, [confirmClose, token]) // 注意：確保 token 是 useAuth 回傳的一部份
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '您確定要離開此頁面嗎？您所做的變更可能不會被儲存。';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    history.replaceState(null, '', window.location.pathname);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [confirmClose]);
 
   return (
     <>
-        <div className={`d-flex container py-4 ${styles.marginTop}`}>
+      <div className={`d-flex container py-4 ${styles.marginTop}`}>
         {/* 側邊選單 */}
         <Sidenav />
         <div className="container">
@@ -166,7 +190,6 @@ export default function AddArticlePage() {
             </div>
             <ButtonGroup confirmClose={confirmClose} onAddArticle={handleAddArticle} />
           </div>
-
         </div>
       </div>
     </>

@@ -199,14 +199,21 @@ export default function ArticleDetail() {
           <article className="y-article-content" style={{ minHeight: '300px' }}>
             {articleContent === '<p>載入中...</p>' ? (
               <ReactContentLoader
-                speed={2}
+                speed={3}
                 width="100%"
-                height={300}
-                viewBox="0 0 400 300"
+                height={1900}
+                viewBox="0 0 1000 1900"
                 backgroundColor="#f3f3f3"
                 foregroundColor="#ecebeb"
               >
-                <rect x="0" y="0" rx="5" ry="5" width="400" height="300" />
+                <rect x="0" y="0" rx="5" ry="5" width="1000" height="600" />
+                <rect x="0" y="630" rx="5" ry="5" width="1000" height="30" />
+                <rect x="0" y="680" rx="5" ry="5" width="900" height="30" />
+                <rect x="0" y="730" rx="5" ry="5" width="1000" height="30" />
+                <rect x="0" y="780" rx="5" ry="5" width="900" height="30" />
+                <rect x="0" y="830" rx="5" ry="5" width="1000" height="30" />
+                <rect x="0" y="880" rx="5" ry="5" width="900" height="30" />
+                <rect x="0" y="930" rx="5" ry="5" width="1000" height="30" />
               </ReactContentLoader>
             ) : (
               <>

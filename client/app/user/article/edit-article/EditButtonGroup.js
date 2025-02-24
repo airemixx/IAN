@@ -2,18 +2,15 @@
 
 import React from 'react'
 import Swal from 'sweetalert2'
-import styles from './AddArticleModal.module.scss'
-import { checkRequiredFields } from './page' // 引入 checkRequiredFields
+import styles from '../add-article/AddArticleModal.module.scss'
+import { checkRequiredFields } from '../add-article/page'
 
-export default function ButtonGroup({ confirmClose, onAddArticle }) {
-  const handleValidatedAddArticle = () => {
-    // 直接呼叫 checkRequiredFields 函式
+export default function EditButtonGroup({ confirmClose, onUpdateArticle }) {
+  const handleValidatedUpdateArticle = () => {
     const isValid = checkRequiredFields()
 
     if (!isValid) {
-      // 取得未填寫的欄位名稱
       const missingFields = getMissingFields()
-
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -22,22 +19,17 @@ export default function ButtonGroup({ confirmClose, onAddArticle }) {
       return
     }
 
-    // 驗證通過後執行 onAddArticle
-    onAddArticle()
+    onUpdateArticle()
   }
 
-  // 取得未填寫的欄位名稱
   const getMissingFields = () => {
     const missingFields = []
 
     const categorySelect = document.querySelector('select[name="文章分類"]')
-    const titleInput = document.querySelector(
-      'input[placeholder="標題 (必填)"]'
-    )
+    const titleInput = document.querySelector('input[placeholder="標題 (必填)"]')
     const imageSourceLocal = document.querySelector('#imageSourceLocal')
     const imageUpload = document.querySelector('#imageUpload')
     const imagePath = document.querySelector('#imagePath')
-    const editorDiv = document.querySelector('#example')
     const editorInstance = window.editorInstance
 
     if (categorySelect && categorySelect.value === '0') {
@@ -49,11 +41,7 @@ export default function ButtonGroup({ confirmClose, onAddArticle }) {
     }
 
     if (imageSourceLocal && imageSourceLocal.checked) {
-      if (
-        !imageUpload ||
-        !imageUpload.files ||
-        imageUpload.files.length === 0
-      ) {
+      if (!imageUpload || !imageUpload.files || imageUpload.files.length === 0) {
         missingFields.push('主圖 (本地圖片)')
       }
     } else {
@@ -75,9 +63,9 @@ export default function ButtonGroup({ confirmClose, onAddArticle }) {
       <button
         type="button"
         className={`mx-3 btn y-btn-add ${styles['y-btn-add']}`}
-        onClick={onAddArticle}
+        onClick={handleValidatedUpdateArticle}
       >
-        新增
+        更新
       </button>
       <button
         type="button"
