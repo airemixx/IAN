@@ -5,6 +5,8 @@
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import RentCard from '../rent-card/page'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 // 動態載入 RentPagination，避免影響 SSR
 const RentPagination = dynamic(() => import('../rent-pagination/page'), {
@@ -14,6 +16,14 @@ const RentPagination = dynamic(() => import('../rent-pagination/page'), {
 export default function RentRecommend({ recommendations = [] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [itemsPerPage, setItemsPerPage] = useState(3)
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // 動畫持續時間 (毫秒)
+      once: true, // 滾動一次後不會再次觸發動畫
+      offset: 100, // 滾動多少距離開始動畫
+    })
+  }, [])
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -44,9 +54,12 @@ export default function RentRecommend({ recommendations = [] }) {
   )
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <h3>推薦商品</h3>
+    <>
+      <div className="d-flex justify-content-between align-items-center mt-1">
+        <div className='k-recommend-title py-1' data-aos="fade-right">
+          <div className='k-title-block'></div>
+          <h2 className='text-white'>推薦商品</h2>
+        </div>
         <RentPagination
           currentIndex={currentIndex}
           setCurrentIndex={setCurrentIndex}
@@ -59,6 +72,6 @@ export default function RentRecommend({ recommendations = [] }) {
           <RentCard key={index} rental={rental} />
         ))}
       </div>
-    </div>
+    </>
   )
 }

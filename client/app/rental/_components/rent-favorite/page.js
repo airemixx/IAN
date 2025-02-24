@@ -171,9 +171,9 @@ export default function FavoriteButton({ rentId, rental }) {
     <button onClick={toggleFavorite} className='k-favorite-icon'>
       {isFavorite ? (
 
-        <FaHeart size={18} color="#d0b088" /> // ✅ 實心愛心 (已收藏)
+        <FaHeart size={22} color="#d0b088" /> // ✅ 實心愛心 (已收藏)
       ) : (
-        <FaRegHeart size={18} color="#d0b088" /> // ✅ 空心愛心 (未收藏)
+        <FaRegHeart size={22} color="#d0b088" /> // ✅ 空心愛心 (未收藏)
       )}
     </button>
   )
