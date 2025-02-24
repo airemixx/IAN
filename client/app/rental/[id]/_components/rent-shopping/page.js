@@ -24,6 +24,10 @@ export default function RentShopping({ rental }) {
   const [disabledDates, setDisabledDates] = useState([])
 
   useEffect(() => {
+    console.log("rental data:", rental);
+  }, [rental]);
+
+  useEffect(() => {
     const today = new Date()
 
     // 🛠️設置開始日期的最小值 (今天 +3 天)
@@ -200,12 +204,19 @@ export default function RentShopping({ rental }) {
     }
 
     // 解析現有的購物車內容
-    const cart = JSON.parse(localStorage.getItem('cart')) || []
+    const cart = JSON.parse(localStorage.getItem('rent_cart')) || []
     const existingItem = cart.find((item) => item.rentalId === rental.id)
+
+    // 傳遞圖片
+    const imageUrl = rental?.images?.[0]
+      ? `images/rental/${rental.images[0]}`
+      : '/images/rental/test/Leica-Q3-0.png' // 當沒有圖片時顯示預設圖片 
+
 
     if (existingItem) {
       existingItem.start = startDate
       existingItem.end = endDate
+      existingItem.image = imageUrl // 🆕 更新圖片資料
     } else {
       cart.push({
         rentalId: rental.id,
@@ -214,10 +225,11 @@ export default function RentShopping({ rental }) {
         fee: rental.fee,
         start: startDate,
         end: endDate,
+        image: imageUrl // 🆕 新增圖片資料
       })
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart))
+    localStorage.setItem('rent_cart', JSON.stringify(cart))
 
     const formatDate = (dateStr) => {
       const date = new Date(dateStr)

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import RentPagination from '../rent-pagination/page'
 import RentTotal from '../rent-total/page'
 import RentOrder from '../rent-order/page'
@@ -18,6 +19,10 @@ export default function RentList() {
   const [itemsPerPage, setItemsPerPage] = useState(12) // 每頁顯示數量
   const [totalPages, setTotalPages] = useState(1) // 總頁數
   const [sorting, setSorting] = useState('') // 排序方式（asc: 價格由低到高, desc: 由高到低）
+  const [shouldAnimate, setShouldAnimate] = useState(false);  // 判斷動畫觸發
+  const router = useRouter(); // ✅ 正確初始化 router
+
+
 
   // 📌 **篩選條件**
   const [filters, setFilters] = useState({
@@ -25,6 +30,24 @@ export default function RentList() {
     advanced: [],
     brands: [],
   })
+
+  // 上移動畫
+  useEffect(() => {
+    const triggerAnimation = () => {
+      setShouldAnimate(true);
+      setTimeout(() => {
+        setShouldAnimate(false);
+      }, 500); // 動畫時長保持一致
+    };
+
+    const hasAnimated = sessionStorage.getItem('hasAnimated');
+    if (!hasAnimated) {
+      sessionStorage.setItem('hasAnimated', 'true');
+      triggerAnimation();
+    } else {
+      triggerAnimation(); // ✅ 讓路由切換後也能觸發動畫
+    }
+  }, [router]); // ✅ 監聽 router 變化，每次切換路由時觸發動畫
 
   // 📌 **初始化時載入資料**
   useEffect(() => {
@@ -122,7 +145,7 @@ export default function RentList() {
   return (
     <div className="row">
       {/* 📌 側邊篩選功能 */}
-      <aside className="col-0 col-md-4 col-lg-3 p-3">
+      <aside className="col-0 col-md-4 col-lg-3 p-3" style={{ marginTop: '35px' }} >
         <hr className="d-none d-md-block" />
         <RentSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <RentHashtag hashtags={hashtags} onHashtagClick={handleHashtagClick} />
@@ -144,7 +167,7 @@ export default function RentList() {
         {/* 📌 商品清單 */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1">
           {visibleItems.map((rental) => (
-            <RentCard key={rental.id} rental={rental} />
+            <RentCard key={rental.id} rental={rental} shouldAnimate={shouldAnimate} />
           ))}
         </div>
 
@@ -157,6 +180,6 @@ export default function RentList() {
           setCurrentPage={setCurrentPage}
         />
       </main>
-    </div>
+    </div >
   )
 }

@@ -6,12 +6,19 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import FavoriteButton from '../rent-favorite/page' // ✅ 引入收藏按鈕元件
 
-export default function RentCard({ rental }) {
+export default function RentCard({ rental, shouldAnimate }) {
   const router = useRouter()
   const [isHovered, setIsHovered] = useState(false)
 
+
   return (
-    <div className="col">
+    <div
+      className={`col ${shouldAnimate ? 'fade-up' : ''}`} // 所有卡片同時觸發動畫
+      style={{
+        opacity: '1',
+        transition: 'opacity 0.5s, transform 0.5s', // 確保動畫平滑顯示
+      }}
+    >
       <div
         className="k-card position-relative w-100 border rounded-1 overflow-hidden"
         style={{ cursor: 'pointer' }}
