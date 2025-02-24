@@ -60,14 +60,14 @@ export const serverConfig = {
     development: {
       channelId: '2006947338',
       channelSecret: 'bc50bd359d0368f34ea424f747907490',
-      confirmUrl: 'http://localhost:3000/cart/line-pay',
-      cancelUrl: 'http://localhost:3000/cart/line-pay/cancel',
+      confirmUrl: 'http://localhost:3000/cart/checkout-form-step3',
+      cancelUrl: 'http://localhost:3000/cart/checkout-form-step3/cancel',
     },
     production: {
       channelId: '',
       channelSecret: '',
-      confirmUrl: 'https://next-app-raw.vercel.app/line-pay',
-      cancelUrl: 'https://next-app-raw.vercel.app/line-pay/cancel',
+      confirmUrl: 'https://next-app-raw.vercel.app/cart/line-pay',
+      cancelUrl: 'https://next-app-raw.vercel.app/cart/line-pay/cancel',
     },
   },
   // 目前沒有使用這個設定，直接寫在 routes/ecpay-test-only.js 中

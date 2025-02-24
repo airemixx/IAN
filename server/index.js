@@ -8,6 +8,9 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import sessionFileStore from 'session-file-store'
+import session from 'express-session'
+
 import path from 'path'
 import coursesRouter from './routes/courses.js'
 import teachersRouter from './routes/teachers.js'
@@ -21,6 +24,7 @@ import likesRouter from './routes/likes.js'
 import users from './routes/users.js'
 import ordersRouter from './routes/orders.js'
 import linePayRouter from './routes/line-pay-test-only.js'
+import { serverConfig } from './config/server.config.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -37,6 +41,51 @@ const corsOptions = {
     }
   },
 }
+let sessionStore = null
+
+if (serverConfig.sessionStoreType === 'redis') {
+  // 使用redis記錄session
+  let redisClient = createClient({
+    url: process.env.REDIS_URL,
+  })
+
+  // 連線redis
+  redisClient.connect().catch(console.error)
+
+  // 初始化redisStore
+  sessionStore = new RedisStore({
+    client: redisClient,
+    prefix: 'express-vercel:',
+  })
+} else {
+  // 使用檔案記錄session
+  const FileStore = sessionFileStore(session)
+  sessionStore = new FileStore({ logFn: function () { } })
+}
+
+const isDev = process.env.NODE_ENV === 'development'
+
+const options = isDev
+  ? { maxAge: 30 * 86400000 }
+  : {
+    domain: serverConfig.domain,
+    maxAge: 30 * 86400000, // session保存30天
+    httpOnly: true, // 無法透過JavaScript讀取
+    secure: true, // HTTPS才能使用
+    sameSite: 'none', // 跨域時也能使用
+  }
+
+app.use(
+  session({
+    store: sessionStore, // 使用檔案記錄session
+    name: 'SESSION_ID', // cookie名稱，儲存在瀏覽器裡
+    secret: '67f71af4602195de2450faeb6f8856c0', // 安全字串，應用一個高安全字串
+    proxy: !isDev, // 是否信任反向代理，預設false
+    cookie: options,
+    resave: false,
+    saveUninitialized: false,
+  })
+)
 
 app.use(cors(corsOptions)) // 允許跨域請求
 app.use(express.json({ limit: '150mb' })) // 解析 JSON 格式的請求
@@ -65,6 +114,7 @@ app.use('/api/article_comments', commentsRouter)
 app.use('/api/likes', likesRouter)
 
 app.use('/api/users', users)
+
 
 
 // 設定伺服器監聽埠號
