@@ -52,7 +52,7 @@ export default function RentDetail() {
             <h2>
               {rental.brand || '無資料'} {rental.name || '無資料'}
             </h2>
-            <p className="fee-text h4 ms-2 mt-2">
+            <p className="k-main-text h4 ms-2 mt-2">
               NT$ {rental.fee ? rental.fee.toLocaleString() : '無資料'}/ 天
             </p>
             <RentTabs rental={rental} />
@@ -63,7 +63,7 @@ export default function RentDetail() {
       </main>
 
       {/* ✅ 直接將推薦商品傳遞到 RentRecommend */}
-      <div className="col-lg-12 col-xl-10 mx-auto my-4">
+      <div className="col-lg-12 col-xl-10 mx-auto mt-4">
         <RentRecommend recommendations={recommendations} />
       </div>
     </div>

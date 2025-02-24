@@ -36,9 +36,10 @@ const redirectUrls = {
 // 回應line-pay交易網址到前端，由前端導向line pay付款頁面
 // 資料格式參考 https://enylin.github.io/line-pay-merchant/api-reference/request.html#example
 router.get('/reserve', async (req, res) => {
+
   // 只需要金額，其它都是範例資料
   const amount = req.query.amount
-
+ 
   // 使用目前最新的v3版本的API，以下是資料的說明:
   // https://pay.line.me/jp/developers/apis/onlineApis?locale=zh_TW
 
@@ -80,7 +81,7 @@ router.get('/reserve', async (req, res) => {
     options: { display: { locale: 'zh_TW' } },
     redirectUrls, // 設定重新導向與失敗導向的網址
   }
-
+  
   if (isDev) console.log('訂單資料:', order)
 
   try {
@@ -91,7 +92,6 @@ router.get('/reserve', async (req, res) => {
 
     // 深拷貝一份order資料
     const reservation = JSON.parse(JSON.stringify(order))
-
     reservation.returnCode = linePayResponse.body.returnCode
     reservation.returnMessage = linePayResponse.body.returnMessage
     reservation.transactionId = linePayResponse.body.info.transactionId
@@ -99,10 +99,10 @@ router.get('/reserve', async (req, res) => {
       linePayResponse.body.info.paymentAccessToken
 
     if (isDev) console.log('預計付款記錄(Reservation):', reservation)
-
+      console.log(req.session.reservation);
     // 記錄到session中(這裡是為了安全性，和一個簡單的範例，在實際應用中，應該也需要要存到資料庫妥善保管)
     req.session.reservation = reservation
-
+    
     // 導向到付款頁面， line pay回應後會帶有info.paymentUrl.web為付款網址
     successResponse(res, {
       paymentUrl: linePayResponse.body.info.paymentUrl.web,

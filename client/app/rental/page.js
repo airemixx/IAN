@@ -5,10 +5,12 @@ import './rent-list.scss'
 
 export default function RentalPage() {
   return (
-    <div className="container" style={{ paddingTop: '120px' }}>
+    <div className="container-fluid k-body">
+      <div className="container" style={{ paddingTop: '120px' }}>
         <RentBreadcrumb />
-      <div className="mb-4" >
-        <RentList />
+        <div className="pb-5" >
+          <RentList />
+        </div>
       </div>
     </div>
   )
