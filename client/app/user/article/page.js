@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import styles from './article.module.scss'
+import '../../../styles/article.css'
 import useAuth from '@/hooks/use-auth'
 import Sidenav from '../_components/Sidenav/page'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'  // 在文件頂部引入
+import { useRouter } from 'next/navigation'
 
 // 格式化日期函式，格式：yyyy/mm/dd hh:mm
 function formatDate(dateString) {
@@ -66,9 +67,73 @@ export default function UserPage() {
   }
 
   const handleDelete = (articleId) => {
-    console.log('刪除文章', articleId)
-    // 可呼叫 API 進行刪除，或先進行確認
-  }
+    // 第一階段：初步確認
+    Swal.fire({
+      title: "確定要刪除這篇文章嗎？",
+      text: "刪除後將無法復原。",
+      icon: "warning",
+      showCancelButton: true,
+      // 移除原本的 confirmButtonColor/cancelButtonColor
+      customClass: {
+        confirmButton: "btn-custom-confirm-delete", // 自訂確認按鈕
+        cancelButton: "btn-custom-cancel-delete"      // 自訂取消按鈕
+      },
+      buttonsStyling: false, // 關閉預設按鈕樣式
+      confirmButtonText: "是, 刪除它！",
+      cancelButtonText: "取消"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 第二階段：再次確認，使用自訂樣式
+        const swalWithCustomStyle = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-custom-confirm-delete-2",
+            cancelButton: "btn btn-custom-cancel-delete-2"
+          },
+          buttonsStyling: false
+        });
+
+        swalWithCustomStyle.fire({
+          title: "刪除後將無法復原！",
+          text: "是否確定永久刪除？",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "是的, 刪除！",
+          cancelButtonText: "否, 取消！",
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // 呼叫 API 更新 is_deleted 為1
+            axios.delete(`http://localhost:8000/api/articles/${articleId}`, {
+              headers: {
+                Authorization: `Bearer ${token}` // token須來自 useAuth 狀態
+              }
+            })
+              .then((res) => {
+                swalWithCustomStyle.fire(
+                  "已刪除！",
+                  "該文章已被刪除。",
+                  "success"
+                );
+                // 從目前文章狀態中移除該文章
+                setArticles(prevArticles => prevArticles.filter(a => a.id !== articleId));
+              })
+              .catch((error) => {
+                swalWithCustomStyle.fire(
+                  "失敗",
+                  "刪除文章失敗，請稍後再試。",
+                  "error"
+                );
+              });
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithCustomStyle.fire(
+              "已取消",
+              "該文章依然安全！",
+            );
+          }
+        });
+      }
+    });
+  };
 
   const handleArticleClick = (articleId) => {
     console.log('Navigating to article:', articleId) // 除錯用
@@ -164,7 +229,7 @@ export default function UserPage() {
                             </div>
                             <div
                               className={styles.moreOption}
-                              onClick={() => handleDelete(article.article_id)}
+                              onClick={() => handleDelete(article.id)}
                             >
                               <img
                                 src="/images/article/delete-origin.svg"
