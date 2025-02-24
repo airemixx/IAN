@@ -253,18 +253,18 @@ export default function UserPage() {
                               編輯
                             </div>
                             <div
-                              className={styles.moreOption}
+                              className={styles.moreOptionDelete}
                               onClick={() => handleDelete(article.id)}
                             >
                               <img
                                 src="/images/article/delete-origin.svg"
                                 alt="刪除原圖"
-                                className={styles.iconOriginal}
+                                className={styles.iconOriginalDelete}
                               />
                               <img
                                 src="/images/article/delete-hover.svg"
                                 alt="刪除 hover 圖"
-                                className={styles.iconHover}
+                                className={styles.iconHoverDelete}
                               />
                               刪除
                             </div>
