@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import RentPagination from '../rent-pagination/page'
 import RentTotal from '../rent-total/page'
 import RentOrder from '../rent-order/page'
@@ -18,6 +19,10 @@ export default function RentList() {
   const [itemsPerPage, setItemsPerPage] = useState(12) // 每頁顯示數量
   const [totalPages, setTotalPages] = useState(1) // 總頁數
   const [sorting, setSorting] = useState('') // 排序方式（asc: 價格由低到高, desc: 由高到低）
+  const [shouldAnimate, setShouldAnimate] = useState(false);  // 判斷動畫觸發
+  const router = useRouter(); // ✅ 正確初始化 router
+
+
 
   // 📌 **篩選條件**
   const [filters, setFilters] = useState({
@@ -26,9 +31,28 @@ export default function RentList() {
     brands: [],
   })
 
+  // 上移動畫
+  useEffect(() => {
+    const triggerAnimation = () => {
+      setShouldAnimate(true);
+      setTimeout(() => {
+        setShouldAnimate(false);
+      }, 500); // 動畫時長保持一致
+    };
+
+    const hasAnimated = sessionStorage.getItem('hasAnimated');
+    if (!hasAnimated) {
+      sessionStorage.setItem('hasAnimated', 'true');
+      triggerAnimation();
+    } else {
+      triggerAnimation(); // ✅ 讓路由切換後也能觸發動畫
+    }
+  }, [router]); // ✅ 監聽 router 變化，每次切換路由時觸發動畫
+
   // 📌 **初始化時載入資料**
   useEffect(() => {
     fetchData()
+    setCurrentPage(1) // 每次搜尋或篩選後自動跳回第一頁
   }, [filters, searchQuery])
 
   // 📌 **當 `filteredRentals` 或 `itemsPerPage` 變更時，重新計算 `totalPages`**
@@ -39,7 +63,11 @@ export default function RentList() {
   // 📌 **RWD 視窗大小變更時，調整 `itemsPerPage`**
   useEffect(() => {
     const updateItemsPerPage = () => {
+      // 📌 **計算當前頁面的第一個商品索引**，確保視窗變更後能保持當前商品可見。
+      const indexOfFirstItem = (currentPage - 1) * itemsPerPage
+      // 📌 **根據視窗大小動態設定 `itemsPerPage`**，以適應 RWD 的顯示需求。
       let newItemsPerPage
+
       if (window.innerWidth < 768) {
         newItemsPerPage = 6
       } else if (window.innerWidth < 992) {
@@ -48,12 +76,18 @@ export default function RentList() {
         newItemsPerPage = 12
       }
       setItemsPerPage(newItemsPerPage)
+
+      // 📌 **計算新的頁碼**，根據第一個商品的索引重新定位頁面，避免頁數錯位。
+      const newPage = Math.floor(indexOfFirstItem / newItemsPerPage) + 1
+      setCurrentPage(newPage)
     }
 
     updateItemsPerPage() // ✅ 初始化時立即執行
+    // 📌 **監聽視窗大小變更事件**，在視窗大小變更時自動調整分頁顯示數量。
     window.addEventListener('resize', updateItemsPerPage)
+    // 📌 **清除事件監聽器**，避免組件卸載時潛在的內存洩漏 (memory leak)。
     return () => window.removeEventListener('resize', updateItemsPerPage)
-  }, [])
+  }, [currentPage, itemsPerPage])
 
   // 📌 **從 API 獲取租借商品和標籤**
   const fetchData = async () => {
@@ -111,7 +145,7 @@ export default function RentList() {
   return (
     <div className="row">
       {/* 📌 側邊篩選功能 */}
-      <aside className="col-0 col-md-4 col-lg-3 p-3">
+      <aside className="col-0 col-md-4 col-lg-3 p-3" style={{ marginTop: '35px' }} >
         <hr className="d-none d-md-block" />
         <RentSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <RentHashtag hashtags={hashtags} onHashtagClick={handleHashtagClick} />
@@ -133,7 +167,7 @@ export default function RentList() {
         {/* 📌 商品清單 */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1">
           {visibleItems.map((rental) => (
-            <RentCard key={rental.id} rental={rental} />
+            <RentCard key={rental.id} rental={rental} shouldAnimate={shouldAnimate} />
           ))}
         </div>
 
@@ -142,8 +176,10 @@ export default function RentList() {
           totalItems={filteredRentals.length}
           itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
         />
       </main>
-    </div>
+    </div >
   )
 }
