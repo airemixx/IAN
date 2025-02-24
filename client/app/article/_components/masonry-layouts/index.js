@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './index.module.scss';
 
 export default function MasonryLayouts() {
+  const router = useRouter();
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
@@ -32,15 +34,27 @@ export default function MasonryLayouts() {
   const leftArticles = articles.slice(0, 4);
   const rightArticles = articles.slice(4, 8);
 
+  const handleArticleClick = (articleId) => {
+    router.push(`/article/${articleId}`);
+  };
+
   // renderCard 根據 variant 決定使用小圖或大圖（調整順序由設計決定）
   const renderCard = (article, variant) => (
-    <div className="article-card pt-3" key={article.id}>
+    <div className="article-card pb-3" key={article.id}>
       {variant === 'small' ? (
-        <div className={styles["article-card-2-image"]}>
+        <div
+          className={styles["article-card-2-image"]}
+          onClick={() => handleArticleClick(article.id)}
+          style={{ cursor: 'pointer' }}
+        >
           <img src={article.image_path} alt="" className="w-full h-auto" />
         </div>
       ) : (
-        <div className={styles["article-card-1-image"]}>
+        <div
+          className={styles["article-card-1-image"]}
+          onClick={() => handleArticleClick(article.id)}
+          style={{ cursor: 'pointer' }}
+        >
           <img src={article.image_path} alt="" className="w-full h-auto" />
         </div>
       )}
@@ -48,7 +62,11 @@ export default function MasonryLayouts() {
         <div className={styles["article-card-category"]}>
           <a href="">{article.category_name}</a>
         </div>
-        <h5 className={styles["article-card-title"]}>
+        <h5
+          className={styles["article-card-title"]}
+          onClick={() => handleArticleClick(article.id)}
+          style={{ cursor: 'pointer' }}
+        >
           <a href="">{article.title}</a>
         </h5>
         <div className={styles["article-card-author-date"]}>
@@ -68,8 +86,8 @@ export default function MasonryLayouts() {
   );
 
   return (
-    <div className={`${styles.container} d-flex justify-content-between`}>
-      <div className={`${styles["article-list-card-area"]} d-flex justify-content-center`}>
+    <div className={`${styles.container} d-flex justify-content-between `}>
+      <div className={`${styles["article-list-card-area"]} d-flex justify-content-center `}>
         {/* 左欄：依序排列 小、大、小、大 */}
         <div className="left me-4">
           {leftArticles.map((article, index) => {

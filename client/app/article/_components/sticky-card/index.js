@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './index.module.scss';
 
 export default function StickyCard() {
+  const router = useRouter();
   const [article, setArticle] = useState(null);
 
   useEffect(() => {
@@ -30,10 +32,20 @@ export default function StickyCard() {
     fetchArticle();
   }, []);
 
+  const handleClick = () => {
+    if (article) {
+      router.push(`/article/${article.id}`);
+    }
+  };
+
   if (!article) return null;
 
   return (
-    <div className={styles["card-custom"]}>
+    <div
+      className={styles["card-custom"]}
+      onClick={handleClick}
+      style={{ cursor: 'pointer' }}
+    >
       <img
         src={article.image_path}
         alt="Background"

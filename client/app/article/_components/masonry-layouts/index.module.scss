@@ -5,11 +5,9 @@
   background-color: #7e726700;
 }
 
+
 .article-list-card-area {
   max-width: 700px;
-  padding-top: 0px;
-  margin: 0 auto;
-  /* 移除獨立滾動（讓整頁的 wheel 事件透過 handleWheel 處理區域內滾動），但此區域依然受 .container 的 overflow 控制 */
 }
 .article-card-1-image img {
   max-width: 300px;
