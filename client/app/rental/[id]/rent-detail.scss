@@ -240,7 +240,6 @@
   cursor: pointer;
   border: none;
   background: none;
-  z-index: 99;
   transition: transform 0.2s ease-in-out;
   &:hover {
     transform: scale(1.1);

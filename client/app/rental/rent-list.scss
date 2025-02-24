@@ -25,24 +25,27 @@
     border-color: #143146;
   }
 }
-// 手風琴 背景
-.accordion-button {
-  background-color: #143146 !important;
-  color: #fff !important;
-  border: none !important;
-  box-shadow: none !important;
+.k-filter {
+  // 手風琴 背景
+  .accordion-button {
+    background-color: #143146 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  // 手風琴 收放按鈕
+  .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 5.646a.5.5 0 0 1 .708 0L8 11.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important;
+  }
+  // 手風琴 預設按鈕
+  .accordion-button:not(.collapsed) {
+    background-color: #23425a !important;
+    color: #f6f7f8 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
 }
-// 手風琴 收放按鈕
-.accordion-button::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3E%3Cpath fill-rule='evenodd' d='M1.646 5.646a.5.5 0 0 1 .708 0L8 11.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important;
-}
-// 手風琴 預設按鈕
-.accordion-button:not(.collapsed) {
-  background-color: #23425a !important;
-  color: #f6f7f8 !important;
-  border: none !important;
-  box-shadow: none !important;
-}
+
 // 輸入框
 .form-control:focus {
   border: 1px solid #ced4da;
@@ -124,7 +127,6 @@
   cursor: pointer;
   border: none;
   background: none;
-  z-index: 99;
   transition: transform 0.2s ease-in-out;
   &:hover {
     transform: scale(1.1);
