@@ -20,6 +20,7 @@ export default function NewsPage() {
   const [filters, setFilters] = useState({})
   const { articles, error, loading } = useArticles(filters)
   const [searchTerm, setSearchTerm] = useState('')
+  const [hasSearch, setHasSearch] = useState(false)
 
   // 分頁相關狀態
   const [currentPage, setCurrentPage] = useState(1)
@@ -31,6 +32,11 @@ export default function NewsPage() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
+    // 找到「所有文章」標題元素並滾動到該位置
+    const titleElement = document.querySelector('.y-list-title h2')
+    if (titleElement) {
+      titleElement.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   // 當 URL 的 search 參數改變時，更新 filters
@@ -39,6 +45,10 @@ export default function NewsPage() {
     const categoryQuery = searchParams.get('category')
     const tagQuery = searchParams.get('tag')
     const newFilters = {}
+
+    // 判斷是否有任何搜尋條件
+    const hasAnySearch = !!(searchQuery || categoryQuery || tagQuery)
+    setHasSearch(hasAnySearch)
 
     if (searchQuery) {
       newFilters.search = searchQuery
@@ -120,15 +130,18 @@ export default function NewsPage() {
   return (
     <div>
       <Breadcrumb />
-      {/* <LoopAd /> */}
-      <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
-        <h1>最新消息 News</h1>
-        {/* <Modal /> */}
-      </div>
-      <div className="page-container d-flex justify-content-between">
-        <StickyCard className="Sticky-Card" />
-        <MasonryLayouts />
-      </div>
+      {/* 只在沒有搜尋條件時顯示 */}
+      {!hasSearch && (
+        <>
+          <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
+            <h1>最新消息 News</h1>
+          </div>
+          <div className="page-container d-flex justify-content-between">
+            <StickyCard className="Sticky-Card" />
+            <MasonryLayouts />
+          </div>
+        </>
+      )}
 
       <section className="y-container">
         {/* 搜尋表單 */}
