@@ -12,7 +12,6 @@ import 'aos/dist/aos.css'
 export default function CourseList({ courses }) {
   const [currentPage, setCurrentPage] = useState(1)
   const coursesPerPage = 12
-  const totalPages = Math.ceil(courses.length / coursesPerPage)
   const [popularCourses, setPopularCourses] = useState([])
 
   console.log('`CourseList` 取得的 courses:', courses)
@@ -22,6 +21,11 @@ export default function CourseList({ courses }) {
       console.log('`CourseList` 重新設定分頁為第一頁')
       setCurrentPage(1) // ✅ 確保篩選變更時，分頁回到第一頁
     }
+  }, [courses])
+
+  // ✅ **過濾只顯示 `status = "published"` 的課程**
+  const publishedCourses = useMemo(() => {
+    return courses.filter(course => course.status === "published")
   }, [courses])
 
   // **請求熱門課程**
@@ -34,7 +38,8 @@ export default function CourseList({ courses }) {
         const data = await res.json()
         console.log('取得熱門課程:', data)
 
-        setPopularCourses(data.slice(0, 4))
+        // ✅ 只保留 `status = "published"` 的熱門課程
+        setPopularCourses(data.filter(course => course.status === "published").slice(0, 4))
       } catch (err) {
         console.error('載入熱門課程失敗:', err.message)
       }
@@ -47,18 +52,18 @@ export default function CourseList({ courses }) {
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage
 
   const currentCourses = useMemo(() => {
-    if (!courses || courses.length === 0) return []
-    return courses.slice(
+    if (!publishedCourses || publishedCourses.length === 0) return []
+    return publishedCourses.slice(
       indexOfFirstCourse,
-      Math.min(indexOfLastCourse, courses.length),
+      Math.min(indexOfLastCourse, publishedCourses.length),
     )
-  }, [courses, currentPage])
+  }, [publishedCourses, currentPage])
 
   console.log('渲染時 currentCourses:', currentCourses)
 
   return (
     <section className={`container ${styles['course-list']}`}>
-      {courses.length === 0 && currentCourses.length === 0 ? (
+      {publishedCourses.length === 0 && currentCourses.length === 0 ? (
         <>
           <div className={styles['notfound']}>
             <p>找不到符合條件的課程，試試其他關鍵字吧！</p>
@@ -94,7 +99,7 @@ export default function CourseList({ courses }) {
 
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
+            totalPages={Math.ceil(publishedCourses.length / coursesPerPage)}
             onPageChange={setCurrentPage}
           />
         </>
@@ -115,9 +120,9 @@ export function CourseCard({ course }) {
 
   useEffect(() => {
     AOS.init({
-      duration: 1000, // 動畫持續時間 (毫秒)
-      once: true, // 滾動一次後不會再次觸發動畫
-      offset: 100, // 滾動多少距離開始動畫
+      duration: 1000, 
+      once: true,
+      offset: 100, 
     })
   }, [])
 

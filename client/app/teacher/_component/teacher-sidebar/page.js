@@ -70,7 +70,7 @@ export default function TeacherSidebar() {
                 <FaAddressBook /> 講師資料
               </Link>
             </li>
-            <li className={pathname === '/teacher' ? styles.active : ''}>
+            <li className={pathname === '/teacher'||'/teacher/course' ? styles.active : ''}>
               <Link href="/teacher">
                 <FaChalkboard /> 我的課程
               </Link>
