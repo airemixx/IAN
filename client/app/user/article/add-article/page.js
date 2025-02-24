@@ -74,7 +74,7 @@ export const checkRequiredFields = () => {
 }
 
 export default function AddArticlePage() {
-  const { user } = useAuth()
+  const { user, token } = useAuth()
   const [hasError, setHasError] = useState(false)
   const imageUpdateRef = useRef(null)
   const router = useRouter()
@@ -94,8 +94,6 @@ export default function AddArticlePage() {
         text: '請填寫所有必填欄位',
       })
       return
-    } else {
-      setHasError(false)
     }
 
     try {
@@ -111,12 +109,13 @@ export default function AddArticlePage() {
         el.textContent.replace(/×$/, '')
       )
 
-      const categoryId = categorySelect ? categorySelect.value : '0'
+      const category = categorySelect ? categorySelect.value : null
       const title = titleInput ? titleInput.value.trim() : ''
       const subtitle = subtitleInput ? subtitleInput.value.trim() : ''
-      const imagePath = imagePathInput ? imagePathInput.value.trim() : ''
+      const image_path = imagePathInput ? imagePathInput.value.trim() : ''
 
-      if (imagePath && !imagePath.startsWith('https://')) {
+      // 確保 image_path 格式正確
+      if (image_path && !image_path.startsWith('https://')) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -125,14 +124,24 @@ export default function AddArticlePage() {
         return
       }
 
-      await axios.post('http://localhost:8000/api/articles', {
-        category: categoryId,
-        title,
-        subtitle,
-        content,
-        image_path: imagePath,
-        hashtags,
-      })
+      // 透過 useAuth 取得 token
+      // 假設你從 useAuth hook 已取得 token
+      await axios.post(
+        'http://localhost:8000/api/articles',
+        {
+          category,
+          title,
+          subtitle,
+          content,
+          image_path,
+          hashtags,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // token 來自 useAuth 的狀態
+          },
+        }
+      )
 
       confirmClose()
     } catch (error) {
@@ -143,7 +152,7 @@ export default function AddArticlePage() {
       })
       console.error('Error adding article:', error)
     }
-  }, [confirmClose])
+  }, [confirmClose, token]) // 注意：確保 token 是 useAuth 回傳的一部份
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
