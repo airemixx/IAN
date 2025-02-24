@@ -97,13 +97,14 @@ router.get('/', async (req, res) => {
   }
 })
 
-// 取得最新文章
+// 修改 /latest 路由
 router.get('/latest', cors(corsOptions), async (req, res) => {
   try {
     const [rows] = await pool.query(`
       SELECT a.*, c.name as category_name
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
+      WHERE a.is_deleted = 0
       ORDER BY a.created_at DESC
       LIMIT 4
     `)
@@ -251,7 +252,7 @@ router.post('/related', cors(corsOptions), async (req, res) => {
       SELECT a.*, c.name as category_name
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
-      WHERE 1=1
+      WHERE a.is_deleted = 0
     `
     let params = []
 
@@ -261,7 +262,7 @@ router.post('/related', cors(corsOptions), async (req, res) => {
       params.push(parseInt(articleId, 10))
     }
 
-    // 1. 關鍵字條件
+    // 1. 關鍵字條件：如果有 title 或 content，額外搜尋標題與內文
     if (title || content) {
       query += ` AND (a.title LIKE ? OR a.content LIKE ?)`
       params.push(`%${title}%`)
@@ -276,7 +277,7 @@ router.post('/related', cors(corsOptions), async (req, res) => {
         SELECT a.*, c.name as category_name
         FROM article a
         LEFT JOIN article_category c ON a.category_id = c.id
-        WHERE a.category_id = ?
+        WHERE a.is_deleted = 0 AND a.category_id = ?
       `
       let categoryParams = [categoryId]
 
@@ -297,13 +298,13 @@ router.post('/related', cors(corsOptions), async (req, res) => {
       rows = combinedRows
     }
 
-    // 3. 推送最新文章
+    // 3. 推送最新文章（只挑未刪除的）
     if (rows.length < limit) {
       let latestQuery = `
         SELECT a.*, c.name as category_name
         FROM article a
         LEFT JOIN article_category c ON a.category_id = c.id
-        WHERE a.id != ?
+        WHERE a.is_deleted = 0 AND a.id != ?
         ORDER BY a.created_at DESC
         LIMIT ?
       `
