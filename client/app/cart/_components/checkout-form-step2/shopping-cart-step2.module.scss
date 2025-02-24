@@ -3,6 +3,7 @@
     padding: 22px;
     border-radius: 20px;
     background-color: #fff;
+    height: 500px;
   }
 
   .j-payStep .j-pTitle {
@@ -40,7 +41,7 @@
     color: #FFF;
     font-size: 14px;
   }
-  @media(max-width:1920px) {
+  @media(max-width:1200px) {
     .j-payStep{
       height: auto;
     }
