@@ -12,21 +12,52 @@ import {
 import styles from './teacher-sidebar.module.scss'
 import { useTeachers } from '@/hooks/use-teachers' // ✅ 使用 Context
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 export default function TeacherSidebar() {
   const { teacher, fetchTeacherById } = useTeachers() // ✅ 獲取講師資料
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
+  const router = useRouter()
+  const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null)
 
-  console.log('Current pathname:', pathname)
+  const appKey = 'loginWithToken'
+
+  console.log('🔍 Current pathname:', pathname)
+
   // ✅ 監聽 `teacher` 變化，確保 Sidebar 更新
   useEffect(() => {
-    setMounted(true)
     if (!teacher) {
       fetchTeacherById('me') // ✅ 取得當前登入的講師資料
     }
+    const storedToken = localStorage.getItem(appKey)
+    setToken(storedToken)
   }, [teacher])
+
+  // 🔹 登出處理
+  const handleLogout = async (e) => {
+    e.preventDefault()
+    if (!token) return
+
+    try {
+      const res = await fetch('http://localhost:8000/api/users/logout', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const result = await res.json()
+      if (result.status !== 'success') throw new Error(result.message)
+
+      // 清除 localStorage 與狀態
+      localStorage.removeItem(appKey)
+      setToken(null)
+      setUser(null)
+
+      router.push('/login') // ✅ 跳轉至登入頁面
+    } catch (err) {
+      console.error('❌ 登出失敗:', err)
+      alert(err.message)
+    }
+  }
 
   return (
     <div className="col-md-3 col-lg-2 d-none d-xl-block">
@@ -61,27 +92,34 @@ export default function TeacherSidebar() {
         {/* 📌 控制中心 */}
         <div className={styles['e-control-center']}>
           <ul>
-            <li
-              className={
-                pathname === '/teacher/teacher-edit' ? styles.active : ''
-              }
-            >
+            <li className={pathname === '/teacher/teacher-edit' ? styles.active : ''}>
               <Link href="/teacher/teacher-edit">
                 <FaAddressBook /> 講師資料
               </Link>
             </li>
-            <li className={pathname === '/teacher' ? styles.active : ''}>
+
+            <li
+              className={
+                pathname === '/teacher' ||
+                (pathname.startsWith('/teacher/course') &&
+                  pathname !== '/teacher/course/course-add')
+                  ? styles.active
+                  : ''
+              }
+            >
               <Link href="/teacher">
                 <FaChalkboard /> 我的課程
               </Link>
             </li>
-            <li>
-              <a href="">
+
+            <li className={pathname === '/teacher/course/course-add' ? styles.active : ''}>
+              <Link href="/teacher/course/course-add">
                 <FaPlusSquare /> 新增課程
-              </a>
+              </Link>
             </li>
+
             <li>
-              <a href="">
+              <a href="#">
                 <FaQuestionCircle /> 客服中心
               </a>
             </li>
@@ -89,7 +127,7 @@ export default function TeacherSidebar() {
 
           {/* 📌 登出 */}
           <div className={styles['logout']}>
-            <a href="">
+            <a href="#" onClick={handleLogout}>
               <FaSignOutAlt /> 登出
             </a>
           </div>

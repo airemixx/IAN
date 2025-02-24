@@ -5,15 +5,10 @@ import { useRouter } from "next/navigation";
 export default function CheckoutFormStep2() {
     const router = useRouter();
     const [formData, setFormData] = useState({
-        title: "",
-        lastName: "",
-        firstName: "",
+      
+        name: "",
         address: "",
-        city: "",
-        region: "",
-        postalCode: "",
-        phoneNumber: "",
-        localPhone: "",
+        phone: ""
     });
 
     const [errors, setErrors] = useState({}); // 用來存放錯誤訊息
@@ -55,17 +50,12 @@ export default function CheckoutFormStep2() {
         <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 mt-4 me-lg-0 `}>
             <div className={`${styles['j-payTitle']} mb-3`}>結帳</div>
             <div className={`${styles['buyerData']} mb-4`}>訂購人資料</div>
-            <div className={`${styles['j-buyerInput']} d-flex flex-wrap mb-5`}>
+            <div className={`${styles['j-buyerInput']} d-flex flex-column mb-5`}>
                 {[
-                    { label: "稱謂*", name: "title" },
-                    { label: "姓氏*", name: "lastName" },
-                    { label: "姓名*", name: "firstName" },
-                    { label: "地址欄*", name: "address" },
-                    { label: "城市*", name: "city" },
-                    { label: "地區*", name: "region" },
-                    { label: "郵遞區號*", name: "postalCode" },
-                    { label: "電話號碼*", name: "phoneNumber" },
-                    { label: "本地電話*", name: "localPhone" }
+                   
+                    { label: "姓名*", name: "name" },
+                    { label: "地址*", name: "address" },
+                    { label: "電話號碼*", name: "phone" },
                 ].map((field, index) => (
                     <div key={index} className="d-flex flex-column flex-grow-1 mb-2">
                         <p className="mb-2">{field.label}</p>

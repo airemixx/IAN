@@ -94,6 +94,7 @@ export default function CourseEdit() {
     sale_price: '',
     image_url: '',
     content: '',
+    status: "draft",
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -129,7 +130,7 @@ export default function CourseEdit() {
     }
 
     fetchCourse()
-  }, [courseId])
+  }, [courseId, router])
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -141,41 +142,45 @@ export default function CourseEdit() {
   }
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) {
-      console.log('❌ 沒有選擇任何檔案')
-      return
-    }
-
-    const formData = new FormData()
-    formData.append('upload', file)
-
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("upload", file);
+  
     try {
       const response = await fetch(
-        'http://localhost:8000/api/course-cv-upload',
+        "http://localhost:8000/api/course-cv-upload",
         {
-          method: 'POST',
+          method: "POST",
           body: formData,
         }
-      )
-
-      const contentType = response.headers.get('content-type')
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('❌ API 沒回傳 JSON，可能是 404/500 錯誤')
+      );
+  
+      // 🔹 確保 `Content-Type` 是 `application/json`
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("❌ API 沒回傳 JSON，可能是 404/500 錯誤");
       }
-
-      const data = await response.json()
-      const fullUrl = `http://localhost:8000${data.url}` // ✅ 修正 URL
-
-      console.log('✅ 圖片上傳成功，URL:', fullUrl)
-
-      // **即時更新圖片預覽**
-      setCourse((prev) => ({ ...prev, image_url: fullUrl }))
-      setPreviewImg(fullUrl)
+  
+      // ✅ 解析 JSON
+      const data = await response.json();
+      if (!data.url) {
+        throw new Error("❌ API 回傳無效的圖片 URL");
+      }
+  
+      const imageUrl = `http://localhost:8000${data.url}`;
+      console.log("✅ 圖片上傳成功，URL:", imageUrl);
+  
+      // ✅ 更新圖片預覽
+      setPreviewImg(imageUrl);
+      setCourse((prev) => ({ ...prev, image_url: imageUrl }));
     } catch (error) {
-      console.error('❌ 圖片上傳失敗:', error)
+      console.error("❌ 圖片上傳錯誤:", error);
+      alert(error.message); // 🔴 顯示錯誤訊息
     }
-  }
+  };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -188,40 +193,42 @@ export default function CourseEdit() {
     setCourse((prev) => ({ ...prev, content: data }))
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async (e, status) => {
+    e.preventDefault();
     if (!courseId) {
-      console.error('❌ `courseId` 無效，請確認 URL 是否有 `id`！')
-      return
+      console.error("❌ `courseId` 無效！");
+      return;
     }
-    console.log('🔍 送出的 `courseId`:', courseId)
-    console.log('🔍 送出的資料:', course)
-
+  
+    const apiUrl = `http://localhost:8000/api/courses/${courseId}`;
+    console.log("🚀 發送 `PUT` 請求到:", apiUrl);
+  
     try {
-      const res = await fetch(`http://localhost:8000/api/courses/${courseId}`, {
-        // ✅ 確保正確的 API 路徑
-        method: 'POST',
+      const res = await fetch(apiUrl, {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('loginWithToken')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("loginWithToken")}`,
         },
-        body: JSON.stringify(course),
-      })
-
-      console.log('🔍 API 回應:', res)
-
+        body: JSON.stringify({ ...course, status }),
+      });
+  
+      console.log("🔍 API 回應狀態:", res.status);
+  
       if (!res.ok) {
-        const errorResponse = await res.json()
-        console.error('❌ API 錯誤訊息:', errorResponse)
-        throw new Error('❌ 更新失敗')
+        const errorText = await res.text(); // 讀取錯誤訊息
+        console.error("❌ API 錯誤:", errorText);
+        throw new Error(`❌ API 錯誤: ${res.status}`);
       }
-
-      alert('✅ 課程更新成功！')
+  
+      console.log("✅ 課程更新成功！");
+      router.push("/teacher");
     } catch (error) {
-      console.error('❌ 更新課程失敗:', error)
-      alert('❌ 更新失敗')
+      console.error("❌ 更新課程失敗:", error);
     }
-  }
+  };
+  
+  
 
   if (loading) return <p>⏳ 載入中...</p>
   if (error) return <p className="text-danger">{error}</p>
@@ -354,13 +361,30 @@ export default function CourseEdit() {
 
             {/* 🔹 按鈕區 */}
             <div className={styles['form-actions']}>
-              <button type="submit" className={styles['save-btn']}>
+              {/* 🔹 儲存為草稿 */}
+              <button
+                type="button"
+                className={styles['save-btn']}
+                onClick={(e) => handleSubmit(e, 'draft')}
+              >
                 儲存為草稿
               </button>
-              <button type="submit" className={styles['publish-btn']}>
+
+              {/* 🔹 上架課程 */}
+              <button
+                type="button"
+                className={styles['publish-btn']}
+                onClick={(e) => handleSubmit(e, 'published')}
+              >
                 上架課程
               </button>
-              <button type="button" className={styles['cancel-btn']}>
+
+              {/* 🔹 返回課程管理 */}
+              <button
+                type="button"
+                className={styles['cancel-btn']}
+                onClick={() => router.push('/teacher')}
+              >
                 返回課程列表
               </button>
             </div>

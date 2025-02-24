@@ -4,24 +4,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { isDev, apiURL } from '@/config';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { RotatingLines } from 'react-loader-spinner'
 
 export default function CheckoutFormStep3() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [paymentMethod, setPaymentMethod] = useState("")
     const [loading, setLoading] = useState(true);
-    const [paymentMethod, setPaymentMethod] = useState("");
     const [result, setResult] = useState({ returnCode: '', returnMessage: '' });
     const [addressData, setAddressData] = useState({
         name: "",
         address: "",
-        city: "",
-        region: "",
-        postalCode: "",
         phone: "",
     });
 
     useEffect(() => {
-        const savedData = localStorage.getItem("checkoutAddress");
+        const savedData = localStorage.getItem("buyerData");
         if (savedData) {
             setAddressData(JSON.parse(savedData));
         }
@@ -46,7 +44,7 @@ export default function CheckoutFormStep3() {
             return;
         }
 
-        const addressData = JSON.parse(localStorage.getItem("checkoutAddress")) || {};
+        const addressData = JSON.parse(localStorage.getItem("buyerData")) || {};
         const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
         const cartItems = Object.values(cartData);
         const items = cartItems.map(item => `${item.brand} ${item.model} x${item.quantity}`).join(", ");
@@ -60,34 +58,35 @@ export default function CheckoutFormStep3() {
 
 
     };
+
     const goLinePay = async (amount) => {
         // 先連到node伺服器後端，取得LINE Pay付款網址
         const res = await fetch(
-          `${apiURL}/linePay/reserve?amount=${amount}`,
-          {
-            method: 'GET',
-            // 讓fetch能夠傳送cookie
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          }
+            `${apiURL}/linePay/reserve?amount=${amount}`,
+            {
+                method: 'GET',
+                // 讓fetch能夠傳送cookie
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            }
         )
-    
+
         const resData = await res.json()
-    
+
         console.log(resData)
-    
+
         if (resData.status === 'success') {
-          if (window.confirm('確認要導向至LINE Pay進行付款?')) {
-            //導向至LINE Pay付款頁面
-            window.location.href = resData.data.paymentUrl
-          }
+            if (window.confirm('確認要導向至LINE Pay進行付款?')) {
+                //導向至LINE Pay付款頁面
+                window.location.href = resData.data.paymentUrl
+            }
         } else {
-          toast.error('付款失敗')
+            toast.error('付款失敗')
         }
-      }
+    }
 
     const handleConfirm = async (transactionId) => {
         try {
@@ -102,13 +101,14 @@ export default function CheckoutFormStep3() {
             if (resData.status === "success") {
                 setResult(resData.data);
                 toast.success("付款成功");
+                
             } else {
                 toast.error("付款失敗");
             }
 
             setTimeout(() => {
                 setLoading(false);
-                router.replace("/line-pay");
+                router.replace("/");
             }, 3000);
         } catch (error) {
             console.error("確認交易失敗:", error);
@@ -170,7 +170,7 @@ export default function CheckoutFormStep3() {
                     <span className={styles['j-adDetailtitle']}>送貨地址：</span>
                     <span className={styles['j-adDetailContent']}>
                         {addressData.name} <br />
-                        {addressData.address}, {addressData.city}, {addressData.region} {addressData.postalCode} <br />
+                        {addressData.address} <br />
                         台灣 ({addressData.phone})<br />
                     </span>
                 </div>

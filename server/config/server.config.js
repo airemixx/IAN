@@ -60,8 +60,8 @@ export const serverConfig = {
     development: {
       channelId: '2006947338',
       channelSecret: 'bc50bd359d0368f34ea424f747907490',
-      confirmUrl: 'http://localhost:3000/cart/checkout-form-step3',
-      cancelUrl: 'http://localhost:3000/cart/checkout-form-step3/cancel',
+      confirmUrl: 'http://localhost:3000/cart/cart-step3',
+      cancelUrl: 'http://localhost:3000/cart/cart-success/cancel',
     },
     production: {
       channelId: '',

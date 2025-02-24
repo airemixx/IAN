@@ -53,7 +53,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       {/* 最前頁按鈕 */}
       {totalPages > 5 && (
         <button
-          className={`${styles['page-arrow']} ${styles['hvr-icon-back']}`}
+          className={`${styles['page-arrow']} ${styles['hvr-icon-back']} ${styles['e-button']}`}
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
         >
@@ -63,7 +63,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
 
       {/* 上一頁按鈕 */}
       <button
-        className={`${styles['page-arrow']} ${styles['hvr-icon-back']}`}
+        className={`${styles['page-arrow']} ${styles['hvr-icon-back']} ${styles['e-button']}`}
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
@@ -87,7 +87,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
 
       {/* 下一頁按鈕 */}
       <button
-        className={`${styles['page-arrow']} ${styles['hvr-icon-forward']}`}
+        className={`${styles['page-arrow']} ${styles['hvr-icon-forward']} ${styles['e-button']}`}
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
@@ -97,7 +97,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       {/* 最後頁按鈕 */}
       {totalPages > 5 && (
         <button
-          className={`${styles['page-arrow']} ${styles['hvr-icon-forward']}`}
+          className={`${styles['page-arrow']} ${styles['hvr-icon-forward']} ${styles['e-button']}`}
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
         >

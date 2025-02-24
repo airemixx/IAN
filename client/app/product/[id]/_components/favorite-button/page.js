@@ -21,7 +21,7 @@ export default function FavoriteButton({ productId }) {
           },
         });
 
-        if (!res.ok) throw new Error("無法取得收藏狀態");
+        // if (!res.ok) throw new Error("無法取得收藏狀態");
 
         const data = await res.json();
         setIsFavorite(data.isFavorite);
