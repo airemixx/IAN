@@ -536,7 +536,8 @@ footer-title {
   transform: scale(1.1);
 }
 
-.e-card-img:hover .e-img-overlay {
+.e-card-img:hover .e-img-overlay,
+.course-img:hover .e-img-overlay {
   opacity: 1; /* 顯示遮色片 */
 }
 
@@ -616,6 +617,25 @@ footer-title {
 
 
 /* ckeditor */
+
+/* .ck{
+  border: 1xp solid var(--secondary-color-med) !important;
+} */
+
+.ck-toolbar__separator{
+  border: 1xp solid var(--secondary-color-med) !important;
+}
+
+.ck.ck-toolbar .ck.ck-toolbar__separator{
+  background: var(--white) !important;
+}
+
+.ck-button:hover{
+  border-radius: 50px !important;
+  background-color: var(--secondary-color-lig)!important;
+  color: black;
+}
+
 .ck-editor__editable_inline {
   min-height:650px;
 }
@@ -625,3 +645,4 @@ footer-title {
   font-weight: bold;
   color: var(--primary-color);
 }
+

@@ -159,8 +159,8 @@
 
 :global(.ck.ck-toolbar) {
   border-radius: 20px 20px 0 0 !important; /* ✅ 讓工具列的上方圓角生效 */
+  background-color: var(--secondary-color-med) !important;
 }
-
 
 
 :global(.ck-rounded-corners .ck.ck-editor__main > .ck-editor__editable),

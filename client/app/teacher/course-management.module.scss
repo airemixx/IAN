@@ -1,6 +1,5 @@
 .center-content-container {
   padding: 1rem;
-  
 }
 
 .center-content {
@@ -131,6 +130,7 @@
   object-fit: cover;
   border-radius: 5px;
 }
+
 .table-container thead th img {
   margin-left: 5px;
 }
@@ -181,4 +181,52 @@
   flex-shrink: 0;
   border-radius: 50%;
   background-color: var(--gray--200);
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 5px;
+
+  img {
+    display: block;
+    width: 100%;
+    transition: transform 0.3s ease;
+    border-radius: inherit; 
+  }
+
+  // 🔹 遮色片（預設隱藏）
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); // 半透明黑色遮色片
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  // 🔹 檢視 Icon
+  .view-icon {
+    color: white;
+    font-size: 1rem;
+  }
+
+  // 🔹 Hover 效果
+  &:hover {
+    img {
+      transform: scale(1.1); // 輕微放大圖片
+      border-radius: 5px;
+    }
+
+    .overlay {
+      opacity: 1; // 顯示遮色片
+      border-radius: 5px;
+    }
+  }
 }

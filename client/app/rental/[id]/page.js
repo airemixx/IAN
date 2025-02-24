@@ -5,14 +5,16 @@ import './rent-detail.scss'
 
 export default function RentalPage() {
   return (
-    <div className="container-fluid k-body">
-      <div className="container" style={{ paddingTop: '120px' }}>
-        {/* Breadcrumb */}
-        <RentBreadcrumb />
-        <div className="py-5">
+    <>
+      <div className="container-fluid k-body px-0">
+        <div className="container" style={{ paddingTop: '120px' }}>
+          {/* Breadcrumb */}
+          <RentBreadcrumb />
+        </div>
+        <div className="pt-5">
           <RentDetail />
         </div>
       </div>
-    </div>
+    </>
   )
 }

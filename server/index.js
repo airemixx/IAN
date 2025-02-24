@@ -27,6 +27,7 @@ import linePayRouter from './routes/line-pay-test-only.js'
 import { serverConfig } from './config/server.config.js'
 import courseCtUploadRouter from './routes/courses-ct-upload.js'
 import courseCvUploadRouter from './routes/courses-cv-upload.js'
+import teacherUploadRouter from './routes/teacher-upload.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -105,6 +106,7 @@ app.use('/api/teachers', teachersRouter)
 app.use("/api/auth", authRouter);
 app.use("/api/course-ct-upload", courseCtUploadRouter);
 app.use("/api/course-cv-upload", courseCvUploadRouter);
+app.use("/api/teacher-upload", teacherUploadRouter);
 app.use("/uploads", express.static(path.join(process.cwd(), "/public/uploads")));
 
 app.use('/api/rental', rentalRouter)

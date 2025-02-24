@@ -41,31 +41,36 @@ export default function RentDetail() {
     return <p className="text-center text-danger mt-5">❌ 找不到商品</p>
 
   return (
-    <div className="container">
-      <main>
-        <div className="row">
-          <div className="col-lg-7">
-            <RentPicture images={rental.images} />
-          </div>
+    <>
+      <div className="container pb-5">
+        <main>
+          <div className="row">
+            <div className="col-lg-7">
+              <RentPicture images={rental.images} />
+            </div>
 
-          <div className="col-lg-5">
-            <h2>
-              {rental.brand || '無資料'} {rental.name || '無資料'}
-            </h2>
-            <p className="k-main-text h4 ms-2 mt-2">
-              NT$ {rental.fee ? rental.fee.toLocaleString() : '無資料'}/ 天
-            </p>
-            <RentTabs rental={rental} />
-            <RentHashtag hashtags={rental.hashtags} />
-            <RentReviews rentalId={rental.id} />
+            <div className="col-lg-5">
+              <h2>
+                {rental.brand || '無資料'} {rental.name || '無資料'}
+              </h2>
+              <p className="k-main-text h4 ms-2 mt-2">
+                NT$ {rental.fee ? rental.fee.toLocaleString() : '無資料'}/ 天
+              </p>
+              <RentTabs rental={rental} />
+              <RentHashtag hashtags={rental.hashtags} />
+              <RentReviews rentalId={rental.id} />
+            </div>
+          </div>
+        </main>
+      </div>
+      <div className="container-fluid k-body-2 py-5">
+        {/* ✅ 直接將推薦商品傳遞到 RentRecommend */}
+        <div className="container">
+          <div className="col-lg-12 col-xl-10 mx-auto">
+            <RentRecommend recommendations={recommendations} />
           </div>
         </div>
-      </main>
-
-      {/* ✅ 直接將推薦商品傳遞到 RentRecommend */}
-      <div className="col-lg-12 col-xl-10 mx-auto mt-4">
-        <RentRecommend recommendations={recommendations} />
       </div>
-    </div>
+    </>
   )
 }

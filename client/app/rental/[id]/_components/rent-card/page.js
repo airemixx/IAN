@@ -11,18 +11,18 @@ export default function RentCard({ rental }) {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <div className="col">
+    <div className="col mb-2">
       <div
-        className="k-card position-relative w-100 border rounded-1 overflow-hidden"
+        className="k-card-2 position-relative w-100 border rounded-1 overflow-hidden"
         style={{ cursor: 'pointer' }}
         onClick={() => router.push(`/rental/${rental.id}`)} // ✅ 點擊後導向 [id] 頁面
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="position-absolute top-0 start-0 k-type-bg text-white fw-bold py-1 px-4">
+        <div className="position-absolute top-0 start-0 k-type-bg-2 text-white fw-bold py-1 px-4">
           {rental.category}
         </div>
-        <div className="position-absolute top-0 end-0 k-status-text  fw-bold pt-2 pe-3">
+        <div className="position-absolute top-0 end-0 k-warn-dark-text  fw-bold pt-2 pe-3">
           {rental.status}
         </div>
         <div className="mt-4">

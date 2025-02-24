@@ -151,14 +151,14 @@
       color: #143146 !important;
       border-bottom: 2px solid #23425a !important;
       background-color: transparent !important;
-      transform: translateY(0.5);
+      transform: translateY(-0.5);
     }
   }
   .active {
     color: #23425a !important;
     font-weight: bold;
     border-bottom: 2px solid #23425a !important;
-    transform: translateY(0.5);
+    transform: translateY(-0.5);
     cursor: default;
   }
 }
