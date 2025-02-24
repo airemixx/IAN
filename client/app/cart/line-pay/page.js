@@ -68,7 +68,7 @@ export default function LinePayPage() {
   // 確認交易，處理伺服器通知line pay已確認付款，為必要流程
   const handleConfirm = async (transactionId) => {
     const res = await fetch(
-      `${apiURL}/line-pay-test-only/confirm?transactionId=${transactionId}`,
+      `${apiURL}/linePay/confirm?transactionId=${transactionId}`,
       {
         method: 'GET',
         // 讓fetch能夠傳送cookie

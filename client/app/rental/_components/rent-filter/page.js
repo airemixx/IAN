@@ -82,14 +82,13 @@ export default function RentFilter({ onFilterChange }) {
   }
 
   return (
-    <div className="accordion" id="filterAccordion">
+    <div className="accordion k-filter" id="filterAccordion">
       {['用途篩選', '設備篩選', '品牌篩選'].map((title, index) => (
         <div className="accordion-item" key={index}>
           <h2 className="accordion-header">
             <button
-              className={`accordion-button ${
-                activeSections.includes(index) ? '' : 'collapsed'
-              }`}
+              className={`accordion-button ${activeSections.includes(index) ? '' : 'collapsed'
+                }`}
               type="button"
               onClick={() => toggleAccordion(index)}
             >
@@ -97,9 +96,8 @@ export default function RentFilter({ onFilterChange }) {
             </button>
           </h2>
           <div
-            className={`accordion-collapse collapse ${
-              activeSections.includes(index) ? 'show' : ''
-            }`}
+            className={`accordion-collapse collapse ${activeSections.includes(index) ? 'show' : ''
+              }`}
           >
             <div className="accordion-body">
               {index === 0 &&
