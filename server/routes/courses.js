@@ -1,5 +1,6 @@
 import pool from '../db.js'
 import express from 'express'
+import authenticate from '../middlewares.js'
 
 const router = express.Router()
 
@@ -158,31 +159,74 @@ router.get('/related/:category', async (req, res) => {
   }
 })
 
-// 編輯課程資訊
-router.post("/:id", async (req, res) => {
-  const { id } = req.params;
-  console.log("🔍 收到的 `id`:", id);
-  console.log("🔍 收到的 `body`:", req.body);
 
-  const { title, description, category, original_price, sale_price, image_url, content } = req.body;
+// 更新課程
+router.put("/:id", authenticate, async (req, res) => {
+  const courseId = req.params.id;
+  const userId = req.userId; // 從 `authenticate` middleware 取得
 
   try {
-    const [result] = await pool.execute(
-      "UPDATE courses SET title = ?, description = ?, category = ?, original_price = ?, sale_price = ?, image_url = ?, content = ?, updated_at = NOW() WHERE id = ?",
-      [title, description, category, original_price, sale_price, image_url, content, id]
+    // **檢查課程是否存在**
+    const [existingCourse] = await pool.query(
+      "SELECT id FROM courses WHERE id = ? AND teacher_id = (SELECT id FROM teachers WHERE user_id = ?)",
+      [courseId, userId]
     );
 
-    console.log("🔍 SQL 更新結果:", result);
+    console.log("📌 查詢結果:", existingCourse);
 
-    if (result.affectedRows === 0) {
-      console.log("❌ 找不到課程 ID:", id);
-      return res.status(404).json({ message: "課程不存在" });
+    if (existingCourse.length === 0) {
+      console.log("❌ 找不到課程或無權限:", { courseId, userId });
+      return res.status(404).json({ error: "❌ 找不到該課程或權限不足" });
     }
 
-    res.json({ message: "課程內容更新成功", courseId: id });
+    // **執行更新**
+    const { title, description, status, original_price, sale_price, category, content, image_url } = req.body;
+
+    const sql = `
+      UPDATE courses 
+      SET title = ?, description = ?, status = ?, original_price = ?, sale_price = ?, category = ?, content = ?, image_url = ?
+      WHERE id = ? AND teacher_id = (SELECT id FROM teachers WHERE user_id = ?)
+    `;
+
+    await pool.query(sql, [title, description, status, original_price, sale_price, category, content, image_url, courseId, userId]);
+
+    res.json({ message: "✅ 課程更新成功！" });
   } catch (error) {
     console.error("❌ 更新課程失敗:", error);
-    res.status(500).json({ message: "伺服器錯誤" });
+    res.status(500).json({ error: "無法更新課程" });
+  }
+});
+
+
+// 新增課程資訊
+router.post('/', authenticate, async (req, res) => {
+  const { title, description, category, original_price, sale_price, image_url, content, status } = req.body;
+  const userId = req.userId; // 從 `authenticate` middleware 獲取 userId
+
+  try {
+    // 確認使用者是老師
+    const [teacherRows] = await pool.query(
+      'SELECT id FROM teachers WHERE user_id = ?',
+      [userId]
+    );
+
+    if (teacherRows.length === 0) {
+      return res.status(403).json({ error: '權限不足，非講師帳號' });
+    }
+
+    const teacherId = teacherRows[0].id;
+
+    // 插入新課程
+    const sql = `
+      INSERT INTO courses (title, description, category, original_price, sale_price, image_url, content, status, teacher_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const [result] = await pool.query(sql, [title, description, category, original_price, sale_price, image_url, content, status, teacherId]);
+
+    res.json({ message: '✅ 課程新增成功！', courseId: result.insertId });
+  } catch (error) {
+    console.error('❌ 新增課程失敗:', error);
+    res.status(500).json({ error: '無法新增課程' });
   }
 });
 

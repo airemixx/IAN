@@ -48,15 +48,44 @@ export default function TeacherEdit() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setFormData((prev) => ({ ...prev, image: event.target.result }));
-        setPreviewImg(event.target.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("upload", file);
+
+    try {
+      const response = await fetch("http://localhost:8000/api/teacher-avatar-upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("❌ 圖片上傳失敗");
+
+      const data = await response.json();
+      const imageUrl = `http://localhost:8000${data.url}`;
+
+      console.log("✅ 頭像上傳成功，URL:", imageUrl);
+
+      // **即時更新圖片預覽**
+      setFormData((prev) => ({ ...prev, image: imageUrl }));
+
+      // **更新資料庫內的講師圖片**
+      await fetch("http://localhost:8000/api/teachers/me/avatar", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("loginWithToken")}`,
+        },
+        body: JSON.stringify({ image_url: imageUrl }),
+      });
+
+      toast.success("✅ 頭像更新成功！", { autoClose: 3000 });
+      fetchTeacherById("me"); // ✅ 重新獲取講師資料
+    } catch (error) {
+      console.error("❌ 頭像上傳錯誤:", error);
+      toast.error("❌ 上傳失敗");
     }
   };
 

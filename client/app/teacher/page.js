@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation' // ✅ 用來導向頁面
 import styles from './course-management.module.scss'
-import { FaBars, FaList, FaSearch, FaPlusSquare } from 'react-icons/fa'
+import { FaBars, FaList, FaSearch, FaPlusSquare, FaEye } from 'react-icons/fa'
 import { FiEdit, FiTrash2 } from 'react-icons/fi'
 import Pagination from '../courses/_components/pagination/page'
 import Link from 'next/link'
@@ -72,11 +72,10 @@ export default function CourseManagement() {
     fetchCoursesAndUser()
   }, []) // ✅ 只在元件掛載時執行
 
-  // **確保 `courses` 變更時，重設 `currentPage`**
   useEffect(() => {
     console.log(`📌 目前的 courses:`, courses)
     if (courses.length > 0) {
-      setCurrentPage(1) // ✅ 修正：初始化 `currentPage`
+      setCurrentPage(1)
     }
   }, [courses])
 
@@ -143,10 +142,10 @@ export default function CourseManagement() {
           </div>
 
           <div className={styles['add']}>
-            <a href="#">
+            <Link href="/teacher/course/course-add">
               <FaPlusSquare />
               <p>新增課程</p>
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -176,12 +175,21 @@ export default function CourseManagement() {
                 return (
                   <tr key={course.id}>
                     <td className={styles['course-img']}>
-                      <Link href={`/courses/${course.id}`}>
-                        <img
-                          src={safeImage}
-                          alt={course.title}
-                          className="img-fluid"
-                        />
+                      <Link
+                        href={`/courses/${course.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <div className={styles['image-container']}>
+                          <img
+                            src={safeImage}
+                            alt={course.title}
+                            className="img-fluid"
+                          />
+                          <div className={styles['overlay']}>
+                            <FaEye className={styles['view-icon']} />
+                          </div>
+                        </div>
                       </Link>
                     </td>
                     <td>{course.title}</td>
@@ -214,7 +222,9 @@ export default function CourseManagement() {
                       </div>
                     </td>
                     <td>
-                      <Link href={`/teacher/course/course-edit?id=${course.id}`}>
+                      <Link
+                        href={`/teacher/course/course-edit?id=${course.id}`}
+                      >
                         <button className={styles['edit-btn']}>
                           <FiEdit />
                         </button>
