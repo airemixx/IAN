@@ -28,7 +28,7 @@ export default function PopularTeacher() {
     fetchTeachers()
   }, [])
 
-  // 📌 點擊講師圖片時，請求該講師詳細資料，並顯示彈跳視窗
+  // 📌 點擊講師圖片時，請求該講師詳細資料 ，並顯示彈跳視窗
   const handleTeacherClick = async (teacherId) => {
     try {
       const res = await fetch(`/api/teachers/${teacherId}`)
@@ -42,6 +42,17 @@ export default function PopularTeacher() {
       console.error('❌ 獲取講師資料失敗:', error)
     }
   }
+
+   useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';  // 禁止背景滾動
+    } else {
+      document.body.style.overflow = 'auto';  // 允許滾動
+    }
+    return () => {
+      document.body.style.overflow = 'auto';  // 彈出視窗關閉時恢復滾動
+    };
+  }, [isModalOpen]);
 
   return (
     <section className={styles['popular-teacher']}>

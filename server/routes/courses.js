@@ -110,24 +110,28 @@ router.get('/:id', async (req, res) => {
 
 // ✅ 取得特定課程的所有評論
 router.get('/:id/comments', async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   try {
     const sql = `
       SELECT 
-      cm.*
+        cm.* ,
+        u.name AS user_name, 
+        u.head AS user_head 
       FROM comments cm
-      WHERE cm.course_id = ?
-      ORDER BY cm.created_at DESC;
-    `
+      JOIN users u ON cm.user_id = u.id
+      WHERE cm.course_id = ?  
+      ORDER BY cm.created_at DESC; 
+    `;
 
-    const [comments] = await pool.execute(sql, [id])
+    const [comments] = await pool.execute(sql, [id]);
 
-    res.json(comments)
+    res.json(comments);
   } catch (error) {
-    console.error('❌ 無法獲取課程評論:', error)
-    res.status(500).json({ error: '無法獲取課程評論' })
+    console.error('❌ 無法獲取課程評論:', error);
+    res.status(500).json({ error: '無法獲取課程評論' });
   }
-})
+});
+
 
 // ✅ 取得同分類課程
 router.get('/related/:category', async (req, res) => {

@@ -5,6 +5,7 @@ import { FaGlobe, FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa'
 import TeacherCoursesList from '../../[id]/_components/teacher-courses-list/page'
 
 export default function TeacherInfoModal({ teacher, onClose }) {
+
   return (
     <div className={styles['modal-overlay']} onClick={onClose}>
       <div

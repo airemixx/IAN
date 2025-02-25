@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation' // ✅ 用來導向頁面
+import { useRouter } from 'next/navigation' 
 import styles from './course-management.module.scss'
 import { FaBars, FaList, FaSearch, FaPlusSquare, FaEye } from 'react-icons/fa'
 import { FiEdit, FiTrash2 } from 'react-icons/fi'
@@ -9,11 +9,12 @@ import Pagination from '../courses/_components/pagination/page'
 import Link from 'next/link'
 
 export default function CourseManagement() {
-  const [user, setUser] = useState(null) // ✅ 儲存使用者資訊
-  const [courses, setCourses] = useState([]) // ✅ 儲存課程列表
-  const [loading, setLoading] = useState(true) // ✅ 避免畫面閃爍
+  const [user, setUser] = useState(null) 
+  const [courses, setCourses] = useState([]) 
+  const [loading, setLoading] = useState(true) 
   const [searchTerm, setSearchTerm] = useState('')
-  const [currentPage, setCurrentPage] = useState(1) // ✅ 初始化 `currentPage`
+  const [currentPage, setCurrentPage] = useState(1) 
+  const [authorized, setAuthorized] = useState(false);
 
   const router = useRouter()
 
@@ -23,54 +24,64 @@ export default function CourseManagement() {
   useEffect(() => {
     const fetchCoursesAndUser = async () => {
       try {
-        const token = localStorage.getItem('loginWithToken')
+        const token = localStorage.getItem("loginWithToken");
+        const userRole = localStorage.getItem("userRole"); // ✅ 先從 localStorage 讀取角色
+  
         if (!token) {
-          console.log('沒有 Token，跳轉登入頁面')
-          router.push('/login')
-          return
+          console.log("❌ 沒有 Token，跳轉登入頁面");
+          router.push("/login");
+          return;
         }
-
-        console.log('正在發送請求到 /api/teachers/me/courses...')
-        const res = await fetch(
-          'http://localhost:8000/api/teachers/me/courses',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
-
-        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`)
-
-        const data = await res.json()
-        console.log('✅ 取得課程與使用者資訊:', data)
-
-        if (!data.length || data[0].level === undefined) {
-          console.error('❌ API 回傳錯誤，沒有 level 值', data)
-          router.push('/dashboard') // 🔹 避免進入錯誤頁面
-          return
+  
+        if (userRole !== "teacher") {
+          console.warn("⚠️ 非教師帳號，無權進入此頁面");
+          router.push("/user");
+          return;
         }
-
+  
+        console.log("✅ 取得課程資訊...");
+        const res = await fetch("http://localhost:8000/api/teachers/me/courses", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        if (res.status === 403) {
+          console.warn("⚠️ 403 Forbidden，無權限");
+          router.push("/user");
+          return;
+        }
+  
+        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`);
+  
+        const data = await res.json();
+        console.log("✅ 取得課程與使用者資訊:", data);
+  
         setUser({
           name: data[0].teacher_name,
           level: data[0].level,
           email: data[0].mail,
-        })
-
-        setCourses(data) // 設定課程資料
-
-        if (data[0].level !== 1) {
-          console.warn('⚠️ 只有老師能進入此頁面，跳轉到 /dashboard')
-          router.push('/dashboard')
-        }
+        });
+  
+        setCourses(data);
+        setAuthorized(true); // ✅ 確認用戶有權限
       } catch (error) {
-        console.error('❌ 獲取使用者與課程失敗:', error)
-        router.push('/login')
+        console.error("❌ 獲取使用者與課程失敗:", error);
+        router.push("/login");
       } finally {
-        setLoading(false) // ✅ 確保 UI 只有在加載完成後才渲染
+        setLoading(false); // ✅ 確保 UI 在加載完成後才渲染
       }
-    }
+    };
+  
+    fetchCoursesAndUser();
+  }, []);
+  
+  // ✅ 如果還在 loading，顯示載入中
+  if (loading) return <p>⏳ 正在驗證您的身份...</p>;
+  
+  // ✅ 如果沒有權限，直接返回 null，不渲染畫面
+  if (!authorized) return null;
+  
 
-    fetchCoursesAndUser()
-  }, []) // ✅ 只在元件掛載時執行
+  
 
   useEffect(() => {
     console.log(`📌 目前的 courses:`, courses)

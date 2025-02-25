@@ -108,7 +108,7 @@ export default function TeacherInfo({ teacherId }) {
         </div>
       </div>
 
-      {/* 彈出視窗 */}
+      {/* 彈出視窗  */}
       {isModalOpen && selectedTeacher && (
         <div className={styles['modal-overlay']} onClick={() => setIsModalOpen(false)}>
           <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
