@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from "react";
 
-
 const FavoriteContext = createContext();
 
 
@@ -20,7 +19,6 @@ export function FavoriteProvider({ children }) {
     </FavoriteContext.Provider>
   );
 }
-
 
 export function useFavorite() {
   return useContext(FavoriteContext);
