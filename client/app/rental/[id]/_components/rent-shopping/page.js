@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { Howl } from 'howler'
 
-
 export default function RentShopping({ rental }) {
   // 日期相關的狀態
   const [startDate, setStartDate] = useState('') // 選擇的開始日期
