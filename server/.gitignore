@@ -59,3 +59,5 @@ yarn.lock
 #ian
 course-seed.js
 teacher-seed.js
+
+/sessions
