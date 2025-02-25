@@ -382,10 +382,10 @@ export default function UserPage(props) {
         const result = await response.json();
 
         if (result.status === 'success') {
-          setLatestAddress(address); // ✅ 更新最新的地址
-          Swal.fire('成功', '住址已添加', 'success');
-        } else {
-          Swal.fire('錯誤', result.message || '無法添加住址', 'error');
+          setAddresses((prevAddresses) => [...prevAddresses, result.data]); // ✅ **直接更新狀態**
+        Swal.fire('成功', '住址已添加', 'success');
+      } else {
+        Swal.fire('錯誤', result.message || '無法添加住址', 'error');
         }
       } catch (error) {
         Swal.fire('錯誤', '伺服器錯誤，請稍後再試', 'error');

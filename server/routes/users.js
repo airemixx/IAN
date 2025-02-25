@@ -266,48 +266,91 @@ router.get('/addresses/me', checkToken, async (req, res) => {
 
 
 // **編輯地址**
-router.put('/addresses/:id', (req, res) => {
-  const { id } = req.params;
-  const { name, address } = req.body;
+router.put('/addresses/:id', checkToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { address } = req.body;
+    const user_id = req.decoded.id; // ✅ 確保 JWT 解析出 user_id
 
-  const addressIndex = addresses.findIndex((a) => a.id == id);
-  if (addressIndex === -1) {
-    return res.status(404).json({
+    if (!address) {
+      return res.status(400).json({
+        status: 'error',
+        message: '請提供地址',
+      });
+    }
+
+    // 🔍 檢查該地址是否存在，且屬於當前用戶
+    const [existingAddress] = await db.execute(
+      `SELECT * FROM addresses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    if (existingAddress.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: '找不到該地址，或您無權修改此地址',
+      });
+    }
+
+    // ✅ 更新地址
+    await db.execute(
+      `UPDATE addresses SET address = ?, updated_at = NOW() WHERE id = ? AND user_id = ?`,
+      [address, id, user_id]
+    );
+
+    res.status(200).json({
+      status: 'success',
+      message: '地址更新成功',
+      data: { id, address },
+    });
+  } catch (error) {
+    console.error('❌ 更新地址失敗:', error);
+    res.status(500).json({
       status: 'error',
-      message: '找不到該地址',
+      message: '無法更新地址，請稍後再試',
     });
   }
-
-  // 更新地址
-  if (name) addresses[addressIndex].name = name;
-  if (address) addresses[addressIndex].address = address;
-
-  res.status(200).json({
-    status: 'success',
-    data: addresses[addressIndex],
-  });
 });
 
-// **刪除地址**
-router.delete('/addresses/:id', (req, res) => {
-  const { id } = req.params;
+//刪除住址
+router.delete('/addresses/:id', checkToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user_id = req.decoded.id; // ✅ 確保 JWT 解析出 user_id
 
-  const addressIndex = addresses.findIndex((a) => a.id == id);
-  if (addressIndex === -1) {
-    return res.status(404).json({
+    // 🔍 檢查該地址是否存在，且屬於當前用戶
+    const [existingAddress] = await db.execute(
+      `SELECT * FROM addresses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    if (existingAddress.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: '找不到該地址，或您無權刪除此地址',
+      });
+    }
+
+    // ✅ 從資料庫刪除地址
+    await db.execute(
+      `DELETE FROM addresses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    res.status(200).json({
+      status: 'success',
+      message: '地址刪除成功',
+      data: { id },
+    });
+  } catch (error) {
+    console.error('❌ 刪除地址失敗:', error);
+    res.status(500).json({
       status: 'error',
-      message: '找不到該地址',
+      message: '無法刪除地址，請稍後再試',
     });
   }
-
-  // 刪除地址
-  const deletedAddress = addresses.splice(addressIndex, 1);
-
-  res.status(200).json({
-    status: 'success',
-    data: deletedAddress[0],
-  });
 });
+
 //address--/
 
 
