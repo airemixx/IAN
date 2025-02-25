@@ -2,21 +2,44 @@
 
 import styles from "./price-summary.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
 
 export default function CheckoutFormStep1({ slItem }) {
   const [price, setPrice] = useState(0);
-  const deliverPrice = 150;
   const router = useRouter(); // 取得 Next.js router
+  const [show, setShow] = useState(false);
+  const [checkState, setCheckState] = useState(false)
+  const [cpName, setCpName] = useState("") 
+  const handleClose = () => {
+    setCheckState(false)
+    setShow(false)
+  };
   
+  async function handleCheck() {
+    setCheckState(!checkState)
+    if(!checkState){
+      setCheckState(true)
+      setShow(true)
+      const resData = await fetch("/api/coupon",{
+        method:"GET",
+      })
+      const res = await resData.json()
+      console.log(res);
+    }
+  }
+  function handsumbit(){
+    setShow(false)
+    setCpName("asdadasdasdasd")
+  }
   // 計算 totalPrice
   useEffect(() => {
-    
+
     if (slItem && Array.isArray(slItem)) {
       const itemPrice =
-        slItem.reduce((acc, item) => acc + ((item.price *item.quantity) || 0), 0) +
-        deliverPrice;
+        slItem.reduce((acc, item) => acc + ((item.price * item.quantity) || 0), 0)
       setPrice(itemPrice);
     }
   }, [slItem]); // 只有當 slItem 變更時才更新 price
@@ -24,7 +47,7 @@ export default function CheckoutFormStep1({ slItem }) {
   function handleClick() {
     if (slItem && slItem.length > 0) {
       localStorage.setItem("cartItems", JSON.stringify(slItem));
-  
+      
       // 確保數據已寫入後再跳轉
       setTimeout(() => {
         router.push("/cart/cart-step2");
@@ -39,26 +62,37 @@ export default function CheckoutFormStep1({ slItem }) {
       <div className={`${styles["j-pCount"]} border-bottom mb-3 d-flex flex-column gap-2`}>
         <div className={`${styles["j-pTitle"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>摘要</div>
         <div className={`${styles["j-ifCouponUse"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
-          <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
-          <label className="form-check-label" htmlFor="flexCheckDefault">
-            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={25} viewBox="0 0 24 25" fill="none">
+          <input className="form-check-input" type="checkbox" id="flexCheck" onChange={handleCheck} checked={checkState}/>
+          <label className="form-check-label" htmlFor="flexCheck">
+            {/* <svg xmlns="http://www.w3.org/2000/svg" width={24} height={25} viewBox="0 0 24 25" fill="none">
               <circle cx={12} cy="12.5" r={11} stroke="#003150" strokeWidth={2} />
               <circle cx={12} cy="12.5" r="7.5" fill="#003150" />
-            </svg>
+            </svg> */}
             是否使用優惠券
           </label>
         </div>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handsumbit}>
+              ok
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* <!-- Modal --> */}
+
         <div className={`${styles["couponName"]} d-flex flex-column ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
-          <span>課程95折優惠券</span>
-          <span>相機1500折價券</span>
+        {cpName}
         </div>
         <div className={`${styles["subTotalBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["subTotal"]}>小計</div>
           <div className={styles["subPrice"]}>NT${price}</div>
-        </div>
-        <div className={`${styles["freightBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
-          <div className={styles["freight"]}>運費</div>
-          <div className={styles["freightPrice"]}>NT${deliverPrice}</div>
         </div>
         <div className={`${styles["totalPriceBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["total"]}>總額</div>
