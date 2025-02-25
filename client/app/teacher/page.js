@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation' // ✅ 用來導向頁面
+import { useRouter } from 'next/navigation'
 import styles from './course-management.module.scss'
 import { FaBars, FaList, FaSearch, FaPlusSquare, FaEye } from 'react-icons/fa'
 import { FiEdit, FiTrash2 } from 'react-icons/fi'
@@ -9,11 +9,11 @@ import Pagination from '../courses/_components/pagination/page'
 import Link from 'next/link'
 
 export default function CourseManagement() {
-  const [user, setUser] = useState(null) // ✅ 儲存使用者資訊
-  const [courses, setCourses] = useState([]) // ✅ 儲存課程列表
-  const [loading, setLoading] = useState(true) // ✅ 避免畫面閃爍
+  const [user, setUser] = useState(null)
+  const [courses, setCourses] = useState([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [currentPage, setCurrentPage] = useState(1) // ✅ 初始化 `currentPage`
+  const [currentPage, setCurrentPage] = useState(1)
 
   const router = useRouter()
 
@@ -31,21 +31,18 @@ export default function CourseManagement() {
         }
 
         console.log('正在發送請求到 /api/teachers/me/courses...')
-        const res = await fetch(
-          'http://localhost:8000/api/teachers/me/courses',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
+        const res = await fetch('http://localhost:8000/api/teachers/me/courses', {
+          headers: { Authorization: `Bearer ${token}` }, // ✅ 修正 Authorization 格式
+        })
 
-        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`)
+        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`) // ✅ 修正模板字串
 
         const data = await res.json()
         console.log('✅ 取得課程與使用者資訊:', data)
 
-        if (!data.length || data[0].level === undefined) {
+        if (!data.length || data[0]?.level === undefined) { // ✅ 修正 data[0]?.level 以防錯誤
           console.error('❌ API 回傳錯誤，沒有 level 值', data)
-          router.push('/dashboard') // 🔹 避免進入錯誤頁面
+          router.push('/dashboard') // 避免進入錯誤頁面
           return
         }
 
@@ -65,15 +62,15 @@ export default function CourseManagement() {
         console.error('❌ 獲取使用者與課程失敗:', error)
         router.push('/login')
       } finally {
-        setLoading(false) // ✅ 確保 UI 只有在加載完成後才渲染
+        setLoading(false)
       }
     }
 
     fetchCoursesAndUser()
-  }, []) // ✅ 只在元件掛載時執行
+  }, [])
 
   useEffect(() => {
-    console.log(`📌 目前的 courses:`, courses)
+    console.log('📌 目前的 courses:', courses)
     if (courses.length > 0) {
       setCurrentPage(1)
     }
@@ -85,22 +82,14 @@ export default function CourseManagement() {
       course.title.includes(searchTerm) || course.category.includes(searchTerm)
   )
 
-  // **如果 `filteredCourses` 為空，不計算分頁**
-  const totalPages =
-    filteredCourses.length > 0
-      ? Math.ceil(filteredCourses.length / coursesPerPage)
-      : 1
+  const totalPages = filteredCourses.length > 0 ? Math.ceil(filteredCourses.length / coursesPerPage) : 1
   const indexOfLastCourse = currentPage * coursesPerPage
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage
-  const currentCourses = filteredCourses.slice(
-    indexOfFirstCourse,
-    indexOfLastCourse
-  )
+  const currentCourses = filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse)
 
-  console.log(`📌 當前顯示的課程列表:`, currentCourses)
-  console.log(`📌 當前頁碼:`, currentPage, ` / 總頁數:`, totalPages)
+  console.log('📌 當前顯示的課程列表:', currentCourses)
+  console.log('📌 當前頁碼:', currentPage, ' / 總頁數:', totalPages)
 
-  // **等待使用者載入完成，避免閃爍**
   if (loading) return <p>⏳ 載入中...</p>
 
   return (

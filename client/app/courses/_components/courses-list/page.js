@@ -8,6 +8,7 @@ import FavoriteButton from '../favorite-button/page'
 import Pagination from '../pagination/page.js'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import 'hover.css'
 
 export default function CourseList({ courses }) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -134,7 +135,7 @@ export function CourseCard({ course }) {
         href={`/courses/${course.id}`}
         className={styles['course-card-link']}
       >
-        <div className={`${styles['course-card']} mb-md-5 mb-4`}>
+        <div className={`${styles['course-card']} mb-md-5 mb-4 hvr-float`}>
           <div className="e-card-img">
             <img src={safeImage} alt={course.title} className="img-fluid" />
             <div className="e-img-overlay"></div>

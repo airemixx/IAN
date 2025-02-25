@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import styles from './course-rating.module.scss'
 import CourseComment from '../course-comment/page'
 import StarRating from '@/app/courses/_components/star-rating/page'
@@ -12,6 +12,8 @@ export default function CourseRating() {
   const [averageRating, setAverageRating] = useState(0)
   const [loading, setLoading] = useState(true)
   const [showAllComments, setShowAllComments] = useState(false)
+  const modalContentRef = useRef(null)
+  const [scrollToCommentId, setScrollToCommentId] = useState(null)
 
   useEffect(() => {
     if (!id) return
@@ -46,16 +48,70 @@ export default function CourseRating() {
     fetchComments()
   }, [id])
 
-  // ✅ 先定義 `ratingCounts` 再計算 `ratingPercentages`
+  // 在 CourseRating 組件中
+
+  useEffect(() => {
+    if (showAllComments && scrollToCommentId !== null) {
+      console.log('🔍 設定 scrollToCommentId:', scrollToCommentId)
+
+      const tryScroll = (attempts = 0) => {
+        setTimeout(() => {
+          const modalContent = modalContentRef.current
+          const targetComment = document.getElementById(
+            `comment-${scrollToCommentId}`
+          )
+
+          console.log(`🔍 嘗試滾動到 ID: comment-${scrollToCommentId}`)
+
+          if (modalContent && targetComment) {
+            const rect = targetComment.getBoundingClientRect()
+            const scrollToPosition =
+              modalContent.scrollTop + rect.top - modalContent.clientHeight / 3
+
+            console.log(`📌 計算的滾動位置: ${scrollToPosition}`)
+
+            modalContent.scrollTo({
+              top: scrollToPosition,
+              behavior: 'smooth',
+            })
+
+            console.log(
+              `✅ 滾動後 modalContent.scrollTop:`,
+              modalContent.scrollTop
+            )
+          } else if (attempts < 5) {
+            console.warn(`⚠️ 找不到評論，嘗試重新滾動 #${attempts + 1}`)
+            tryScroll(attempts + 1)
+          } else {
+            console.error(`❌ 最多嘗試 5 次，仍然找不到評論`)
+          }
+        }, 300 * (attempts + 1))
+      }
+
+      tryScroll()
+    }
+  }, [showAllComments, scrollToCommentId])
+
+  //  先定義 `ratingCounts` 再計算 `ratingPercentages`
   const ratingCounts = [5, 4, 3, 2, 1].map(
     (star) =>
-      comments.filter((comment) => Math.round(comment.rating) === star).length,
+      comments.filter((comment) => Math.round(comment.rating) === star).length
   )
 
   const totalReviews = comments.length || 1 // 避免除以 0
   const ratingPercentages = ratingCounts.map(
-    (count) => (count / totalReviews) * 100,
+    (count) => (count / totalReviews) * 100
   )
+
+  const handleOverlayClick = (e) => {
+    if (
+      modalContentRef.current &&
+      !modalContentRef.current.contains(e.target)
+    ) {
+      setShowAllComments(false)
+      setScrollToCommentId(null)
+    }
+  }
 
   return (
     <section className={styles['course-rating-container']} id="course-rating">
@@ -108,9 +164,20 @@ export default function CourseRating() {
       <div className="row g-3">
         {comments.slice(0, 4).map((comment, index) => (
           <CourseComment
-            key={index}
-            {...comment}
-            onShowAllComments={() => setShowAllComments(true)}
+            key={comment.id}
+            isModal={false}
+            commentId={comment.id}
+            name={comment.user_name}
+            date={comment.created_at}
+            rating={comment.rating}
+            title={comment.title || '無標題'}
+            content={comment.content}
+            imgSrc={comment.user_head || '/images/default-avatar.jpg'}
+            onShowAllComments={(id) => {
+              console.log('🔍 設定 scrollToCommentId:', id) // ✅ 檢查正確 `id`
+              setScrollToCommentId(id)
+              setShowAllComments(true)
+            }}
           />
         ))}
       </div>
@@ -126,18 +193,33 @@ export default function CourseRating() {
 
       {/* 彈出視窗 - 顯示所有評論 */}
       {showAllComments && (
-        <div className={styles['modal-overlay']}>
+        <div className={styles['modal-overlay']} onClick={handleOverlayClick}>
           <div className={styles['modal']}>
             <button
               className={styles['close-btn']}
-              onClick={() => setShowAllComments(false)}
+              onClick={() => {
+                setShowAllComments(false)
+                setScrollToCommentId(null)
+              }}
             >
               ✖
             </button>
+
             <h2>所有評論</h2>
-            <div className={styles['modal-content']}>
+            <div className={styles['modal-content']} ref={modalContentRef}>
               {comments.map((comment, index) => (
-                <CourseComment key={index} {...comment} isModal={true} />
+                <CourseComment
+                  key={comment.id} // 使用 comment.id 而非 index
+                  commentId={comment.id} // 添加這一行，確保每個評論有正確的 ID
+                  name={comment.user_name}
+                  date={comment.created_at}
+                  rating={comment.rating}
+                  title={comment.title || '無標題'}
+                  content={comment.content}
+                  imgSrc={comment.user_head || '/images/default-avatar.jpg'}
+                  isModal={true}
+                  id={`comment-${comment.id}`}
+                />
               ))}
             </div>
           </div>

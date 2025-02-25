@@ -111,10 +111,10 @@ export default function FavoriteButtonG({ courseId, className }) {
   return (
     <button
       onClick={handleFavoriteClick}
-      className={`${styles['favorite-btn']} hvr-icon-pulse ${className || ''}`}
+      className={`${styles['favorite-btn']} ${className || ''}`}
     >
       {isFavorite ? (
-        <FaHeart size={18} className={styles['favorite-icon']} />
+        <FaHeart size={18} className={`styles['favorite-icon'] `} />
       ) : (
         <FaRegHeart size={18} className={styles['favorite-icon']} />
       )}

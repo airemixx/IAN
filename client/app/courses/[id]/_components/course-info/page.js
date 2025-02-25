@@ -5,6 +5,7 @@ import styles from './course-info.module.scss'
 import FavoriteButtonG from '../favorite-button-g/page'
 import { toast } from 'react-toastify'
 
+
 export default function CourseInfo({ course }) {
   const [cart, setCart] = useState([])
 
@@ -189,7 +190,6 @@ export default function CourseInfo({ course }) {
                   <img
                     src="/images/icon/cart-btn.svg"
                     alt=""
-                    className="hvr-icon"
                   />
                   <p>加入購物車</p>
                 </button>

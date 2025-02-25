@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react'
 import styles from './popular-teacher.module.scss'
 import { FaArrowRight } from 'react-icons/fa6'
 import TeacherInfoModal from '../teacher-info-modal/page'
+import "hover.css"
 
 export default function PopularTeacher() {
-  const [topTeachers, setTopTeachers] = useState([]) // ✅ 儲存熱門講師
-  const [isModalOpen, setIsModalOpen] = useState(false) // ✅ 控制彈跳視窗
-  const [selectedTeacher, setSelectedTeacher] = useState(null) // ✅ 確保變數存在
+  const [topTeachers, setTopTeachers] = useState([]) 
+  const [isModalOpen, setIsModalOpen] = useState(false) 
+  const [selectedTeacher, setSelectedTeacher] = useState(null) 
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -28,7 +29,7 @@ export default function PopularTeacher() {
     fetchTeachers()
   }, [])
 
-  // 📌 點擊講師圖片時，請求該講師詳細資料，並顯示彈跳視窗
+  // 📌 點擊講師圖片時，請求該講師詳細資料 ，並顯示彈跳視窗
   const handleTeacherClick = async (teacherId) => {
     try {
       const res = await fetch(`/api/teachers/${teacherId}`)
@@ -42,6 +43,17 @@ export default function PopularTeacher() {
       console.error('❌ 獲取講師資料失敗:', error)
     }
   }
+
+   useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';  // 禁止背景滾動
+    } else {
+      document.body.style.overflow = 'auto';  // 允許滾動
+    }
+    return () => {
+      document.body.style.overflow = 'auto';  // 彈出視窗關閉時恢復滾動
+    };
+  }, [isModalOpen]);
 
   return (
     <section className={styles['popular-teacher']}>
