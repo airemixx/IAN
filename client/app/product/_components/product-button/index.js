@@ -39,14 +39,16 @@ export default function CompareButton({ product, isHovered }) {
           icon: "success",
           title: "成功加入比較清單！",
           text: `${product.name} 已加入比較！`,
-          // imageUrl: product.image_url,
-          // imageWidth: 350,
-          // imageHeight: 300,
-          // imageAlt: product.name,
           timer: 1500,
           showConfirmButton: false,
           customClass: {
             popup: styles.sweetAlertPopup,
+          },
+          willOpen: () => {
+            document.body.style.overflow = "hidden"; // 禁止滾動
+          },
+          didClose: () => {
+            document.body.style.overflow = "auto"; // 恢復滾動
           },
         });
       }

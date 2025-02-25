@@ -52,18 +52,17 @@
 @media (max-width: 391px) {
   .productInfo {
     max-width: 100%;
+    position: relative;
 
     .brand {
       position: absolute;
-      top: 90px;
-      left: 10px;
+      top: -410px;
       text-align: left;
     }
 
     .productTitle {
       position: absolute;
-      top: 130px;
-      left: 10px;
+      top: -380px;
       text-align: left;
     }
 
