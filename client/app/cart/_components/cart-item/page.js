@@ -100,7 +100,7 @@ export default function CartItem({ id, itemData, page }) {
                 <button className={`${styles['j-decrease']} btn pb-0 ps-2 pt-0`}
                   onClick={handleClickDec}>-</button>
               </div> : ''}
-              <p className={`${styles['j-price']} me-3 `}>價格: {price}$</p>
+              <p className={`${styles['j-price']} me-3 `}>價格: {price}元</p>
             </div>
             {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
               <button className="btn" onClick={handleDeleteItem}>

@@ -8,26 +8,40 @@ import CartItem from '../_components/cart-item/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
 import { useEffect, useState, useRef } from 'react'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 
 export default function cartPageOne() {
+  const router = useRouter()
+  const token = localStorage.getItem('loginWithToken')
+  if (!token) {
+    
+    setTimeout(() => {
+      router.push('/login')
+    },2000)
+    return 
+  }
+
   useEffect(() => {
     require('bootstrap/dist/js/bootstrap.bundle.min.js')
   }, [])
+
   let cartStorage = JSON.parse(localStorage.getItem("cart")) || [];
   let rentStorage = JSON.parse(localStorage.getItem("rent_cart")) || [];
 
+  let lessionStorage = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+
   const cartProduct = []
   const cartRent = []
+  const cartLession = []
 
   Object.values(cartStorage).map((v, i) => {
     cartProduct.push({
       type: 'product',
       id: i,
-      catgory_id: v.id,
+      product_id: v.id,
       image: v.image_url,
       brand: v.brand_name,
-      model: v.name,
+      name: v.name,
       price: v.price,
       quantity: v.quantity,
       specs: [
@@ -48,7 +62,8 @@ export default function cartPageOne() {
     cartRent.push({
       type:'rent',
       id: i,
-      catgory_id: v.rentalId,
+      brand: v.brand,
+      product_id: v.rentalId,
       image: v.image,
       name: v.name,
       price: v.fee,
@@ -58,26 +73,18 @@ export default function cartPageOne() {
     })
   })
 
-  const cartLession = [
-    // {
-    //   type: 'lession',
-    //   id: 1,
-    //   image: '/images/shopping-cart-image/lesson1.png',
-    //   title: '旅行攝影：按下快門，用攝影書寫故事',
-    //   instructor: '食癮，拾影',
-    //   rating: '4.2',
-    //   price: 'NT$ 2,180',
-    // },
-    // {
-    //   type: 'lession',
-    //   id: 2,
-    //   image: '/images/shopping-cart-image/lesson1.png',
-    //   title: '旅行攝影：按下快門，用攝影書寫故事',
-    //   instructor: '食癮，拾影',
-    //   rating: '4.2',
-    //   price: 'NT$ 2,180',
-    // },
-  ]
+  Object.values(lessionStorage).map((v, i) => {
+    cartLession.push({
+      type:'lession',
+      id: i,
+      product_id: v.id,
+      image: v.image,
+      name: v.title,
+      price: v.price,
+      quantity: v.quantity,
+    })
+  })
+ 
 
   const [checkAll, setCheckAll] = useState(false)
   const [checkedItems, setCheckedItems] = useState({})
@@ -119,9 +126,9 @@ export default function cartPageOne() {
     setSelectedItems(newSelects)
     setCheckAll(newSelects.length === allItems.length)
   }
-  let isCartEmpty;
-  if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0) {
-    isCartEmpty = false;
+  let isCartEmpty = false;
+  if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0 ) {
+    isCartEmpty = true;
   }
 
   return (
@@ -168,7 +175,7 @@ export default function cartPageOne() {
                 <div className="mt-2 mb-5">
                   {cartLession.length != 0 ? <h3 className="j-cartTitle mb-0 ps-3 pt-2 pb-2">課程</h3> : ''}
                   {cartLession.map((lession, index) => {
-                    const lessonIndex = index + cartproduct.length
+                    const lessonIndex = index + cartProduct.length
                     return (
                       <div
                         className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : ""}`}
@@ -185,7 +192,7 @@ export default function cartPageOne() {
                           htmlFor={`lessonItem-${index}`}
                           className="ms-2 d-flex flex-grow-1"
                         >
-                          <LessonItem key={index} lessionitem={lession} />
+                          <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} page={1}/>
                         </label>
                       </div>
                     )
