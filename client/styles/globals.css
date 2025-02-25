@@ -597,6 +597,17 @@ footer-title {
 }
 
 /*  錯誤類型 Toast */
+
+.Toastify__toast--warning {
+  background: var(--secondary-color-med) !important; 
+  color: var(--primary-color) !important;
+  box-shadow: var(--box-shadow);
+}
+
+.Toastify__toast--warning svg {
+  fill: var(--primary-color) !important;
+}
+
 .Toastify__toast--error {
   background: var(--warning-color) !important; 
   color: var(--white) !important;

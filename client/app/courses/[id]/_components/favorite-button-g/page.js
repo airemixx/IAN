@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { FaRegHeart, FaHeart } from 'react-icons/fa6'
 import { toast } from 'react-toastify'
@@ -58,7 +60,7 @@ export default function FavoriteButtonG({ courseId, className }) {
     e.stopPropagation()
 
     if (!token) {
-      toast.warn('請先登入才能收藏課程！', {
+      toast.warn('請先登入，即可收藏課程！', {
         position: 'top-right',
         autoClose: 3000,
       })
@@ -105,6 +107,7 @@ export default function FavoriteButtonG({ courseId, className }) {
     }
   }
 
+  // ✅ **這是唯一的 return**
   return (
     <button
       onClick={handleFavoriteClick}
@@ -119,17 +122,3 @@ export default function FavoriteButtonG({ courseId, className }) {
     </button>
   )
 }
-
-return (
-  <button
-    onClick={handleFavoriteClick}
-    className={`${styles['favorite-btn']} hvr-icon-pulse ${className || ''}`}
-  >
-    {isFavorite ? (
-      <FaHeart size={18} className={styles['favorite-icon']} />
-    ) : (
-      <FaRegHeart size={18} className={styles['favorite-icon']} />
-    )}
-    <p>收藏課程</p>
-  </button>
-)
