@@ -44,10 +44,9 @@ export default function CheckoutFormStep3() {
             return;
         }
 
-        const addressData = JSON.parse(localStorage.getItem("buyerData")) || {};
         const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
         const cartItems = Object.values(cartData);
-        const items = cartItems.map(item => `${item.brand} ${item.model} x${item.quantity}`).join(", ");
+        const items = cartItems.map(item => `${item.brand || ''} ${item.name} x${item.quantity}`).join(", ");
         const amount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
         if (paymentMethod === "linePay") {
@@ -101,6 +100,33 @@ export default function CheckoutFormStep3() {
             if (resData.status === "success") {
                 setResult(resData.data);
                 toast.success("付款成功");
+                try {
+                    // 取得網址參數
+                    const orderData = {
+                      buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
+                      cartItems:  JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
+                      date: new Date().toString()
+                    };
+            
+                    console.log("送出訂單資料:", orderData);
+            
+                    const response = await fetch('/api/orders', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(orderData),
+                    });
+            
+                    if (response.status == 200) {
+                      console.log('訂單已成功存入資料庫');
+                      // localStorage.removeItem('cart')
+                      // localStorage.removeItem('cartItems')
+                      // localStorage.removeItem('buyerData')
+                    } else {
+                      console.error('存入失敗:', await response.text());
+                    }
+                  } catch (error) {
+                    console.error('存入訂單時發生錯誤:', error);
+                  }
                 
             } else {
                 toast.error("付款失敗");

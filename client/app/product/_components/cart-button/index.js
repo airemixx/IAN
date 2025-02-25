@@ -44,7 +44,11 @@ export default function CartButton({ product }) {
       timer: 1500,
       toast: true,
       position: 'top-end',
-    })
+      customClass: {
+        popup: styles.swalPopupAdjust
+      }
+    });
+
   }
 
   return (

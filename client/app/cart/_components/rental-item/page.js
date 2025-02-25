@@ -2,8 +2,8 @@
 import styles from "./rental-item.module.scss";
 
 export default function RentItem({rentalitem, id, length, page}) {
-    const {image, brand, name, start, end} = rentalitem
-    id = id -length
+    const {image, brand, name, start, end, price} = rentalitem
+    id = id - length
     function handleDeleteItem() {
         const confirmDelete = window.confirm("是否要從購物車刪除該商品？");
         if (confirmDelete) {
@@ -32,11 +32,12 @@ export default function RentItem({rentalitem, id, length, page}) {
                     <div className={`${styles['j-rentImg']} m-2 d-flex justify-content-center `}>
                         <img src={`/${image}.png`} className="object-fit-contain" />
                     </div>
-                    <div className={`${styles['j-rentCameraBrand']} d-flex flex-column align-items-center mb-3`}>
-                        <span className={`${styles['j-rtText']}`}>{brand}</span>
+                    <div className={`${styles['j-rentCameraBrand']} d-flex justify-content-center mb-3`}>
+                        <span className={`me-2 ${styles['j-rtText']}`}>{brand}</span>
                         <span className={`${styles['j-rtText']}`}>{name}</span>
                     </div>
                     <div className="d-flex flex-column align-items-center testSize">
+                    <span className={`${styles['j-rtText']} mb-2`}>價格: {price}元</span>
                         <span className={`${styles['j-rtText']} mb-2`}>租賃日期: {start}</span>
                         <span className={`${styles['j-rentDeadLine']}`}>到期日: {end}</span>
                     </div>
