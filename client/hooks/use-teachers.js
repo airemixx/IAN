@@ -1,42 +1,26 @@
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useEffect } from "react";
 
-
-// 創建 Context
 const TeacherContext = createContext();
 
-// 提供者組件
 export const TeacherProvider = ({ children }) => {
-  const [teachers, setTeachers] = useState([]); // 所有老師
-  const [teacher, setTeacher] = useState(null); // 單筆老師資料
+  const [teachers, setTeachers] = useState([]);
+  const [teacher, setTeacher] = useState(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); // ✅ 用於重導向
+  const router = useRouter();
 
-  // ✅ 取得所有老師（包含 Token）
   const fetchAllTeachers = async () => {
     setLoading(true);
-    const token = localStorage.getItem("loginWithToken");
-    if (!token) {
-      console.error("❌ Token 不存在，請先登入");
-      router.push("/login"); // ✅ 自動導向登入頁面
-      return;
-    }
+    const token = typeof window !== "undefined" ? localStorage.getItem("loginWithToken") : null;
 
     try {
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
       const res = await fetch("http://localhost:8000/api/teachers", {
         method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers,
       });
-
-      if (res.status === 401) {
-        console.error("❌ 未授權，請重新登入");
-        localStorage.removeItem("loginWithToken"); // ✅ 清除過期 Token
-        router.push("/login"); // ✅ 跳轉到登入頁面
-        return;
-      }
 
       const data = await res.json();
       setTeachers(data);
@@ -47,31 +31,18 @@ export const TeacherProvider = ({ children }) => {
     }
   };
 
-  // ✅ 取得單筆老師資料（支援 `me`）
   const fetchTeacherById = async (teacherId) => {
     setLoading(true);
-    const token = localStorage.getItem("loginWithToken");
-    if (!token) {
-      console.error("❌ Token 不存在，請先登入");
-      router.push("/login"); // ✅ 導向登入頁面
-      return;
-    }
+    const token = typeof window !== "undefined" ? localStorage.getItem("loginWithToken") : null;
 
     try {
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
       const res = await fetch(`http://localhost:8000/api/teachers/${teacherId}`, {
         method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers,
       });
-
-      if (res.status === 401) {
-        console.error("❌ 未授權，請重新登入");
-        localStorage.removeItem("loginWithToken"); // ✅ 清除過期 Token
-        router.push("/login"); // ✅ 導向登入頁面
-        return;
-      }
 
       const data = await res.json();
       setTeacher(data);
@@ -83,7 +54,9 @@ export const TeacherProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchAllTeachers(); // ✅ 頁面載入時獲取所有老師
+    if (typeof window !== "undefined") {
+      fetchAllTeachers();
+    }
   }, []);
 
   return (
@@ -93,7 +66,6 @@ export const TeacherProvider = ({ children }) => {
   );
 };
 
-// ✅ 自訂 Hook，確保 `useTeachers` 只能在 `TeacherProvider` 內使用
 export const useTeachers = () => {
   const context = useContext(TeacherContext);
   if (!context) {

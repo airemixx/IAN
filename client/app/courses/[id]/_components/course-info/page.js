@@ -86,7 +86,7 @@ export default function CourseInfo({ course }) {
                   />
                   <p>加入購物車</p>
                 </button>
-                <FavoriteButtonG />
+                <FavoriteButtonG courseId={course.id} />
               </div>
             </div>
           </div>
