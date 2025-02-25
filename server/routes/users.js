@@ -183,6 +183,135 @@ router.post("/", upload.single("avatar"), async (req, res) => {
   }
 });
 
+//address
+router.post('/addresses', checkToken , async (req, res) => {
+  // 此處假設 JWT 已經在前面的中間件中解析，並將解碼的用戶資訊附加到了 req.user 上
+  const user_id = req.decoded.id;
+
+  const { address } = req.body;
+
+  // 驗證必填欄位
+  if (!address) {
+    return res.status(400).json({
+      status: 'error',
+      message: '請提供地址',
+    });
+  }
+
+  try {
+    // 將地址插入到資料庫
+    const [result] = await db.execute(
+      `INSERT INTO addresses (user_id, address, created_at) VALUES (?, ?, ?)`,
+      [user_id, address, new Date()]
+    );
+
+    const newAddress = {
+      id: result.insertId,
+      user_id,
+      address,
+      created_at: new Date(),
+    };
+
+    res.status(201).json({
+      status: 'success',
+      data: newAddress,
+    });
+  } catch (error) {
+    console.error('無法新增地址:', error);
+    res.status(500).json({
+      status: 'error',
+      message: '無法新增地址，請稍後再試。',
+    });
+  }
+});
+
+// **取得所有地址**
+router.get('/addresses/me', checkToken, async (req, res) => {
+  try {
+    const user_id = req.decoded.id; // ✅ 直接使用 JWT 解析的 `id`
+    console.log("🔹 取得用戶 ID:", user_id); // 確保 `user_id` 有值
+
+    if (!user_id) {
+      return res.status(401).json({
+        status: 'error',
+        message: '無法識別用戶，請重新登入',
+      });
+    }
+
+    // ✅ 查詢資料庫，獲取該用戶的所有住址，按 `created_at` 降序排列
+    const [rows] = await db.execute(
+      'SELECT id, address, created_at FROM addresses WHERE user_id = ? ORDER BY created_at DESC',
+      [user_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: '該用戶沒有地址紀錄',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: rows, // ✅ 返回所有住址
+    });
+  } catch (error) {
+    console.error('❌ 獲取所有住址失敗:', error);
+    res.status(500).json({
+      status: 'error',
+      message: '無法獲取所有住址，請稍後再試',
+    });
+  }
+});
+
+
+// **編輯地址**
+router.put('/addresses/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, address } = req.body;
+
+  const addressIndex = addresses.findIndex((a) => a.id == id);
+  if (addressIndex === -1) {
+    return res.status(404).json({
+      status: 'error',
+      message: '找不到該地址',
+    });
+  }
+
+  // 更新地址
+  if (name) addresses[addressIndex].name = name;
+  if (address) addresses[addressIndex].address = address;
+
+  res.status(200).json({
+    status: 'success',
+    data: addresses[addressIndex],
+  });
+});
+
+// **刪除地址**
+router.delete('/addresses/:id', (req, res) => {
+  const { id } = req.params;
+
+  const addressIndex = addresses.findIndex((a) => a.id == id);
+  if (addressIndex === -1) {
+    return res.status(404).json({
+      status: 'error',
+      message: '找不到該地址',
+    });
+  }
+
+  // 刪除地址
+  const deletedAddress = addresses.splice(addressIndex, 1);
+
+  res.status(200).json({
+    status: 'success',
+    data: deletedAddress[0],
+  });
+});
+//address--/
+
+
+
 router.put("/:account", checkToken, upload.none(), async (req, res) => {
   const { account } = req.params;
   console.log(account);
@@ -441,6 +570,7 @@ function checkToken(req, res, next) {
       message: "驗證資料失效, 請重新登入",
     })
     req.decoded = decoded;
+    console.log(req.decoded)
     next();
   });
 }
