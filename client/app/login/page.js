@@ -54,9 +54,9 @@ export default function UserPage() {
       if (userData.level === 1) {
         router.push("/teacher"); // 講師跳轉至課程管理中心
       } else if (userData.level === 2) {
-        router.push("/admin"); // 管理員跳轉至管理中心
+        router.push("/user/article"); // 編輯跳轉至文章管理中心
       } else {
-        router.push("/user"); // 其他使用者導回主頁
+        router.push("/"); // 其他使用者導回主頁
       }
     } catch (err) {
       console.error(err);

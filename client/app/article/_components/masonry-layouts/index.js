@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './index.module.scss';
+import Link from 'next/link';
 
 export default function MasonryLayouts() {
   const router = useRouter();
@@ -67,7 +68,9 @@ export default function MasonryLayouts() {
           onClick={() => handleArticleClick(article.id)}
           style={{ cursor: 'pointer' }}
         >
-          <a href="">{article.title}</a>
+          <Link href={`/article/${article.id}`}>
+            {article.title}
+          </Link>
         </h5>
         <div className={styles["article-card-author-date"]}>
           <p className={styles["author-date-1"]}>
