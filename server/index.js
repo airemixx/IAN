@@ -17,17 +17,18 @@ import teachersRouter from './routes/teachers.js'
 import authRouter from "./routes/auth.js";
 import productRoutes from './routes/product.js'
 import rentalRouter from './routes//rental.js'
-import ecpayRouter from './routes/ecpay-test-only.js'
+import ecpayRouter from './routes/ecpay.js'
 import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
 import likesRouter from './routes/likes.js'
 import users from './routes/users.js'
 import ordersRouter from './routes/orders.js'
-import linePayRouter from './routes/line-pay-test-only.js'
+import linePayRouter from './routes/linePay.js'
 import { serverConfig } from './config/server.config.js'
 import courseCtUploadRouter from './routes/courses-ct-upload.js'
 import courseCvUploadRouter from './routes/courses-cv-upload.js'
 import teacherUploadRouter from './routes/teacher-upload.js'
+import couponRouter from './routes/coupon.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -111,6 +112,7 @@ app.use("/uploads", express.static(path.join(process.cwd(), "/public/uploads")))
 
 app.use('/api/rental', rentalRouter)
 
+app.use('/api/coupon', couponRouter)
 app.use('/api/ecpay', ecpayRouter)
 app.use('/api/linePay', linePayRouter)
 app.use('/api/orders', ordersRouter)
