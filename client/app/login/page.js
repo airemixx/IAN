@@ -1,68 +1,68 @@
-"use client";
-import Link from "next/link";
-import styles from "./login.module.scss";
-import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { useRouter } from "next/navigation";
+'use client'
+import Link from 'next/link'
+import styles from './login.module.scss'
+import React, { useState, useEffect } from 'react'
+import { jwtDecode } from 'jwt-decode'
+import { useRouter } from 'next/navigation'
 
 export default function UserPage() {
-  const router = useRouter();
-  const appKey = "loginWithToken";
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
-  const [account, setAccount] = useState("");
-  const [password, setPassword] = useState("");
+  const router = useRouter()
+  const appKey = 'loginWithToken'
+  const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null)
+  const [account, setAccount] = useState('')
+  const [password, setPassword] = useState('')
 
   // 檢查是否已登入
   useEffect(() => {
-    const savedToken = localStorage.getItem(appKey);
+    const savedToken = localStorage.getItem(appKey)
     if (savedToken) {
       try {
-        const decodedUser = jwtDecode(savedToken);
-        setToken(savedToken);
-        setUser(decodedUser);
-        router.push("/user");
+        const decodedUser = jwtDecode(savedToken)
+        setToken(savedToken)
+        setUser(decodedUser)
+        router.push('/user')
       } catch (error) {
-        console.error("Token 解碼失敗", error);
-        localStorage.removeItem(appKey);
+        console.error('Token 解碼失敗', error)
+        localStorage.removeItem(appKey)
       }
     }
-  }, []);
+  }, [])
 
   // 登入處理，根據 level 導向不同頁面
   const handleLogin = async (e) => {
-    e.preventDefault();
-    const API = "http://localhost:8000/api/users/login";
+    e.preventDefault()
+    const API = 'http://localhost:8000/api/users/login'
 
     try {
       const res = await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ account, password }),
-      });
+      })
 
-      const result = await res.json();
-      if (result.status !== "success") throw new Error(result.message);
+      const result = await res.json()
+      if (result.status !== 'success') throw new Error(result.message)
 
-      const newToken = result.data.token;
-      localStorage.setItem(appKey, newToken);
-      const userData = jwtDecode(newToken); 
-      setToken(newToken);
-      setUser(userData);
+      const newToken = result.data.token
+      localStorage.setItem(appKey, newToken)
+      const userData = jwtDecode(newToken)
+      setToken(newToken)
+      setUser(userData)
 
       // 根據 level 跳轉不同頁面
       if (userData.level === 1) {
-        router.push("/teacher"); // 講師跳轉至課程管理中心
+        router.push('/teacher') // 講師跳轉至課程管理中心
       } else if (userData.level === 2) {
-        router.push("/user/article"); // 編輯跳轉至文章管理中心
+        router.push('/user/article') // 編輯跳轉至文章管理中心
       } else {
-        router.push("/"); // 其他使用者導回主頁
+        router.push('/') // 其他使用者導回主頁
       }
     } catch (err) {
-      console.error(err);
-      alert(err.message);
+      console.error(err)
+      alert(err.message)
     }
-  };
+  }
 
   return (
     <main className="container">
@@ -70,7 +70,9 @@ export default function UserPage() {
         <div className="container">
           <div className="mb-5 text-center">
             <h3 className={styles.parent}>客戶登入</h3>
-            <h6 className={styles.parent}>登入您的映相坊帳戶，享受所有個人化功能。</h6>
+            <h6 className={styles.parent}>
+              登入您的映相坊帳戶，享受所有個人化功能。
+            </h6>
           </div>
 
           <div className={`row justify-content-center ${styles.marginTop}`}>
@@ -90,7 +92,9 @@ export default function UserPage() {
                 </div>
                 <div className={styles.box1}>
                   <Link href="/login/register">
-                    <button className={`${styles.buttonBox} ${styles.marginTop33}`}>
+                    <button
+                      className={`${styles.buttonBox} ${styles.marginTop33}`}
+                    >
                       建立帳戶
                     </button>
                   </Link>
@@ -127,7 +131,10 @@ export default function UserPage() {
                   />
                 </div>
                 <div className={`${styles.box1} mb-2`}>
-                  <button type="submit" className={`${styles.buttonBox} ${styles.start}`}>
+                  <button
+                    type="submit"
+                    className={`${styles.buttonBox} ${styles.start}`}
+                  >
                     登入
                   </button>
                 </div>
@@ -137,5 +144,5 @@ export default function UserPage() {
         </div>
       </section>
     </main>
-  );
+  )
 }

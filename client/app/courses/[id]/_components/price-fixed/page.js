@@ -155,7 +155,7 @@ export default function PriceFixed({ course }) {
         <button className={styles['buy-btn']} onClick={handleBuyNow}>+ 立即購買</button>
         <div className={styles['shopping-btn-flex']}>
           <button className={`${styles['cart-btn']} hvr-icon-pulse`} onClick={handleAddToCart}>
-            <img src="/images/icon/cart-btn.svg" alt="" className="hvr-icon" />
+            <img src="/images/icon/cart-btn.svg" alt="加入購物車" />
             <p>加入購物車</p>
           </button>
           <FavoriteButtonG className={styles['favorite-btn']} courseId={course.id}  />

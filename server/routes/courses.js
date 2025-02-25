@@ -280,7 +280,7 @@ router.get('/collection/:courseId', authenticate, async (req, res) => {
       const userId = req.userId; // ✅ 取得 `user_id`
       const { courseId } = req.params; // ✅ 取得 `course_id`
 
-      console.log(`✅ 取得用戶 ${userId} 的收藏狀態，課程 ID: ${courseId}`);
+      // console.log(` 取得用戶 ${userId} 的收藏狀態，課程 ID: ${courseId}`);
 
       // 查詢該用戶是否收藏了該課程
       const [result] = await pool.query(
@@ -337,7 +337,6 @@ router.delete('/collection/:courseId', authenticate, async (req, res) => {
     const { courseId } = req.params;
     const userId = req.user.id;
 
-    console.log("🔍 接收到刪除請求 - userId:", userId, "courseId:", courseId);
 
     // 檢查 `courseId` 是否有效
     if (!courseId) {

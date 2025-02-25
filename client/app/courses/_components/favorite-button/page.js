@@ -107,8 +107,8 @@ export default function FavoriteButton({ courseId }) {
   
 
   return (
-    <button onClick={handleFavoriteClick} className="e-favorite-icon">
-      {isFavorite ? <FaHeart size={18} color="white" /> : <FaRegHeart size={18} color="white" />}
+    <button onClick={handleFavoriteClick} className="e-favorite-icon hvr-back-pulse">
+      {isFavorite ? <FaHeart size={18} color="white" className="hvr-icon"/> : <FaRegHeart size={18} color="white" />}
     </button>
   );
 }

@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react'
 import styles from './popular-teacher.module.scss'
 import { FaArrowRight } from 'react-icons/fa6'
 import TeacherInfoModal from '../teacher-info-modal/page'
+import "hover.css"
 
 export default function PopularTeacher() {
-  const [topTeachers, setTopTeachers] = useState([]) // ✅ 儲存熱門講師
-  const [isModalOpen, setIsModalOpen] = useState(false) // ✅ 控制彈跳視窗
-  const [selectedTeacher, setSelectedTeacher] = useState(null) // ✅ 確保變數存在
+  const [topTeachers, setTopTeachers] = useState([]) 
+  const [isModalOpen, setIsModalOpen] = useState(false) 
+  const [selectedTeacher, setSelectedTeacher] = useState(null) 
 
   useEffect(() => {
     const fetchTeachers = async () => {

@@ -3,16 +3,19 @@
 import styles from './teacher-info-modal.module.scss'
 import { FaGlobe, FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa'
 import TeacherCoursesList from '../../[id]/_components/teacher-courses-list/page'
+import 'hover.css'
 
 export default function TeacherInfoModal({ teacher, onClose }) {
-
   return (
     <div className={styles['modal-overlay']} onClick={onClose}>
       <div
         className={styles['modal-content']}
         onClick={(e) => e.stopPropagation()}
       >
-        <button className={styles['close-btn']} onClick={onClose}>
+        <button
+          className={`${styles['close-btn']} hvr-grow-rotate`}
+          onClick={onClose}
+        >
           ✖
         </button>
 
@@ -36,7 +39,7 @@ export default function TeacherInfoModal({ teacher, onClose }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <FaGlobe />
+                    <FaGlobe className="hvr-icon" />
                   </a>
                 )}
                 {teacher.facebook && (
