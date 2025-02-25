@@ -19,7 +19,7 @@ const corsOptions = {
 const router = Router()
 router.use(cors(corsOptions))
 
-// 取得所有文章或篩選文章
+// 取得所有文章（僅撈出尚未刪除的文章）
 router.get('/', async (req, res) => {
   const { year, month, category, search, tag, user_id } = req.query
 
@@ -43,12 +43,12 @@ router.get('/', async (req, res) => {
     JOIN users u ON a.user_id = u.id
   `
 
-  const conditions = []
-  // 前三個參數對應 CASE 判斷
+  // 一律只撈出 is_deleted 為 0 的文章
+  const conditions = ['a.is_deleted = 0'];
   const queryParams = [
-    tag || '',            // CASE WHEN t.tag_name = ?
-    `%${search || ''}%`,  // WHEN a.title LIKE ?
-    `%${search || ''}%`,  // WHEN a.content LIKE ?
+    tag || '',              // CASE WHEN t.tag_name = ?
+    `%${search || ''}%`,    // WHEN a.title LIKE ?
+    `%${search || ''}%`,    // WHEN a.content LIKE ?
   ]
 
   if (year) {
@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
     conditions.push('a.user_id = ?')
     queryParams.push(user_id)
   }
-  // 改用搜尋條件 (非 tag 時) 搜尋 tag、標題、內文
+  // 當 search 但非 tag 搜尋時，額外搜尋標題與內文
   if (search && !tag) {
     conditions.push('(t.tag_name LIKE ? OR a.title LIKE ? OR a.content LIKE ?)')
     queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`)
@@ -77,7 +77,6 @@ router.get('/', async (req, res) => {
     query += ' WHERE ' + conditions.join(' AND ')
   }
 
-  // 如果是點擊 tag 搜尋，則在 HAVING 判斷該文章是否含該 tag，但保留所有 tag
   if (tag) {
     query += ' GROUP BY a.id HAVING FIND_IN_SET(?, tags)'
     queryParams.push(tag)
@@ -98,13 +97,14 @@ router.get('/', async (req, res) => {
   }
 })
 
-// 取得最新文章
+// 修改 /latest 路由
 router.get('/latest', cors(corsOptions), async (req, res) => {
   try {
     const [rows] = await pool.query(`
       SELECT a.*, c.name as category_name
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
+      WHERE a.is_deleted = 0
       ORDER BY a.created_at DESC
       LIMIT 4
     `)
@@ -252,7 +252,7 @@ router.post('/related', cors(corsOptions), async (req, res) => {
       SELECT a.*, c.name as category_name
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
-      WHERE 1=1
+      WHERE a.is_deleted = 0
     `
     let params = []
 
@@ -262,7 +262,7 @@ router.post('/related', cors(corsOptions), async (req, res) => {
       params.push(parseInt(articleId, 10))
     }
 
-    // 1. 關鍵字條件
+    // 1. 關鍵字條件：如果有 title 或 content，額外搜尋標題與內文
     if (title || content) {
       query += ` AND (a.title LIKE ? OR a.content LIKE ?)`
       params.push(`%${title}%`)
@@ -277,7 +277,7 @@ router.post('/related', cors(corsOptions), async (req, res) => {
         SELECT a.*, c.name as category_name
         FROM article a
         LEFT JOIN article_category c ON a.category_id = c.id
-        WHERE a.category_id = ?
+        WHERE a.is_deleted = 0 AND a.category_id = ?
       `
       let categoryParams = [categoryId]
 
@@ -298,13 +298,13 @@ router.post('/related', cors(corsOptions), async (req, res) => {
       rows = combinedRows
     }
 
-    // 3. 推送最新文章
+    // 3. 推送最新文章（只挑未刪除的）
     if (rows.length < limit) {
       let latestQuery = `
         SELECT a.*, c.name as category_name
         FROM article a
         LEFT JOIN article_category c ON a.category_id = c.id
-        WHERE a.id != ?
+        WHERE a.is_deleted = 0 AND a.id != ?
         ORDER BY a.created_at DESC
         LIMIT ?
       `
@@ -565,21 +565,29 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// 刪除指定文章
-router.delete('/:id', async (req, res) => {
+// 刪除指定文章（軟刪除：將 is_deleted 更新為 1）
+router.delete('/:id', checkToken, async (req, res) => {
+  const articleId = req.params.id;
   try {
-    //此為初步測試 實際的新增邏輯請根據需求補上，例如取得 req.body 資料
+    const [result] = await pool.query(
+      "UPDATE article SET is_deleted = 1, update_time = NOW() WHERE id = ?",
+      [articleId]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ status: "error", message: "文章不存在" });
+    }
     res.status(200).json({
-      status: 'success',
-      message: `刪除文章ID: ${req.params.id}成功`,
-    })
+      status: "success",
+      message: `刪除文章ID: ${articleId} 成功`
+    });
   } catch (err) {
+    console.error('刪除文章錯誤:', err);
     res.status(500).json({
-      status: 'error',
-      message: err.message ? err.message : '刪除文章失敗~',
-    })
+      status: "error",
+      message: err.message || "刪除文章失敗"
+    });
   }
-})
+});
 
 router.delete('/:articleId/tags/:tagId', async (req, res) => {
   const { articleId, tagId } = req.params;

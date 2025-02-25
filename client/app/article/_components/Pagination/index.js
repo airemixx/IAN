@@ -11,7 +11,7 @@ import styles from './index.module.scss' // 使用 article 的樣式
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default function Pagination({
-  currentPage = 1,
+  currentPage = 1, // 這裡預設為1
   totalPages = 1,
   onPageChange = () => { },
 }) {
@@ -68,7 +68,7 @@ export default function Pagination({
 
       {/* 上一頁按鈕 */}
       <button
-        className={styles['page-link']}
+        className={styles['page-link-prev']}
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
@@ -79,12 +79,12 @@ export default function Pagination({
       <ul className={`${styles['y-pagination-css-ul']} pagination`}> {/* 使用 article 的樣式 */}
         {generatePageNumbers().map((page) => (
           <li
-            key={`page-${page}`} // 使用唯一的 key
-            className={`page-item ${currentPage === page ? 'active' : ''}`}
+            key={page}
+            className={`page-item ${currentPage === page ? styles.active : ''}`}
           >
             <button
               type="button"
-              className={styles['page-link']}
+              className={`${styles['page-link']} ${currentPage === page ? styles.active : ''}`}
               onClick={() => onPageChange(page)}
             >
               {page}
@@ -95,7 +95,7 @@ export default function Pagination({
 
       {/* 下一頁按鈕 */}
       <button
-        className={styles['page-link']}
+        className={styles['page-link-next']}
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >

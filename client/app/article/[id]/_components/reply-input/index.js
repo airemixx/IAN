@@ -2,6 +2,9 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import useAuth from '@/hooks/use-auth'
+import Swal from 'sweetalert2'
 import { GiphyFetch } from '@giphy/js-fetch-api'
 import { Grid } from '@giphy/react-components'
 import styles from './index.module.scss'
@@ -45,6 +48,9 @@ class ErrorBoundary extends React.Component {
 
 // 主組件
 export default function ReplyInput({ articleId, parentId, onCommentSubmitted, replyTo }) {
+  const { token, user } = useAuth() // 改用 useAuth 來獲取登入使用者資料
+  const router = useRouter()
+
   const [comment, setComment] = useState(replyTo || '') // 留言文字
   const [previews, setPreviews] = useState([]) // 圖片和 GIF 預覽
   const [showGifPicker, setShowGifPicker] = useState(false) // 是否顯示 GIF 選擇器
@@ -52,7 +58,8 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
   const [isHovered, setIsHovered] = useState(false) // 新增 hover state
   const [isSent, setIsSent] = useState(false) // 是否已送出
   const fileInputRef = useRef(null) // 文件上傳輸入框的參考引用
-  const userId = 1 // 預設用戶 ID（可以改為動態獲取登入使用者資訊）
+  // 移除硬編碼，使用從 token 解析出的 user.id
+  // const userId = 1
 
   // 如果父層切換了 replyTo，需要同步更新
   useEffect(() => {
@@ -107,7 +114,8 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
       const formData = new FormData();
       formData.append('content', comment);
       formData.append('articleId', articleId);
-      formData.append('userId', userId);
+      // 利用 token 取得當前登入的 user_id
+      formData.append('userId', user?.id);
       formData.append('parentId', parentId || '');
 
       // 處理預覽中的媒體檔案
@@ -187,6 +195,31 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
     // 或者 setGifResult(...) 執行 UI 更新等
   }
 
+  // 新增：如果使用者未登入，點選輸入框時彈出 Swal 提示
+  const handleInputFocus = () => {
+    if (!token) {
+      Swal.fire({
+        title: "<strong>需要登入</strong>",
+        icon: "info",
+        html: `
+          請先登入再留言。<br/>
+          是否前往登入頁面？
+        `,
+        showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: `<i class="fa fa-thumbs-up"></i> 登入`,
+        confirmButtonAriaLabel: "登入",
+        cancelButtonText: `<i class="fa fa-thumbs-down"></i> 留在此頁`,
+        cancelButtonAriaLabel: "取消"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push('/login')
+        }
+      })
+    }
+  }
+
   return (
     <div
       className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}
@@ -203,6 +236,7 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
             handleSubmit()
           }
         }}
+        onFocus={handleInputFocus}
         style={{
           // 若文字開頭為 '@' 則設定 fontWeight 
           fontWeight: comment.trim().startsWith('@') ? 700 : 'normal'
