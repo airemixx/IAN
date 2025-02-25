@@ -36,12 +36,14 @@ const ListCard = ({ article, onTagClick, searchTerm }) => {
   return (
     <div className={`${styles['y-list-card-area']}`}>
       <div className={`card ${styles['y-card']}`}>
-        <img
-          src={article.image_path || '/images/article/social.jpg'}
-          className={`card-img-top ${styles['y-card-img-top-css']} ${styles['fade-in']} ${imageLoaded ? styles['loaded'] : ''}`}
-          alt={article.title}
-          onLoad={handleImageLoaded}
-        />
+        <Link href={`/article/${article.id}`} className={styles['image-link']}>
+          <img
+            src={article.image_path || '/images/article/social.jpg'}
+            className={`card-img-top ${styles['y-card-img-top-css']} ${styles['fade-in']} ${imageLoaded ? styles['loaded'] : ''}`}
+            alt={article.title}
+            onLoad={handleImageLoaded}
+          />
+        </Link>
         <div className={`px-0 card-body ${styles['y-card-body-css']}`}>
           <div className={`mb-1 ${styles['y-article-list-tag']} d-flex justify-content-between`}>
             <p className="mb-0">{article.category_name || '未分類'}</p>

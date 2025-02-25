@@ -29,6 +29,7 @@ export default function SelectList({ onFilterChange }) {
     { value: '11', label: '11' },
     { value: '12', label: '12' },
   ])
+  const [openSelect, setOpenSelect] = useState({})
   const router = useRouter()
 
   // 動態載入 Bootstrap JS（僅在 client-side）
@@ -40,7 +41,6 @@ export default function SelectList({ onFilterChange }) {
 
   // 定義 handleFilterChange 函式
   const handleFilterChange = () => {
-    // 記住當前滾動位置
     const scrollPosition = window.scrollY
 
     const selectedCategory = document.getElementById('select-category').value
@@ -133,6 +133,30 @@ export default function SelectList({ onFilterChange }) {
     }
   }, [])
 
+  useEffect(() => {
+    const collapseEl = document.getElementById('filter-collapse')
+    if (collapseEl) {
+      // 當展開動畫結束時，設定 isCollapsed 為 false
+      collapseEl.addEventListener('shown.bs.collapse', () => {
+        setIsCollapsed(false)
+      })
+      // 當摺疊動畫結束時，設定 isCollapsed 為 true
+      collapseEl.addEventListener('hidden.bs.collapse', () => {
+        setIsCollapsed(true)
+      })
+    }
+    return () => {
+      if (collapseEl) {
+        collapseEl.removeEventListener('shown.bs.collapse', () =>
+          setIsCollapsed(false)
+        )
+        collapseEl.removeEventListener('hidden.bs.collapse', () =>
+          setIsCollapsed(true)
+        )
+      }
+    }
+  }, [])
+
   return (
     <>
       <div className={`${styles['y-title-line']} mt-5`}></div>
@@ -142,7 +166,7 @@ export default function SelectList({ onFilterChange }) {
         <h2 className="mb-0">所有文章</h2>
 
         <button
-          className="mb-0 btn rounded-pill"
+          className="mb-0 btn rounded-pill btn-select-use"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#filter-collapse"
@@ -150,11 +174,13 @@ export default function SelectList({ onFilterChange }) {
           aria-controls="filter-collapse"
         >
           篩選條件
-          <FontAwesomeIcon
-            icon={isCollapsed ? faAngleDown : faAngleUp}
-            className="ms-1"
-            style={{ fontSize: '20px', color: 'black' }}
-          />
+          <div style={{ fontSize: '20px', display: 'inline-block' }}>
+            <FontAwesomeIcon
+              icon={isCollapsed ? faAngleDown : faAngleUp}
+              style={{ fontSize: 'inherit', color: 'black' }}
+              className="ms-1"
+            />
+          </div>
         </button>
         {typeof resultCount !== 'undefined' && (
           <p className="text-black mt-2">搜尋到 {resultCount} 筆資料</p>

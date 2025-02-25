@@ -34,11 +34,17 @@ const NewsCardLoader = () => {
 
 export default function NewsCard({ articles }) {
   const [showLoader, setShowLoader] = useState(true)
+  const [filteredArticles, setFilteredArticles] = useState([])
 
   useEffect(() => {
     // 每次 articles 改變時都先重設 loader 狀態為 true
     setShowLoader(true)
-    if (articles && articles.length > 0) {
+
+    // 篩選掉 is_deleted 為 true 的文章
+    const validArticles = articles ? articles.filter(article => !article.is_deleted) : []
+    setFilteredArticles(validArticles)
+
+    if (validArticles.length > 0) {
       // 延長動畫呈現 3 秒 (3000 毫秒)
       const timer = setTimeout(() => {
         setShowLoader(false)
@@ -49,7 +55,7 @@ export default function NewsCard({ articles }) {
     }
   }, [articles])
 
-  if (!articles || articles.length === 0) {
+  if (!filteredArticles || filteredArticles.length === 0) {
     return <p>No related articles found.</p>
   }
 
@@ -60,7 +66,7 @@ export default function NewsCard({ articles }) {
   return (
     <>
       <ul className={`list-unstyled ${styles['y-news-list']}`}>
-        {articles.map((article, index) => (
+        {filteredArticles.map((article, index) => (
           <li className={styles['y-news-item']} key={index}>
             <div className={styles['y-news-image-container']}>
               <img

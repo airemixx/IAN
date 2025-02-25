@@ -202,6 +202,38 @@
   }
 }
 
+.moreOptionDelete {
+  padding: 5px 0;
+  text-align: center;
+  width: 80px;
+  cursor: pointer;
+  color: #d33;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #d33;
+    color: white;
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
+  .iconHoverDelete {
+    display: none;
+  }
+
+  &:hover {
+    .iconOriginalDelete {
+      display: none;
+    }
+    .iconHoverDelete {
+      display: block;
+    }
+  }
+}
+
 .moreBtnContainer:hover .moreOptions {
   display: block;
 }
@@ -246,6 +278,32 @@
   border-radius: 10px;
 }
 
+.btn-custom-confirm-delete {
+  background-color: #1E3C54;
+  border: none;
+  padding: 8px 16px;
+  color: white;
+  border-radius: 25px;
+
+}
+
+.btn-custom-cancel-delete {
+  background-color: #d33;
+  border: none;
+  padding: 8px 16px;
+  color: white;
+  border-radius: 4px;
+}
+
+
+
+
+
+
+
+
+
+
 @media (max-width: 768px) {
   .sidenav {
     margin-bottom: 20px;
@@ -266,3 +324,4 @@
     margin-top: 15px;
   }
 }
+

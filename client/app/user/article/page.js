@@ -3,10 +3,12 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import styles from './article.module.scss'
+import '../../../styles/article.css'
 import useAuth from '@/hooks/use-auth'
 import Sidenav from '../_components/Sidenav/page'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'  // 在文件頂部引入
+import { useRouter } from 'next/navigation'
+import UserArticleFilter from './_components/UserArticleFilter'
 
 // 格式化日期函式，格式：yyyy/mm/dd hh:mm
 function formatDate(dateString) {
@@ -50,11 +52,6 @@ export default function UserPage() {
     return <div className="text-center mt-5">載入中...</div>
   }
 
-  // 如果沒有文章，也可以顯示提示
-  if (!articles.length) {
-    return <div className="container py-4">尚無文章</div>
-  }
-
   // 模擬 handleEdit/handleDelete 行為
   const handleEdit = (articleId) => {
     console.log('編輯文章 ID:', articleId) // 除錯用
@@ -66,9 +63,73 @@ export default function UserPage() {
   }
 
   const handleDelete = (articleId) => {
-    console.log('刪除文章', articleId)
-    // 可呼叫 API 進行刪除，或先進行確認
-  }
+    // 第一階段：初步確認
+    Swal.fire({
+      title: "確定要刪除這篇文章嗎？",
+      text: "刪除後將無法復原。",
+      icon: "warning",
+      showCancelButton: true,
+      // 移除原本的 confirmButtonColor/cancelButtonColor
+      customClass: {
+        confirmButton: "btn-custom-confirm-delete", // 自訂確認按鈕
+        cancelButton: "btn-custom-cancel-delete"      // 自訂取消按鈕
+      },
+      buttonsStyling: false, // 關閉預設按鈕樣式
+      confirmButtonText: "是, 刪除它！",
+      cancelButtonText: "取消"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 第二階段：再次確認，使用自訂樣式
+        const swalWithCustomStyle = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-custom-confirm-delete-2",
+            cancelButton: "btn btn-custom-cancel-delete-2"
+          },
+          buttonsStyling: false
+        });
+
+        swalWithCustomStyle.fire({
+          title: "刪除後將無法復原！",
+          text: "是否確定永久刪除？",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "是的, 刪除！",
+          cancelButtonText: "否, 取消！",
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // 呼叫 API 更新 is_deleted 為1
+            axios.delete(`http://localhost:8000/api/articles/${articleId}`, {
+              headers: {
+                Authorization: `Bearer ${token}` // token須來自 useAuth 狀態
+              }
+            })
+              .then((res) => {
+                swalWithCustomStyle.fire(
+                  "已刪除！",
+                  "該文章已被刪除。",
+                  "success"
+                );
+                // 從目前文章狀態中移除該文章
+                setArticles(prevArticles => prevArticles.filter(a => a.id !== articleId));
+              })
+              .catch((error) => {
+                swalWithCustomStyle.fire(
+                  "失敗",
+                  "刪除文章失敗，請稍後再試。",
+                  "error"
+                );
+              });
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithCustomStyle.fire(
+              "已取消",
+              "該文章依然安全！",
+            );
+          }
+        });
+      }
+    });
+  };
 
   const handleArticleClick = (articleId) => {
     console.log('Navigating to article:', articleId) // 除錯用
@@ -82,7 +143,7 @@ export default function UserPage() {
         <div className="col-md-9">
           <h1 className="mb-4">我的文章</h1>
           <div className="d-flex flex-column gap-4">
-            {/* 新增文章卡片，以 Link 包裹 */}
+            {/* 新增文章卡片 */}
             <Link href="/user/article/add-article" style={{ textDecoration: 'none' }}>
               <div className={styles.addArticleCard} style={{ cursor: 'pointer' }}>
                 <div className="text-center">
@@ -92,6 +153,35 @@ export default function UserPage() {
               </div>
             </Link>
 
+            {/* 多篩選功能 (UserArticleFilter) 放在新增文章區下方 */}
+            <UserArticleFilter
+              onFilterChange={(filters) => {
+                // 根據篩選條件更新文章列表
+                if (user && token) {
+                  const queryParams = new URLSearchParams()
+                  queryParams.append('user_id', user.id)
+                  if (filters.category) {
+                    queryParams.append('category', filters.category)
+                  }
+                  if (filters.year) {
+                    queryParams.append('year', filters.year)
+                  }
+                  if (filters.month) {
+                    queryParams.append('month', filters.month)
+                  }
+
+                  axios.get(`http://localhost:8000/api/articles?${queryParams}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  })
+                    .then(res => {
+                      setArticles(res.data.data || [])
+                    })
+                    .catch(error => console.error('篩選失敗：', error))
+                }
+              }}
+            />
+
+            {/* 文章列表 */}
             {articles.map((article) => {
               // 轉換 tags，若為字串則 split
               const tags = typeof article.tags === 'string' && article.tags !== ''
@@ -163,18 +253,18 @@ export default function UserPage() {
                               編輯
                             </div>
                             <div
-                              className={styles.moreOption}
-                              onClick={() => handleDelete(article.article_id)}
+                              className={styles.moreOptionDelete}
+                              onClick={() => handleDelete(article.id)}
                             >
                               <img
                                 src="/images/article/delete-origin.svg"
                                 alt="刪除原圖"
-                                className={styles.iconOriginal}
+                                className={styles.iconOriginalDelete}
                               />
                               <img
                                 src="/images/article/delete-hover.svg"
                                 alt="刪除 hover 圖"
-                                className={styles.iconHover}
+                                className={styles.iconHoverDelete}
                               />
                               刪除
                             </div>

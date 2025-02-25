@@ -129,6 +129,8 @@ export default function FroalaEditorWrapper() {
             },
           },
           zIndex: 1050,
+          toolbarSticky: true,
+          toolbarStickyOffset: 80  // 根據 header 高度調整
         })
       }
     }
