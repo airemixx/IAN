@@ -47,28 +47,33 @@ export default function NewsPage() {
 
   // 當 URL 的 search 參數改變時，更新 filters
   useEffect(() => {
-    const searchQuery = searchParams.get('search')
-    const categoryQuery = searchParams.get('category')
-    const tagQuery = searchParams.get('tag')
-    const newFilters = {}
+    const searchQuery = searchParams.get('search');
+    const categoryQuery = searchParams.get('category');
+    const tagQuery = searchParams.get('tag');
+    const userIdQuery = searchParams.get('user_id');
+    const authorNameQuery = searchParams.get('author_name');
+    const newFilters = {};
 
-    // 判斷是否有任何搜尋條件
-    const hasAnySearch = !!(searchQuery || categoryQuery || tagQuery)
-    setHasSearch(hasAnySearch)
+    const hasAnySearch = !!(searchQuery || categoryQuery || tagQuery || userIdQuery);
+    setHasSearch(hasAnySearch);
 
     if (searchQuery) {
-      newFilters.search = searchQuery
+      newFilters.search = searchQuery;
     }
     if (categoryQuery) {
-      newFilters.category = categoryQuery
+      newFilters.category = categoryQuery;
     }
     if (tagQuery) {
-      newFilters.search = tagQuery
-      setSearchTerm(tagQuery)
+      newFilters.search = tagQuery;
+      setSearchTerm(tagQuery);
     }
-    setFilters(newFilters)
-    setCurrentPage(1) // 每次 URL 變更時重置分頁到第一頁
-  }, [searchParams])
+    if (userIdQuery) {
+      newFilters.user_id = userIdQuery;
+      newFilters.author_name = authorNameQuery || '作者';
+    }
+    setFilters(newFilters);
+    setCurrentPage(1);
+  }, [searchParams]); // 確保 searchParams 是依賴項
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters)
@@ -99,6 +104,16 @@ export default function NewsPage() {
     e.preventDefault()
     handleFilterChange({ ...filters, search: searchTerm })
   }
+
+  const handleAuthorClick = (userId, authorName) => {
+    const params = new URLSearchParams();
+    params.set('user_id', userId);
+    params.set('author_name', authorName);
+    // 清除其他搜尋條件
+    router.push(`/article?${params.toString()}`);
+    setFilters({ user_id: userId, author_name: authorName });
+    setSearchTerm('');
+  };
 
   useEffect(() => {
     import('bootstrap/dist/js/bootstrap.bundle.min.js')
@@ -162,6 +177,7 @@ export default function NewsPage() {
               <ListCard
                 article={article}
                 onTagClick={handleTagClick}
+                onAuthorClick={handleAuthorClick}  // 新增此 prop
                 searchTerm={searchTerm}
               />
             </div>

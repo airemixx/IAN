@@ -219,14 +219,10 @@ export default function UserPage() {
 
                       <div className={styles['btn-date']}>
                         <div className={styles.moreBtnContainer}>
-                          {/* 更多按鈕區塊，保持原有功能 */}
-                          <button
-                            className={styles['more-btn']}
-                            onClick={(e) => e.stopPropagation()}
-                          >
+                          <button className={styles['more-btn']} onClick={(e) => e.stopPropagation()}>
                             <img
                               src="/images/article/more-origin.svg"
-                              alt="more origin"
+                              alt="more"
                               className={styles.iconOrigin}
                             />
                             <img
@@ -247,7 +243,7 @@ export default function UserPage() {
                               />
                               <img
                                 src="/images/article/edit-hover.svg"
-                                alt="編輯 hover 圖"
+                                alt="編輯 hover圖"
                                 className={styles.iconHover}
                               />
                               編輯

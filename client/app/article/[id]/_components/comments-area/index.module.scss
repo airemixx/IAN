@@ -1,53 +1,54 @@
-.y-all-comment-btn button{
+.y-all-comment-btn button {
   border: none;
   background-color: #ffffff00;
-  color: #7E7267;
+  color: #7e7267;
   font-size: 16px;
 }
-.y-sort-dropdown{
-  select{
+
+.y-sort-dropdown {
+  select {
     background-color: #ffffff00;
     width: 15%;
     border-radius: 25px;
     border: 2px solid #7e726700;
   }
-  select:focus{
-    box-shadow: 0 0 15px #7E7267;
-    border: 2px solid #7E7267;
+  select:focus {
+    box-shadow: 0 0 15px #7e7267;
+    border: 2px solid #7e7267;
   }
 }
 
-.y-reply{
+.y-reply {
   border-top: 1px solid #000;
   margin-top: 16px;
   padding-top: 16px;
 }
-.y-reply-user-profile{
-  img{
+.y-reply-user-profile {
+  img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
   }
 }
-.y-reply-img img{
+.y-reply-img img {
   border-radius: 5px;
   width: 100%;
   aspect-ratio: 1/1;
 }
-.y-reply-time-like button{
+.y-reply-time-like button {
   border: none;
   background-color: #ffffff00;
   border-radius: 25px;
-  padding:5px 5px;
+  padding: 5px 5px;
 }
-.y-reply-time-like button:focus{
+.y-reply-time-like button:focus {
   border: none;
   background-color: #adadad00;
   border-radius: 25px;
-  padding:5px 5px;
+  padding: 5px 5px;
 }
-.y-btn-reply-in-reply{
+.y-btn-reply-in-reply {
   color: #000;
   &:hover {
     img {
@@ -63,18 +64,219 @@
       content: url('/images/article/reply-active.svg'); // 替換為 active 狀態的 SVG
     }
     .reply-text {
-      color: #7E7267; // 替換為 active 狀態的文字顏色
+      color: #7e7267; // 替換為 active 狀態的文字顏色
     }
   }
 }
 
-.y-hidden-reply-btn button{
+.y-reply-content {
+  max-width: 780px;
+  word-wrap: break-word;
+  position: relative;
+
+  //編輯輸入框
+  textarea {
+    border-radius: 15px;
+    padding: 8px 5px 0 10px;
+    width: 100%;
+    overflow: wrap;
+    resize: none;
+    box-sizing: border-box;
+  }
+}
+// Modal 相關樣式
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  width: 750px;
+  background-color: rgb(233, 233, 233);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.editing-buttons {
+  margin-top: 10px;
+  text-align: right;
+}
+
+.editingTextArea {
+  width: 100%;
+  border-radius: 15px;
+  padding: 8px 5px 0 10px;
+  min-height: 100px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+//編輯回復按紐
+.btn-editor-reply-save {
+  background-color: transparent;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-right: 5px;
+
+  img {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &.active {
+      transform: scale(1.5);
+    }
+  }
+}
+
+.editedMark {
+  font-size: 0.85em;
+  color: #888;
+  font-style: italic;
+  margin-left: 4px;
+}
+
+.y-reply-content-nested {
+  max-width: 720px;
+  word-wrap: break-word;
+}
+
+.y-reply-content-nested-out {
+  max-width: 800px;
+  width: 800px;
+}
+
+.moreBtnReply {
+  position: relative;
+  display: inline-block;
+  height: 20px;
+}
+
+.more-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.moreOptions {
+  display: none;
+  position: absolute;
+  top: -5px; // 改為與按鈕頂部對齊
+  right: 100%; // 改為出現在按鈕左側
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 80px;
+  margin-right: 5px; // 加入右側間距
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10px; // 設定箭頭較上方
+    left: 100%; // 從右側指向按鈕
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent white; // 左指箭頭
+  }
+}
+
+// 添加新的 show 類別來控制顯示
+.moreOptions.show {
+  display: block;
+}
+
+.moreOption {
+  padding: 5px 10px;
+  text-align: center;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
+  .iconHover {
+    display: none;
+  }
+
+  &:hover {
+    background-color: #7e7267;
+    color: white;
+
+    .iconOriginal {
+      display: none;
+    }
+    .iconHover {
+      display: block;
+    }
+  }
+}
+
+.moreOptionDelete {
+  padding: 5px 10px;
+  text-align: center;
+  cursor: pointer;
+  color: #d33;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
+  .iconHoverDelete {
+    display: none;
+  }
+
+  &:hover {
+    background-color: #d33;
+    color: white;
+
+    .iconOriginalDelete {
+      display: none;
+    }
+    .iconHoverDelete {
+      display: block;
+    }
+  }
+}
+
+// 移除圖片上下的 margin
+.moreBtnReply img {
+  margin: 0;
+}
+
+.y-hidden-reply-btn button {
   border: none;
   background-color: #ffffff00;
-  color: #7E7267;
+  color: #7e7267;
 }
-.reply-text{
-  color: #1E3C54;
+.reply-text {
+  color: #1e3c54;
 }
 
 .fade-in {
@@ -87,34 +289,29 @@
   transition: opacity 0.8s ease-out;
 }
 
-@media screen and (max-width: 390px){
-  .y-sort-dropdown{
-    select{
+@media screen and (max-width: 390px) {
+  .y-sort-dropdown {
+    select {
       width: 40%;
     }
   }
-  .y-reply-user-profile img{
+  .y-reply-user-profile img {
     width: 30px;
     height: 30px;
   }
-  .y-reply-user-name{
+  .y-reply-user-name {
     font-size: 16px;
   }
-  .y-reply-img img{
+  .y-reply-img img {
     width: 100%;
   }
-  .y-reply-time-like h6{
+  .y-reply-time-like h6 {
     font-size: 12px;
   }
-  .y-reply-time-like{
+  .y-reply-time-like {
     justify-content: space-between;
   }
-  .y-btn-reply-in-reply span{
+  .y-btn-reply-in-reply span {
     font-size: 12px;
   }
-}
-
-
-@media screen and (max-width: 390px){
-
 }
