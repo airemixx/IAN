@@ -141,6 +141,8 @@ function ReplyItem({
   const [displayText, setDisplayText] = useState(text)
   const [isHovered, setIsHovered] = useState(false)
   const [isSent, setIsSent] = useState(false) // 添加 isSent 狀態
+  // 新增：用於強制讓嵌套回覆容器重新渲染
+  const [nestedRepliesKey, setNestedRepliesKey] = useState(Date.now())
 
   // 定義選單識別字串
   const menuKey = `reply-${commentId}`
@@ -241,10 +243,33 @@ function ReplyItem({
     }
   }, [showReplyInput])
 
-  const handleNestedReplySubmitted = (newNestedReply) => {
-    setNestedReplies((prev) => [newNestedReply, ...prev])
-    setShowReplyInput(false)
-  }
+  const handleNestedReplySubmitted = (parentId, newNestedReply) => {
+    if (newNestedReply && typeof newNestedReply === 'object') {
+      console.log('New nested reply received:', newNestedReply);
+  
+      // 直接使用從後端或 ReplyInput 傳入的完整欄位，避免使用 fallback 預設值
+      const mappedReply = {
+        id: newNestedReply.id,
+        userName: newNestedReply.userName,
+        userProfile: newNestedReply.userProfile, // 改用 userProfile 欄位，避免空白
+        content: newNestedReply.content,
+        created_at: newNestedReply.created_at,
+        like_count: newNestedReply.like_count || 0,
+        media_urls: newNestedReply.media_urls || [],
+        media_types: newNestedReply.media_types || [],
+        parent_id: parentId,
+      };
+  
+      console.log('Mapped nested reply:', mappedReply);
+      setNestedReplies((prev) => [mappedReply, ...prev]);
+      setShowNestedReplies(true);
+      setShowReplyInput(false);
+      // 強制重新渲染嵌套回覆容器
+      setNestedRepliesKey(Date.now());
+    } else {
+      console.error('Invalid nested reply data:', newNestedReply);
+    }
+  };
 
   // 父回覆不使用 nested reply 的渲染動畫，直接切換顯示/隱藏
   const toggleNestedReplies = () => {
@@ -487,7 +512,7 @@ function ReplyItem({
                     </button>
                   </div>
                   {showNestedReplies && (
-                    <>
+                    <div key={nestedRepliesKey}>
                       {nestedReplies.map((reply, idx) => {
                         if (!reply) return null
                         return (
@@ -497,13 +522,12 @@ function ReplyItem({
                             userProfile={reply.head}
                             text={reply.content}
                             time={reply.created_at}
-                            media_urls={reply.media_urls}
-                            media_types={reply.media_types}
+                            media_urls={reply.media_url}
+                            media_types={reply.media_type}
                             parentId={reply.parent_id}
                             commentId={reply.id}
                             initialLikeCount={reply.like_count}
                             onReplyClick={handleReplyClick}
-                            // 傳入全域選單管理狀態
                             activeMenuId={activeMenuId}
                             setActiveMenuId={setActiveMenuId}
                             currentEditingId={currentEditingId} // 新增
@@ -517,7 +541,7 @@ function ReplyItem({
                       <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
                         <button onClick={toggleNestedReplies}>ㄧ 隱藏回覆</button>
                       </div>
-                    </>
+                    </div>
                   )}
                 </>
               )}
