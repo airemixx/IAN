@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import RentShopping from '../rent-shopping/page'
 
-export default function RentTabs({ rental }) {
+export default function RentTabs({ rental, onDateChange, onFeeChange }) {
   const [activeTab, setActiveTab] = useState('rent')
 
   return (
@@ -57,7 +57,9 @@ export default function RentTabs({ rental }) {
               </div>
 
               {/* 租借時段 */}
-              <RentShopping rental={rental} />
+              <RentShopping rental={rental}
+                onDateChange={onDateChange}
+                onFeeChange={onFeeChange} />
             </div>
           </div>
         ) : (
