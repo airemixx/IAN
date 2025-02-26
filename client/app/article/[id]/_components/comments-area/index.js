@@ -243,27 +243,39 @@ function ReplyItem({
     }
   }, [showReplyInput])
 
+
+  // 新增：處理嵌套回覆提交後的數據
   const handleNestedReplySubmitted = (parentId, newNestedReply) => {
     if (newNestedReply && typeof newNestedReply === 'object') {
       console.log('New nested reply received:', newNestedReply);
-  
-      // 直接使用從後端或 ReplyInput 傳入的完整欄位，避免使用 fallback 預設值
+
+      // 新增：處理嵌套回覆的數據結構
+      // 正確處理從服務器返回的數據結構
+      const responseData = newNestedReply.data || newNestedReply;
+
+      // 將服務器返回的欄位正確映射到組件期望的格式
       const mappedReply = {
-        id: newNestedReply.id,
-        userName: newNestedReply.userName,
-        userProfile: newNestedReply.userProfile, // 改用 userProfile 欄位，避免空白
-        content: newNestedReply.content,
-        created_at: newNestedReply.created_at,
-        like_count: newNestedReply.like_count || 0,
-        media_urls: newNestedReply.media_urls || [],
-        media_types: newNestedReply.media_types || [],
+        id: responseData.id,
+        nickname: responseData.nickname || responseData.name, // 使用 nickname 或 name 作為顯示名稱
+        name: responseData.nickname || responseData.name,// 使用 nickname 或 name 作為顯示名稱
+        head: responseData.head, // 使用頭像路徑
+        content: responseData.content,// 使用 content 作為回覆內容
+        created_at: responseData.created_at,
+        like_count: responseData.like_count || 0,
+        media_url: responseData.media_urls || [],
+        media_type: responseData.media_types || [],
         parent_id: parentId,
+        is_edited: responseData.is_edited || false,
+        updated_at: responseData.updated_at || null
       };
-  
+
       console.log('Mapped nested reply:', mappedReply);
-      setNestedReplies((prev) => [mappedReply, ...prev]);
+
+      // 添加到嵌套回覆列表
+      setNestedReplies(prev => [mappedReply, ...prev]);
       setShowNestedReplies(true);
       setShowReplyInput(false);
+
       // 強制重新渲染嵌套回覆容器
       setNestedRepliesKey(Date.now());
     } else {
