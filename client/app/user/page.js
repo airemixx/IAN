@@ -253,7 +253,7 @@ export default function UserPage(props) {
       <input id="swal-input" class="swal2-input" style="border-radius: 10px;" width="100%;" placeholder="請輸入新住址...">
     `,
     showCancelButton: true,
-    confirmButtonText: '添加',
+    confirmButtonText: '新增',
     cancelButtonText: '關閉',
     didOpen: () => {
       // ✅ 綁定「編輯」按鈕
@@ -618,15 +618,6 @@ export default function UserPage(props) {
                 <br />
                 <div>
                   <a onClick={handleAddAddress}>添加新住址</a>
-                  <ul>
-                    {addresses.map((address) => (
-                      <li key={address.id}>
-                        {address.address}
-                        <button onClick={() => handleEditAddress(address.id, address.address)}>編輯</button>
-                        <button onClick={() => handleDeleteAddress(address.id)}>刪除</button>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </div>
             </div>
@@ -636,3 +627,14 @@ export default function UserPage(props) {
     </div>
   )
 }
+
+
+//<ul>
+// {addresses.map((address) => (
+//   <li key={address.id}>
+//     {address.address}
+//     <button onClick={() => handleEditAddress(address.id, address.address)}>編輯</button>
+//     <button onClick={() => handleDeleteAddress(address.id)}>刪除</button>
+//   </li>
+// ))}
+// </ul>

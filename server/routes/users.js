@@ -240,7 +240,7 @@ router.get('/addresses/me', checkToken, async (req, res) => {
 
     // ✅ 查詢資料庫，獲取該用戶的所有住址，按 `created_at` 降序排列
     const [rows] = await db.execute(
-      'SELECT id, address, created_at FROM addresses WHERE user_id = ? ORDER BY created_at DESC',
+      'SELECT id, address, created_at FROM addresses WHERE user_id = ? ORDER BY created_at ASC',
       [user_id]
     );
 
