@@ -390,6 +390,16 @@ function ReplyItem({
     };
   }, [isEditing]);
 
+  // 在 ReplyItem 組件中新增這個函數
+  const handleNestedReplyDeleted = (deletedId) => {
+    console.log('Deleting nested reply:', deletedId);
+    // 從當前的嵌套回覆陣列中移除被刪除的回覆
+    setNestedReplies(prev => prev.filter(reply => reply.id !== deletedId));
+
+    // 同時通知父組件更新總計數
+    onCommentDeleted && onCommentDeleted(deletedId, commentId);
+  };
+
   return (
     <>
       {showLoader ? (
@@ -546,7 +556,7 @@ function ReplyItem({
                             setCurrentEditingId={setCurrentEditingId} // 新增
                             is_edited={reply.is_edited} // 新增
                             updated_at={reply.updated_at} // 新增
-                            onCommentDeleted={onCommentDeleted} // 新增
+                            onCommentDeleted={handleNestedReplyDeleted} // 新增
                           />
                         )
                       })}
