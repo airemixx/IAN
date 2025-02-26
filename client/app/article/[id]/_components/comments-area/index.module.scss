@@ -3,7 +3,7 @@
   background-color: #ffffff00;
   color: #7e7267;
   font-size: 16px;
-  }
+}
 
 .y-sort-dropdown {
   select {
@@ -75,13 +75,12 @@
   position: relative;
 
   //編輯輸入框
-  textarea{
+  textarea {
     border-radius: 15px;
     padding: 8px 5px 0 10px;
-    min-height: 100px;
     width: 100%;
     overflow: wrap;
-    resize:none;
+    resize: none;
     box-sizing: border-box;
   }
 }
@@ -99,32 +98,49 @@
   z-index: 1000;
 }
 
+.modalContent {
+  width: 750px;
+  background-color: rgb(233, 233, 233);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.editing-buttons {
+  margin-top: 10px;
+  text-align: right;
+}
+
+.editingTextArea {
+  width: 100%;
+  border-radius: 15px;
+  padding: 8px 5px 0 10px;
+  min-height: 100px;
+  resize: none;
+  box-sizing: border-box;
+}
 
 //編輯回復按紐
 .btn-editor-reply-save {
-  background-color: #7e7267;
-  color: white;
+  background-color: transparent;
   border: none;
   padding: 5px 15px;
   border-radius: 25px;
   cursor: pointer;
   margin-right: 5px;
 
-  &:hover {
-    background-color: darken(#7e7267, 10%);
-  }
-}
+  img {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
 
-.btn-editor-reply-cancel {
-  background-color: #838383;
-  color: #ffffff;
-  border: none;
-  padding: 5px 15px;
-  border-radius: 25px;
-  cursor: pointer;
+    &:hover {
+      transform: scale(1.1);
+    }
 
-  &:hover {
-    background-color: darken(#ccc, 10%);
+    &.active {
+      transform: scale(1.5);
+    }
   }
 }
 
@@ -273,32 +289,29 @@
   transition: opacity 0.8s ease-out;
 }
 
-
-
-  @media screen and (max-width: 390px) {
-    .y-sort-dropdown {
-      select {
-        width: 40%;
-      }
-    }
-    .y-reply-user-profile img {
-      width: 30px;
-      height: 30px;
-    }
-    .y-reply-user-name {
-      font-size: 16px;
-    }
-    .y-reply-img img {
-      width: 100%;
-    }
-    .y-reply-time-like h6 {
-      font-size: 12px;
-    }
-    .y-reply-time-like {
-      justify-content: space-between;
-    }
-    .y-btn-reply-in-reply span {
-      font-size: 12px;
+@media screen and (max-width: 390px) {
+  .y-sort-dropdown {
+    select {
+      width: 40%;
     }
   }
-
+  .y-reply-user-profile img {
+    width: 30px;
+    height: 30px;
+  }
+  .y-reply-user-name {
+    font-size: 16px;
+  }
+  .y-reply-img img {
+    width: 100%;
+  }
+  .y-reply-time-like h6 {
+    font-size: 12px;
+  }
+  .y-reply-time-like {
+    justify-content: space-between;
+  }
+  .y-btn-reply-in-reply span {
+    font-size: 12px;
+  }
+}

@@ -115,7 +115,8 @@ function ReplyItem({
   updated_at,
   // 新增：接收全局編輯ID和設置函數
   currentEditingId,
-  setCurrentEditingId
+  setCurrentEditingId,
+  onCommentDeleted
 }) {
   // 新增：控制父回覆初次顯示的 loader
   const [showLoader, setShowLoader] = useState(true)
@@ -138,6 +139,8 @@ function ReplyItem({
   const [isEdited, setIsEdited] = useState(is_edited ? true : false) // 從服務器獲取是否已編輯
   const [updatedTime, setUpdatedTime] = useState(updated_at || null) // 從服務器獲取更新時間
   const [displayText, setDisplayText] = useState(text)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isSent, setIsSent] = useState(false) // 添加 isSent 狀態
 
   // 定義選單識別字串
   const menuKey = `reply-${commentId}`
@@ -151,11 +154,22 @@ function ReplyItem({
     ? format(new Date(updatedTime), 'yyyy/MM/dd HH:mm')
     : format(new Date(time), 'yyyy/MM/dd HH:mm')
 
-  // 父回覆首次渲染時，顯示 1500 毫秒的動畫
+
+  const isReadyToSend = editedText.trim().length > 0;
+
+  const sendIcon = isReadyToSend
+    ? isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended.svg'
+    : isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended-black.svg'
+
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false)
-    }, 1000)
+    }, 800)
     return () => clearTimeout(timer)
   }, [])
 
@@ -254,6 +268,9 @@ function ReplyItem({
   const handleUpdate = async () => {
     if (!editedText.trim()) return;
 
+    setIsSent(true); // 設置發送動畫
+    setTimeout(() => setIsSent(false), 300);
+
     try {
       const res = await fetch(`http://localhost:8000/api/comments/${commentId}`, {
         method: 'PUT',
@@ -279,27 +296,27 @@ function ReplyItem({
     }
   };
 
-  const handleDelete = (id) => {
-    // 實現刪除留言功能
-    console.log('刪除留言', id);
-
-    // 可以加入確認對話框
+  const handleDelete = async (id) => {
     if (confirm('確定要刪除此留言嗎？')) {
-      // 呼叫 API 刪除留言
-      fetch(`http://localhost:8000/api/comments/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            // 從畫面上移除該留言
-            // 或者重新載入留言
-          }
-        })
-        .catch(err => console.error('刪除留言失敗:', err));
+      try {
+        const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          // 通知父組件進行刪除
+          onCommentDeleted(id);
+        } else {
+          alert(data.message || '刪除失敗');
+        }
+      } catch (err) {
+        console.error('刪除留言失敗:', err);
+        alert('刪除留言失敗，請稍後再試');
+      }
     }
-  }
+  };
 
   const toggleMoreOptions = (e) => {
     e.stopPropagation()
@@ -318,6 +335,23 @@ function ReplyItem({
       document.removeEventListener('click', closeMoreOptions);
     };
   }, [isMenuOpen]);
+
+  // 添加 ESC 鍵監聽
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && isEditing) {
+        handleCancelEdit();
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isEditing]);
 
   return (
     <>
@@ -346,37 +380,26 @@ function ReplyItem({
               </div>
               {isEditing && (
                 <div className={styles.modalOverlay}>
-                  <div
-                    style={{
-                      width: '750px',
-                      backgroundColor: 'white',
-                      padding: '20px',
-                      borderRadius: '8px',
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
+                  <div className={`${styles.modalContent} d-flex flex-column`}>
                     <textarea
                       value={editedText}
                       onChange={(e) => setEditedText(e.target.value)}
                       autoFocus
-                      style={{
-                        width: '100%',
-                        borderRadius: '15px',
-                        padding: '8px 5px 0 10px',
-                        minHeight: '100px',
-                        resize: 'none',
-                        boxSizing: 'border-box'
-                      }}
+                      className={styles.editingTextArea}
                     />
-                    <div
-                      className={styles['editing-buttons']}
-                      style={{ marginTop: '10px', textAlign: 'right' }}
-                    >
-                      <button className={styles['btn-editor-reply-cancel']} onClick={handleCancelEdit}>
-                        取消
-                      </button>
-                      <button className={styles['btn-editor-reply-save']} onClick={handleUpdate}>
-                        更新
+                    <div className={styles['editing-buttons'] + ' d-flex justify-content-between align-items-center'}>
+                      <small className="text-secondary">按下 ESC 即可取消</small>
+                      <button
+                        className={`${styles['btn-editor-reply-save']} p-1 sendIcon`}
+                        onClick={handleUpdate}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                      >
+                        <img
+                          src={sendIcon}
+                          alt="發送"
+                          className={isSent ? styles.active : ''}
+                        />
                       </button>
                     </div>
                   </div>
@@ -449,7 +472,7 @@ function ReplyItem({
                   <ReplyInput
                     articleId={articleId}
                     parentId={commentId}
-                    onCommentSubmitted={handleNestedReplySubmitted}
+                    onCommentSubmitted={(newNestedReply) => handleNestedReplySubmitted(commentId, newNestedReply)}
                     replyTo={replyTo}
                   />
                 </div>
@@ -483,6 +506,11 @@ function ReplyItem({
                             // 傳入全域選單管理狀態
                             activeMenuId={activeMenuId}
                             setActiveMenuId={setActiveMenuId}
+                            currentEditingId={currentEditingId} // 新增
+                            setCurrentEditingId={setCurrentEditingId} // 新增
+                            is_edited={reply.is_edited} // 新增
+                            updated_at={reply.updated_at} // 新增
+                            onCommentDeleted={onCommentDeleted} // 新增
                           />
                         )
                       })}
@@ -547,7 +575,19 @@ function ReplyItem({
 }
 
 // 回覆中的回覆元件
-function NestedReplyItem({ userName, onReplyClick, parentId, activeMenuId, setActiveMenuId, ...props }) {
+function NestedReplyItem({
+  userName,
+  onReplyClick,
+  parentId,
+  activeMenuId,
+  setActiveMenuId,
+  currentEditingId,  // 新增
+  setCurrentEditingId,  // 新增
+  is_edited,  // 新增
+  updated_at,  // 新增
+  onCommentDeleted, // 新增
+  ...props
+}) {
   const [isLiked, setIsLiked] = useState(false)
   const [commentLikeCount, setCommentLikeCount] = useState(props.initialLikeCount || 0)
   const [isClicked, setIsClicked] = useState(false)
@@ -566,6 +606,24 @@ function NestedReplyItem({ userName, onReplyClick, parentId, activeMenuId, setAc
   // 定義選單識別字串
   const menuKey = `nested-${props.commentId}`
   const isMenuOpen = activeMenuId === menuKey
+
+  const isEditing = currentEditingId === props.commentId;
+  const [editedText, setEditedText] = useState(props.text)
+  const [isEdited, setIsEdited] = useState(is_edited ? true : false)
+  const [updatedTime, setUpdatedTime] = useState(updated_at || null)
+  const [displayText, setDisplayText] = useState(props.text)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isSent, setIsSent] = useState(false)
+
+  const isReadyToSend = editedText?.trim().length > 0;
+
+  const sendIcon = isReadyToSend
+    ? isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended.svg'
+    : isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended-black.svg';
 
   const toggleMoreOptions = (e) => {
     e.stopPropagation()
@@ -624,33 +682,86 @@ function NestedReplyItem({ userName, onReplyClick, parentId, activeMenuId, setAc
     }
   }
 
-  const handleEdit = (id) => {
-    // 實現編輯留言功能
-    console.log('編輯留言', id);
-    // 這裡可以打開編輯模式或跳出編輯視窗
-  }
+  const handleEdit = () => {
+    setEditedText(displayText);
+    setCurrentEditingId(props.commentId);
+    setActiveMenuId(null);
+  };
 
-  const handleDelete = (id) => {
-    // 實現刪除留言功能
-    console.log('刪除留言', id);
+  // 取消編輯
+  const handleCancelEdit = () => {
+    setCurrentEditingId(null);
+    setEditedText(displayText);
+  };
 
-    // 可以加入確認對話框
-    if (confirm('確定要刪除此留言嗎？')) {
-      // 呼叫 API 刪除留言
-      fetch(`http://localhost:8000/api/comments/${id}`, {
-        method: 'DELETE',
+  // 更新留言
+  const handleUpdate = async () => {
+    if (!editedText.trim()) return;
+
+    setIsSent(true);
+    setTimeout(() => setIsSent(false), 300);
+
+    try {
+      const res = await fetch(`http://localhost:8000/api/comments/${props.commentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editedText }),
         credentials: 'include',
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            // 從畫面上移除該留言
-            // 或者重新載入留言
-          }
-        })
-        .catch(err => console.error('刪除留言失敗:', err));
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setDisplayText(editedText);
+        setIsEdited(true);
+        setUpdatedTime(data.updatedTime);
+        setCurrentEditingId(null);
+      } else {
+        alert(data.message || '更新失敗');
+      }
+    } catch (error) {
+      console.error('更新留言失敗:', error);
+      alert('更新留言失敗，請稍後再試');
     }
-  }
+  };
+
+  // 添加 ESC 鍵監聽
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && isEditing) {
+        handleCancelEdit();
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isEditing]);
+
+  const handleDelete = async (id) => {
+    if (confirm('確定要刪除此留言嗎？')) {
+      try {
+        const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+        const data = await res.json();
+        if (data.success) {
+          // 通知父組件從 UI 移除此回覆
+          onCommentDeleted && onCommentDeleted(id, parentId);
+        } else {
+          alert(data.message || '刪除失敗');
+        }
+      } catch (err) {
+        console.error('刪除留言失敗:', err);
+        alert('刪除留言失敗，請稍後再試');
+      }
+    }
+  };
 
   return (
     <div className="d-flex">
@@ -664,9 +775,37 @@ function NestedReplyItem({ userName, onReplyClick, parentId, activeMenuId, setAc
           <a href="#" className="text-black text-decoration-none">
             <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
           </a>
-          <div className={styles['y-reply-content-nested']}>
-            <p className={`mt-3 ${styles['y-reply-text']}`}>{props.text}</p>
+          {isEditing && <div className={styles['editing-overlay']}></div>}
+          <div className={`${styles['y-reply-content-nested']} ${isEditing ? styles['editing-area'] : ''}`}>
+            <p className={`mt-3 ${styles['y-reply-text']}`}>{displayText}</p>
           </div>
+          {isEditing && (
+            <div className={styles.modalOverlay}>
+              <div className={`${styles.modalContent} d-flex flex-column`}>
+                <textarea
+                  value={editedText}
+                  onChange={(e) => setEditedText(e.target.value)}
+                  autoFocus
+                  className={styles.editingTextArea}
+                />
+                <div className={styles['editing-buttons'] + ' d-flex justify-content-between align-items-center'}>
+                  <small className="text-secondary">按下 ESC 即可取消</small>
+                  <button
+                    className={`${styles['btn-editor-reply-save']} p-1 sendIcon`}
+                    onClick={handleUpdate}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <img
+                      src={sendIcon}
+                      alt="發送"
+                      className={isSent ? styles.active : ''}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {props.media_urls &&
             props.media_urls.length > 0 &&
             props.media_urls.map((media_url, index) => (
@@ -682,7 +821,7 @@ function NestedReplyItem({ userName, onReplyClick, parentId, activeMenuId, setAc
               style={{ cursor: 'pointer' }}
               className="my-auto me-3"
             >
-              {timeAgo}
+              {timeAgo} {isEdited && <span className={styles.editedMark}>（已編輯）</span>}
             </h6>
             <Tooltip
               id={`tooltip-nested-${props.time}`}
@@ -839,6 +978,27 @@ export default function CommentsArea({
     return sorted
   }
 
+  // 在 CommentsArea 組件中添加
+  const handleCommentDeleted = (deletedId, parentId = null) => {
+    if (!parentId) {
+      // 刪除主評論
+      setComments(prev => prev.filter(comment => comment.id !== deletedId));
+      setCount(prev => prev - 1);
+    } else {
+      // 刪除巢狀評論
+      setComments(prev => prev.map(comment => {
+        if (comment.id === parentId) {
+          return {
+            ...comment,
+            replies: comment.replies.filter(reply => reply.id !== deletedId)
+          };
+        }
+        return comment;
+      }));
+      setCount(prev => prev - 1);
+    }
+  };
+
   return (
     <div>
       <div className={styles['y-all-comment-btn']}>
@@ -883,6 +1043,7 @@ export default function CommentsArea({
                 updated_at={comment.updated_at}
                 currentEditingId={currentEditingId}
                 setCurrentEditingId={setCurrentEditingId}
+                onCommentDeleted={handleCommentDeleted}
               />
             ))}
           </div>

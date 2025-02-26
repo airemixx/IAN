@@ -56,7 +56,7 @@ router.get('/', async (req, res) => {
         IF(ac.updated_at > ac.created_at, 1, 0) AS is_edited
        FROM article_comments AS ac
        LEFT JOIN users AS u ON ac.user_id = u.id
-       LEFT JOIN comments_media AS cm ON ac.id = cm.comment_id
+       LEFT JOIN comments_media AS cm ON ac.id = cm.comment_id AND cm.is_deleted = 0
        WHERE ac.article_id = ? AND ac.is_deleted = 0
        GROUP BY ac.id
        ORDER BY ac.parent_id IS NULL DESC, ac.created_at DESC`,
@@ -81,23 +81,27 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/count', async (req, res) => {
-  const { articleId } = req.query
+  const { articleId } = req.query;
   if (!articleId) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: 'articleId 為必填' })
+    return res.status(400).json({
+      status: 'error',
+      message: 'articleId 為必填'
+    });
   }
   try {
     const [rows] = await pool.query(
-      'SELECT COUNT(*) as count FROM article_comments WHERE article_id = ?',
+      'SELECT COUNT(*) as count FROM article_comments WHERE article_id = ? AND is_deleted = 0',
       [articleId]
-    )
-    res.json({ count: rows[0].count })
+    );
+    res.json({ count: rows[0].count });
   } catch (err) {
-    console.error('取得留言數量錯誤：', err)
-    res.status(500).json({ status: 'error', message: '取得留言數量失敗' })
+    console.error('取得留言數量錯誤：', err);
+    res.status(500).json({
+      status: 'error',
+      message: '取得留言數量失敗'
+    });
   }
-})
+});
 
 // 新增留言 API：將留言內容存入 article_comments 資料表，若有附檔則存入 comments_media
 // 接受欄位 media，可能多筆檔案
@@ -233,11 +237,11 @@ router.post('/comments', upload.single('media'), async (req, res) => {
 router.put('/:commentId', async (req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
-  
+
   if (!content) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       success: false,
-      message: '留言內容不能為空' 
+      message: '留言內容不能為空'
     });
   }
 
@@ -249,9 +253,9 @@ router.put('/:commentId', async (req, res) => {
     );
 
     if (comment.length === 0) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: '找不到此留言' 
+        message: '找不到此留言'
       });
     }
 
@@ -267,16 +271,16 @@ router.put('/:commentId', async (req, res) => {
       [commentId]
     );
 
-    return res.json({ 
-      success: true, 
+    return res.json({
+      success: true,
       message: '留言更新成功',
       updatedTime: updatedComment[0].updated_at
     });
   } catch (err) {
     console.error('更新留言失敗:', err);
-    return res.status(500).json({ 
-      success: false, 
-      message: err.message || '更新留言失敗' 
+    return res.status(500).json({
+      success: false,
+      message: err.message || '更新留言失敗'
     });
   }
 });
@@ -286,34 +290,39 @@ router.delete('/:commentId', async (req, res) => {
   const { commentId } = req.params;
 
   try {
-    // 檢查留言是否存在
-    const [comment] = await pool.query(
-      'SELECT * FROM article_comments WHERE id = ? AND is_deleted = 0',
-      [commentId]
-    );
+    const connection = await pool.getConnection();
+    await connection.beginTransaction();
 
-    if (comment.length === 0) {
-      return res.status(404).json({ 
-        success: false,
-        message: '找不到此留言' 
+    try {
+      // 1. 將留言標記為已刪除
+      await connection.query(
+        'UPDATE article_comments SET is_deleted = 1 WHERE id = ?',
+        [commentId]
+      );
+
+      // 2. 將相關的媒體檔案標記為已刪除
+      await connection.query(
+        'UPDATE comments_media SET is_deleted = 1 WHERE comment_id = ?',
+        [commentId]
+      );
+
+      await connection.commit();
+
+      return res.json({
+        success: true,
+        message: '留言刪除成功'
       });
+    } catch (err) {
+      await connection.rollback();
+      throw err;
+    } finally {
+      connection.release();
     }
-
-    // 軟刪除留言 (將 is_deleted 設為 1)
-    await pool.query(
-      'UPDATE article_comments SET is_deleted = 1 WHERE id = ?',
-      [commentId]
-    );
-
-    return res.json({ 
-      success: true, 
-      message: '留言刪除成功'
-    });
   } catch (err) {
     console.error('刪除留言失敗:', err);
-    return res.status(500).json({ 
-      success: false, 
-      message: err.message || '刪除留言失敗' 
+    return res.status(500).json({
+      success: false,
+      message: err.message || '刪除留言失敗'
     });
   }
 });
