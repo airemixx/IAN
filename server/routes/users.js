@@ -184,7 +184,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
 });
 
 //address
-router.post('/addresses', checkToken , async (req, res) => {
+router.post('/addresses', checkToken, async (req, res) => {
   // 此處假設 JWT 已經在前面的中間件中解析，並將解碼的用戶資訊附加到了 req.user 上
   const user_id = req.decoded.id;
 
@@ -351,7 +351,7 @@ router.delete('/addresses/:id', checkToken, async (req, res) => {
   }
 });
 
-//address--/
+//address end--/
 
 
 
@@ -378,12 +378,12 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
     if (password) {
       // 更新密碼前，必須提供並驗證原密碼
       if (!currentPassword) throw new Error("必須提供原密碼以更新新密碼");
-      
+
       // 取得目前使用者的密碼 hash
       const [rows] = await db.execute("SELECT password FROM users WHERE account = ?", [account]);
       if (rows.length === 0) throw new Error("找不到使用者");
       const userHash = rows[0].password;
-      
+
       // 驗證原密碼是否正確
       const isMatch = await bcrypt.compare(currentPassword, userHash);
       if (!isMatch) throw new Error("目前密碼不正確，請再重新輸入");
@@ -409,7 +409,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
 
     if (result.affectedRows == 0) throw new Error("更新失敗");
 
-    
+
     // 🔥 **步驟 1：更新後，重新從資料庫取得最新的 user 資料**
     const getUserSql = "SELECT id, account, name, nickname, mail, head, level, DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday FROM `users` WHERE account = ?;";
     const [userRows] = await db.execute(getUserSql, [account]);
@@ -420,7 +420,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
     console.log("📌 更新後的最新 user 資料:", updatedUser);
 
     // 🔥 **步驟 2：產生新的 Token，確保使用 `updatedUser` 的最新資料**
-    
+
     // **🔹 產生新的 Token**
 
     const newToken = jwt.sign(
@@ -432,7 +432,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
         mail: updatedUser.mail,
         head: updatedUser.head,
         level: updatedUser.level,
-        birthday: updatedUser.birthday 
+        birthday: updatedUser.birthday
       },
       secretKey,
       { expiresIn: "7d" }
@@ -487,7 +487,7 @@ router.post("/login", upload.none(), async (req, res) => {
     const [rows] = await db.execute(sql, [account]);
 
     if (rows.length == 0) throw new Error("找不到使用者");
-    
+
     const user = rows[0]
     console.log(user);
     const isMatch = await bcrypt.compare(password, user.password);
@@ -546,7 +546,7 @@ router.post("/logout", checkToken, (req, res) => {
   });
 });
 
-router.get("/me", checkToken, async (req, res) => {
+router.get("/users/me", checkToken, async (req, res) => {
   try {
     const sql = `
       SELECT account, name, nickname, mail, head, 
@@ -596,6 +596,125 @@ router.post("/status", checkToken, (req, res) => {
 
 
 
+
+//address end //
+
+
+// async function getRandomAvatar(){
+//   const api = "https://randomuser.me/api";
+//   try{
+//     const res = await fetch(api);
+//     if(!res.ok) throw new Error("伺服器掛了T_T");
+//     const result = await res.json();
+//     return result.results[0].picture.large;
+//   }catch(err){
+//     console.log("取得隨機照片失敗", err.message);
+//     return "https://randomuser.me/api/portraits/men/7.jpg";
+//   }
+// }
+
+
+//collect 
+
+
+// ✅ 透過 JWT 獲取 `user_id`，查詢用戶的收藏產品
+router.get("/favorites/me", checkToken, async (req, res) => {
+  try {
+    const connection = await db.getConnection(); // ✅ 取得資料庫連線
+    const userId = req.decoded.id; // ✅ 直接從 JWT 解析 `user_id`
+
+    console.log(`取得收藏資料，使用者 ID: ${userId}`);
+
+    // 查詢用戶收藏的商品
+    const [products] = await connection.query(
+      `SELECT 
+        c.id AS collection_id,
+        p.id AS product_id,
+        p.name, 
+        p.short_introduce,
+        p.price,
+        b.brand_name,
+        CONCAT('/images/product/', COALESCE(i.image_url, 'default.jpg')) AS image_url
+      FROM collection c
+      JOIN product p ON c.product_id = p.id
+      LEFT JOIN brand b ON p.brand_id = b.brand_id
+      LEFT JOIN image i ON p.id = i.product_id AND i.is_main = 1
+      WHERE c.user_id = ?`,
+      [userId]
+    );
+
+    // 查詢用戶收藏的課程
+    const [courses] = await connection.query(
+      `SELECT 
+        c.id AS collection_id,
+        cs.id AS course_id,
+        cs.title AS course_title,
+        cs.teacher_id AS instructor,
+        t.name AS instructor_name,  -- ✅ 講師名稱
+        t.image AS instructor_image,  -- ✅ 講師頭像
+        t.bio AS instructor_bio,  -- ✅ 講師簡介
+        t.facebook AS instructor_facebook,  -- ✅ 講師 Facebook
+        t.instagram AS instructor_instagram,  -- ✅ 講師 Instagram
+        t.youtube AS instructor_youtube,  -- ✅ 講師 YouTube
+        cs.sale_price AS price, 
+        CONCAT('', COALESCE(cs.image_url, 'default.jpg')) AS image_url 
+      FROM collection c
+      JOIN courses cs ON c.course_id = cs.id
+      LEFT JOIN teachers t ON cs.teacher_id = t.user_id 
+      WHERE c.user_id = ? AND c.course_id IS NOT NULL;`,
+      [userId]
+    );
+
+    // 查詢用戶收藏的租賃 
+    const [rents] = await connection.query(
+      `SELECT 
+    c.id AS collection_id,
+    r.id AS rent_id,
+    r.name AS rent_name,
+    r.brand AS brand,
+    r.fee AS price,  -- 租賃費用
+    r.stock,
+    CONCAT('/images/rental/', COALESCE(ri.url, 'default'), '.png') AS image_url
+  FROM collection c  
+  JOIN rental r ON c.rent_id = r.id
+  LEFT JOIN rent_image ri ON r.id = ri.rent_id AND ri.sequence = 1  
+  WHERE c.user_id = ? AND c.rent_id IS NOT NULL;`,
+      [userId]
+    );
+
+    // 查詢用戶收藏的文章
+    const [articles] = await connection.query(
+      `SELECT 
+        c.id AS collection_id,
+        a.id AS article_id,
+        a.title,
+        a.subtitle,
+        a.content,
+        a.like_count,
+        a.created_at,
+        a.update_time,
+        a.image_path AS image_url  -- 直接使用文章的圖片 URL
+      FROM collection c
+      JOIN article a ON c.article_id = a.id
+      WHERE c.user_id = ? AND c.article_id IS NOT NULL;`,
+      [userId]
+    );
+
+    connection.release(); // ✅ 釋放連線
+
+    // ✅ 如果沒有任何收藏
+    if (products.length === 0 && courses.length === 0 && rents.length === 0 && articles.length === 0) {
+      return res.status(404).json({ message: "沒有收藏的商品、課程、租賃與文章" });
+    }
+
+    res.json({ products, courses, rents, articles });
+  } catch (error) {
+    console.error("獲取收藏錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
+
+//collect end //
 function checkToken(req, res, next) {
   let token = req.get("Authorization");
   if (!token) return res.status(401).json({
@@ -617,20 +736,5 @@ function checkToken(req, res, next) {
     next();
   });
 }
-
-
-
-// async function getRandomAvatar(){
-//   const api = "https://randomuser.me/api";
-//   try{
-//     const res = await fetch(api);
-//     if(!res.ok) throw new Error("伺服器掛了T_T");
-//     const result = await res.json();
-//     return result.results[0].picture.large;
-//   }catch(err){
-//     console.log("取得隨機照片失敗", err.message);
-//     return "https://randomuser.me/api/portraits/men/7.jpg";
-//   }
-// }
 
 export default router;
