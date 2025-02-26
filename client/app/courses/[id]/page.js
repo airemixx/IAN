@@ -48,6 +48,24 @@ export default function CourseDetailPage() {
     fetchCourse()
   }, [id]) // 監聽 ID 變化
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1200) {
+        document.body.style.paddingBottom = '80px'; // 1200px 以下才加 padding
+      } else {
+        document.body.style.paddingBottom = '0px'; //1200px 以上移除
+      }
+    };
+
+    handleResize(); // 先執行一次，確保進入頁面時生效
+    window.addEventListener('resize', handleResize); // 監聽視窗大小變化
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.body.style.paddingBottom = '0px'; // 確保離開頁面時清除
+    };
+  }, []);
+
   return (
     <>
       {loading && <p>載入中...</p>}
@@ -70,7 +88,8 @@ export default function CourseDetailPage() {
                   <TeacherInfo teacherId={course.teacher_id} course={course} />
                   <CourseRating />
                 </div>
-                <div className="col-md-4 d-none d-xl-block">
+                <div className="col-12 col-md-4 d-block">
+                {/* <div className="col-md-4 d-none d-xl-block"> */}
                   <PriceFixed course={course}/>
                 </div>
               </div>

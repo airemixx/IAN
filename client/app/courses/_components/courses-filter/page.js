@@ -5,6 +5,7 @@ import styles from './courses-filter.module.scss'
 import CourseList from '../courses-list/page'
 import { FaChevronDown } from 'react-icons/fa'
 
+
 export default function CoursesFilter({ courses, setFilteredCourses }) {
   const [search, setSearch] = useState('')
   const [tempSearch, setTempSearch] = useState('')

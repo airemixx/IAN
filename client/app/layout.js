@@ -91,7 +91,7 @@ export default function RootLayout({ children }) {
 
         {/* top按鈕 */}
         {showButton && (
-          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob'>
+          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob d-none d-xl-block'>
             <IoIosArrowUp size={25}   className="hvr-icon"/>
           </button>
         )}
