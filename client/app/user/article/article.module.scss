@@ -279,12 +279,11 @@
 }
 
 .btn-custom-confirm-delete {
-  background-color: #1E3C54;
+  background-color: #1e3c54;
   border: none;
   padding: 8px 16px;
   color: white;
   border-radius: 25px;
-
 }
 
 .btn-custom-cancel-delete {
@@ -294,15 +293,6 @@
   color: white;
   border-radius: 4px;
 }
-
-
-
-
-
-
-
-
-
 
 @media (max-width: 768px) {
   .sidenav {
@@ -325,3 +315,46 @@
   }
 }
 
+.moreBtnContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.more-btn {
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.moreOptions {
+  display: none;
+  position: absolute;
+  bottom: 100%; // 上浮於按鈕上方
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  // 可加入箭頭效果（選用）
+  &::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+  }
+}
+
+.moreBtnContainer:hover .moreOptions {
+  display: block;
+}

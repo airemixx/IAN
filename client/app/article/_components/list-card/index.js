@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import styles from './index.module.scss'
 import Link from 'next/link'
 
-const ListCard = ({ article, onTagClick, searchTerm }) => {
+const ListCard = ({ article, onTagClick, onAuthorClick, searchTerm }) => {
   const [imageLoaded, setImageLoaded] = useState(false) // 文章圖片
   const [authorImageLoaded, setAuthorImageLoaded] = useState(false) // 作者圖片
   const [authorDetail, setAuthorDetail] = useState(null) // 取得使用者資料
@@ -65,21 +65,26 @@ const ListCard = ({ article, onTagClick, searchTerm }) => {
           </div>
           <div className={styles['y-author-date']}>
             <p className="mb-0">
-              <img
-                className={`mb-2 ${styles['y-user-list-profile']} rounded-pill me-2 ${styles['fade-in']} ${authorImageLoaded ? styles['loaded'] : ''
-                  }`}
-                src={
-                  // 優先使用取得的使用者 head，若無則使用原本的圖片
-                  (authorDetail && authorDetail.head) ||
-                  article.authorImageUrl ||
-                  '/images/article/user (1).jpg'
-                }
-                alt={article.author}
-                onLoad={handleAuthorImageLoaded}
-              />
-              {authorDetail
-                ? authorDetail.nickname || authorDetail.name
-                : '編輯部'}
+              {/* 將作者圖片與名稱用 a 包裹，添加 onClick */}
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onAuthorClick && article.user_id) {
+                    const name = authorDetail ? (authorDetail.nickname || authorDetail.name) : '編輯部';
+                    onAuthorClick(article.user_id, name);
+                  }
+                }}
+                className="text-decoration-none text-dark"
+              >
+                <img
+                  className={`mb-2 ${styles['y-user-list-profile']} rounded-pill me-2 ${styles['fade-in']} ${authorImageLoaded ? styles['loaded'] : ''}`}
+                  src={(authorDetail && authorDetail.head) || article.authorImageUrl || '/images/article/user (1).jpg'}
+                  alt={article.author}
+                  onLoad={handleAuthorImageLoaded}
+                />
+                {authorDetail ? authorDetail.nickname || authorDetail.name : '編輯部'}
+              </a>
             </p>
             <p>
               {new Date(article.created_at).toLocaleDateString('zh-tw', {

@@ -109,6 +109,14 @@ function ReplyItem({
   likeCount: initialLikeCount,
   commentId,
   articleId,
+  activeMenuId,      // 從父組件接收
+  setActiveMenuId,   // 從父組件接收
+  is_edited,
+  updated_at,
+  // 新增：接收全局編輯ID和設置函數
+  currentEditingId,
+  setCurrentEditingId,
+  onCommentDeleted
 }) {
   // 新增：控制父回覆初次顯示的 loader
   const [showLoader, setShowLoader] = useState(true)
@@ -120,23 +128,50 @@ function ReplyItem({
   const [showReplyInput, setShowReplyInput] = useState(false)
   const [nestedReplies, setNestedReplies] = useState(replies || [])
   const [showNestedReplies, setShowNestedReplies] = useState(false)
-  // 控制 nested reply 載入動畫用的 state（此處保留原始邏輯）
   const [isNestedRepliesLoading, setIsNestedRepliesLoading] = useState(false)
   const [replyTo, setReplyTo] = useState('')
+  const [moreHover, setMoreHover] = useState(false)
   const inputRef = useRef(null)
 
-  const timeAgo = formatDistanceToNow(new Date(time), {
-    locale: zhTW,
-    addSuffix: true,
-  })
+  // 將本地 isEditing 狀態與全局編輯ID綁定
+  const isEditing = currentEditingId === commentId;
+  const [editedText, setEditedText] = useState(text)
+  const [isEdited, setIsEdited] = useState(is_edited ? true : false) // 從服務器獲取是否已編輯
+  const [updatedTime, setUpdatedTime] = useState(updated_at || null) // 從服務器獲取更新時間
+  const [displayText, setDisplayText] = useState(text)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isSent, setIsSent] = useState(false) // 添加 isSent 狀態
+  // 新增：用於強制讓嵌套回覆容器重新渲染
+  const [nestedRepliesKey, setNestedRepliesKey] = useState(Date.now())
 
-  const formattedTime = format(new Date(time), 'yyyy/MM/dd HH:mm')
+  // 定義選單識別字串
+  const menuKey = `reply-${commentId}`
+  const isMenuOpen = activeMenuId === menuKey
 
-  // 父回覆首次渲染時，顯示 1500 毫秒的動畫
+  const timeAgo = updatedTime
+    ? formatDistanceToNow(new Date(updatedTime), { locale: zhTW, addSuffix: true })
+    : formatDistanceToNow(new Date(time), { locale: zhTW, addSuffix: true })
+
+  const formattedTime = updatedTime
+    ? format(new Date(updatedTime), 'yyyy/MM/dd HH:mm')
+    : format(new Date(time), 'yyyy/MM/dd HH:mm')
+
+
+  const isReadyToSend = editedText.trim().length > 0;
+
+  const sendIcon = isReadyToSend
+    ? isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended.svg'
+    : isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended-black.svg'
+
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false)
-    }, 1000)
+    }, 800)
     return () => clearTimeout(timer)
   }, [])
 
@@ -208,142 +243,354 @@ function ReplyItem({
     }
   }, [showReplyInput])
 
-  const handleNestedReplySubmitted = (newNestedReply) => {
-    setNestedReplies((prev) => [newNestedReply, ...prev])
-    setShowReplyInput(false)
-  }
+  const handleNestedReplySubmitted = (parentId, newNestedReply) => {
+    if (newNestedReply && typeof newNestedReply === 'object') {
+      console.log('New nested reply received:', newNestedReply);
+  
+      // 直接使用從後端或 ReplyInput 傳入的完整欄位，避免使用 fallback 預設值
+      const mappedReply = {
+        id: newNestedReply.id,
+        userName: newNestedReply.userName,
+        userProfile: newNestedReply.userProfile, // 改用 userProfile 欄位，避免空白
+        content: newNestedReply.content,
+        created_at: newNestedReply.created_at,
+        like_count: newNestedReply.like_count || 0,
+        media_urls: newNestedReply.media_urls || [],
+        media_types: newNestedReply.media_types || [],
+        parent_id: parentId,
+      };
+  
+      console.log('Mapped nested reply:', mappedReply);
+      setNestedReplies((prev) => [mappedReply, ...prev]);
+      setShowNestedReplies(true);
+      setShowReplyInput(false);
+      // 強制重新渲染嵌套回覆容器
+      setNestedRepliesKey(Date.now());
+    } else {
+      console.error('Invalid nested reply data:', newNestedReply);
+    }
+  };
 
   // 父回覆不使用 nested reply 的渲染動畫，直接切換顯示/隱藏
   const toggleNestedReplies = () => {
     setShowNestedReplies((prev) => !prev)
   }
 
+  // 修改：點擊編輯按鈕後進入編輯模式
+  const handleEdit = () => {
+    setEditedText(displayText); // 確保編輯框內顯示當前顯示的文字
+    setCurrentEditingId(commentId);
+    setActiveMenuId(null); // 關閉選單
+  }
+
+  // 取消編輯
+  const handleCancelEdit = () => {
+    setCurrentEditingId(null);
+    setEditedText(displayText); // 恢復原始文字
+  }
+
+  // 修改：提交更新
+  const handleUpdate = async () => {
+    if (!editedText.trim()) return;
+
+    setIsSent(true); // 設置發送動畫
+    setTimeout(() => setIsSent(false), 300);
+
+    try {
+      const res = await fetch(`http://localhost:8000/api/comments/${commentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editedText }),
+        credentials: 'include',
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // 立即更新視覺顯示
+        setDisplayText(editedText);
+        setIsEdited(true);
+        setUpdatedTime(data.updatedTime);
+        setCurrentEditingId(null); // 完成編輯
+      } else {
+        alert(data.message || '更新失敗');
+      }
+    } catch (error) {
+      console.error('更新留言失敗:', error);
+      alert('更新留言失敗，請稍後再試');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (confirm('確定要刪除此留言嗎？')) {
+      try {
+        const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          // 通知父組件進行刪除
+          onCommentDeleted(id);
+        } else {
+          alert(data.message || '刪除失敗');
+        }
+      } catch (err) {
+        console.error('刪除留言失敗:', err);
+        alert('刪除留言失敗，請稍後再試');
+      }
+    }
+  };
+
+  const toggleMoreOptions = (e) => {
+    e.stopPropagation()
+    setActiveMenuId(isMenuOpen ? null : menuKey)
+  }
+
+  useEffect(() => {
+    const closeMoreOptions = (e) => {
+      if (isMenuOpen && !e.target.closest(`.${styles.moreBtnReply}`)) {
+        setActiveMenuId(null);
+      }
+    };
+
+    document.addEventListener('click', closeMoreOptions);
+    return () => {
+      document.removeEventListener('click', closeMoreOptions);
+    };
+  }, [isMenuOpen]);
+
+  // 添加 ESC 鍵監聽
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && isEditing) {
+        handleCancelEdit();
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isEditing]);
+
   return (
     <>
       {showLoader ? (
         <ReplyItemLoader />
       ) : (
-        <div className={`d-flex ${styles['y-reply']}`}>
+        <div className={`d-flex ${styles['y-reply']} ${isEditing ? styles['editing-mode'] : ''}`}>
           <div className={styles['y-reply-user-profile']}>
             <a href="#">
               <img src={userProfile} alt={userName} />
             </a>
           </div>
-          <div className={`mx-3 ${styles['y-reply-content']}`}>
-            <a href="#" className="text-black text-decoration-none">
-              <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
-            </a>
-            <div className={styles['y-reply-content']}>
-              <p className={`mt-3 ${styles['y-reply-text']}`}>{text}</p>
-            </div>
-            {media_urls &&
-              media_urls.length > 0 &&
-              media_urls.map((media_url, index) => {
-                const media_type = media_types[index]
-                return (
-                  <MediaRenderer
-                    media_type={media_type}
-                    media_url={media_url}
-                    key={index}
-                  />
-                )
-              })}
-            <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
-              <h6
-                data-tooltip-id={`tooltip-${time}`}
-                style={{ cursor: 'pointer' }}
-                className="my-auto me-3"
-              >
-                {timeAgo}
-              </h6>
-              <Tooltip
-                id={`tooltip-${time}`}
-                content={formattedTime}
-                place="bottom"
-                style={{ backgroundColor: '#7E7267' }}
-              />
-              <div className="d-flex mb-like-reply">
-                <button className="ms-sm-3" onClick={handleLike}>
-                  <img
-                    src={
-                      isLiked
-                        ? '/images/article/thumb-up-red.svg'
-                        : '/images/article/thumb-up-black.svg'
-                    }
-                    alt="Like"
-                    style={{
-                      transform: isClicked ? 'scale(1.5)' : 'scale(1)',
-                      transition: 'transform 0.3s ease',
-                    }}
-                  />
-                  <span
-                    className={`${numVibrate ? styles.vibrate : ''}`}
-                    onAnimationEnd={() => setNumVibrate(false)}
-                    style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
-                  >
-                    {commentLikeCount}
-                  </span>
-                </button>
-                <button
-                  className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
-                  onClick={() => handleReplyClick(userName)}
+          <div className="d-flex justify-content-between w-100 pe-2">
+            <div className={`mx-3 ${styles['y-reply-content']}`}>
+              <a href="#" className="text-black text-decoration-none">
+                <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
+              </a>
+
+              {/* 加入遮罩層 */}
+              {isEditing && <div className={styles['editing-overlay']}></div>}
+
+              <div className={`${styles['y-reply-content']} ${isEditing ? styles['editing-area'] : ''}`}>
+                <p className={`mt-3 ${styles['y-reply-text']}`}>
+                  {displayText}
+                </p>
+              </div>
+              {isEditing && (
+                <div className={styles.modalOverlay}>
+                  <div className={`${styles.modalContent} d-flex flex-column`}>
+                    <textarea
+                      value={editedText}
+                      onChange={(e) => setEditedText(e.target.value)}
+                      autoFocus
+                      className={styles.editingTextArea}
+                    />
+                    <div className={styles['editing-buttons'] + ' d-flex justify-content-between align-items-center'}>
+                      <small className="text-secondary">按下 ESC 即可取消</small>
+                      <button
+                        className={`${styles['btn-editor-reply-save']} p-1 sendIcon`}
+                        onClick={handleUpdate}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                      >
+                        <img
+                          src={sendIcon}
+                          alt="發送"
+                          className={isSent ? styles.active : ''}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {media_urls &&
+                media_urls.length > 0 &&
+                media_urls.map((media_url, index) => {
+                  const media_type = media_types[index]
+                  return (
+                    <MediaRenderer
+                      media_type={media_type}
+                      media_url={media_url}
+                      key={index}
+                    />
+                  )
+                })}
+              <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
+                <h6
+                  data-tooltip-id={`tooltip-${time}`}
+                  style={{ cursor: 'pointer' }}
+                  className="my-auto me-3"
                 >
-                  <img src="/images/article/reply-origin.svg" alt="Reply" />
-                  <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
-                </button>
-              </div>
-            </div>
-            {showReplyInput && (
-              <div
-                ref={inputRef}
-                id={`reply-input-${commentId}`}
-                className={styles['fade-in']}
-                style={{ transition: 'opacity 0.3s', width: '850px' }}
-              >
-                <ReplyInput
-                  articleId={articleId}
-                  parentId={commentId}
-                  onCommentSubmitted={handleNestedReplySubmitted}
-                  replyTo={replyTo}
+                  {timeAgo} {isEdited && <span className={styles.editedMark}>（已編輯）</span>}
+                </h6>
+                <Tooltip
+                  id={`tooltip-${time}`}
+                  content={formattedTime}
+                  place="bottom"
+                  style={{ backgroundColor: '#7E7267' }}
                 />
-              </div>
-            )}
-            {nestedReplies && nestedReplies.length > 0 && (
-              <>
-                <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
-                  <button onClick={toggleNestedReplies}>
-                    {showNestedReplies
-                      ? `ㄧ 隱藏回覆`
-                      : `ㄧ ${nestedReplies.length}則回覆`}
+                <div className="d-flex mb-like-reply">
+                  <button className="ms-sm-3" onClick={handleLike}>
+                    <img
+                      src={
+                        isLiked
+                          ? '/images/article/thumb-up-red.svg'
+                          : '/images/article/thumb-up-black.svg'
+                      }
+                      alt="Like"
+                      style={{
+                        transform: isClicked ? 'scale(1.5)' : 'scale(1)',
+                        transition: 'transform 0.3s ease',
+                      }}
+                    />
+                    <span
+                      className={`${numVibrate ? styles.vibrate : ''}`}
+                      onAnimationEnd={() => setNumVibrate(false)}
+                      style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
+                    >
+                      {commentLikeCount}
+                    </span>
+                  </button>
+                  <button
+                    className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
+                    onClick={() => handleReplyClick(userName)}
+                  >
+                    <img src="/images/article/reply-origin.svg" alt="Reply" />
+                    <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
                   </button>
                 </div>
-                {showNestedReplies && (
-                  <>
-                    {nestedReplies.map((reply, idx) => {
-                      if (!reply) return null
-                      return (
-                        <NestedReplyItem
-                          key={reply.id || idx}
-                          userName={reply?.nickname || reply?.name}
-                          userProfile={reply.head}
-                          text={reply.content}
-                          time={reply.created_at}
-                          media_urls={reply.media_urls}
-                          media_types={reply.media_types}
-                          parentId={reply.parent_id}
-                          commentId={reply.id}
-                          initialLikeCount={reply.like_count}
-                          onReplyClick={handleReplyClick}
-                        />
-                      )
-                    })}
-                    <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
-                      <button onClick={toggleNestedReplies}>ㄧ 隱藏回覆</button>
+              </div>
+              {showReplyInput && (
+                <div
+                  ref={inputRef}
+                  id={`reply-input-${commentId}`}
+                  className={styles['fade-in']}
+                  style={{ transition: 'opacity 0.3s', width: '850px' }}
+                >
+                  <ReplyInput
+                    articleId={articleId}
+                    parentId={commentId}
+                    onCommentSubmitted={(newNestedReply) => handleNestedReplySubmitted(commentId, newNestedReply)}
+                    replyTo={replyTo}
+                  />
+                </div>
+              )}
+              {nestedReplies && nestedReplies.length > 0 && (
+                <>
+                  <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
+                    <button onClick={toggleNestedReplies}>
+                      {showNestedReplies
+                        ? `ㄧ 隱藏回覆`
+                        : `ㄧ ${nestedReplies.length}則回覆`}
+                    </button>
+                  </div>
+                  {showNestedReplies && (
+                    <div key={nestedRepliesKey}>
+                      {nestedReplies.map((reply, idx) => {
+                        if (!reply) return null
+                        return (
+                          <NestedReplyItem
+                            key={reply.id || idx}
+                            userName={reply?.nickname || reply?.name}
+                            userProfile={reply.head}
+                            text={reply.content}
+                            time={reply.created_at}
+                            media_urls={reply.media_url}
+                            media_types={reply.media_type}
+                            parentId={reply.parent_id}
+                            commentId={reply.id}
+                            initialLikeCount={reply.like_count}
+                            onReplyClick={handleReplyClick}
+                            activeMenuId={activeMenuId}
+                            setActiveMenuId={setActiveMenuId}
+                            currentEditingId={currentEditingId} // 新增
+                            setCurrentEditingId={setCurrentEditingId} // 新增
+                            is_edited={reply.is_edited} // 新增
+                            updated_at={reply.updated_at} // 新增
+                            onCommentDeleted={onCommentDeleted} // 新增
+                          />
+                        )
+                      })}
+                      <div className={`my-3 ${styles['y-hidden-reply-btn']}`}>
+                        <button onClick={toggleNestedReplies}>ㄧ 隱藏回覆</button>
+                      </div>
                     </div>
-                  </>
-                )}
-              </>
-            )}
+                  )}
+                </>
+              )}
+            </div>
+            <div className={`${styles.moreBtnReply}`}
+              onMouseEnter={() => setMoreHover(true)}
+              onMouseLeave={() => setMoreHover(false)}
+            >
+              <button className={styles['more-btn']} onClick={toggleMoreOptions}>
+                <img
+                  src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
+                  alt=""
+                />
+              </button>
+              <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
+                <div
+                  className={styles.moreOption}
+                  onClick={() => handleEdit(commentId)}
+                >
+                  <img
+                    src="/images/article/edit-origin.svg"
+                    alt="編輯原圖"
+                    className={styles.iconOriginal}
+                  />
+                  <img
+                    src="/images/article/edit-hover.svg"
+                    alt="編輯 hover 圖"
+                    className={styles.iconHover}
+                  />
+                  編輯
+                </div>
+                <div
+                  className={styles.moreOptionDelete}
+                  onClick={() => handleDelete(commentId)}
+                >
+                  <img
+                    src="/images/article/delete-origin.svg"
+                    alt="刪除原圖"
+                    className={styles.iconOriginalDelete}
+                  />
+                  <img
+                    src="/images/article/delete-hover.svg"
+                    alt="刪除 hover 圖"
+                    className={styles.iconHoverDelete}
+                  />
+                  刪除
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -352,11 +599,24 @@ function ReplyItem({
 }
 
 // 回覆中的回覆元件
-function NestedReplyItem({ userName, onReplyClick, parentId, ...props }) {
+function NestedReplyItem({
+  userName,
+  onReplyClick,
+  parentId,
+  activeMenuId,
+  setActiveMenuId,
+  currentEditingId,  // 新增
+  setCurrentEditingId,  // 新增
+  is_edited,  // 新增
+  updated_at,  // 新增
+  onCommentDeleted, // 新增
+  ...props
+}) {
   const [isLiked, setIsLiked] = useState(false)
   const [commentLikeCount, setCommentLikeCount] = useState(props.initialLikeCount || 0)
   const [isClicked, setIsClicked] = useState(false)
   const [numVibrate, setNumVibrate] = useState(false)
+  const [moreHover, setMoreHover] = useState(false)
 
   const parsedTime = new Date(props.time)
   const validTime = isNaN(parsedTime.getTime()) ? new Date() : parsedTime
@@ -366,6 +626,33 @@ function NestedReplyItem({ userName, onReplyClick, parentId, ...props }) {
     addSuffix: true,
   })
   const formattedTime = format(validTime, 'yyyy/MM/dd HH:mm')
+
+  // 定義選單識別字串
+  const menuKey = `nested-${props.commentId}`
+  const isMenuOpen = activeMenuId === menuKey
+
+  const isEditing = currentEditingId === props.commentId;
+  const [editedText, setEditedText] = useState(props.text)
+  const [isEdited, setIsEdited] = useState(is_edited ? true : false)
+  const [updatedTime, setUpdatedTime] = useState(updated_at || null)
+  const [displayText, setDisplayText] = useState(props.text)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isSent, setIsSent] = useState(false)
+
+  const isReadyToSend = editedText?.trim().length > 0;
+
+  const sendIcon = isReadyToSend
+    ? isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended.svg'
+    : isHovered
+      ? '/images/article/sended-hover.svg'
+      : '/images/article/sended-black.svg';
+
+  const toggleMoreOptions = (e) => {
+    e.stopPropagation()
+    setActiveMenuId(isMenuOpen ? null : menuKey)
+  }
 
   const handleLike = async () => {
     if (isLiked) {
@@ -419,6 +706,87 @@ function NestedReplyItem({ userName, onReplyClick, parentId, ...props }) {
     }
   }
 
+  const handleEdit = () => {
+    setEditedText(displayText);
+    setCurrentEditingId(props.commentId);
+    setActiveMenuId(null);
+  };
+
+  // 取消編輯
+  const handleCancelEdit = () => {
+    setCurrentEditingId(null);
+    setEditedText(displayText);
+  };
+
+  // 更新留言
+  const handleUpdate = async () => {
+    if (!editedText.trim()) return;
+
+    setIsSent(true);
+    setTimeout(() => setIsSent(false), 300);
+
+    try {
+      const res = await fetch(`http://localhost:8000/api/comments/${props.commentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editedText }),
+        credentials: 'include',
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setDisplayText(editedText);
+        setIsEdited(true);
+        setUpdatedTime(data.updatedTime);
+        setCurrentEditingId(null);
+      } else {
+        alert(data.message || '更新失敗');
+      }
+    } catch (error) {
+      console.error('更新留言失敗:', error);
+      alert('更新留言失敗，請稍後再試');
+    }
+  };
+
+  // 添加 ESC 鍵監聽
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && isEditing) {
+        handleCancelEdit();
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isEditing]);
+
+  const handleDelete = async (id) => {
+    if (confirm('確定要刪除此留言嗎？')) {
+      try {
+        const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+        const data = await res.json();
+        if (data.success) {
+          // 通知父組件從 UI 移除此回覆
+          onCommentDeleted && onCommentDeleted(id, parentId);
+        } else {
+          alert(data.message || '刪除失敗');
+        }
+      } catch (err) {
+        console.error('刪除留言失敗:', err);
+        alert('刪除留言失敗，請稍後再試');
+      }
+    }
+  };
+
   return (
     <div className="d-flex">
       <div className={styles['y-reply-user-profile']}>
@@ -426,65 +794,137 @@ function NestedReplyItem({ userName, onReplyClick, parentId, ...props }) {
           <img src={props.userProfile} alt={userName} />
         </a>
       </div>
-      <div className={`mx-3 ${styles['y-reply-content']}`}>
-        <a href="#" className="text-black text-decoration-none">
-          <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
-        </a>
-        <div className={styles['y-reply-content']}>
-          <p className={`mt-3 ${styles['y-reply-text']}`}>{props.text}</p>
-        </div>
-        {props.media_urls &&
-          props.media_urls.length > 0 &&
-          props.media_urls.map((media_url, index) => (
-            <MediaRenderer
-              key={`${props.commentId}-media-${index}`}
-              media_type={props.media_types[index]}
-              media_url={media_url}
-            />
-          ))}
-        <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
-          <h6
-            data-tooltip-id={`tooltip-nested-${props.time}`}
-            style={{ cursor: 'pointer' }}
-            className="my-auto me-3"
-          >
-            {timeAgo}
-          </h6>
-          <Tooltip
-            id={`tooltip-nested-${props.time}`}
-            content={formattedTime}
-            place="bottom"
-            style={{ backgroundColor: '#7E7267' }}
-          />
-          <div className="d-flex mb-like-reply">
-            <button className="ms-sm-3" onClick={handleLike}>
-              <img
-                src={
-                  isLiked
-                    ? '/images/article/thumb-up-red.svg'
-                    : '/images/article/thumb-up-black.svg'
-                }
-                alt="Like"
-                style={{
-                  transform: isClicked ? 'scale(1.5)' : 'scale(1)',
-                  transition: 'transform 0.3s ease',
-                }}
+      <div className="d-flex justify-content-between w-100 mx-3">
+        <div className={` ${styles['y-reply-content-nested-out']}`}>
+          <a href="#" className="text-black text-decoration-none">
+            <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
+          </a>
+          {isEditing && <div className={styles['editing-overlay']}></div>}
+          <div className={`${styles['y-reply-content-nested']} ${isEditing ? styles['editing-area'] : ''}`}>
+            <p className={`mt-3 ${styles['y-reply-text']}`}>{displayText}</p>
+          </div>
+          {isEditing && (
+            <div className={styles.modalOverlay}>
+              <div className={`${styles.modalContent} d-flex flex-column`}>
+                <textarea
+                  value={editedText}
+                  onChange={(e) => setEditedText(e.target.value)}
+                  autoFocus
+                  className={styles.editingTextArea}
+                />
+                <div className={styles['editing-buttons'] + ' d-flex justify-content-between align-items-center'}>
+                  <small className="text-secondary">按下 ESC 即可取消</small>
+                  <button
+                    className={`${styles['btn-editor-reply-save']} p-1 sendIcon`}
+                    onClick={handleUpdate}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <img
+                      src={sendIcon}
+                      alt="發送"
+                      className={isSent ? styles.active : ''}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {props.media_urls &&
+            props.media_urls.length > 0 &&
+            props.media_urls.map((media_url, index) => (
+              <MediaRenderer
+                key={`${props.commentId}-media-${index}`}
+                media_type={props.media_types[index]}
+                media_url={media_url}
               />
-              <span
-                className={`${numVibrate ? styles.vibrate : ''}`}
-                onAnimationEnd={() => setNumVibrate(false)}
-                style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
-              >
-                {commentLikeCount}
-              </span>
-            </button>
-            <button
-              className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
-              onClick={handleNestedReplyClick}
+            ))}
+          <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
+            <h6
+              data-tooltip-id={`tooltip-nested-${props.time}`}
+              style={{ cursor: 'pointer' }}
+              className="my-auto me-3"
             >
-              <img src="/images/article/reply-origin.svg" alt="Reply" />
-              <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
-            </button>
+              {timeAgo} {isEdited && <span className={styles.editedMark}>（已編輯）</span>}
+            </h6>
+            <Tooltip
+              id={`tooltip-nested-${props.time}`}
+              content={formattedTime}
+              place="bottom"
+              style={{ backgroundColor: '#7E7267' }}
+            />
+            <div className="d-flex mb-like-reply">
+              <button className="ms-sm-3" onClick={handleLike}>
+                <img
+                  src={
+                    isLiked
+                      ? '/images/article/thumb-up-red.svg'
+                      : '/images/article/thumb-up-black.svg'
+                  }
+                  alt="Like"
+                  style={{
+                    transform: isClicked ? 'scale(1.5)' : 'scale(1)',
+                    transition: 'transform 0.3s ease',
+                  }}
+                />
+                <span
+                  className={`${numVibrate ? styles.vibrate : ''}`}
+                  onAnimationEnd={() => setNumVibrate(false)}
+                  style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
+                >
+                  {commentLikeCount}
+                </span>
+              </button>
+              <button
+                className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
+                onClick={handleNestedReplyClick}
+              >
+                <img src="/images/article/reply-origin.svg" alt="Reply" />
+                <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className={`${styles.moreBtnReply}`}>
+          <button className={styles['more-btn']} onClick={toggleMoreOptions}>
+            <img
+              src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
+              alt="More"
+            />
+          </button>
+          <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
+            <div
+              className={styles.moreOption}
+              onClick={() => handleEdit(props.commentId)}
+            >
+              <img
+                src="/images/article/edit-origin.svg"
+                alt="編輯原圖"
+                className={styles.iconOriginal}
+              />
+              <img
+                src="/images/article/edit-hover.svg"
+                alt="編輯 hover 圖"
+                className={styles.iconHover}
+              />
+              編輯
+            </div>
+            <div
+              className={styles.moreOptionDelete}
+              onClick={() => handleDelete(props.commentId)}
+            >
+              <img
+                src="/images/article/delete-origin.svg"
+                alt="刪除原圖"
+                className={styles.iconOriginalDelete}
+              />
+              <img
+                src="/images/article/delete-hover.svg"
+                alt="刪除 hover 圖"
+                className={styles.iconHoverDelete}
+              />
+              刪除
+            </div>
           </div>
         </div>
       </div>
@@ -502,6 +942,8 @@ export default function CommentsArea({
   const [count, setCount] = useState(initialCount ?? 0)
   const [comments, setComments] = useState([])
   const [sortOption, setSortOption] = useState('1')
+  const [activeMenuId, setActiveMenuId] = useState(null)
+  const [currentEditingId, setCurrentEditingId] = useState(null)
 
   const toggleComments = () => setIsCollapsed((prev) => !prev)
 
@@ -523,19 +965,30 @@ export default function CommentsArea({
     if (!isCollapsed && articleId) {
       const fetchComments = async () => {
         try {
-          const res = await fetch(`http://localhost:8000/api/article_comments?articleId=${articleId}`)
+          const res = await fetch(`http://localhost:8000/api/article_comments?articleId=${articleId}`);
           if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`)
+            // 檢查回應是否為 JSON 格式
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const errorData = await res.json();
+              throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+            } else {
+              // 如果不是 JSON 格式，則直接顯示錯誤訊息
+              const errorText = await res.text();
+              throw new Error(errorText || `HTTP error! status: ${res.status}`);
+            }
           }
-          const data = await res.json()
-          setComments(organizeComments(data.comments))
+          const data = await res.json();
+          setComments(organizeComments(data.comments));
         } catch (error) {
-          console.error('Could not fetch comments:', error)
+          console.error('Could not fetch comments:', error);
+          // 顯示錯誤訊息給使用者
+          alert('取得留言失敗：' + error.message);
         }
-      }
-      fetchComments()
+      };
+      fetchComments();
     }
-  }, [articleId, refreshTrigger, isCollapsed])
+  }, [articleId, refreshTrigger, isCollapsed]);
 
   const getSortedComments = () => {
     const sorted = [...comments]
@@ -548,6 +1001,27 @@ export default function CommentsArea({
     }
     return sorted
   }
+
+  // 在 CommentsArea 組件中添加
+  const handleCommentDeleted = (deletedId, parentId = null) => {
+    if (!parentId) {
+      // 刪除主評論
+      setComments(prev => prev.filter(comment => comment.id !== deletedId));
+      setCount(prev => prev - 1);
+    } else {
+      // 刪除巢狀評論
+      setComments(prev => prev.map(comment => {
+        if (comment.id === parentId) {
+          return {
+            ...comment,
+            replies: comment.replies.filter(reply => reply.id !== deletedId)
+          };
+        }
+        return comment;
+      }));
+      setCount(prev => prev - 1);
+    }
+  };
 
   return (
     <div>
@@ -587,6 +1061,13 @@ export default function CommentsArea({
                 media_types={comment.media_types}
                 replies={comment.replies}
                 likeCount={comment.like_count}
+                activeMenuId={activeMenuId}
+                setActiveMenuId={setActiveMenuId}
+                is_edited={comment.is_edited}
+                updated_at={comment.updated_at}
+                currentEditingId={currentEditingId}
+                setCurrentEditingId={setCurrentEditingId}
+                onCommentDeleted={handleCommentDeleted}
               />
             ))}
           </div>

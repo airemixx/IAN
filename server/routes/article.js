@@ -21,10 +21,10 @@ router.use(cors(corsOptions))
 
 // 取得所有文章（僅撈出尚未刪除的文章）
 router.get('/', async (req, res) => {
-  const { year, month, category, search, tag, user_id } = req.query
+  const { year, month, category, search, tag, user_id } = req.query;
 
   let query = `
-    SELECT 
+    SELECT
       a.*,
       c.name AS category_name,
       GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags,
@@ -41,59 +41,58 @@ router.get('/', async (req, res) => {
     LEFT JOIN article_tags at ON a.id = at.article_id
     LEFT JOIN tag t ON at.tag_id = t.id
     JOIN users u ON a.user_id = u.id
-  `
+  `;
 
-  // 一律只撈出 is_deleted 為 0 的文章
   const conditions = ['a.is_deleted = 0'];
   const queryParams = [
-    tag || '',              // CASE WHEN t.tag_name = ?
-    `%${search || ''}%`,    // WHEN a.title LIKE ?
-    `%${search || ''}%`,    // WHEN a.content LIKE ?
-  ]
+    tag || '',
+    `%${search || ''}%`,
+    `%${search || ''}%`,
+  ];
 
   if (year) {
-    conditions.push('YEAR(a.created_at) = ?')
-    queryParams.push(year)
+    conditions.push('YEAR(a.created_at) = ?');
+    queryParams.push(year);
   }
   if (month) {
-    conditions.push('MONTH(a.created_at) = ?')
-    queryParams.push(month)
+    conditions.push('MONTH(a.created_at) = ?');
+    queryParams.push(month);
   }
   if (category) {
-    conditions.push('a.category_id = ?')
-    queryParams.push(category)
+    conditions.push('a.category_id = ?');
+    queryParams.push(category);
   }
   if (user_id) {
-    conditions.push('a.user_id = ?')
-    queryParams.push(user_id)
+    conditions.push('a.user_id = ?');
+    queryParams.push(user_id); // 確保 user_id 被正確添加到查詢參數
   }
-  // 當 search 但非 tag 搜尋時，額外搜尋標題與內文
+
   if (search && !tag) {
-    conditions.push('(t.tag_name LIKE ? OR a.title LIKE ? OR a.content LIKE ?)')
-    queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`)
+    conditions.push('(t.tag_name LIKE ? OR a.title LIKE ? OR a.content LIKE ?)');
+    queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
 
   if (conditions.length > 0) {
-    query += ' WHERE ' + conditions.join(' AND ')
+    query += ' WHERE ' + conditions.join(' AND ');
   }
 
   if (tag) {
-    query += ' GROUP BY a.id HAVING FIND_IN_SET(?, tags)'
-    queryParams.push(tag)
+    query += ' GROUP BY a.id HAVING FIND_IN_SET(?, tags)';
+    queryParams.push(tag);
   } else {
-    query += ' GROUP BY a.id'
+    query += ' GROUP BY a.id';
   }
 
-  query += ' ORDER BY relevance ASC, a.created_at DESC'
+  query += ' ORDER BY relevance ASC, a.created_at DESC';
 
   try {
-    const [rows] = await pool.query(query, queryParams)
-    res.status(200).json({ status: 'success', data: rows })
+    const [rows] = await pool.query(query, queryParams);
+    res.status(200).json({ status: 'success', data: rows });
   } catch (err) {
     res.status(500).json({
       status: 'error',
       message: err.message || '取得文章失敗',
-    })
+    });
   }
 })
 
