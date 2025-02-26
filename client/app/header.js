@@ -231,7 +231,7 @@ export default function Header({ searchOpen, setSearchOpen }) {
               <a href="#">
                 <img src="/images/icon/compare.svg" alt="" />
               </a>
-              <a href="/cart/cart-step1">
+              <a href="/cart">
                 <img src="/images/icon/cart.svg" alt="" />
               </a>
             </li>

@@ -21,11 +21,6 @@ export default function ECPayCallback() {
         // 取得網址參數
         const orderData = {
           merchantTradeNo: searchParams?.get('MerchantTradeNo'),
-          // tradeAmount: searchParams?.get('TradeAmt'),
-          // tradeDate: searchParams?.get('TradeDate'),
-          // paymentType: searchParams?.get('PaymentType'),
-          // rtnCode: searchParams?.get('RtnCode'),
-          // rtnMsg: searchParams?.get('RtnMsg'),
           buyerData: JSON.parse(localStorage.getItem('buyerData') || '[]'), // 取得買家資料
           cartItems: JSON.parse(localStorage.getItem('cartItems') || '[]'), // 取得購物車資料
           date: searchParams?.get('PaymentDate'),
