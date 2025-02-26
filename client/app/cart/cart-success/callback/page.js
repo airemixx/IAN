@@ -2,31 +2,34 @@
 
 import { useSearchParams } from 'next/navigation'
 import { isDev } from '@/config'
-import Link from 'next/link'
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./cart-success.scss";
 import { CheckCircle } from "react-bootstrap-icons";
+import { jwtDecode } from "jwt-decode";
 
 export default function ECPayCallback() {
     // 取得網址參數，例如: ?RtnCode=xxxxxx
   const searchParams = useSearchParams();
   const [orderSaved, setOrderSaved] = useState(false); // 確認訂單是否存入
-  
+  const token = localStorage.getItem("loginWithToken");
+  const decoded = jwtDecode(token);
+
   useEffect(() => {
     const saveOrderToDB = async () => {
       try {
         // 取得網址參數
         const orderData = {
-          // merchantTradeNo: searchParams?.get('MerchantTradeNo'),
+          merchantTradeNo: searchParams?.get('MerchantTradeNo'),
           // tradeAmount: searchParams?.get('TradeAmt'),
           // tradeDate: searchParams?.get('TradeDate'),
-          // paymentDate: searchParams?.get('PaymentDate'),
           // paymentType: searchParams?.get('PaymentType'),
           // rtnCode: searchParams?.get('RtnCode'),
           // rtnMsg: searchParams?.get('RtnMsg'),
           buyerData: JSON.parse(localStorage.getItem('buyerData') || '[]'), // 取得買家資料
           cartItems: JSON.parse(localStorage.getItem('cartItems') || '[]'), // 取得購物車資料
+          date: searchParams?.get('PaymentDate'),
+          userId: decoded.id
         };
 
         console.log("送出訂單資料:", orderData);
@@ -78,11 +81,11 @@ export default function ECPayCallback() {
                   <h2>謝謝你! 你的訂單已成立</h2>
                   <p className="fw-bold">訂單號碼: {searchParams?.get('MerchantTradeNo')}</p>
                   <br />
-                  <p>交易金額: {searchParams?.get('TradeAmt')}</p>
+                  <p>交易金額: {searchParams?.get('TradeAmt')}元</p>
                   <p>交易日期: {searchParams?.get('TradeDate')}</p>
                   <p>付款日期: {searchParams?.get('PaymentDate')}</p>
                   <span>訂單確認電郵已發到您的電子郵箱:</span>
-                  <p className="fw-bold">{1234}</p>
+                  <p className="fw-bold">{decoded.mail}</p>
                 </div>
               </div>
             </div>
@@ -90,6 +93,3 @@ export default function ECPayCallback() {
     </>
   )
 }
-
-// 返回的範例:
-// http://localhost:3000/ecpay/callback?CustomField1=&CustomField2=&CustomField3=&CustomField4=&MerchantID=3002607&MerchantTradeNo=od20241130223942231&PaymentDate=2024%2F11%2F30+23%3A11%3A51&PaymentType=TWQR_OPAY&PaymentTypeChargeFee=0&RtnCode=1&RtnMsg=Succeeded&SimulatePaid=0&StoreID=&TradeAmt=1000&TradeDate=2024%2F11%2F30+22%3A39%3A42&TradeNo=2411302239425452&CheckMacValue=958DF6A1C508F2A90F04440AF0F464960A71E315EBA903A4FCD53C1517C043ED

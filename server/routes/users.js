@@ -183,6 +183,178 @@ router.post("/", upload.single("avatar"), async (req, res) => {
   }
 });
 
+//address
+router.post('/addresses', checkToken , async (req, res) => {
+  // 此處假設 JWT 已經在前面的中間件中解析，並將解碼的用戶資訊附加到了 req.user 上
+  const user_id = req.decoded.id;
+
+  const { address } = req.body;
+
+  // 驗證必填欄位
+  if (!address) {
+    return res.status(400).json({
+      status: 'error',
+      message: '請提供地址',
+    });
+  }
+
+  try {
+    // 將地址插入到資料庫
+    const [result] = await db.execute(
+      `INSERT INTO addresses (user_id, address, created_at) VALUES (?, ?, ?)`,
+      [user_id, address, new Date()]
+    );
+
+    const newAddress = {
+      id: result.insertId,
+      user_id,
+      address,
+      created_at: new Date(),
+    };
+
+    res.status(201).json({
+      status: 'success',
+      data: newAddress,
+    });
+  } catch (error) {
+    console.error('無法新增地址:', error);
+    res.status(500).json({
+      status: 'error',
+      message: '無法新增地址，請稍後再試。',
+    });
+  }
+});
+
+// **取得所有地址**
+router.get('/addresses/me', checkToken, async (req, res) => {
+  try {
+    const user_id = req.decoded.id; // ✅ 直接使用 JWT 解析的 `id`
+    console.log("🔹 取得用戶 ID:", user_id); // 確保 `user_id` 有值
+
+    if (!user_id) {
+      return res.status(401).json({
+        status: 'error',
+        message: '無法識別用戶，請重新登入',
+      });
+    }
+
+    // ✅ 查詢資料庫，獲取該用戶的所有住址，按 `created_at` 降序排列
+    const [rows] = await db.execute(
+      'SELECT id, address, created_at FROM addresses WHERE user_id = ? ORDER BY created_at ASC',
+      [user_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: '該用戶沒有地址紀錄',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: rows, // ✅ 返回所有住址
+    });
+  } catch (error) {
+    console.error('❌ 獲取所有住址失敗:', error);
+    res.status(500).json({
+      status: 'error',
+      message: '無法獲取所有住址，請稍後再試',
+    });
+  }
+});
+
+
+// **編輯地址**
+router.put('/addresses/:id', checkToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { address } = req.body;
+    const user_id = req.decoded.id; // ✅ 確保 JWT 解析出 user_id
+
+    if (!address) {
+      return res.status(400).json({
+        status: 'error',
+        message: '請提供地址',
+      });
+    }
+
+    // 🔍 檢查該地址是否存在，且屬於當前用戶
+    const [existingAddress] = await db.execute(
+      `SELECT * FROM addresses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    if (existingAddress.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: '找不到該地址，或您無權修改此地址',
+      });
+    }
+
+    // ✅ 更新地址
+    await db.execute(
+      `UPDATE addresses SET address = ?, updated_at = NOW() WHERE id = ? AND user_id = ?`,
+      [address, id, user_id]
+    );
+
+    res.status(200).json({
+      status: 'success',
+      message: '地址更新成功',
+      data: { id, address },
+    });
+  } catch (error) {
+    console.error('❌ 更新地址失敗:', error);
+    res.status(500).json({
+      status: 'error',
+      message: '無法更新地址，請稍後再試',
+    });
+  }
+});
+
+//刪除住址
+router.delete('/addresses/:id', checkToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user_id = req.decoded.id; // ✅ 確保 JWT 解析出 user_id
+
+    // 🔍 檢查該地址是否存在，且屬於當前用戶
+    const [existingAddress] = await db.execute(
+      `SELECT * FROM addresses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    if (existingAddress.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: '找不到該地址，或您無權刪除此地址',
+      });
+    }
+
+    // ✅ 從資料庫刪除地址
+    await db.execute(
+      `DELETE FROM addresses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    res.status(200).json({
+      status: 'success',
+      message: '地址刪除成功',
+      data: { id },
+    });
+  } catch (error) {
+    console.error('❌ 刪除地址失敗:', error);
+    res.status(500).json({
+      status: 'error',
+      message: '無法刪除地址，請稍後再試',
+    });
+  }
+});
+
+//address--/
+
+
+
 router.put("/:account", checkToken, upload.none(), async (req, res) => {
   const { account } = req.params;
   console.log(account);
@@ -441,6 +613,7 @@ function checkToken(req, res, next) {
       message: "驗證資料失效, 請重新登入",
     })
     req.decoded = decoded;
+    console.log(req.decoded)
     next();
   });
 }

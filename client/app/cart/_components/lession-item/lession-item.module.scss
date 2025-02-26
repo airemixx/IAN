@@ -6,7 +6,27 @@
   background-color: #fff;
   
 }
-
+.j-lessonImg{
+  width: 90%;
+}
 .j-lessonImg img {
   width: 100%;
+  height: 90%;
+ 
+}
+
+.j-delBtn>button:active,
+.j-delBtnfocus>button:focus,
+.j-delBtn>button:not(.j-cartItem){
+  border: none;
+}
+
+.j-delBtn{
+  left: 92.5%;
+}
+
+@media (max-width: 1200px){
+  .j-delBtn{
+    left: 90%;
+  }
 }

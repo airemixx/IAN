@@ -6,7 +6,7 @@ import useAuth from '@/hooks/use-auth';
 import Sidenav from '../_components/Sidenav/page';
 import FavoriteButton from "@/app/courses/_components/favorite-button/page";
 
-export default function UserPage() {
+export default function CollectPage() {
     const { token, user, loading } = useAuth();
   
     if (loading) {

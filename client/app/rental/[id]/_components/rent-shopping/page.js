@@ -6,11 +6,14 @@ import { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { Howl } from 'howler'
 
-
-export default function RentShopping({ rental }) {
+export default function RentShopping({ rental, onDateChange, onFeeChange }) {
   // 日期相關的狀態
   const [startDate, setStartDate] = useState('') // 選擇的開始日期
   const [endDate, setEndDate] = useState('')     // 選擇的結束日期
+  const [totalFee, setTotalFee] = useState(0); // 總金額（初始為 0）
+  const [originFee, setOriginFee] = useState(0); // 原始總金額（不含折扣）
+
+
 
   // 開始日期的範圍
   const [minStartDate, setMinStartDate] = useState('')
@@ -124,6 +127,68 @@ export default function RentShopping({ rental }) {
     return disabledDates
   }
 
+  // // 計算總金額
+  // useEffect(() => {
+  //   if (startDate && endDate) {
+  //     const start = new Date(startDate);
+  //     const end = new Date(endDate);
+  //     const diffTime = Math.abs(end - start);
+  //     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  //     const calculatedFee = diffDays * rental.fee;
+  //     setTotalFee(calculatedFee);
+  //     console.log('總金額計算:', calculatedFee);
+  //     onDateChange(startDate, endDate);
+  //     onFeeChange(calculatedFee);
+  //   } else {
+  //     setTotalFee(0);
+  //     onFeeChange(0);
+  //   }
+  // }, [startDate, endDate, rental.fee, onDateChange, onFeeChange]);
+
+  // 🧮 計算總金額，包含禮拜日的折扣邏輯
+  useEffect(() => {
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      let normalDays = 0; // 非星期日的天數
+      let sundayDays = 0; // 星期日的天數
+
+      // 🗓️ 迴圈計算日期區間內的每一天
+      const currentDate = new Date(start);
+      while (currentDate <= end) {
+        if (currentDate.getUTCDay() === 0) {
+          sundayDays++; // 是星期日
+        } else {
+          normalDays++; // 是一般日
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      console.log('一般日天數:', normalDays, '星期日天數:', sundayDays);
+
+      // 計算原始總金額（無折扣）
+      const originDays = normalDays + sundayDays;
+      const calculatedOriginFee = originDays * rental.fee;
+      setOriginFee(calculatedOriginFee);
+
+      // 計算總金額，星期日價格為原價的一半
+      const calculatedFee = (normalDays * rental.fee) + (sundayDays * rental.fee * 0.5);
+      setTotalFee(calculatedFee);
+
+      console.log('總金額計算:', calculatedFee);
+
+      // 更新父元件資料，傳遞原始金額與折扣後金額
+      onDateChange(startDate, endDate);
+      onFeeChange({ originFee: calculatedOriginFee, totalFee: calculatedFee });
+    } else {
+      setTotalFee(0);
+      setOriginFee(0);
+      onFeeChange({ originFee: 0, totalFee: 0 });
+    }
+  }, [startDate, endDate, rental.fee, onDateChange, onFeeChange]);
+
+
   // 🛒 加入購物車邏輯
   const handleAddToCart = () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('loginWithToken') : null
@@ -217,12 +282,13 @@ export default function RentShopping({ rental }) {
       existingItem.start = startDate
       existingItem.end = endDate
       existingItem.image = imageUrl // 🆕 更新圖片資料
+      existingItem.fee = totalFee; // 直接將計算後的總金額傳遞
     } else {
       cart.push({
         rentalId: rental.id,
         brand: rental.brand,
         name: rental.name,
-        fee: rental.fee,
+        fee: totalFee, // 傳遞運算過的總金額（折扣後）
         start: startDate,
         end: endDate,
         image: imageUrl // 🆕 新增圖片資料

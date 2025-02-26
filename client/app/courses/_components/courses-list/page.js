@@ -8,6 +8,7 @@ import FavoriteButton from '../favorite-button/page'
 import Pagination from '../pagination/page.js'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import 'hover.css'
 
 export default function CourseList({ courses }) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -25,7 +26,7 @@ export default function CourseList({ courses }) {
 
   // ✅ **過濾只顯示 `status = "published"` 的課程**
   const publishedCourses = useMemo(() => {
-    return courses.filter(course => course.status === "published")
+    return courses.filter((course) => course.status === 'published')
   }, [courses])
 
   // **請求熱門課程**
@@ -39,7 +40,9 @@ export default function CourseList({ courses }) {
         console.log('取得熱門課程:', data)
 
         // ✅ 只保留 `status = "published"` 的熱門課程
-        setPopularCourses(data.filter(course => course.status === "published").slice(0, 4))
+        setPopularCourses(
+          data.filter((course) => course.status === 'published').slice(0, 4)
+        )
       } catch (err) {
         console.error('載入熱門課程失敗:', err.message)
       }
@@ -55,7 +58,7 @@ export default function CourseList({ courses }) {
     if (!publishedCourses || publishedCourses.length === 0) return []
     return publishedCourses.slice(
       indexOfFirstCourse,
-      Math.min(indexOfLastCourse, publishedCourses.length),
+      Math.min(indexOfLastCourse, publishedCourses.length)
     )
   }, [publishedCourses, currentPage])
 
@@ -120,21 +123,25 @@ export function CourseCard({ course }) {
 
   useEffect(() => {
     AOS.init({
-      duration: 1000, 
+      duration: 1000,
       once: true,
-      offset: 100, 
+      offset: 100,
     })
   }, [])
 
   return (
     <div className="col-lg-3 col-sm-6 col-12" data-aos="fade-up">
-      <Link href={`/courses/${course.id}`} className={styles['course-card-link']}>
-        <div className={`${styles['course-card']} mb-md-5 mb-4`}>
+      <Link
+        href={`/courses/${course.id}`}
+        className={styles['course-card-link']}
+      >
+        <div className={`${styles['course-card']} mb-md-5 mb-4 hvr-float`}>
           <div className="e-card-img">
             <img src={safeImage} alt={course.title} className="img-fluid" />
             <div className="e-img-overlay"></div>
 
             <FavoriteButton
+              courseId={course.id}
               isFavorite={isFavorite}
               toggleFavorite={() => setIsFavorite(!isFavorite)}
             />
@@ -168,7 +175,7 @@ export function CourseCard({ course }) {
             </p>
           </div>
         </div>
-        </Link>
+      </Link>
     </div>
   )
 }

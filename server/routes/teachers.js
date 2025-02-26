@@ -3,6 +3,7 @@ import pool from '../db.js'
 import jwt from 'jsonwebtoken'
 import authenticate from '../middlewares.js'
 
+
 const router = express.Router()
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key'
 
@@ -145,6 +146,7 @@ router.put('/me', authenticate, async (req, res) => {
     connection.release() // 釋放連線
   }
 })
+
 
 // ✅ 獲取特定講師的資訊 + 該老師的所有課程(包含評分)
 router.get('/:id', async (req, res) => {

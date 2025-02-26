@@ -68,12 +68,9 @@ router.get('/', async (req, res) => {
       if (sort === 'high-price') query += ` ORDER BY c.sale_price DESC`
     }
 
-   
-
     const result = await pool.query(query, params)
     const courses = result[0]
 
-  
     res.json(courses)
   } catch (error) {
     console.error('❌ 取得課程失敗:', error.stack)
@@ -113,24 +110,28 @@ router.get('/:id', async (req, res) => {
 
 // ✅ 取得特定課程的所有評論
 router.get('/:id/comments', async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   try {
     const sql = `
       SELECT 
-      cm.*
+        cm.* ,
+        u.name AS user_name, 
+        u.head AS user_head 
       FROM comments cm
-      WHERE cm.course_id = ?
-      ORDER BY cm.created_at DESC;
-    `
+      JOIN users u ON cm.user_id = u.id
+      WHERE cm.course_id = ?  
+      ORDER BY cm.created_at DESC; 
+    `;
 
-    const [comments] = await pool.execute(sql, [id])
+    const [comments] = await pool.execute(sql, [id]);
 
-    res.json(comments)
+    res.json(comments);
   } catch (error) {
-    console.error('❌ 無法獲取課程評論:', error)
-    res.status(500).json({ error: '無法獲取課程評論' })
+    console.error('❌ 無法獲取課程評論:', error);
+    res.status(500).json({ error: '無法獲取課程評論' });
   }
-})
+});
+
 
 // ✅ 取得同分類課程
 router.get('/related/:category', async (req, res) => {
@@ -159,74 +160,217 @@ router.get('/related/:category', async (req, res) => {
   }
 })
 
-
 // 更新課程
-router.put("/:id", authenticate, async (req, res) => {
-  const courseId = req.params.id;
-  const userId = req.userId; // 從 `authenticate` middleware 取得
+router.put('/:id', authenticate, async (req, res) => {
+  const courseId = req.params.id
+  const userId = req.userId // 從 `authenticate` middleware 取得
 
   try {
     // **檢查課程是否存在**
     const [existingCourse] = await pool.query(
-      "SELECT id FROM courses WHERE id = ? AND teacher_id = (SELECT id FROM teachers WHERE user_id = ?)",
+      'SELECT id FROM courses WHERE id = ? AND teacher_id = (SELECT id FROM teachers WHERE user_id = ?)',
       [courseId, userId]
-    );
+    )
 
-    console.log("📌 查詢結果:", existingCourse);
+    console.log('📌 查詢結果:', existingCourse)
 
     if (existingCourse.length === 0) {
-      console.log("❌ 找不到課程或無權限:", { courseId, userId });
-      return res.status(404).json({ error: "❌ 找不到該課程或權限不足" });
+      console.log('❌ 找不到課程或無權限:', { courseId, userId })
+      return res.status(404).json({ error: '❌ 找不到該課程或權限不足' })
     }
 
     // **執行更新**
-    const { title, description, status, original_price, sale_price, category, content, image_url } = req.body;
+    const {
+      title,
+      description,
+      status,
+      original_price,
+      sale_price,
+      category,
+      content,
+      image_url,
+    } = req.body
 
     const sql = `
       UPDATE courses 
       SET title = ?, description = ?, status = ?, original_price = ?, sale_price = ?, category = ?, content = ?, image_url = ?
       WHERE id = ? AND teacher_id = (SELECT id FROM teachers WHERE user_id = ?)
-    `;
+    `
 
-    await pool.query(sql, [title, description, status, original_price, sale_price, category, content, image_url, courseId, userId]);
+    await pool.query(sql, [
+      title,
+      description,
+      status,
+      original_price,
+      sale_price,
+      category,
+      content,
+      image_url,
+      courseId,
+      userId,
+    ])
 
-    res.json({ message: "✅ 課程更新成功！" });
+    res.json({ message: '✅ 課程更新成功！' })
   } catch (error) {
-    console.error("❌ 更新課程失敗:", error);
-    res.status(500).json({ error: "無法更新課程" });
+    console.error('❌ 更新課程失敗:', error)
+    res.status(500).json({ error: '無法更新課程' })
   }
-});
-
+})
 
 // 新增課程資訊
 router.post('/', authenticate, async (req, res) => {
-  const { title, description, category, original_price, sale_price, image_url, content, status } = req.body;
-  const userId = req.userId; // 從 `authenticate` middleware 獲取 userId
+  const {
+    title,
+    description,
+    category,
+    original_price,
+    sale_price,
+    image_url,
+    content,
+    status,
+  } = req.body
+  const userId = req.userId // 從 `authenticate` middleware 獲取 userId
 
   try {
     // 確認使用者是老師
     const [teacherRows] = await pool.query(
       'SELECT id FROM teachers WHERE user_id = ?',
       [userId]
-    );
+    )
 
     if (teacherRows.length === 0) {
-      return res.status(403).json({ error: '權限不足，非講師帳號' });
+      return res.status(403).json({ error: '權限不足，非講師帳號' })
     }
 
-    const teacherId = teacherRows[0].id;
+    const teacherId = teacherRows[0].id
 
     // 插入新課程
     const sql = `
       INSERT INTO courses (title, description, category, original_price, sale_price, image_url, content, status, teacher_id)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const [result] = await pool.query(sql, [title, description, category, original_price, sale_price, image_url, content, status, teacherId]);
+    `
+    const [result] = await pool.query(sql, [
+      title,
+      description,
+      category,
+      original_price,
+      sale_price,
+      image_url,
+      content,
+      status,
+      teacherId,
+    ])
 
-    res.json({ message: '✅ 課程新增成功！', courseId: result.insertId });
+    res.json({ message: '✅ 課程新增成功！', courseId: result.insertId })
   } catch (error) {
-    console.error('❌ 新增課程失敗:', error);
-    res.status(500).json({ error: '無法新增課程' });
+    console.error('❌ 新增課程失敗:', error)
+    res.status(500).json({ error: '無法新增課程' })
+  }
+})
+
+router.get('/collection/:courseId', authenticate, async (req, res) => {
+  try {
+      console.log("🛠 API 端點收到 req.userId:", req.userId);
+
+      if (!req.userId) {
+          console.error("❌ req.userId 未定義");
+          return res.status(401).json({ message: "未授權，請先登入 (req.userId 無效)" });
+      }
+
+      const userId = req.userId; // ✅ 取得 `user_id`
+      const { courseId } = req.params; // ✅ 取得 `course_id`
+
+      // console.log(` 取得用戶 ${userId} 的收藏狀態，課程 ID: ${courseId}`);
+
+      // 查詢該用戶是否收藏了該課程
+      const [result] = await pool.query(
+          'SELECT id FROM collection WHERE user_id = ? AND course_id = ?',
+          [userId, courseId]
+      );
+
+      res.json({ isFavorite: result.length > 0 }); // ✅ 回傳布林值
+  } catch (error) {
+      console.error('❌ 取得課程收藏狀態失敗:', error);
+      res.status(500).json({ message: '伺服器錯誤' });
+  }
+});
+
+
+// 新增收藏
+router.post('/collection', authenticate, async (req, res) => {
+  try {
+      console.log("🔍 接收的 `req.body`:", req.body);
+      console.log("🔍 req.user:", req.user);
+
+      if (!req.user || !req.user.id) {
+          console.error("❌ req.user.id 未定義");
+          return res.status(401).json({ message: "未授權，請先登入 (req.user.id 無效)" });
+      }
+
+      const userId = req.user.id;
+      const { course_id } = req.body;
+
+      // ✅ 檢查 `course_id` 是否為 `undefined` 或 `null`
+      if (!course_id) {
+          console.error("❌ course_id 未提供或為無效值:", course_id);
+          return res.status(400).json({ message: "請提供有效的 course_id" });
+      }
+
+      console.log(`✅ 新增收藏 - 用戶 ID: ${userId}, 課程 ID: ${course_id}`);
+
+      const [result] = await pool.query(
+          'INSERT INTO collection (user_id, course_id) VALUES (?, ?)',
+          [userId, course_id]
+      );
+
+      res.json({ message: "收藏成功", insertId: result.insertId });
+  } catch (error) {
+      console.error('❌ 收藏失敗:', error);
+      res.status(500).json({ message: '伺服器錯誤' });
+  }
+});
+
+
+// 移除收藏
+router.delete('/collection/:courseId', authenticate, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const userId = req.user.id;
+
+
+    // 檢查 `courseId` 是否有效
+    if (!courseId) {
+      console.error("❌ courseId 無效:", courseId);
+      return res.status(400).json({ message: "請提供有效的 courseId" });
+    }
+
+    // 確保該用戶有收藏該課程
+    const [check] = await pool.query(
+      "SELECT id FROM collection WHERE user_id = ? AND course_id = ?",
+      [userId, courseId]
+    );
+
+    if (check.length === 0) {
+      console.warn("⚠️ 該用戶未收藏此課程，無法刪除");
+      return res.status(404).json({ message: "找不到收藏紀錄" });
+    }
+
+    // 刪除收藏
+    const [result] = await pool.query(
+      "DELETE FROM collection WHERE user_id = ? AND course_id = ?",
+      [userId, courseId]
+    );
+
+    console.log("✅ 刪除成功，影響行數:", result.affectedRows);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "找不到對應的收藏紀錄" });
+    }
+
+    res.json({ message: "已取消收藏" });
+  } catch (error) {
+    console.error("❌ 取消收藏失敗:", error);
+    res.status(500).json({ message: "伺服器錯誤" });
   }
 });
 

@@ -2,15 +2,17 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
+import authenticate from "../middlewares.js"; 
+import pool from "../db.js"; 
 
 const router = express.Router();
-const uploadDir = path.join(process.cwd(), "/public/uploads/images/teacher"); // ✅ 存放講師頭像的資料夾
+const uploadDir = path.join(process.cwd(), "/public/uploads/images/teacher");
 
 // **Multer 設定**
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
-      await fs.access(uploadDir); // ✅ 確保目錄存在
+      await fs.access(uploadDir);
     } catch {
       console.log("📂 目錄不存在，嘗試創建...");
       await fs.mkdir(uploadDir, { recursive: true });
@@ -29,16 +31,35 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// **講師圖片上傳 API**
-router.post("/", upload.single("upload"), (req, res) => {
+// **講師圖片上傳並更新資料庫**
+// **講師圖片上傳並更新資料庫**
+router.post("/", authenticate, upload.single("upload"), async (req, res) => {
+  const userId = req.userId; // 從 Token 取得 userId
+
   if (!req.file) {
-    return res.status(400).json({ message: "上傳失敗" });
+    return res.status(400).json({ error: "❌ 沒有選擇圖片" });
   }
 
-  console.log("📂 檔案存入:", req.file.path);
+  const imageUrl = `http://localhost:8000/uploads/images/teacher/${req.file.filename}`;
 
-  const fileUrl = `/uploads/images/teachers/${req.file.filename}`;
-  res.status(200).json({ url: fileUrl });
+  try {
+    // **更新講師資料**
+    const [updateResult] = await pool.query(
+      "UPDATE teachers SET image = ? WHERE user_id = ?",
+      [imageUrl, userId]
+    );
+
+    if (updateResult.affectedRows === 0) {
+      return res.status(404).json({ error: "❌ 找不到講師，無法更新頭像" });
+    }
+
+    console.log(`✅ 老師頭像更新成功: ${imageUrl}`);
+    res.json({ message: "✅ 老師頭像更新成功！", image_url: imageUrl }); // ✅ 確保正確回傳
+  } catch (error) {
+    console.error("❌ 更新老師頭像失敗:", error);
+    res.status(500).json({ error: "無法更新頭像" });
+  }
 });
+
 
 export default router;

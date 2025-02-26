@@ -15,6 +15,11 @@ export default function RentDetail() {
   const [rental, setRental] = useState(null)
   const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [totalFee, setTotalFee] = useState(0);
+  const [originFee, setOriginFee] = useState(0);
+  // const [discountedTotalFee, setDiscountedTotalFee] = useState(0);
 
   useEffect(() => {
     if (!id) return
@@ -24,6 +29,8 @@ export default function RentDetail() {
       .then((data) => {
         if (data.success) {
           setRental(data.data)
+          setTotalFee(data.data.fee); // 預設顯示單日金額
+          setOriginFee(data.data.fee); // 預設顯示單日金額
           setRecommendations(data.recommendations) // ✅ 取得推薦商品
         } else {
           console.error('商品資料加載失敗:', data.error)
@@ -35,6 +42,20 @@ export default function RentDetail() {
         setLoading(false)
       })
   }, [id])
+
+  // 計算總金額
+  const handleDateChange = (start, end) => {
+    console.log('Date updated:', start, end);
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  const handleFeeChange = ({ originFee, totalFee }) => {
+    console.log('Fee updated - Original:', originFee, 'Discounted:', totalFee);
+    setOriginFee(originFee);
+    setTotalFee(totalFee);
+  };
+
 
   if (loading) return <p className="text-center mt-5">🚀 資料載入中...</p>
   if (!rental)
@@ -51,12 +72,20 @@ export default function RentDetail() {
 
             <div className="col-lg-5">
               <h2>
-                {rental.brand || '無資料'} {rental.name || '無資料'}
+                {rental.brand} {rental.name || '無資料'}
               </h2>
               <p className="k-main-text h4 ms-2 mt-2">
-                NT$ {rental.fee ? rental.fee.toLocaleString() : '無資料'}/ 天
+
+                {originFee > totalFee && (
+                  <small className="text-muted me-1" style={{ textDecoration: 'line-through' }}>
+                    NT$ {originFee.toLocaleString()}
+                  </small>
+                )}
+                NT$ {totalFee ? totalFee.toLocaleString() : `${rental.fee.toLocaleString()} / 天`}
               </p>
-              <RentTabs rental={rental} />
+              <RentTabs rental={rental}
+                onDateChange={handleDateChange}
+                onFeeChange={handleFeeChange} />
               <RentHashtag hashtags={rental.hashtags} />
               <RentReviews rentalId={rental.id} />
             </div>
