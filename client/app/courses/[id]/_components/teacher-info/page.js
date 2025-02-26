@@ -10,6 +10,7 @@ import {
   FaYoutube,
 } from 'react-icons/fa'
 import TeacherCoursesList from '../teacher-courses-list/page'
+import Link from "next/link";
 
 export default function TeacherInfo({ teacherId }) {
   const [teacher, setTeacher] = useState(null)
@@ -42,15 +43,14 @@ export default function TeacherInfo({ teacherId }) {
 
   useEffect(() => {
     if (isModalOpen) {
-      document.body.style.overflow = 'hidden';  // 禁止背景滾動
+      document.body.style.overflow = 'hidden' // 禁止背景滾動
     } else {
-      document.body.style.overflow = 'auto';  // 允許滾動
+      document.body.style.overflow = 'auto' // 允許滾動
     }
     return () => {
-      document.body.style.overflow = 'auto';  // 彈出視窗關閉時恢復滾動
-    };
-  }, [isModalOpen]);
-  
+      document.body.style.overflow = 'auto' // 彈出視窗關閉時恢復滾動
+    }
+  }, [isModalOpen])
 
   console.log('📌 TeacherInfo 接收到的 teacherId:', teacherId)
   if (loading) return <p>載入中...</p>
@@ -80,8 +80,10 @@ export default function TeacherInfo({ teacherId }) {
               </p>
             </li>
             <li className={styles['data-item']}>
-              <img src="/images/icon/article-icon.svg" alt="" />
-              <p>{teacher.articleCount?.toLocaleString() || '0'} 篇文章</p>
+              <Link href="/article" className={styles['link-wrapper']}>
+                <img src="/images/icon/article-icon.svg" alt="" />
+                <p>{teacher.articleCount?.toLocaleString() || '0'} 篇文章</p>
+              </Link>
             </li>
             <li className={styles['data-item']}>
               <img src="/images/icon/student-icon.svg" alt="" />
@@ -110,8 +112,14 @@ export default function TeacherInfo({ teacherId }) {
 
       {/* 彈出視窗  */}
       {isModalOpen && selectedTeacher && (
-        <div className={styles['modal-overlay']} onClick={() => setIsModalOpen(false)}>
-          <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={styles['modal-overlay']}
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className={styles['modal-content']}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className={styles['close-btn']}
               onClick={() => setIsModalOpen(false)}

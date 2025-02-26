@@ -49,7 +49,7 @@ export default function RelatedCourses({ course }) {
         {relatedCourses.map((relatedCourse) => (
           <div
             key={relatedCourse.id}
-            className="col-md-3"
+            className="col-lg-3 col-md-6 col-12"
             data-aos="fade-up"
             data-aos-anchor-placement="top-bottom"
           >

@@ -32,6 +32,7 @@
     "i": "^0.3.7",
     "jquery": "^3.7.1",
     "jwt-decode": "^4.0.0",
+    "lottie-react": "^2.4.1",
     "material-react-toastify": "^10.0.5",
     "next": "^15.1.6",
     "next-auth": "^4.24.11",

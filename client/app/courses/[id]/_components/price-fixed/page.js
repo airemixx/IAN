@@ -20,7 +20,7 @@ export default function PriceFixed({ course }) {
     }
   }, [])
 
-  const router = useRouter();
+  const router = useRouter()
 
   //立即購買
   const handleBuyNow = () => {
@@ -48,15 +48,11 @@ export default function PriceFixed({ course }) {
         title: course.title,
         price: course.sale_price,
         image: course.image_url,
-        quantity: 1, // ✅ 初始數量 1
+        quantity: 1,
       })
-
-      // ✅ 更新 `localStorage`
       localStorage.setItem('shoppingCart', JSON.stringify(updatedCart))
       setCart(updatedCart)
     }
-
-    // ✅ 直接導向購物車頁面
     router.push('/cart/cart-step1')
   }
 
@@ -87,7 +83,7 @@ export default function PriceFixed({ course }) {
         title: course.title,
         price: course.sale_price,
         image: course.image_url,
-        quantity: 1, // 初始數量 1
+        quantity: 1,
       })
 
       // 更新 `localStorage`
@@ -110,8 +106,13 @@ export default function PriceFixed({ course }) {
 
   useEffect(() => {
     const handleScroll = () => {
+      if (window.innerWidth < 1200) {
+        setIsVisible(true) // 手機版強制顯示
+        return
+      }
+
       const priceSection = document.querySelector(
-        `.${styles['course-price-fixed']}`,
+        `.${styles['course-price-fixed']}`
       )
       const contentSection = document.querySelector('.col-12.col-xl-8') // 左側內容區
 
@@ -140,7 +141,9 @@ export default function PriceFixed({ course }) {
 
   return (
     <div
-      className={`${styles['course-price-fixed']} ${isVisible ? styles['show'] : styles['hide']}`}
+      className={`${styles['course-price-fixed']} ${
+        isVisible ? styles['show'] : styles['hide']
+      }`}
       data-aos="fade-down"
     >
       <div className={styles['fixed-price']}>
@@ -152,14 +155,21 @@ export default function PriceFixed({ course }) {
         </div>
       </div>
       <div className={styles['shopping-btn-fixed']}>
-        <button className={styles['buy-btn']} onClick={handleBuyNow}>+ 立即購買</button>
+        <button className={styles['buy-btn']} onClick={handleBuyNow}>
+          + 立即購買
+        </button>
         <div className={styles['shopping-btn-flex']}>
-          <button className={`${styles['cart-btn']} hvr-icon-pulse`} onClick={handleAddToCart}>
+          <button
+            className={`${styles['cart-btn']} hvr-icon-pulse`}
+            onClick={handleAddToCart}
+          >
             <img src="/images/icon/cart-btn.svg" alt="加入購物車" />
             <p>加入購物車</p>
           </button>
-          <FavoriteButtonG className={styles['favorite-btn']} courseId={course.id}  />
-            
+          <FavoriteButtonG
+            className={styles['favorite-btn']}
+            courseId={course.id}
+          />
         </div>
         <div className={styles['refund']}>
           <p>30 天退款保證</p>
