@@ -130,7 +130,7 @@ export function CourseCard({ course }) {
   }, [])
 
   return (
-    <div className="col-lg-3 col-sm-6 col-12" data-aos="fade-up">
+    <div className="col-lg-3 col-md-6 col-12" data-aos="fade-up">
       <Link
         href={`/courses/${course.id}`}
         className={styles['course-card-link']}

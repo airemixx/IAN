@@ -52,7 +52,6 @@ export default function CourseRating() {
 
   useEffect(() => {
     if (showAllComments && scrollToCommentId !== null) {
-      console.log('🔍 設定 scrollToCommentId:', scrollToCommentId)
 
       const tryScroll = (attempts = 0) => {
         setTimeout(() => {
@@ -61,14 +60,10 @@ export default function CourseRating() {
             `comment-${scrollToCommentId}`
           )
 
-          console.log(`🔍 嘗試滾動到 ID: comment-${scrollToCommentId}`)
-
           if (modalContent && targetComment) {
             const rect = targetComment.getBoundingClientRect()
             const scrollToPosition =
               modalContent.scrollTop + rect.top - modalContent.clientHeight / 3
-
-            console.log(`📌 計算的滾動位置: ${scrollToPosition}`)
 
             modalContent.scrollTo({
               top: scrollToPosition,
@@ -92,13 +87,12 @@ export default function CourseRating() {
     }
   }, [showAllComments, scrollToCommentId])
 
-  //  先定義 `ratingCounts` 再計算 `ratingPercentages`
   const ratingCounts = [5, 4, 3, 2, 1].map(
     (star) =>
       comments.filter((comment) => Math.round(comment.rating) === star).length
   )
 
-  const totalReviews = comments.length || 1 // 避免除以 0
+  const totalReviews = comments.length || 1 
   const ratingPercentages = ratingCounts.map(
     (count) => (count / totalReviews) * 100
   )
@@ -174,7 +168,7 @@ export default function CourseRating() {
             content={comment.content}
             imgSrc={comment.user_head || '/images/default-avatar.jpg'}
             onShowAllComments={(id) => {
-              console.log('🔍 設定 scrollToCommentId:', id) // ✅ 檢查正確 `id`
+              // console.log('🔍 設定 scrollToCommentId:', id)
               setScrollToCommentId(id)
               setShowAllComments(true)
             }}
@@ -209,8 +203,8 @@ export default function CourseRating() {
             <div className={styles['modal-content']} ref={modalContentRef}>
               {comments.map((comment, index) => (
                 <CourseComment
-                  key={comment.id} // 使用 comment.id 而非 index
-                  commentId={comment.id} // 添加這一行，確保每個評論有正確的 ID
+                  key={comment.id} 
+                  commentId={comment.id} 
                   name={comment.user_name}
                   date={comment.created_at}
                   rating={comment.rating}

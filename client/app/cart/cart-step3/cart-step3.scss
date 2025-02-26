@@ -2,9 +2,6 @@ nav{
   display: flex;
   justify-content: flex-end;
 }
-.nav-left{
- display: none;
-}
 
 .j-cartTitle{
   background-color: #003150;
@@ -30,10 +27,6 @@ nav{
   background-color: #f6f6f6;
   border-radius: 20px;
   color: #fff;
-}
-
-.j-bodyHeight{
-  height: auto;
 }
 
 .j-cartItemsBox {

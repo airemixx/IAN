@@ -10,6 +10,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import sessionFileStore from 'session-file-store'
 import session from 'express-session'
+import db from './db.js'
 
 import path from 'path'
 import coursesRouter from './routes/courses.js'

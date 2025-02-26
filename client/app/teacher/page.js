@@ -90,7 +90,7 @@ export default function CourseManagement() {
   console.log('📌 當前顯示的課程列表:', currentCourses)
   console.log('📌 當前頁碼:', currentPage, ' / 總頁數:', totalPages)
 
-  if (loading) return <p>⏳ 載入中...</p>
+  if (loading) return <p>載入中...</p>
 
   return (
     <>

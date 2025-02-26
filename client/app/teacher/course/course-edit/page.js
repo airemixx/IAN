@@ -42,12 +42,12 @@ const editorConfig = {
       'imageStyle:side',
     ],
     upload: {
-      types: ['jpeg', 'png', 'gif', 'avif'],
+      types: ['jpeg', 'png', 'gif', 'avif', 'webp'],
     },
   },
 
   imageUpload: {
-    allowedTypes: ['jpeg', 'png', 'gif', 'avif'],
+    allowedTypes: ['jpeg', 'png', 'gif', 'avif', 'webp'],
   },
 
   toolbar: [
@@ -230,7 +230,7 @@ export default function CourseEdit() {
   
   
 
-  if (loading) return <p>⏳ 載入中...</p>
+  if (loading) return <p>載入中...</p>
   if (error) return <p className="text-danger">{error}</p>
 
   return (
