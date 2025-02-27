@@ -1,109 +1,139 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import styles from "./favorite-button.module.scss";
+import { useFavorite } from "@/hooks/use-collection";
 
-export default function FavoriteButton({ productId, onFavoriteToggle = () => {} }) {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const token = typeof window !== "undefined" ? localStorage.getItem("loginWithToken") : null;
+export default function FavoriteButtonG({ productId, courseId, articleId, rentId, className }) {
+  const [token, setToken] = useState(null);
+  const { favoriteItems = {}, toggleFavorite } = useFavorite();
+  const [isFavorite, setIsFavorite] = useState(false); // ✅ 初始收藏狀態
 
+  // 確定收藏類型
+  const itemType = productId
+    ? "product"
+    : courseId
+      ? "course"
+      : articleId
+        ? "article"
+        : rentId
+          ? "rent"
+          : null;
+
+  const itemId = productId || courseId || articleId || rentId;
+
+  // 讀取 `token`
   useEffect(() => {
-    if (!token) return;
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("loginWithToken");
+      console.log("🔑 取得 token:", storedToken);
+      setToken(storedToken);
+    }
+  }, []);
+
+  // ✅ 檢查收藏狀態（初始載入時）
+  useEffect(() => {
+    if (!token || !itemId || !itemType) return;
+
+    console.log("📌 發送 `GET` 收藏查詢:", `http://localhost:8000/api/collect/${itemType}/collection/${itemId}`);
 
     const checkFavoriteStatus = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/product/collection/${productId}`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await fetch(
+          `http://localhost:8000/api/collect/${itemType}/collection/${itemId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        // if (!res.ok) throw new Error("無法取得收藏狀態");
+        if (!res.ok) throw new Error("無法取得收藏狀態");
 
         const data = await res.json();
-        setIsFavorite(data.isFavorite);
+        console.log(`✅ API 回傳收藏狀態 (${itemType} - ${itemId}):`, data);
+
+
+        if (typeof data.isFavorite !== "undefined") {
+          setIsFavorite(data.isFavorite);  // ✅ 確保 UI 正確更新
+          toggleFavorite(itemType, itemId, data.isFavorite);
+        }
       } catch (error) {
-        console.error("無法確認收藏狀態:", error);
+        console.error("❌ 無法確認收藏狀態:", error);
       }
     };
 
     checkFavoriteStatus();
-  }, [productId, token]);
+  }, [itemId, token]);
 
-  const toggleFavorite = async () => {
+  // 收藏或取消收藏
+  const handleFavoriteClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!token) {
-      Swal.fire({
-        icon: "warning",
-        title: "請先登入",
-        text: "您需要登入後才能收藏商品",
-        confirmButtonText: "前往登入",
-        showCancelButton: true,
-        cancelButtonText: "取消",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = "/login";
-        }
+      toast.warn("請先登入，即可收藏！", {
+        position: "top-right",
+        autoClose: 3000,
       });
       return;
     }
-    if (loading) return; // ✅ 防止短時間內重複點擊
-    setLoading(true);
 
     try {
       const method = isFavorite ? "DELETE" : "POST";
-      const res = await fetch("http://localhost:8000/api/product/collection", {
+      let url = `http://localhost:8000/api/collect/${itemType}/collection/${itemId}`; // ✅ 正確的路徑
+
+      if (method === "POST") {
+        url = `http://localhost:8000/api/collect/${itemType}/collection/me`; // ✅ 正確的 POST 路徑
+      }
+
+      console.log("📌 送出的請求:", method, url);
+
+      const res = await fetch(url, {
         method,
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ product_id: productId }),
+        body:
+          method === "POST" ? JSON.stringify({ [`${itemType}_id`]: itemId }) : null,
       });
 
       if (!res.ok) {
         const errorText = await res.text();
-        if (errorText.startsWith("<!DOCTYPE html>")) {
-          throw new Error("伺服器錯誤或 API 連結錯誤，請檢查後端");
-        }
-
-        let errorJson;
-        try {
-          errorJson = JSON.parse(errorText);
-        } catch {
-          throw new Error("API 回應格式錯誤");
-        }
+        throw new Error(errorText);
       }
 
-      setIsFavorite((prev) => !prev);
+      setIsFavorite(!isFavorite); // ✅ 更新 UI 狀態
+      toggleFavorite(itemType, itemId, !isFavorite); // ✅ 更新 global 狀態
 
-      Swal.fire({
-        icon: "success",
-        title: isFavorite ? "已取消收藏" : "成功加入收藏",
-        text: isFavorite ? "商品已從收藏列表移除" : "商品已加入您的收藏",
-        showConfirmButton: false,
-        timer: 1500,
+      toast.success(isFavorite ? "已取消收藏！" : "成功加入收藏！", {
+        position: "top-right",
+        autoClose: 2000,
       });
-      if (onFavoriteToggle) onFavoriteToggle();
     } catch (error) {
-      console.error(" 收藏錯誤:", error);
-      Swal.fire({
-        icon: "error",
-        title: "操作失敗",
-        text: error.message || "發生錯誤，請稍後再試",
+      console.error("收藏錯誤:", error);
+      toast.error("操作失敗：" + (error.message || "發生錯誤，請稍後再試"), {
+        position: "top-right",
+        autoClose: 3000,
       });
     }
   };
 
   return (
-    <button onClick={toggleFavorite} className={styles.favoriteIcon}>
+    <button
+      onClick={handleFavoriteClick}
+      className={`${styles.favoriteIcon} ${className || ""}`}
+    >
       {isFavorite ? (
-        <FaHeart size={18} color="#d0b088" />
+        <FaHeart size={22} color="#d0b088" />
       ) : (
-        <FaRegHeart size={18} color="gray" />
+        <FaRegHeart size={22} color="gray" />
       )}
     </button>
   );

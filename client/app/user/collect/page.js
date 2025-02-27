@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import useAuth from "@/hooks/use-auth";
 import Sidenav from "../_components/Sidenav/page";
 import FavoriteButton from "../_components/favorite-button-p/page";
-import FavoriteButtonG from "../_components/favorite-button-g/page";
+
 import styles from "./collect.module.scss";
 
 export default function CollectPage() {
@@ -100,7 +100,7 @@ export default function CollectPage() {
                   <div key={item.collect_id || item.rent_id} className="col-12 col-md-6 col-lg-4">
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
-                        <FavoriteButton productId={item.product_id} />
+                        <FavoriteButton rentId={item.rent_id} onFavoriteToggle={handleRefresh} />
                       </div>
                       <img src={item.image_url} alt={item.rent_name} className="mb-3" />
                       <div className={styles.cardDivider} />
@@ -125,7 +125,7 @@ export default function CollectPage() {
                   <div key={item.collect_id || item.course_id} className="col-12 col-md-6 col-lg-4">
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
-                        <FavoriteButtonG productId={item.product_id} />
+                        <FavoriteButton courseId={item.course_id} onFavoriteToggle={handleRefresh} />
                       </div>
                       <img src={item.image_url} alt={item.course_title} className="mb-3" />
                       <div className={styles.cardDivider} />
@@ -150,7 +150,7 @@ export default function CollectPage() {
                   <div key={item.collect_id || item.article_id} className="col-12 col-md-6 col-lg-4">
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
-                        <FavoriteButton productId={item.product_id} />
+                        <FavoriteButton articleId={item.article_id} onFavoriteToggle={handleRefresh} />
                       </div>
                       <img src={item.image_url} alt={item.title} className="mb-3" />
                       <div className={styles.cardDivider} />
