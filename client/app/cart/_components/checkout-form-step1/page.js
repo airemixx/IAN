@@ -7,7 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
 import { jwtDecode } from 'jwt-decode'
-
+import moment from "moment";
 export default function CheckoutFormStep1({ slItem }) {
   const token = localStorage.getItem("loginWithToken")
   const decoded = jwtDecode(token);
@@ -71,6 +71,7 @@ export default function CheckoutFormStep1({ slItem }) {
       if (response.status === 200) {
         const data = await response.json();
         setCouponData(data.result); // 儲存優惠券資訊
+        console.log(data);
       } else {
         console.error("獲取失敗:", await response.text());
       }
@@ -91,27 +92,28 @@ export default function CheckoutFormStep1({ slItem }) {
         <div className={`${styles["j-ifCouponUse"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
           <input className="form-check-input" type="checkbox" id="flexCheck" onChange={handleCheck} checked={checkState} />
           <label className="form-check-label" htmlFor="flexCheck">
-            {/* <svg xmlns="http://www.w3.org/2000/svg" width={24} height={25} viewBox="0 0 24 25" fill="none">
-              <circle cx={12} cy="12.5" r={11} stroke="#003150" strokeWidth={2} />
-              <circle cx={12} cy="12.5" r="7.5" fill="#003150" />
-            </svg> */}
             是否使用優惠券
           </label>
         </div>
-        <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className="j-model">
+        <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className={`${styles["j-model"]}`}>
           <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-           {couponData.length > 0 ? (
+          <div className="d-flex">
+          {couponData.length > 0 ? (
               couponData.map((coupon, index) => (
-                <div key={index} className={`${styles['j-cp']} mb-2 d-flex`}>
+                <div key={index} className={`${styles['j-cp']} mb-2 d-flex flex-column align-items-center position-relative`}>
                   <img src={`/images/cart/${coupon.img}`} alt="" />
+                  <span className={`position-absolute ${styles['j-cpEndDate']}`}>{moment(coupon.end_date).format('YYYY-MM-DD hh:mm:ss')}</span>
+                  <span >{coupon.cpName}</span>
                 </div>
               ))
             ) : (
               <p>沒有可用的優惠券</p>
             )}
+          </div>
+          
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>

@@ -29,7 +29,9 @@
     border-radius: 50px;
     background: #003150;
   }
-  
+  .j-modle{
+    margin-top: 50rem;
+  }
   .j-Checkout .j-btn {
     &:not(.j-payStep){
       border: none;
@@ -46,7 +48,12 @@
     font-size: 14px;
   }
   .j-cp img{
-    width: 50%;
+    width: 100%;
+  }
+  .j-cpEndDate{
+    bottom: 17%;
+    left: 39%;
+    color: #fff;
   }
   @media (max-width: 996px){
     .j-payStep {
