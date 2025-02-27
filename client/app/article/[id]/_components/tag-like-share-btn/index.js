@@ -6,34 +6,38 @@ import Link from 'next/link'
 import { FaRegHeart, FaHeart } from 'react-icons/fa6'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
-// 假設 currentUserId 可從某處獲取，這裡暫時硬編碼為 1
-const currentUserId = 1
+import { jwtDecode } from 'jwt-decode' // 添加此導入
 
 export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showAuthModal }) {
   const [tags, setTags] = useState([])
   const [isLiked, setIsLiked] = useState(false)
-  const [likeCount, setLikeCount] = useState(0) // 初始值從後端取得
-  const [isHovered, setIsHovered] = useState(false) // 追蹤 Like 按鈕 hover
-  const [isClicked, setIsClicked] = useState(false) // 追蹤 Like 按鈕 active
-  // 新增分享按鈕 hover 與 active 狀態
+  const [likeCount, setLikeCount] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isClicked, setIsClicked] = useState(false)
   const [shareHovered, setShareHovered] = useState(false)
   const [shareActive, setShareActive] = useState(false)
-  // 新增 Share popup 狀態
   const [showSharePopup, setShowSharePopup] = useState(false)
   const [copyHovered, setCopyHovered] = useState(false)
   const [copyActive, setCopyActive] = useState(false)
 
-  // 新增收藏功能相關狀態
   const [token, setToken] = useState(null)
+  const [userId, setUserId] = useState(null) // 新增: 存儲當前用戶ID
   const [isFavorite, setIsFavorite] = useState(false)
   const [favoriteHovered, setFavoriteHovered] = useState(false)
 
-  // 在組件載入時獲取 token
+  // 在組件載入時獲取 token 和 userId
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('loginWithToken')
-      setToken(storedToken)
+      if (storedToken) {
+        setToken(storedToken)
+        try {
+          const decoded = jwtDecode(storedToken)
+          setUserId(decoded.id) // 假設JWT中包含用戶ID
+        } catch (error) {
+          console.error('解析JWT失敗:', error)
+        }
+      }
     }
   }, [])
 
@@ -79,6 +83,30 @@ export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showA
     checkFavoriteStatus()
   }, [articleId, token])
 
+  // 檢查此用戶是否已為此文章點贊
+  useEffect(() => {
+    if (!token || !userId || !articleId) return;
+
+    const checkLikeStatus = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/likes/check?userId=${userId}&articleId=${articleId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsLiked(data.isLiked);
+        }
+      } catch (error) {
+        console.error('檢查點贊狀態失敗:', error);
+      }
+    };
+
+    checkLikeStatus();
+  }, [articleId, token, userId]);
+
   useEffect(() => {
     // 取得標籤
     const fetchTags = async () => {
@@ -113,38 +141,55 @@ export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showA
     fetchArticleLikeCount()
   }, [articleId])
 
-  // 當使用者按讚，僅能按一次
+  // 修改處理點贊的函數，支持點贊和取消點贊
   const handleLike = async () => {
-    if (!isAuthenticated && !token) {
+    if (!isAuthenticated || !token) {
       showAuthModal();
       return;
     }
 
-    if (isLiked) return // 已按讚，不重複
-    setIsLiked(true)
-    const newLikeCount = Number(likeCount) + 1
-    setLikeCount(newLikeCount)
-    setIsClicked(true)
-    setTimeout(() => setIsClicked(false), 300)
+    if (!userId) {
+      console.error('無法獲取用戶ID');
+      toast.error('操作失敗，請重新登入');
+      return;
+    }
 
     try {
-      const response = await fetch(`/api/likes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // 根據當前狀態決定操作
+      const method = isLiked ? 'DELETE' : 'POST';
+      const newLikeCount = isLiked ? Number(likeCount) - 1 : Number(likeCount) + 1;
+
+      // 先更新UI，提供即時反饋
+      setIsLiked(!isLiked);
+      setLikeCount(newLikeCount);
+      setIsClicked(true);
+      setTimeout(() => setIsClicked(false), 300);
+
+      // 修改這裡，使用絕對路徑
+      const response = await fetch(`http://localhost:8000/api/likes`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify({
           likeableId: articleId,
           likeableType: 'article',
           newLikeCount,
-          userId: currentUserId,
+          userId,
         }),
-      })
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+        credentials: 'include', // 添加此項以包含 cookies
+      });
+
+      // 其他代碼保持不變...
     } catch (error) {
-      console.error('Error updating like count:', error)
+      console.error('Error updating like:', error);
+      toast.error('操作失敗，請稍後再試', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
     }
-  }
+  };
 
   // 處理收藏點擊
   const handleFavoriteClick = async (e) => {
