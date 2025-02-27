@@ -13,6 +13,30 @@ export default function AuthModal({ show, onHide, onLoginSuccess }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // 新增一個轉換錯誤訊息的函數
+  const getErrorMessage = (errMsg) => {
+    // 先記錄收到的確切錯誤訊息，幫助偵錯
+    console.log('收到的錯誤訊息:', errMsg);
+    
+    // 使用更寬鬆的匹配條件
+    if (errMsg.toLowerCase().includes('invalid') || 
+        errMsg.toLowerCase().includes('password') ||
+        errMsg.toLowerCase().includes('密碼')) {
+      return '帳號或密碼不正確，請重新確認';
+    } 
+    else if (errMsg.toLowerCase().includes('not found') || 
+             errMsg.toLowerCase().includes('找不到')) {
+      return '找不到此帳號，請確認您的資料';
+    } 
+    else if (errMsg.toLowerCase().includes('required')) {
+      return '請輸入帳號和密碼';
+    }
+    else {
+      // 返回通用錯誤訊息，同時包含原始錯誤用於調試
+      return `登入失敗，請稍後再試 (${errMsg})`;
+    }
+  };
+
   // 登入處理
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -48,7 +72,7 @@ export default function AuthModal({ show, onHide, onLoginSuccess }) {
 
     } catch (err) {
       console.error(err)
-      setError(err.message || '登入失敗，請重試')
+      setError(getErrorMessage(err.message))
     } finally {
       setLoading(false)
     }
@@ -94,8 +118,11 @@ export default function AuthModal({ show, onHide, onLoginSuccess }) {
               <div className={`p-4 h-100 ${styles.rightSide}`}>
                 <h5 className="mb-3">已有帳戶</h5>
                 {error && (
-                  <div className="alert alert-danger py-2" role="alert">
-                    {error}
+                  <div className={styles.loginError}>
+                    <svg className={styles.errorIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                      <path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z" />
+                    </svg>
+                    <span>{error}</span>
                   </div>
                 )}
                 <form onSubmit={handleLogin}>
