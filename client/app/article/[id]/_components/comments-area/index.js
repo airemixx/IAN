@@ -116,7 +116,12 @@ function ReplyItem({
   // 新增：接收全局編輯ID和設置函數
   currentEditingId,
   setCurrentEditingId,
-  onCommentDeleted
+  onCommentDeleted,
+  isAuthenticated, // 添加這行
+  showAuthModal, // 添加這行
+  activeReplyId, // 新增
+  handleReplyClick, // 新增
+  currentReplyTo // 新增
 }) {
   // 新增：控制父回覆初次顯示的 loader
   const [showLoader, setShowLoader] = useState(true)
@@ -125,11 +130,9 @@ function ReplyItem({
   const [commentLikeCount, setCommentLikeCount] = useState(initialLikeCount || 0)
   const [isClicked, setIsClicked] = useState(false)
   const [numVibrate, setNumVibrate] = useState(false)
-  const [showReplyInput, setShowReplyInput] = useState(false)
   const [nestedReplies, setNestedReplies] = useState(replies || [])
   const [showNestedReplies, setShowNestedReplies] = useState(false)
   const [isNestedRepliesLoading, setIsNestedRepliesLoading] = useState(false)
-  const [replyTo, setReplyTo] = useState('')
   const [moreHover, setMoreHover] = useState(false)
   const inputRef = useRef(null)
 
@@ -221,28 +224,9 @@ function ReplyItem({
 
   // 其餘邏輯維持不變
   // 每次點擊回覆時更新 replyTo，若未顯示則打開輸入框
-  const handleReplyClick = (replyUserName) => {
-    setReplyTo(`@${replyUserName} `)
-    if (!showReplyInput) {
-      setShowReplyInput(true)
-    }
-  }
-
-  useEffect(() => {
-    function handleOutsideClick(e) {
-      if (e.target.closest(`.${styles['y-btn-reply-in-reply']}`)) return
-      if (inputRef.current && !inputRef.current.contains(e.target)) {
-        setShowReplyInput(false)
-      }
-    }
-    if (showReplyInput) {
-      document.addEventListener('mousedown', handleOutsideClick)
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick)
-    }
-  }, [showReplyInput])
-
+  const onReplyButtonClick = () => {
+    handleReplyClick(commentId, userName);
+  };
 
   // 新增：處理嵌套回覆提交後的數據
   const handleNestedReplySubmitted = (parentId, newNestedReply) => {
@@ -274,10 +258,10 @@ function ReplyItem({
       // 添加到嵌套回覆列表
       setNestedReplies(prev => [mappedReply, ...prev]);
       setShowNestedReplies(true);
-      setShowReplyInput(false);
 
       // 強制重新渲染嵌套回覆容器
       setNestedRepliesKey(Date.now());
+      handleReplyClick(null, ''); // 傳 null 表示關閉所有回覆框
     } else {
       console.error('Invalid nested reply data:', newNestedReply);
     }
@@ -400,6 +384,10 @@ function ReplyItem({
     onCommentDeleted && onCommentDeleted(deletedId, commentId);
   };
 
+  // 修改：使用父組件傳遞的全局狀態
+  const showReplyInput = activeReplyId === commentId;
+  const replyTo = currentReplyTo;
+
   return (
     <>
       {showLoader ? (
@@ -502,7 +490,7 @@ function ReplyItem({
                   </button>
                   <button
                     className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
-                    onClick={() => handleReplyClick(userName)}
+                    onClick={onReplyButtonClick} // 修改這裡，使用新的處理函數
                   >
                     <img src="/images/article/reply-origin.svg" alt="Reply" />
                     <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
@@ -521,6 +509,8 @@ function ReplyItem({
                     parentId={commentId}
                     onCommentSubmitted={(newNestedReply) => handleNestedReplySubmitted(commentId, newNestedReply)}
                     replyTo={replyTo}
+                    isAuthenticated={isAuthenticated} // 已在留言區內，所以一定是登入的
+                    showAuthModal={showAuthModal} // 在此環境下不需要真正調用，但需要提供一個空函數
                   />
                 </div>
               )}
@@ -557,6 +547,8 @@ function ReplyItem({
                             is_edited={reply.is_edited} // 新增
                             updated_at={reply.updated_at} // 新增
                             onCommentDeleted={handleNestedReplyDeleted} // 新增
+                            isAuthenticated={isAuthenticated} // 添加這行
+                            showAuthModal={showAuthModal} // 添加這行
                           />
                         )
                       })}
@@ -632,6 +624,8 @@ function NestedReplyItem({
   is_edited,  // 新增
   updated_at,  // 新增
   onCommentDeleted, // 新增
+  isAuthenticated, // 添加這行
+  showAuthModal, // 添加這行
   ...props
 }) {
   const [isLiked, setIsLiked] = useState(false)
@@ -721,12 +715,9 @@ function NestedReplyItem({
   }
 
   const handleNestedReplyClick = () => {
-    onReplyClick && onReplyClick(userName)
-    const inputElement = document.querySelector(`#reply-input-${parentId}`)
-    if (inputElement) {
-      inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }
+    onReplyClick && onReplyClick(parentId, userName);
+    // 不再需要滾動到特定輸入框，因為只有一個會顯示
+  };
 
   const handleEdit = () => {
     setEditedText(displayText);
@@ -955,17 +946,15 @@ function NestedReplyItem({
 }
 
 // 主留言區元件
-export default function CommentsArea({
-  articleId,
-  commentCount: initialCount,
-  refreshTrigger,
-}) {
+export default function CommentsArea({ articleId, refreshTrigger, isAuthenticated, showAuthModal }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  const [count, setCount] = useState(initialCount ?? 0)
+  const [count, setCount] = useState(0)
   const [comments, setComments] = useState([])
   const [sortOption, setSortOption] = useState('1')
   const [activeMenuId, setActiveMenuId] = useState(null)
   const [currentEditingId, setCurrentEditingId] = useState(null)
+  const [activeReplyId, setActiveReplyId] = useState(null) // 新增
+  const [currentReplyTo, setCurrentReplyTo] = useState('') // 新增
 
   const toggleComments = () => setIsCollapsed((prev) => !prev)
 
@@ -1045,6 +1034,19 @@ export default function CommentsArea({
     }
   };
 
+  // 新增：統一處理回覆框打開關閉的函數
+  const handleReplyClick = (commentId, replyToName) => {
+    // 如果點擊的是當前已打開的回覆框，則關閉它
+    if (activeReplyId === commentId) {
+      setActiveReplyId(null);
+      setCurrentReplyTo('');
+    } else {
+      // 否則打開新的回覆框，關閉之前的
+      setActiveReplyId(commentId);
+      setCurrentReplyTo(replyToName ? `@${replyToName} ` : '');
+    }
+  };
+
   return (
     <div>
       <div className={styles['y-all-comment-btn']}>
@@ -1090,6 +1092,11 @@ export default function CommentsArea({
                 currentEditingId={currentEditingId}
                 setCurrentEditingId={setCurrentEditingId}
                 onCommentDeleted={handleCommentDeleted}
+                isAuthenticated={isAuthenticated} // 添加這行
+                showAuthModal={showAuthModal} // 添加這行
+                activeReplyId={activeReplyId} // 新增
+                handleReplyClick={handleReplyClick} // 新增
+                currentReplyTo={activeReplyId === comment.id ? currentReplyTo : ''} // 新增
               />
             ))}
           </div>

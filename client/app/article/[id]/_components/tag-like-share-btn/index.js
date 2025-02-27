@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css'
 // 假設 currentUserId 可從某處獲取，這裡暫時硬編碼為 1
 const currentUserId = 1
 
-export default function TagLikeShareBtnIndex({ articleId }) {
+export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showAuthModal }) {
   const [tags, setTags] = useState([])
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0) // 初始值從後端取得
@@ -115,6 +115,11 @@ export default function TagLikeShareBtnIndex({ articleId }) {
 
   // 當使用者按讚，僅能按一次
   const handleLike = async () => {
+    if (!isAuthenticated && !token) {
+      showAuthModal();
+      return;
+    }
+
     if (isLiked) return // 已按讚，不重複
     setIsLiked(true)
     const newLikeCount = Number(likeCount) + 1
@@ -146,12 +151,10 @@ export default function TagLikeShareBtnIndex({ articleId }) {
     e.preventDefault()
     e.stopPropagation()
 
-    if (!token) {
-      toast.warn('請先登入，即可收藏文章！', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      return
+    if (!isAuthenticated && !token) {
+      // 不再使用 toast，而是調用 showAuthModal 函數
+      showAuthModal();
+      return;
     }
 
     try {
