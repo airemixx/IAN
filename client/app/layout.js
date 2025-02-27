@@ -35,6 +35,10 @@ export default function RootLayout({ children }) {
     [pathname]
   )
 
+  const isCartPage = useMemo(
+    () => pathname?.startsWith('/cart'),
+    [pathname]
+  )
   // top按鈕
   const [showButton, setShowButton] = useState(false)
 
@@ -68,33 +72,32 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
-        <CompareProvider>
-          <div className="layout-container">
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={true}
-              closeOnClick
-              pauseOnHover
-              draggable
-              theme="dark"
-              className="custom-toast-container"
-              style={{ marginTop: '80px' }}
-            />
-            {!isTeacherPage && (
-              <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
-            )}
-            <AppProvider>
-              {' '}
-              <main className="root-content">{children}</main>
-            </AppProvider>
-            {isTeacherPage ? <TeacherFooter /> : <Footer />}
-          </div>
-        </CompareProvider>
+        <div className="layout-container">
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={true}
+            closeOnClick
+            pauseOnHover
+            draggable
+            theme="dark"
+            className="custom-toast-container"
+            style={{ marginTop: '80px' }}
+          />
+          {!isTeacherPage && (
+            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage}/>
+          )}
+          <AppProvider>
+            {' '}
+            <main className="root-content">{children}</main>
+          </AppProvider>
+          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage}/>}
+        </div>
+
         {/* top按鈕 */}
         {showButton && (
-          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob'>
-            <IoIosArrowUp size={25} className="hvr-icon" />
+          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob d-none d-xl-block'>
+            <IoIosArrowUp size={25}   className="hvr-icon"/>
           </button>
         )}
       </body>

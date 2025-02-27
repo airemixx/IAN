@@ -295,4 +295,35 @@ router.get('/me/courses', async (req, res) => {
   }
 })
 
+//老師文章
+router.get("/:teacherId/articles", async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+
+    // 1. 先找到該老師對應的 user_id
+    const [teacherRows] = await pool.execute(
+      "SELECT user_id FROM teachers WHERE id = ?",
+      [teacherId]
+    );
+
+    if (teacherRows.length === 0) {
+      return res.status(404).json({ error: "找不到該老師" });
+    }
+
+    const userId = teacherRows[0].user_id;
+
+    // 2. 用 user_id 查詢該老師的文章數
+    const [articleRows] = await pool.execute(
+      "SELECT COUNT(*) AS articleCount FROM article WHERE user_id = ?",
+      [userId]
+    );
+
+    res.json({ articleCount: articleRows[0].articleCount });
+  } catch (error) {
+    console.error("無法獲取文章數:", error);
+    res.status(500).json({ error: "伺服器錯誤" });
+  }
+});
+
+
 export default router

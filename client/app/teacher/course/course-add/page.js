@@ -43,12 +43,12 @@ const editorConfig = {
       'imageStyle:side',
     ],
     upload: {
-      types: ['jpeg', 'png', 'gif', 'avif'],
+      types: ['jpeg', 'png', 'gif', 'avif', 'webp'],
     },
   },
 
   imageUpload: {
-    allowedTypes: ['jpeg', 'png', 'gif', 'avif'],
+    allowedTypes: ['jpeg', 'png', 'gif', 'avif', 'webp'],
   },
 
   toolbar: [

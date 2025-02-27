@@ -68,7 +68,7 @@ export default function UserPage(props) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/users/me`, {
+      const response = await fetch(`http://localhost:8000/api/users/users/me`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -173,7 +173,7 @@ export default function UserPage(props) {
       await fetchUserData();
 
       // 🔥 **步驟 3：導向 `/user` 頁面**
-      window.location.href = "/user";
+      // window.location.href = "/user";
     } catch (error) {
       console.error("❌ 更新失敗:", error);
       alert("更新失敗，請稍後再試");
