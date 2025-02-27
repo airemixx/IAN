@@ -14,6 +14,7 @@ export default function CourseList({ courses }) {
   const [currentPage, setCurrentPage] = useState(1)
   const coursesPerPage = 12
   const [popularCourses, setPopularCourses] = useState([])
+  const [filterChangeId, setFilterChangeId] = useState(0)
 
   console.log('`CourseList` 取得的 courses:', courses)
 
@@ -21,6 +22,7 @@ export default function CourseList({ courses }) {
     if (courses.length > 0) {
       console.log('`CourseList` 重新設定分頁為第一頁')
       setCurrentPage(1) // ✅ 確保篩選變更時，分頁回到第一頁
+      setFilterChangeId((prev) => prev + 1)
     }
   }, [courses])
 
@@ -62,7 +64,19 @@ export default function CourseList({ courses }) {
     )
   }, [publishedCourses, currentPage])
 
-  console.log('渲染時 currentCourses:', currentCourses)
+  // console.log('渲染時 currentCourses:', currentCourses)
+
+  // 初始化 AOS
+  useEffect(() => {
+    AOS.init({ duration: 1000, once: false })
+  }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      AOS.refresh()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [currentCourses, filterChangeId])
 
   return (
     <section className={`container ${styles['course-list']}`}>
@@ -82,7 +96,10 @@ export default function CourseList({ courses }) {
 
               <div className="row">
                 {popularCourses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+                  <CourseCard
+                    key={`${course.id}-${filterChangeId}`}
+                    course={course}
+                  />
                 ))}
               </div>
             </div>
@@ -95,7 +112,10 @@ export default function CourseList({ courses }) {
               <p>找不到符合條件的課程，試試其他關鍵字吧！</p>
             ) : (
               currentCourses.map((course, index) => (
-                <CourseCard key={`${course.id}-${index}`} course={course} />
+                <CourseCard
+                  key={`${course.id}-${filterChangeId}`}
+                  course={course}
+                />
               ))
             )}
           </div>
@@ -120,17 +140,26 @@ export function CourseCard({ course }) {
 
   const [isFavorite, setIsFavorite] = useState(false)
   const safeImage = course.image_url || '/images/default-course.jpg'
+  const [aosTrigger, setAosTrigger] = useState(false)
+
+  // useEffect(() => {
+  //   AOS.init({
+  //     duration: 1000,
+  //     once: true,
+  //     offset: 100,
+  //   })
+  // }, [])
 
   useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      once: true,
-      offset: 100,
-    })
-  }, [])
+    setAosTrigger((prev) => !prev) // ✅ 這樣 AOS 會重新觸發動畫，但不影響 key
+  }, [course])
 
   return (
-    <div className="col-lg-3 col-md-6 col-12" data-aos="fade-up">
+    <div
+      className="col-lg-3 col-md-6 col-12"
+      data-aos="fade-up"
+      data-aos-offset="100"
+    >
       <Link
         href={`/courses/${course.id}`}
         className={styles['course-card-link']}

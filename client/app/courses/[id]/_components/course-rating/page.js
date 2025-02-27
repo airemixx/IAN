@@ -80,7 +80,7 @@ export default function CourseRating() {
           } else {
             console.error(`❌ 最多嘗試 5 次，仍然找不到評論`)
           }
-        }, 300 * (attempts + 1))
+        }, 100 * (attempts + 1))
       }
 
       tryScroll()
