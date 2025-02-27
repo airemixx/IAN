@@ -227,72 +227,91 @@ export default function cartPageOne() {
                 </div>
               </div>
               <div className="j-cartItemsBox d-sm-none d-block p-0">
-                <div>
+              <div>
                   <input
                     type="checkbox"
-                    name=""
-                    id=""
+                    id="checkAll"
                     className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
+                    checked={checkAll}
+                    onChange={handleCheckAll}
                   />
-                  全選
+                  <span className="ms-2 align-middle">全選</span>
                 </div>
-                <div className={`mt-2 mb-5 ${styles['j-itemBox']}`}>
-                  <h3 className="mb-1 ms-3 pt-2">相機</h3>
+                <div className="mt-2 mb-5">
+                  {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
                   {cartProduct.map((item, index) => (
                     <div
-                      className={`${styles['j-input-box']} d-flex align-items-center`}
-                      key={index + 1}
+                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
+                      key={index}
                     >
                       <input
                         type="checkbox"
                         className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
                         id={`cartItem-${index}`}
+                        checked={checkedItems[index] || false}
+                        onChange={() => handleItemChange(index, item)}
                       />
                       <label
                         htmlFor={`cartItem-${index}`}
                         className="ms-2 d-flex flex-grow-1"
                       >
-                        <CartItem key={index} id={index + 1} itemData={item} />
+                        <CartItem key={index} id={index} itemData={item} page={1} />
                       </label>
                     </div>
                   ))}
                 </div>
-                <div className={`mt-2 mb-5 ${styles['j-itemBox']}`}>
-                  <h3 className="mb-1 ms-3 pt-2">課程</h3>
-                  {cartLession.map((lession, index) => (
-                    <div
-                      className={`${styles['j-input-box']} d-flex align-items-center`}
-                      key={index + 1}
-                    >
-                      <input
-                        type="checkbox"
-                        className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
-                        id={`lessonItem-${index}`}
-                      />
-                      <label
-                        htmlFor={`lessonItem-${index}`}
-                        className="ms-2 d-flex flex-grow-1"
+                <div className="mt-2 mb-5">
+                  {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
+                  {cartLession.map((lession, index) => {
+                    const lessonIndex = index + cartProduct.length
+                    return (
+                      <div
+                        className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
+                        key={index}
                       >
-                        <LessonItem key={index} lessionitem={lession} />
-                      </label>
-                    </div>
-                  ))}
+                        <input
+                          type="checkbox"
+                          className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
+                          id={`lessonItem-${index}`}
+                          checked={checkedItems[lessonIndex] || false}
+                          onChange={() => handleItemChange(lessonIndex, lession)}
+                        />
+                        <label
+                          htmlFor={`lessonItem-${index}`}
+                          className="ms-2 d-flex flex-grow-1"
+                        >
+                          <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} page={1}/>
+                        </label>
+                      </div>
+                    )
+                  })}
                 </div>
-                <div className={`mt-2 mb-5 ${styles['j-itemBox']}`}>
-                  <h3 className="mb-1 ms-3 pt-2">租借</h3>
-                  {cartRent.map((rental, index) => (
-                    <div
-                      className={`${styles['j-input-box']} d-flex align-items-center`}
-                      key={index + 1}
-                    >
-                      <input
-                        type="checkbox"
-                        className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
-                        id={`rentItem-${index}`}
-                      />
-                      <RentItem key={index} rentalitem={rental} />
-                    </div>
-                  ))}
+                <div className="mt-2 mb-5">
+                  {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
+                  {cartRent.map((rental, index) => {
+                    const rentalIndex =
+                      index + cartProduct.length + cartLession.length
+                    return (
+                      <div
+                        className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
+                        key={index}
+                      >
+                        <input
+                          type="checkbox"
+                          className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
+                          id={`rentItem-${index}`}
+                          checked={checkedItems[rentalIndex] || false}
+                          onChange={() => handleItemChange(rentalIndex, rental)}
+                        />
+                        <label
+                          htmlFor={`rentItem-${index}`}
+                          className="ms-2 d-flex flex-grow-1"
+                        >
+                          <RentItem key={index} rentalitem={rental} id={rentalIndex} length={(cartProduct.length+cartLession.length)} page={1}/>
+                        </label>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>

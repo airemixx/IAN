@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./shopping-cart-step3.module.scss";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { isDev, apiURL } from '@/config';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { jwtDecode } from "jwt-decode";
+import moment from "moment"
 
 export default function CheckoutFormStep3() {
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const [paymentMethod, setPaymentMethod] = useState("")
@@ -101,7 +103,7 @@ export default function CheckoutFormStep3() {
             if (resData.status === "success") {
                 setResult(resData.data);
                 toast.success("付款成功");
-                testfun();
+                LineInsertDB();
 
 
             } else {
@@ -118,14 +120,13 @@ export default function CheckoutFormStep3() {
             setLoading(false);
         }
     };
-    async function testfun() {
+    async function LineInsertDB() {
         try {
             
             const orderData = {
-                merchantTradeNo: `od${Date.now()}`,
+                merchantTradeNo: `line${moment().format('YYYYMMDDhhmmss')}`,
                 buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
                 cartItems: JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
-                createdDate: Date.now(),
                 userId: decoded.id
             };
 
@@ -139,9 +140,11 @@ export default function CheckoutFormStep3() {
             console.log(response);
             if (response.status == 200) {
                 console.log('訂單已成功存入資料庫');
-                localStorage.removeItem('cart')
-                localStorage.removeItem('cartItems')
-                localStorage.removeItem('buyerData')
+                // localStorage.removeItem('cart')
+                // localStorage.removeItem('rent_cart')
+                // localStorage.removeItem('shoppingCart')
+                // localStorage.removeItem('cartItems')
+                // localStorage.removeItem('buyerData')
             } else {
                 console.error('存入失敗:', await response.text());
             }
