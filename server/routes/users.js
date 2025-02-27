@@ -660,7 +660,7 @@ router.get("/favorites/me", checkToken, async (req, res) => {
         CONCAT('', COALESCE(cs.image_url, 'default.jpg')) AS image_url 
       FROM collection c
       JOIN courses cs ON c.course_id = cs.id
-      LEFT JOIN teachers t ON cs.teacher_id = t.user_id 
+      LEFT JOIN teachers t ON cs.teacher_id = t.id 
       WHERE c.user_id = ? AND c.course_id IS NOT NULL;`,
       [userId]
     );
@@ -681,6 +681,7 @@ router.get("/favorites/me", checkToken, async (req, res) => {
   WHERE c.user_id = ? AND c.rent_id IS NOT NULL;`,
       [userId]
     );
+    
 
     // 查詢用戶收藏的文章
     const [articles] = await connection.query(

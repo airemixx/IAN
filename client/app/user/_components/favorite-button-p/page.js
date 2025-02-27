@@ -4,8 +4,9 @@ import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import styles from "./favorite-button.module.scss";
 
-export default function FavoriteButton({ productId }) {
+export default function FavoriteButton({ productId, onFavoriteToggle = () => {} }) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
   const token = typeof window !== "undefined" ? localStorage.getItem("loginWithToken") : null;
 
   useEffect(() => {
@@ -49,6 +50,8 @@ export default function FavoriteButton({ productId }) {
       });
       return;
     }
+    if (loading) return; // ✅ 防止短時間內重複點擊
+    setLoading(true);
 
     try {
       const method = isFavorite ? "DELETE" : "POST";
@@ -84,7 +87,7 @@ export default function FavoriteButton({ productId }) {
         showConfirmButton: false,
         timer: 1500,
       });
-
+      if (onFavoriteToggle) onFavoriteToggle();
     } catch (error) {
       console.error(" 收藏錯誤:", error);
       Swal.fire({
@@ -98,7 +101,7 @@ export default function FavoriteButton({ productId }) {
   return (
     <button onClick={toggleFavorite} className={styles.favoriteIcon}>
       {isFavorite ? (
-        <FaHeart size={18} color="red" />
+        <FaHeart size={18} color="#d0b088" />
       ) : (
         <FaRegHeart size={18} color="gray" />
       )}

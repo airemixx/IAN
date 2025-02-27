@@ -21,7 +21,8 @@
   
   img {
     width: 100%;
-    border-radius: 20px 20px 0 0;
+    height: 200px;
+    border-radius: 20px 20px 20px 20px;
     object-fit: cover;
   }
   &:hover {
@@ -40,6 +41,7 @@
 .cardDivider {
   border-top: 1px solid #8f8f8f;
   margin: 15px 0;
+  
 }
 
 .addCollection {
@@ -90,6 +92,19 @@
 
 .textGray {
   color: #8f8f8f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.price {
+  color: red;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.courseTitle{
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

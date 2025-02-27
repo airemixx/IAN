@@ -1,8 +1,9 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useAuth from "@/hooks/use-auth";
 import Sidenav from "../_components/Sidenav/page";
-import FavoriteButton from "../_components/favorite-button/page";
+import FavoriteButton from "../_components/favorite-button-p/page";
+import FavoriteButtonG from "../_components/favorite-button-g/page";
 import styles from "./collect.module.scss";
 
 export default function CollectPage() {
@@ -15,8 +16,10 @@ export default function CollectPage() {
   }); // ✅ 確保 collections 為物件
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+
+  const fetchFavorites = useCallback(() => {
     if (!token) return;
+    setIsLoading(true);
 
     fetch(`http://localhost:8000/api/users/favorites/me`, {
       method: "GET",
@@ -40,6 +43,15 @@ export default function CollectPage() {
       });
   }, [token]);
 
+  useEffect(() => {
+    fetchFavorites();
+  }, [fetchFavorites]);
+
+  // ✅ 讓 `FavoriteButton` 呼叫時，能夠重新獲取數據
+  const handleRefresh = () => {
+    fetchFavorites();
+  };
+
   if (loading || isLoading) {
     return <div className="text-center mt-5">載入中...</div>;
   }
@@ -62,13 +74,13 @@ export default function CollectPage() {
                   <div key={item.collect_id || item.product_id} className="col-12 col-md-6 col-lg-4">
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
-                        <FavoriteButton productId={item.product_id} />
+                        <FavoriteButton productId={item.product_id} onFavoriteToggle={handleRefresh} />
                       </div>
                       <img src={item.image_url} alt={item.name} className="mb-3" />
                       <div className={styles.cardDivider} />
                       <h6 className={styles.textGray}>{item.brand_name}</h6>
                       <h5 className="mb-3">{item.name}</h5>
-                      <h5 className="mb-3">價格: ${item.price}</h5>
+                      <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price}</h5>
                       <h6 className={styles.textGray}>{item.short_introduce}</h6>
                     </div>
                   </div>
@@ -87,14 +99,14 @@ export default function CollectPage() {
                 {collections.rents.map((item) => (
                   <div key={item.collect_id || item.rent_id} className="col-12 col-md-6 col-lg-4">
                     <div className={`p-4 ${styles.collectionCard}`}>
-                    <div className='text-end'>
+                      <div className='text-end'>
                         <FavoriteButton productId={item.product_id} />
                       </div>
                       <img src={item.image_url} alt={item.rent_name} className="mb-3" />
                       <div className={styles.cardDivider} />
                       <h6 className={styles.textGray}>{item.brand}</h6>
                       <h5 className="mb-3">{item.rent_name}</h5>
-                      <h5 className="mb-3">價格: ${item.price} /天</h5>
+                      <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price} /天</h5>
                     </div>
                   </div>
                 ))}
@@ -112,14 +124,14 @@ export default function CollectPage() {
                 {collections.courses.map((item) => (
                   <div key={item.collect_id || item.course_id} className="col-12 col-md-6 col-lg-4">
                     <div className={`p-4 ${styles.collectionCard}`}>
-                    <div className='text-end'>
-                        <FavoriteButton productId={item.product_id} />
+                      <div className='text-end'>
+                        <FavoriteButtonG productId={item.product_id} />
                       </div>
                       <img src={item.image_url} alt={item.course_title} className="mb-3" />
                       <div className={styles.cardDivider} />
-                      <h5>{item.course_title}</h5>
                       <h6 className={styles.textGray}>講師: {item.instructor_name}</h6>
-                      <h5 className="mb-3">價格: ${item.price}</h5>
+                      <h5 className={`${styles.courseTitle}`}>{item.course_title}</h5>
+                      <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price}</h5>
                     </div>
                   </div>
                 ))}
@@ -137,12 +149,15 @@ export default function CollectPage() {
                 {collections.articles.map((item) => (
                   <div key={item.collect_id || item.article_id} className="col-12 col-md-6 col-lg-4">
                     <div className={`p-4 ${styles.collectionCard}`}>
+                      <div className='text-end'>
+                        <FavoriteButton productId={item.product_id} />
+                      </div>
                       <img src={item.image_url} alt={item.title} className="mb-3" />
                       <div className={styles.cardDivider} />
                       <h5>{item.title}</h5>
                       <h6 className={styles.textGray}>{item.subtitle}</h6>
-                      <p>{item.content.slice(0, 100)}...</p> {/* 顯示前100字 */}
-                      <h6 className={styles.textGray}>讚數: {item.like_count}</h6>
+
+                      <h6 >讚數: {item.like_count}</h6>
                     </div>
                   </div>
                 ))}
