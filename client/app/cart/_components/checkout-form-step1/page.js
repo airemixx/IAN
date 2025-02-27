@@ -7,7 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
 import { jwtDecode } from 'jwt-decode'
-
+import moment from "moment";
 export default function CheckoutFormStep1({ slItem }) {
   const token = localStorage.getItem("loginWithToken")
   const decoded = jwtDecode(token);
@@ -18,6 +18,7 @@ export default function CheckoutFormStep1({ slItem }) {
   const [checkState, setCheckState] = useState(false)
   const [cpName, setCpName] = useState("")
   const [couponData, setCouponData] = useState([]); // 儲存優惠券資料
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
   const handleClose = () => {
     setCheckState(false)
     setShow(false)
@@ -52,15 +53,16 @@ export default function CheckoutFormStep1({ slItem }) {
       setCheckState(true)
       setShow(true)
       await fetchCoupon(); // 取得優惠券資訊
+    }else{
+      setCpName('')
     }
   }
 
   function handsumbit() {
     setShow(false)
-    setCpName("asdadasdasdasd")
   }
 
-  
+
 
   async function fetchCoupon() {
     try {
@@ -71,6 +73,7 @@ export default function CheckoutFormStep1({ slItem }) {
       if (response.status === 200) {
         const data = await response.json();
         setCouponData(data.result); // 儲存優惠券資訊
+        console.log(data);
       } else {
         console.error("獲取失敗:", await response.text());
       }
@@ -80,8 +83,15 @@ export default function CheckoutFormStep1({ slItem }) {
   }
 
   function handleCouponSelect(coupon) {
-    setCpName(coupon.code);
-    setShow(false); // 選擇優惠券後關閉 Modal
+    if (selectedCoupon === coupon.code) {
+      // 如果點擊的是已選中的優惠券，則取消選取
+      setSelectedCoupon(null);
+      setCpName(""); // 清空優惠券名稱
+    } else {
+      // 否則，設置新的選取優惠券
+      setSelectedCoupon(coupon.code);
+      setCpName(coupon.code);
+    }
   }
 
   return (
@@ -91,27 +101,34 @@ export default function CheckoutFormStep1({ slItem }) {
         <div className={`${styles["j-ifCouponUse"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
           <input className="form-check-input" type="checkbox" id="flexCheck" onChange={handleCheck} checked={checkState} />
           <label className="form-check-label" htmlFor="flexCheck">
-            {/* <svg xmlns="http://www.w3.org/2000/svg" width={24} height={25} viewBox="0 0 24 25" fill="none">
-              <circle cx={12} cy="12.5" r={11} stroke="#003150" strokeWidth={2} />
-              <circle cx={12} cy="12.5" r="7.5" fill="#003150" />
-            </svg> */}
             是否使用優惠券
           </label>
         </div>
-        <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className="j-model">
+        <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className={`${styles["j-model"]}`}>
           <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-           {couponData.length > 0 ? (
-              couponData.map((coupon, index) => (
-                <div key={index} className={`${styles['j-cp']} mb-2 d-flex`}>
-                  <img src={`/images/cart/${coupon.img}`} alt="" />
-                </div>
-              ))
-            ) : (
-              <p>沒有可用的優惠券</p>
-            )}
+            <div className="d-flex flex-wrap">
+              {couponData.length > 0 ? (
+                couponData.map((coupon, index) => (
+                  <div
+                    key={index}
+                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 ${cpName === coupon.code ? styles["j-selected"] : ""}`}
+                    onClick={() => handleCouponSelect(coupon)}
+                  >
+                    <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
+                    <span className={`position-absolute ${styles["j-cpEndDate"]}`}>
+                      {moment(coupon.end_date).format("YYYY-MM-DD HH:mm:ss")}
+                    </span>
+                    <span>{coupon.cpName}</span>
+                  </div>
+                ))
+              ) : (
+                <p>沒有可用的優惠券</p>
+              )}
+            </div>
+
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>

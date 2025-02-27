@@ -36,22 +36,28 @@
   }
   
   .btnMore button {
-    background-color: #E58E41;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    padding: 5px 20px;
-    font-family: "Noto Sans HK", serif;
-    font-size: 16px;
-    transition: 0.3s;
+  //   position: absolute;
+  // bottom: -82%;
+  // transform: translateX(-50%);
+  padding: 10px 20px;
+  background-color: #e58e41;
+  color: white;
+  border: none;
+  font-size: 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.3s;
   }
   
   .btnMore button:hover {
-    background-color: #FFF;
-    color: #E58E41;
+    background-color: rgba(255, 255, 255, 0.8);
+  color: black;
   }
   
   @media (max-width: 391px) {
+    .btnMore button {
+      bottom: -200%;
+    }
     .cardTitle {
       font-size: 1rem;
     }

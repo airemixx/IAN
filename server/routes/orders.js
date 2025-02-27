@@ -13,6 +13,7 @@ const corsOptions = {
 
 router.use(cors(corsOptions)); // 使用 cors 中間件
 
+
 router.post("/", async (req, res) => {
 
   const { cartItems, buyerData, userId, merchantTradeNo } = req.body;
@@ -47,13 +48,7 @@ router.post("/", async (req, res) => {
 
       const price = cartItem.price;
       const quantity = cartItem.quantity;
-     
-
-      // 插入資料
-      // await pool.execute(
-      //   `INSERT INTO orders (user_id, rent_id, start_date, end_date) VALUES 
-      //   (?, ?, ?, ?, ?)`
-      // )
+  
       if(categoryId !== null){
         await pool.execute(
           `INSERT INTO user_product (
@@ -76,9 +71,6 @@ router.post("/", async (req, res) => {
           [ userId, rentalId,price, start_date, end_date]
         );
       }
-    
-
-      
     })
     await pool.execute(
       `INSERT INTO orders (
