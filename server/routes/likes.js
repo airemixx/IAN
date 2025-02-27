@@ -18,14 +18,24 @@ const corsOptions = {
 const router = Router()
 router.use(cors(corsOptions))
 
-// 檢查用戶是否已為特定文章點贊
+// 檢查用戶是否已點贊
 router.get('/check', authenticate, async (req, res) => {
   try {
-    const { userId, articleId } = req.query;
+    const { userId, articleId, commentId, type } = req.query;
+
+    let likeableId, likeableType;
+
+    if (type === 'comment' && commentId) {  // 修改為 'comment'
+      likeableId = commentId;
+      likeableType = 'comment';
+    } else {
+      likeableId = articleId;
+      likeableType = 'article';
+    }
 
     const [rows] = await pool.query(
       'SELECT id FROM likes WHERE user_id = ? AND likeable_id = ? AND likeable_type = ?',
-      [userId, articleId, 'article']
+      [userId, likeableId, likeableType]
     );
 
     res.status(200).json({ isLiked: rows.length > 0 });
@@ -60,10 +70,17 @@ router.post('/', authenticate, async (req, res) => {
     await connection.beginTransaction();
 
     try {
-      // 更新文章的like_count
+      // 更新文章或評論的 like_count
       if (likeableType === 'article') {
         await connection.query(
           'UPDATE article SET like_count = ? WHERE id = ?',
+          [newLikeCount, likeableId]
+        );
+      }
+      // 新增這個處理評論點讚的部分
+      else if (likeableType === 'comment') {
+        await connection.query(
+          'UPDATE article_comments SET like_count = ? WHERE id = ?',
           [newLikeCount, likeableId]
         );
       }
@@ -116,10 +133,17 @@ router.delete('/', authenticate, async (req, res) => {
     await connection.beginTransaction();
 
     try {
-      // 更新文章的like_count
+      // 更新文章或評論的 like_count
       if (likeableType === 'article') {
         await connection.query(
           'UPDATE article SET like_count = ? WHERE id = ?',
+          [newLikeCount, likeableId]
+        );
+      }
+      // 新增這個處理評論點讚的部分
+      else if (likeableType === 'comment') {
+        await connection.query(
+          'UPDATE article_comments SET like_count = ? WHERE id = ?',
           [newLikeCount, likeableId]
         );
       }

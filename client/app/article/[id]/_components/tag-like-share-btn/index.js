@@ -107,6 +107,31 @@ export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showA
     checkLikeStatus();
   }, [articleId, token, userId]);
 
+  const fetchArticleLikeCount = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/articles/${articleId}`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      console.log('完整的API響應結構:', result)
+
+      // 正確處理嵌套的數據結構
+      let count = 0;
+      if (result.data && result.data.like_count !== undefined) {
+        count = Number(result.data.like_count);
+      } else if (result.like_count !== undefined) {
+        count = Number(result.like_count);
+      }
+
+      console.log('處理後的點讚數:', count);
+      setLikeCount(count);
+    } catch (error) {
+      console.error('Could not fetch article like count:', error)
+    }
+  }
+
   useEffect(() => {
     // 取得標籤
     const fetchTags = async () => {
@@ -123,22 +148,9 @@ export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showA
       }
     }
 
-    // 取得文章的初始 like_count
-    const fetchArticleLikeCount = async () => {
-      try {
-        const response = await fetch(`/api/articles/${articleId}`)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        setLikeCount(Number(data.like_count) || 0)
-      } catch (error) {
-        console.error('Could not fetch article like count:', error)
-      }
-    }
-
-    fetchTags()
-    fetchArticleLikeCount()
+    // 現在可以直接調用上面定義的函數
+    fetchArticleLikeCount();
+    fetchTags();
   }, [articleId])
 
   // 修改處理點贊的函數，支持點贊和取消點贊
@@ -180,6 +192,11 @@ export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showA
         }),
         credentials: 'include', // 添加此項以包含 cookies
       });
+
+      // 新增：在操作成功後重新獲取最新資料
+      if (response.ok) {
+        fetchArticleLikeCount(); // 重新獲取最新的點讚數
+      }
 
       // 其他代碼保持不變...
     } catch (error) {

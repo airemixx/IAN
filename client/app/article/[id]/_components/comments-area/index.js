@@ -10,6 +10,8 @@ import ReplyInput from '../reply-input'
 import MediaRenderer from '../media-render'
 import GifImage from '../gif-image'
 import ContentLoader from 'react-content-loader'
+import { jwtDecode } from 'jwt-decode' // 添加 jwtDecode 導入
+import { toast } from 'react-toastify' // 添加 toast 導入，用於錯誤訊息
 
 // 新增：回覆區段的渲染動畫元件
 const NestedReplyLoader = () => {
@@ -121,7 +123,9 @@ function ReplyItem({
   showAuthModal, // 添加這行
   activeReplyId, // 新增
   handleReplyClick, // 新增
-  currentReplyTo // 新增
+  currentReplyTo, // 新增
+  token, // 新增
+  userId // 新增
 }) {
   // 新增：控制父回覆初次顯示的 loader
   const [showLoader, setShowLoader] = useState(true)
@@ -146,6 +150,58 @@ function ReplyItem({
   const [isSent, setIsSent] = useState(false) // 添加 isSent 狀態
   // 新增：用於強制讓嵌套回覆容器重新渲染
   const [nestedRepliesKey, setNestedRepliesKey] = useState(Date.now())
+
+  const [localToken, setLocalToken] = useState(null)
+  const [localUserId, setLocalUserId] = useState(null)
+
+  // 在組件載入時獲取 token 和 userId
+  useEffect(() => {
+    // 如果已經從父組件接收到 token 和 userId，則直接使用
+    if (token && userId) return;
+
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('loginWithToken')
+      if (storedToken) {
+        setLocalToken(storedToken)
+        try {
+          const decoded = jwtDecode(storedToken)
+          setLocalUserId(decoded.id) // 假設JWT中包含用戶ID
+        } catch (error) {
+          console.error('解析JWT失敗:', error)
+        }
+      }
+    }
+  }, [token, userId])
+
+  // 使用時優先使用從父組件傳入的值，再回退到本地狀態
+  const effectiveToken = token || localToken
+  const effectiveUserId = userId || localUserId
+
+  // 檢查用戶是否已點讚
+  useEffect(() => {
+    if (!effectiveToken || !effectiveUserId || !commentId) return;
+
+    const checkLikeStatus = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/likes/check?userId=${effectiveUserId}&commentId=${commentId}&type=comment`,
+          {
+            headers: {
+              Authorization: `Bearer ${effectiveToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setIsLiked(data.isLiked);
+        }
+      } catch (error) {
+        console.error('檢查點讚狀態失敗:', error);
+      }
+    };
+
+    checkLikeStatus();
+  }, [commentId, effectiveToken, effectiveUserId]);
 
   // 定義選單識別字串
   const menuKey = `reply-${commentId}`
@@ -179,46 +235,50 @@ function ReplyItem({
   }, [])
 
   const handleLike = async () => {
-    if (isLiked) {
-      const newCount = commentLikeCount - 1
-      setIsLiked(false)
-      setCommentLikeCount(newCount)
-      setNumVibrate(true)
-      try {
-        await fetch(`http://localhost:8000/api/likes`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            likeableId: commentId,
-            likeableType: 'article_comment',
-            newLikeCount: newCount,
-          }),
-          credentials: 'include',
-        })
-      } catch (error) {
-        console.error('Error updating comment unlike:', error)
+    if (!isAuthenticated || !effectiveToken) {
+      showAuthModal();
+      return;
+    }
+
+    if (!effectiveUserId) {
+      console.error('無法獲取用戶ID');
+      toast.error('操作失敗，請重新登入');
+      return;
+    }
+
+    try {
+      // 根據當前狀態決定操作
+      const method = isLiked ? 'DELETE' : 'POST';
+      const newCount = isLiked ? commentLikeCount - 1 : commentLikeCount + 1;
+
+      // 先更新UI，提供即時反饋
+      setIsLiked(!isLiked);
+      setCommentLikeCount(newCount);
+      setNumVibrate(true);
+      if (!isLiked) {
+        setIsClicked(true);
+        setTimeout(() => setIsClicked(false), 300);
       }
-    } else {
-      setIsLiked(true)
-      setIsClicked(true)
-      const newCount = commentLikeCount + 1
-      setCommentLikeCount(newCount)
-      setNumVibrate(true)
-      setTimeout(() => setIsClicked(false), 300)
-      try {
-        await fetch(`http://localhost:8000/api/likes`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            likeableId: commentId,
-            likeableType: 'article_comment',
-            newLikeCount: newCount,
-          }),
-          credentials: 'include',
-        })
-      } catch (error) {
-        console.error('Error updating comment like count:', error)
-      }
+
+      await fetch(`http://localhost:8000/api/likes`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${effectiveToken}`,
+        },
+        body: JSON.stringify({
+          likeableId: commentId,
+          likeableType: 'comment', // 修改這裡，從 'article_comment' 改為 'comment'
+          newLikeCount: newCount,
+          userId: effectiveUserId,
+        }),
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Error updating comment like:', error);
+      // 如果失敗，恢復原始狀態
+      setIsLiked(isLiked);
+      setCommentLikeCount(isLiked ? commentLikeCount : commentLikeCount);
     }
   }
 
@@ -549,6 +609,8 @@ function ReplyItem({
                             onCommentDeleted={handleNestedReplyDeleted} // 新增
                             isAuthenticated={isAuthenticated} // 添加這行
                             showAuthModal={showAuthModal} // 添加這行
+                            token={token} // 新增
+                            userId={userId} // 新增
                           />
                         )
                       })}
@@ -626,6 +688,8 @@ function NestedReplyItem({
   onCommentDeleted, // 新增
   isAuthenticated, // 添加這行
   showAuthModal, // 添加這行
+  token, // 新增
+  userId, // 新增
   ...props
 }) {
   const [isLiked, setIsLiked] = useState(false)
@@ -670,49 +734,105 @@ function NestedReplyItem({
     setActiveMenuId(isMenuOpen ? null : menuKey)
   }
 
-  const handleLike = async () => {
-    if (isLiked) {
-      const newCount = commentLikeCount - 1
-      setIsLiked(false)
-      setCommentLikeCount(newCount)
-      setNumVibrate(true)
-      try {
-        await fetch(`http://localhost:8000/api/likes`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            likeableId: props.commentId,
-            likeableType: 'article_comment',
-            newLikeCount: newCount,
-          }),
-          credentials: 'include',
-        })
-      } catch (error) {
-        console.error('Error updating comment unlike:', error)
-      }
-    } else {
-      setIsLiked(true)
-      setIsClicked(true)
-      const newCount = commentLikeCount + 1
-      setCommentLikeCount(newCount)
-      setNumVibrate(true)
-      setTimeout(() => setIsClicked(false), 300)
-      try {
-        await fetch(`http://localhost:8000/api/likes`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            likeableId: props.commentId,
-            likeableType: 'article_comment',
-            newLikeCount: newCount,
-          }),
-          credentials: 'include',
-        })
-      } catch (error) {
-        console.error('Error updating comment like count:', error)
+  const [localToken, setLocalToken] = useState(null)
+  const [localUserId, setLocalUserId] = useState(null)
+
+  // 在組件載入時獲取 token 和 userId
+  useEffect(() => {
+    // 如果已經從父組件接收到 token 和 userId，則直接使用
+    if (token && userId) return;
+
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('loginWithToken')
+      if (storedToken) {
+        setLocalToken(storedToken)
+        try {
+          const decoded = jwtDecode(storedToken)
+          setLocalUserId(decoded.id)
+        } catch (error) {
+          console.error('解析JWT失敗:', error)
+        }
       }
     }
+  }, [token, userId])
+
+  // 使用時優先使用從父組件傳入的值，再回退到本地狀態
+  const effectiveToken = token || localToken
+  const effectiveUserId = userId || localUserId
+
+  const handleLike = async () => {
+    if (!isAuthenticated || !effectiveToken) {
+      showAuthModal();
+      return;
+    }
+
+    if (!effectiveUserId) {
+      console.error('無法獲取用戶ID');
+      toast.error('操作失敗，請重新登入');
+      return;
+    }
+
+    try {
+      // 根據當前狀態決定操作
+      const method = isLiked ? 'DELETE' : 'POST';
+      const newCount = isLiked ? commentLikeCount - 1 : commentLikeCount + 1;
+
+      // 先更新UI，提供即時反饋
+      setIsLiked(!isLiked);
+      setCommentLikeCount(newCount);
+      setNumVibrate(true);
+      if (!isLiked) {
+        setIsClicked(true);
+        setTimeout(() => setIsClicked(false), 300);
+      }
+
+      await fetch(`http://localhost:8000/api/likes`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${effectiveToken}`,
+        },
+        body: JSON.stringify({
+          likeableId: props.commentId,
+          likeableType: 'comment', // 修改這裡，從 'article_comment' 改為 'comment'
+          newLikeCount: newCount,
+          userId: effectiveUserId,
+        }),
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Error updating comment like:', error);
+      // 如果失敗，恢復原始狀態
+      setIsLiked(isLiked);
+      setCommentLikeCount(isLiked ? commentLikeCount : commentLikeCount);
+    }
   }
+
+  // 添加以下 useEffect 檢查點讚狀態
+  useEffect(() => {
+    if (!effectiveToken || !effectiveUserId || !props.commentId) return;
+
+    const checkLikeStatus = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/likes/check?userId=${effectiveUserId}&commentId=${props.commentId}&type=comment`,
+          {
+            headers: {
+              Authorization: `Bearer ${effectiveToken}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setIsLiked(data.isLiked);
+        }
+      } catch (error) {
+        console.error('檢查點讚狀態失敗:', error);
+      }
+    };
+
+    checkLikeStatus();
+  }, [props.commentId, effectiveToken, effectiveUserId]);
 
   const handleNestedReplyClick = () => {
     onReplyClick && onReplyClick(parentId, userName);
@@ -946,7 +1066,7 @@ function NestedReplyItem({
 }
 
 // 主留言區元件
-export default function CommentsArea({ articleId, refreshTrigger, isAuthenticated, showAuthModal }) {
+export default function CommentsArea({ articleId, refreshTrigger, isAuthenticated, showAuthModal, token, userId }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [count, setCount] = useState(0)
   const [comments, setComments] = useState([])
@@ -1056,53 +1176,57 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
             : `- 隱藏全部留言 -`}
         </button>
       </div>
-      {!isCollapsed && (
-        <>
-          <div className={`${styles['y-sort-dropdown']} my-4`}>
-            <select
-              id="sort-comments"
-              name="sort-comments"
-              className="form-select"
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-            >
-              <option value="1">由新到舊</option>
-              <option value="2">由舊到新</option>
-              <option value="3">熱門留言</option>
-            </select>
-          </div>
-          <div className="pt-3">
-            {getSortedComments().map((comment) => (
-              <ReplyItem
-                key={comment.id}
-                articleId={articleId}
-                commentId={comment.id}
-                userName={comment.nickname || comment.name}
-                userProfile={comment.head}
-                text={comment.content}
-                time={comment.created_at}
-                media_urls={comment.media_urls}
-                media_types={comment.media_types}
-                replies={comment.replies}
-                likeCount={comment.like_count}
-                activeMenuId={activeMenuId}
-                setActiveMenuId={setActiveMenuId}
-                is_edited={comment.is_edited}
-                updated_at={comment.updated_at}
-                currentEditingId={currentEditingId}
-                setCurrentEditingId={setCurrentEditingId}
-                onCommentDeleted={handleCommentDeleted}
-                isAuthenticated={isAuthenticated} // 添加這行
-                showAuthModal={showAuthModal} // 添加這行
-                activeReplyId={activeReplyId} // 新增
-                handleReplyClick={handleReplyClick} // 新增
-                currentReplyTo={activeReplyId === comment.id ? currentReplyTo : ''} // 新增
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+      {
+        !isCollapsed && (
+          <>
+            <div className={`${styles['y-sort-dropdown']} my-4`}>
+              <select
+                id="sort-comments"
+                name="sort-comments"
+                className="form-select"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                <option value="1">由新到舊</option>
+                <option value="2">由舊到新</option>
+                <option value="3">熱門留言</option>
+              </select>
+            </div>
+            <div className="pt-3">
+              {getSortedComments().map((comment) => (
+                <ReplyItem
+                  key={comment.id}
+                  articleId={articleId}
+                  commentId={comment.id}
+                  userName={comment.nickname || comment.name}
+                  userProfile={comment.head}
+                  text={comment.content}
+                  time={comment.created_at}
+                  media_urls={comment.media_urls}
+                  media_types={comment.media_types}
+                  replies={comment.replies}
+                  likeCount={comment.like_count}
+                  activeMenuId={activeMenuId}
+                  setActiveMenuId={setActiveMenuId}
+                  is_edited={comment.is_edited}
+                  updated_at={comment.updated_at}
+                  currentEditingId={currentEditingId}
+                  setCurrentEditingId={setCurrentEditingId}
+                  onCommentDeleted={handleCommentDeleted}
+                  isAuthenticated={isAuthenticated} // 添加這行
+                  showAuthModal={showAuthModal} // 添加這行
+                  activeReplyId={activeReplyId} // 新增
+                  handleReplyClick={handleReplyClick} // 新增
+                  currentReplyTo={activeReplyId === comment.id ? currentReplyTo : ''} // 新增
+                  token={token} // 新增
+                  userId={userId} // 新增
+                />
+              ))}
+            </div>
+          </>
+        )
+      }
+    </div >
   )
 }
 
