@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import useAuth from "@/hooks/use-auth";
 import Sidenav from "../_components/Sidenav/page";
 import FavoriteButton from "../_components/favorite-button-p/page";
-
+import Link from "next/link";
 import styles from "./collect.module.scss";
 
 export default function CollectPage() {
@@ -72,6 +72,7 @@ export default function CollectPage() {
               <div className="row g-4">
                 {collections.products.map((item) => (
                   <div key={item.collect_id || item.product_id} className="col-12 col-md-6 col-lg-4">
+                  <Link href={`/product/${item.product_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
                         <FavoriteButton productId={item.product_id} onFavoriteToggle={handleRefresh} />
@@ -83,6 +84,7 @@ export default function CollectPage() {
                       <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price}</h5>
                       <h6 className={styles.textGray}>{item.short_introduce}</h6>
                     </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -98,6 +100,7 @@ export default function CollectPage() {
               <div className="row g-4">
                 {collections.rents.map((item) => (
                   <div key={item.collect_id || item.rent_id} className="col-12 col-md-6 col-lg-4">
+                  <Link href={`/rental/${item.rent_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
                         <FavoriteButton rentId={item.rent_id} onFavoriteToggle={handleRefresh} />
@@ -108,6 +111,7 @@ export default function CollectPage() {
                       <h5 className="mb-3">{item.rent_name}</h5>
                       <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price} /天</h5>
                     </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -123,6 +127,7 @@ export default function CollectPage() {
               <div className="row g-4">
                 {collections.courses.map((item) => (
                   <div key={item.collect_id || item.course_id} className="col-12 col-md-6 col-lg-4">
+                  <Link href={`/courses/${item.course_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
                         <FavoriteButton courseId={item.course_id} onFavoriteToggle={handleRefresh} />
@@ -133,6 +138,7 @@ export default function CollectPage() {
                       <h5 className={`${styles.courseTitle}`}>{item.course_title}</h5>
                       <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price}</h5>
                     </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -148,6 +154,7 @@ export default function CollectPage() {
               <div className="row g-4">
                 {collections.articles.map((item) => (
                   <div key={item.collect_id || item.article_id} className="col-12 col-md-6 col-lg-4">
+                  <Link href={`/article/${item.article_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
                     <div className={`p-4 ${styles.collectionCard}`}>
                       <div className='text-end'>
                         <FavoriteButton articleId={item.article_id} onFavoriteToggle={handleRefresh} />
@@ -159,6 +166,7 @@ export default function CollectPage() {
 
                       <h6 >讚數: {item.like_count}</h6>
                     </div>
+                    </Link>
                   </div>
                 ))}
               </div>
