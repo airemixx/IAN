@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { isDev, apiURL } from '@/config';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { RotatingLines } from 'react-loader-spinner'
+import { jwtDecode } from "jwt-decode";
 
 export default function CheckoutFormStep3() {
     const router = useRouter();
@@ -17,7 +17,8 @@ export default function CheckoutFormStep3() {
         address: "",
         phone: "",
     });
-
+    const token = localStorage.getItem("loginWithToken");
+    const decoded = jwtDecode(token);
     useEffect(() => {
         const savedData = localStorage.getItem("buyerData");
         if (savedData) {
@@ -100,46 +101,55 @@ export default function CheckoutFormStep3() {
             if (resData.status === "success") {
                 setResult(resData.data);
                 toast.success("付款成功");
-                
-                // 取得網址參數
-                const orderData = {
-                    buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
-                    cartItems: JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
-                    createdDate: new Date().toString()
-                };
+                testfun();
 
-                console.log("送出訂單資料:", orderData);
-
-                const response = await fetch('/api/orders', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData),
-                });
-
-                if (response.status == 200) {
-                    console.log('訂單已成功存入資料庫');
-                    // localStorage.removeItem('cart')
-                    // localStorage.removeItem('cartItems')
-                    // localStorage.removeItem('buyerData')
-                } else {
-                    console.error('存入失敗:', await response.text());
-                }
 
             } else {
                 toast.error("付款失敗");
             }
 
-            setTimeout(() => {
-                setLoading(false);
-                router.replace("/");
-            }, 3000);
+            // setTimeout(() => {
+            //     setLoading(false);
+            //     router.replace("/");
+            // }, 3000);
         } catch (error) {
             console.error("確認交易失敗:", error);
             toast.error("交易確認失敗");
             setLoading(false);
         }
     };
+    async function testfun() {
+        try {
+            
+            const orderData = {
+                merchantTradeNo: `od${Date.now()}`,
+                buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
+                cartItems: JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
+                createdDate: Date.now(),
+                userId: decoded.id
+            };
 
+            console.log("送出訂單資料:", orderData);
+
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData),
+            });
+            console.log(response);
+            if (response.status == 200) {
+                console.log('訂單已成功存入資料庫');
+                localStorage.removeItem('cart')
+                localStorage.removeItem('cartItems')
+                localStorage.removeItem('buyerData')
+            } else {
+                console.error('存入失敗:', await response.text());
+            }
+        } catch (error) {
+            console.error("資料獲取失敗");
+        }
+
+    }
     const goECPay = async (amount, items) => {
         try {
             const res = await fetch(`${apiURL}/${paymentMethod}?amount=${amount}&items=${encodeURIComponent(items)}`, {
