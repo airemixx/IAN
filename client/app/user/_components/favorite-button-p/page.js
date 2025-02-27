@@ -4,24 +4,35 @@ import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import styles from "./favorite-button.module.scss";
 
-export default function FavoriteButton({ productId }) {
+export default function FavoriteButton({ productId, onFavoriteToggle = () => {} }) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
   const token = typeof window !== "undefined" ? localStorage.getItem("loginWithToken") : null;
 
   useEffect(() => {
-    if (!token || !productId) return;
+    if (!token) return;
 
-    fetch(`http://localhost:8000/api/product/collection/${productId}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setIsFavorite(data.isFavorite))
-      .catch((error) => console.error("無法確認收藏狀態:", error));
-  }, [productId]);
+    const checkFavoriteStatus = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/product/collection/${productId}`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        // if (!res.ok) throw new Error("無法取得收藏狀態");
+
+        const data = await res.json();
+        setIsFavorite(data.isFavorite);
+      } catch (error) {
+        console.error("無法確認收藏狀態:", error);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [productId, token]);
 
   const toggleFavorite = async () => {
     if (!token) {
@@ -39,6 +50,8 @@ export default function FavoriteButton({ productId }) {
       });
       return;
     }
+    if (loading) return; // ✅ 防止短時間內重複點擊
+    setLoading(true);
 
     try {
       const method = isFavorite ? "DELETE" : "POST";
@@ -52,8 +65,17 @@ export default function FavoriteButton({ productId }) {
       });
 
       if (!res.ok) {
-        const errMessage = await res.text();
-        throw new Error(errMessage || "API 發生錯誤");
+        const errorText = await res.text();
+        if (errorText.startsWith("<!DOCTYPE html>")) {
+          throw new Error("伺服器錯誤或 API 連結錯誤，請檢查後端");
+        }
+
+        let errorJson;
+        try {
+          errorJson = JSON.parse(errorText);
+        } catch {
+          throw new Error("API 回應格式錯誤");
+        }
       }
 
       setIsFavorite((prev) => !prev);
@@ -65,7 +87,7 @@ export default function FavoriteButton({ productId }) {
         showConfirmButton: false,
         timer: 1500,
       });
-
+      if (onFavoriteToggle) onFavoriteToggle();
     } catch (error) {
       console.error(" 收藏錯誤:", error);
       Swal.fire({
@@ -79,9 +101,9 @@ export default function FavoriteButton({ productId }) {
   return (
     <button onClick={toggleFavorite} className={styles.favoriteIcon}>
       {isFavorite ? (
-        <FaHeart size={22} color="#d0b088" />
+        <FaHeart size={18} color="#d0b088" />
       ) : (
-        <FaRegHeart size={22} color="#d0b088" />
+        <FaRegHeart size={18} color="gray" />
       )}
     </button>
   );

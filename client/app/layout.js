@@ -12,6 +12,7 @@ import TeacherFooter from './teacher/_component/teacher-footer/page'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AppProvider from '@/hooks/app-provider'
+import { CompareProvider } from "@/app/product/_context/CompareContext";
 import { IoIosArrowUp } from "react-icons/io";
 import "hover.css";
 
@@ -34,16 +35,20 @@ export default function RootLayout({ children }) {
     [pathname]
   )
 
+  const isCartPage = useMemo(
+    () => pathname?.startsWith('/cart'),
+    [pathname]
+  )
   // top按鈕
   const [showButton, setShowButton] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY; 
+      const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight; 
+      const documentHeight = document.documentElement.scrollHeight;
 
-    
+
       if (scrollY > 300) {
         setShowButton(true);
       } else {
@@ -51,7 +56,7 @@ export default function RootLayout({ children }) {
       }
 
       if (scrollY + windowHeight >= documentHeight - 50) {
-        setShowButton(false); 
+        setShowButton(false);
       }
     };
 
@@ -80,13 +85,13 @@ export default function RootLayout({ children }) {
             style={{ marginTop: '80px' }}
           />
           {!isTeacherPage && (
-            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
+            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage}/>
           )}
           <AppProvider>
             {' '}
             <main className="root-content">{children}</main>
           </AppProvider>
-          {isTeacherPage ? <TeacherFooter /> : <Footer />}
+          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage}/>}
         </div>
 
         {/* top按鈕 */}

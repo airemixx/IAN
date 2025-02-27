@@ -35,7 +35,7 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                             <p className={`${styles['j-lsText']}`}>{name}</p>
                         </div>
                         <div>
-                            <p className={`mt-2 ${styles['j-lsText']}`}>價格:{price}元</p>
+                            <p className={`mt-2 mb-2 ${styles['j-lsText']}`}>價格:{price}元</p>
                         </div>
                     </div>
                 </div>
