@@ -12,6 +12,7 @@ import TeacherFooter from './teacher/_component/teacher-footer/page'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AppProvider from '@/hooks/app-provider'
+import { CompareProvider } from "@/app/product/_context/CompareContext";
 import { IoIosArrowUp } from "react-icons/io";
 import "hover.css";
 
@@ -43,11 +44,11 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY; 
+      const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight; 
+      const documentHeight = document.documentElement.scrollHeight;
 
-    
+
       if (scrollY > 300) {
         setShowButton(true);
       } else {
@@ -55,7 +56,7 @@ export default function RootLayout({ children }) {
       }
 
       if (scrollY + windowHeight >= documentHeight - 50) {
-        setShowButton(false); 
+        setShowButton(false);
       }
     };
 

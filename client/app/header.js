@@ -233,8 +233,10 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <Link href="/login">
                 <img src="/images/icon/user.svg" alt="" />
               </Link>
-              <a href="#">
+              <Link href="/product/spec">
                 <img src="/images/icon/compare.svg" alt="" />
+              </Link>
+              <a href="/cart/cart-step1">
               </a>
               <a href="/cart">
                 <img src="/images/icon/cart.svg" alt="" />
