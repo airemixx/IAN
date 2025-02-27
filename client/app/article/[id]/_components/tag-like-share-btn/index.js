@@ -374,7 +374,7 @@ export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showA
             onMouseLeave={() => setFavoriteHovered(false)}
           >
             {isFavorite ? (
-              <FaHeart color="#FF6464" size={18} className={styles['favorite-icon']} />
+              <FaHeart color="#d0b088" size={18} className={styles['favorite-icon']} />
             ) : (
               <FaRegHeart
                 size={18}

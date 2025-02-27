@@ -207,14 +207,38 @@ function ReplyItem({
   const menuKey = `reply-${commentId}`
   const isMenuOpen = activeMenuId === menuKey
 
-  const timeAgo = updatedTime
-    ? formatDistanceToNow(new Date(updatedTime), { locale: zhTW, addSuffix: true })
-    : formatDistanceToNow(new Date(time), { locale: zhTW, addSuffix: true })
+  // 检查 timeAgo 和 formattedTime 计算逻辑
+  useEffect(() => {
+    // 調試輸出
+    console.log('時間數據:', {
+      updatedTime,
+      originalTime: time,
+      isEdited
+    });
+    
+    // 如果有更新時間，確保它是有效的日期對象
+    if (updatedTime) {
+      try {
+        const testDate = new Date(updatedTime);
+        if (isNaN(testDate.getTime())) {
+          console.error('無效的更新時間格式:', updatedTime);
+        } else {
+          console.log('有效的更新時間:', testDate);
+        }
+      } catch (err) {
+        console.error('解析更新時間出錯:', err);
+      }
+    }
+  }, [updatedTime, time, isEdited]);
 
-  const formattedTime = updatedTime
+  // 計算顯示時間
+  const timeAgo = formatDistanceToNow(new Date(time), { 
+    locale: zhTW, 
+    addSuffix: true 
+  });
+  const formattedTime = updatedTime && !isNaN(new Date(updatedTime).getTime())
     ? format(new Date(updatedTime), 'yyyy/MM/dd HH:mm')
-    : format(new Date(time), 'yyyy/MM/dd HH:mm')
-
+    : format(new Date(time), 'yyyy/MM/dd HH:mm');
 
   const isReadyToSend = editedText.trim().length > 0;
 
@@ -294,30 +318,6 @@ function ReplyItem({
       console.log('New nested reply received:', newNestedReply);
 
       // 新增：處理嵌套回覆的數據結構
-      // 正確處理從服務器返回的數據結構
-      const responseData = newNestedReply.data || newNestedReply;
-
-      // 將服務器返回的欄位正確映射到組件期望的格式
-      const mappedReply = {
-        id: responseData.id,
-        nickname: responseData.nickname || responseData.name, // 使用 nickname 或 name 作為顯示名稱
-        name: responseData.nickname || responseData.name,// 使用 nickname 或 name 作為顯示名稱
-        head: responseData.head, // 使用頭像路徑
-        content: responseData.content,// 使用 content 作為回覆內容
-        created_at: responseData.created_at,
-        like_count: responseData.like_count || 0,
-        media_url: responseData.media_urls || [],
-        media_type: responseData.media_types || [],
-        parent_id: parentId,
-        is_edited: responseData.is_edited || false,
-        updated_at: responseData.updated_at || null
-      };
-
-      console.log('Mapped nested reply:', mappedReply);
-
-      // 添加到嵌套回覆列表
-      setNestedReplies(prev => [mappedReply, ...prev]);
-      setShowNestedReplies(true);
 
       // 強制重新渲染嵌套回覆容器
       setNestedRepliesKey(Date.now());
@@ -349,7 +349,7 @@ function ReplyItem({
   const handleUpdate = async () => {
     if (!editedText.trim()) return;
 
-    setIsSent(true); // 設置發送動畫
+    setIsSent(true);
     setTimeout(() => setIsSent(false), 300);
 
     try {
@@ -361,13 +361,39 @@ function ReplyItem({
       });
 
       const data = await res.json();
+      console.log('更新留言返回資料:', data); // 確保這行代碼有執行
 
       if (data.success) {
-        // 立即更新視覺顯示
         setDisplayText(editedText);
         setIsEdited(true);
-        setUpdatedTime(data.updatedTime);
-        setCurrentEditingId(null); // 完成編輯
+
+        // 檢查後端返回的數據結構
+        console.log('後端返回的時間數據:', {
+          updatedTime: data.updatedTime,
+          updated_at: data.updated_at,
+          update_time: data.update_time,
+          data_time: data.time
+        });
+
+        // 處理不同欄位名稱的可能性
+        let newUpdatedTime;
+        if (data.updated_at) {
+          newUpdatedTime = data.updated_at;
+        } else if (data.update_time) {
+          newUpdatedTime = data.update_time;
+        } else if (data.time) {
+          newUpdatedTime = data.time;
+        } else if (data.data && data.data.updated_at) {
+          newUpdatedTime = data.data.updated_at;
+        } else {
+          // 如果後端沒有返回時間，使用當前時間
+          newUpdatedTime = new Date().toISOString();
+        }
+
+        console.log('設置的更新時間:', newUpdatedTime);
+        setUpdatedTime(newUpdatedTime);
+
+        setCurrentEditingId(null);
       } else {
         alert(data.message || '更新失敗');
       }
@@ -867,11 +893,38 @@ function NestedReplyItem({
       });
 
       const data = await res.json();
+      console.log('更新留言返回資料:', data); // 確保這行代碼有執行
 
       if (data.success) {
         setDisplayText(editedText);
         setIsEdited(true);
-        setUpdatedTime(data.updatedTime);
+
+        // 檢查後端返回的數據結構
+        console.log('後端返回的時間數據:', {
+          updatedTime: data.updatedTime,
+          updated_at: data.updated_at,
+          update_time: data.update_time,
+          data_time: data.time
+        });
+
+        // 處理不同欄位名稱的可能性
+        let newUpdatedTime;
+        if (data.updated_at) {
+          newUpdatedTime = data.updated_at;
+        } else if (data.update_time) {
+          newUpdatedTime = data.update_time;
+        } else if (data.time) {
+          newUpdatedTime = data.time;
+        } else if (data.data && data.data.updated_at) {
+          newUpdatedTime = data.data.updated_at;
+        } else {
+          // 如果後端沒有返回時間，使用當前時間
+          newUpdatedTime = new Date().toISOString();
+        }
+
+        console.log('設置的更新時間:', newUpdatedTime);
+        setUpdatedTime(newUpdatedTime);
+
         setCurrentEditingId(null);
       } else {
         alert(data.message || '更新失敗');
