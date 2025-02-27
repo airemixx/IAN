@@ -18,6 +18,7 @@ export default function CheckoutFormStep1({ slItem }) {
   const [checkState, setCheckState] = useState(false)
   const [cpName, setCpName] = useState("")
   const [couponData, setCouponData] = useState([]); // 儲存優惠券資料
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
   const handleClose = () => {
     setCheckState(false)
     setShow(false)
@@ -52,15 +53,16 @@ export default function CheckoutFormStep1({ slItem }) {
       setCheckState(true)
       setShow(true)
       await fetchCoupon(); // 取得優惠券資訊
+    }else{
+      setCpName('')
     }
   }
 
   function handsumbit() {
     setShow(false)
-    setCpName("asdadasdasdasd")
   }
 
-  
+
 
   async function fetchCoupon() {
     try {
@@ -81,8 +83,15 @@ export default function CheckoutFormStep1({ slItem }) {
   }
 
   function handleCouponSelect(coupon) {
-    setCpName(coupon.code);
-    setShow(false); // 選擇優惠券後關閉 Modal
+    if (selectedCoupon === coupon.code) {
+      // 如果點擊的是已選中的優惠券，則取消選取
+      setSelectedCoupon(null);
+      setCpName(""); // 清空優惠券名稱
+    } else {
+      // 否則，設置新的選取優惠券
+      setSelectedCoupon(coupon.code);
+      setCpName(coupon.code);
+    }
   }
 
   return (
@@ -100,20 +109,26 @@ export default function CheckoutFormStep1({ slItem }) {
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          <div className="d-flex">
-          {couponData.length > 0 ? (
-              couponData.map((coupon, index) => (
-                <div key={index} className={`${styles['j-cp']} mb-2 d-flex flex-column align-items-center position-relative`}>
-                  <img src={`/images/cart/${coupon.img}`} alt="" />
-                  <span className={`position-absolute ${styles['j-cpEndDate']}`}>{moment(coupon.end_date).format('YYYY-MM-DD hh:mm:ss')}</span>
-                  <span >{coupon.cpName}</span>
-                </div>
-              ))
-            ) : (
-              <p>沒有可用的優惠券</p>
-            )}
-          </div>
-          
+            <div className="d-flex flex-wrap">
+              {couponData.length > 0 ? (
+                couponData.map((coupon, index) => (
+                  <div
+                    key={index}
+                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 ${cpName === coupon.code ? styles["j-selected"] : ""}`}
+                    onClick={() => handleCouponSelect(coupon)}
+                  >
+                    <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
+                    <span className={`position-absolute ${styles["j-cpEndDate"]}`}>
+                      {moment(coupon.end_date).format("YYYY-MM-DD HH:mm:ss")}
+                    </span>
+                    <span>{coupon.cpName}</span>
+                  </div>
+                ))
+              ) : (
+                <p>沒有可用的優惠券</p>
+              )}
+            </div>
+
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>

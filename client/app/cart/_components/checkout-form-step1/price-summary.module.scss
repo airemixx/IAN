@@ -51,10 +51,31 @@
     width: 100%;
   }
   .j-cpEndDate{
-    bottom: 17%;
+    bottom: 21%;
     left: 39%;
     color: #fff;
   }
+
+  .j-cp {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    background: #fff;
+    border: 2px solid transparent; // 預設無邊框
+  
+    &:hover {
+      transform: translateY(-5px); // 滑鼠移入時讓元素向上浮動 5px
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); // 增加陰影，使其更有立體感
+    }
+  }
+  
+  .j-selected {
+    border: 3px solid #ff9800; // 選中的優惠券會有橙色邊框
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.5); // 增加較強烈的陰影
+    transform: translateY(-5px); // 同樣浮動 5px，讓選中狀態有視覺一致性
+  }
+
   @media (max-width: 996px){
     .j-payStep {
       margin-top: 0;
