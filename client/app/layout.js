@@ -12,6 +12,7 @@ import TeacherFooter from './teacher/_component/teacher-footer/page'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AppProvider from '@/hooks/app-provider'
+import { CompareProvider } from "@/app/product/_context/CompareContext";
 import { IoIosArrowUp } from "react-icons/io";
 import "hover.css";
 
@@ -39,11 +40,11 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY; 
+      const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight; 
+      const documentHeight = document.documentElement.scrollHeight;
 
-    
+
       if (scrollY > 300) {
         setShowButton(true);
       } else {
@@ -51,7 +52,7 @@ export default function RootLayout({ children }) {
       }
 
       if (scrollY + windowHeight >= documentHeight - 50) {
-        setShowButton(false); 
+        setShowButton(false);
       }
     };
 
@@ -67,32 +68,33 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
-        <div className="layout-container">
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={true}
-            closeOnClick
-            pauseOnHover
-            draggable
-            theme="dark"
-            className="custom-toast-container"
-            style={{ marginTop: '80px' }}
-          />
-          {!isTeacherPage && (
-            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
-          )}
-          <AppProvider>
-            {' '}
-            <main className="root-content">{children}</main>
-          </AppProvider>
-          {isTeacherPage ? <TeacherFooter /> : <Footer />}
-        </div>
-
+        <CompareProvider>
+          <div className="layout-container">
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={true}
+              closeOnClick
+              pauseOnHover
+              draggable
+              theme="dark"
+              className="custom-toast-container"
+              style={{ marginTop: '80px' }}
+            />
+            {!isTeacherPage && (
+              <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
+            )}
+            <AppProvider>
+              {' '}
+              <main className="root-content">{children}</main>
+            </AppProvider>
+            {isTeacherPage ? <TeacherFooter /> : <Footer />}
+          </div>
+        </CompareProvider>
         {/* top按鈕 */}
         {showButton && (
           <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob'>
-            <IoIosArrowUp size={25}   className="hvr-icon"/>
+            <IoIosArrowUp size={25} className="hvr-icon" />
           </button>
         )}
       </body>

@@ -66,7 +66,7 @@ export default function ArticleCardIndex(props) {
 
       {/* 查看更多按鈕 */}
       <div className={`text-center my-5 ${styles.btnMore}`}>
-        <button className="px-4 py-2">查看更多</button>
+        <button>查看更多</button>
       </div>
     </div>
   )

@@ -228,9 +228,9 @@ export default function Header({ searchOpen, setSearchOpen }) {
               <Link href="/login">
                 <img src="/images/icon/user.svg" alt="" />
               </Link>
-              <a href="#">
+              <Link href="/product/spec">
                 <img src="/images/icon/compare.svg" alt="" />
-              </a>
+              </Link>
               <a href="/cart/cart-step1">
                 <img src="/images/icon/cart.svg" alt="" />
               </a>
