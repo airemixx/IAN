@@ -3,11 +3,30 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 
-export default function RentReviews({ reviews = [] }) {
+export default function RentReviews({ rent_id }) {
+  const [reviews, setReviews] = useState([])
   const [itemsPerPage, setItemsPerPage] = useState(3)
 
-  // 📌 **顯示更多評論 (每次顯示3條)**
+  // 初始加載評論數據
+  useEffect(() => {
+    fetchReviews()
+  }, [rent_id])
+
+  // 從 API 獲取評論數據
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(`/api/rental/reviews?rent_id=${rent_id}`)
+      if (response.data.success) {
+        setReviews(response.data.reviews || [])
+      }
+    } catch (error) {
+      console.error('獲取評論失敗:', error.message)
+    }
+  }
+
+  // 顯示更多評論 (每次顯示3條)
   const showMore = () => {
     setItemsPerPage(itemsPerPage + 3)
   }
@@ -46,7 +65,6 @@ export default function RentReviews({ reviews = [] }) {
             </div>
           </div>
         ))}
-
         {itemsPerPage < reviews.length && (
           <div className="d-flex justify-content-end">
             <button

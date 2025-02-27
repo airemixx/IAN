@@ -146,6 +146,7 @@
 .k-picture-container {
   transition: all 0.3s ease;
   height: auto;
+  min-height: 710px;
 }
 // (大螢幕)
 .sticky .k-picture-sticky {

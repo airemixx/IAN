@@ -13,7 +13,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AppProvider from '@/hooks/app-provider'
 import { IoIosArrowUp } from "react-icons/io";
-import "hover.css";
+// import "hover.css";
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -39,11 +39,11 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY; 
+      const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight; 
+      const documentHeight = document.documentElement.scrollHeight;
 
-    
+
       if (scrollY > 300) {
         setShowButton(true);
       } else {
@@ -51,7 +51,7 @@ export default function RootLayout({ children }) {
       }
 
       if (scrollY + windowHeight >= documentHeight - 50) {
-        setShowButton(false); 
+        setShowButton(false);
       }
     };
 
@@ -92,7 +92,7 @@ export default function RootLayout({ children }) {
         {/* top按鈕 */}
         {showButton && (
           <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob'>
-            <IoIosArrowUp size={25}   className="hvr-icon"/>
+            <IoIosArrowUp size={25} className="hvr-icon" />
           </button>
         )}
       </body>

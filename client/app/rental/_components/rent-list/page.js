@@ -22,8 +22,6 @@ export default function RentList() {
   const [shouldAnimate, setShouldAnimate] = useState(false);  // 判斷動畫觸發
   const router = useRouter(); // ✅ 正確初始化 router
 
-
-
   // 📌 **篩選條件**
   const [filters, setFilters] = useState({
     category: '全部',
@@ -130,12 +128,22 @@ export default function RentList() {
     setCurrentPage(1) // 重置到第一頁
   }
 
+  // // 📌 **商品排序功能**
+  // const sortedRentals = [...filteredRentals].sort((a, b) => {
+  //   if (sorting === 'asc') return a.fee - b.fee // 由低到高
+  //   if (sorting === 'desc') return b.fee - a.fee // 由高到低
+  //   return 0
+  // })
+
   // 📌 **商品排序功能**
   const sortedRentals = [...filteredRentals].sort((a, b) => {
-    if (sorting === 'asc') return a.fee - b.fee // 由低到高
-    if (sorting === 'desc') return b.fee - a.fee // 由高到低
-    return 0
-  })
+    if (sorting === 'asc') return a.fee - b.fee; // 價格由低到高
+    if (sorting === 'desc') return b.fee - a.fee; // 價格由高到低
+    if (sorting === 'reviews_desc') return b.total_reviews - a.total_reviews; // 評論數量多到少
+    if (sorting === 'rating_desc') return b.average_rating - a.average_rating; // 評分高到低
+    return 0;
+  });
+
 
   // 📌 **計算當前頁面的商品範圍**
   const indexOfLastItem = currentPage * itemsPerPage
