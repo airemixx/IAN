@@ -88,7 +88,6 @@ export default function RootLayout({ children }) {
             <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage}/>
           )}
           <AppProvider>
-            {' '}
             <main className="root-content">{children}</main>
           </AppProvider>
           {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage}/>}

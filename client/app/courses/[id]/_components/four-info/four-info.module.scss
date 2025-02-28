@@ -46,6 +46,10 @@
   color: var(--primary-color);
 }
 
+.info-content a{
+  text-decoration: none
+}
+
 /* 響應式樣式 */
 
 @media screen and (max-width: 992px) {

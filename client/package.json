@@ -49,6 +49,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-toastify": "^11.0.3",
     "react-tooltip": "^5.28.0",
+    "react-typed": "^2.0.12",
     "sass": "^1.84.0",
     "sweetalert2": "^11.17.2",
     "sweetalert2-react-content": "^5.1.0",
