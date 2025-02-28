@@ -3,7 +3,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import useAuth from '@/hooks/use-auth'
+// 修改這裡：引入 usePublicAuth 替代 useAuth
+import usePublicAuth from '@/hooks/usePublicAuth'
 import Swal from 'sweetalert2'
 import { GiphyFetch } from '@giphy/js-fetch-api'
 import { Grid } from '@giphy/react-components'
@@ -47,8 +48,9 @@ class ErrorBoundary extends React.Component {
 }
 
 // 主組件
-export default function ReplyInput({ articleId, parentId, onCommentSubmitted, replyTo }) {
-  const { token, user } = useAuth() // 改用 useAuth 來獲取登入使用者資料
+export default function ReplyInput({ articleId, parentId, onCommentSubmitted, replyTo, isAuthenticated, showAuthModal }) {
+  // 修改這裡：使用 usePublicAuth 替代 useAuth
+  const { token, user } = usePublicAuth()
   const router = useRouter()
 
   const [comment, setComment] = useState(replyTo || '') // 留言文字
@@ -107,6 +109,12 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
 
   // 留言送出
   const handleSubmit = async () => {
+    // 如果用戶未登入，顯示登入 Modal
+    if (!isAuthenticated && !token) {
+      showAuthModal();
+      return;
+    }
+
     // 如果沒有文字內容且沒有檔案，則不處理
     if (!comment.trim() && previews.length === 0) return;
 
@@ -195,29 +203,21 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
     // 或者 setGifResult(...) 執行 UI 更新等
   }
 
-  // 新增：如果使用者未登入，點選輸入框時彈出 Swal 提示
-  const handleInputFocus = () => {
-    if (!token) {
-      Swal.fire({
-        title: "<strong>需要登入</strong>",
-        icon: "info",
-        html: `
-          請先登入再留言。<br/>
-          是否前往登入頁面？
-        `,
-        showCloseButton: true,
-        showCancelButton: true,
-        focusConfirm: false,
-        confirmButtonText: `<i class="fa fa-thumbs-up"></i> 登入`,
-        confirmButtonAriaLabel: "登入",
-        cancelButtonText: `<i class="fa fa-thumbs-down"></i> 留在此頁`,
-        cancelButtonAriaLabel: "取消"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push('/login')
-        }
-      })
-    }
+  // 如果用戶未登入，直接顯示登入按鈕而不是輸入框
+  if (!isAuthenticated && !token) {
+    return (
+      <div className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}>
+        <div className="text-center py-3">
+          <p className="mb-3">登入後才能發表評論</p>
+          <button
+            className={`btn ${styles['btn-needs-login']}`}
+            onClick={showAuthModal} // 正確用法，直接傳遞函數引用而不是調用
+          >
+            立即登入
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -236,7 +236,6 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
             handleSubmit()
           }
         }}
-        onFocus={handleInputFocus}
         style={{
           // 若文字開頭為 '@' 則設定 fontWeight 
           fontWeight: comment.trim().startsWith('@') ? 700 : 'normal'
@@ -377,7 +376,24 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
   )
 }
 
-export function NestedReplyInput({ articleId, parentId, onCommentSubmitted }) {
+export function NestedReplyInput({ articleId, parentId, onCommentSubmitted, isAuthenticated, showAuthModal }) {
+  // 檢查登入
+  if (!isAuthenticated) {
+    return (
+      <div className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}>
+        <div className="text-center py-3">
+          <p className="mb-3">登入後才能發表評論</p>
+          <button
+            className={`btn ${styles['btn-needs-login']}`}
+            onClick={showAuthModal} // 注意這裡不要調用函數，而是直接傳遞
+          >
+            立即登入
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const [comment, setComment] = useState('')
   const fileInputRef = useRef(null)
   const userId = 1 // 這裡可改為動態取得
