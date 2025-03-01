@@ -1,0 +1,510 @@
+.chatWidgetContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.chatButtonWrapper {
+  width: 56px;
+  height: 56px;
+  position: relative; /* 添加相對定位 */
+}
+
+.chatButton {
+  position: fixed !important;
+  bottom: 80px !important;
+  right: 30px !important;
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 50% !important; /* 改為 50% 確保完全圓形 */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+  background-color: #fc671a !important;
+  line-height: 1 !important;
+  transform: scale(1);
+  overflow: hidden !important; /* 確保內容不會溢出 */
+}
+
+.chatButton:hover {
+  transform: scale(1.05);
+  background-color: darken(#fc671a, 5%) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.chatButton:active,
+.chatButton:focus,
+.chatButton:focus-visible {
+  transform: scale(0.95);
+  background-color: darken(#fc671a, 10%) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  border: none !important;
+  outline: none !important;
+}
+//按鈕部分
+
+.chatWindow {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 390px;
+  height: 500px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  background: #7e7267;
+  color: #333;
+  transform-origin: bottom right;
+}
+
+.chatWindowEnter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.chatWindowEnterActive {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.chatWindowExit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chatWindowExitActive {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.chatButtonEnter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.chatButtonEnterActive {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.chatButtonExit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.chatButtonExitActive {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.mainChat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #7e7267;
+  color: white;
+  height: 50px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.headerUserInfo {
+  display: flex;
+  align-items: center;
+}
+
+.userName {
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: white;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.iconButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chatBody {
+  flex: 1;
+  padding: 0; // 從2px減少到0px
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.chatBody > div {
+  padding: 5px 0;
+}
+
+.messagesContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+// 訊息行容器 - 確保所有訊息垂直居中對齊
+.messageRow {
+  display: flex;
+  align-items: center; // 垂直置中對齊
+  margin-bottom: 2px; // 從12px減少到8px
+  gap: 8px; // 提供頭像與訊息之間的間距
+  position: relative; // 讓頭像可以絕對定位
+}
+
+// 用戶訊息行靠右對齊，移除右側頭像空間
+.userMessageRow {
+  justify-content: flex-end;
+  padding-right: 10px; // 大幅減少右側內邊距，因為不再需要頭像空間
+  padding-left: 30px; // 保持左側邊距小一點
+}
+
+// 客服訊息行靠左對齊，保留頭像空間
+.agentMessageRow {
+  justify-content: flex-start;
+  padding-left: 40px; // 保留客服頭像空間
+  padding-right: 10px; // 保持右側邊距小一點
+}
+
+// 訊息本體 - 統一基本樣式
+.message {
+  max-width: 80%;
+  padding: 8px 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  word-break: break-word; // 在訊息容器層級也添加換行控制
+}
+
+// IG風格訊息氣泡圓角樣式
+// 單獨訊息 - 四邊都圓角
+.bubble-single {
+  border-radius: 15px;
+}
+
+// 連續訊息的第一條 - 上方兩角圓，底部左角小圓，右角圓
+.bubble-first {
+  border-radius: 15px 15px 5px 15px;
+}
+
+// 連續訊息的中間部分 - 上方右角圓，其他三角小圓
+.bubble-middle {
+  border-radius: 15px 5px 5px 15px;
+}
+
+// 連續訊息的最後一條 - 下方兩角圓，上方左角小圓，右角圓
+.bubble-last {
+  border-radius: 15px 5px 15px 15px;
+}
+
+.userMessage.bubble-middle {
+  border-radius: 15px 5px 5px 15px;
+}
+
+.userMessage.bubble-last {
+  border-radius: 15px 5px 15px 15px;
+}
+
+// 連續訊息的間距調整
+.messageRow + .messageRow {
+  margin-top: 2px;
+}
+
+// 當上下訊息是同一發送者時減少間距
+.bubble-first,
+.bubble-middle {
+  margin-bottom: 1px;
+}
+
+.bubble-middle,
+.bubble-last {
+  margin-top: 1px;
+}
+
+// 用戶訊息樣式
+.userMessage {
+  background: #1e3c54;
+  color: white;
+  align-self: flex-end;
+  margin-right: 0; // 移除右側外邊距
+}
+
+// 客服訊息樣式
+.agentMessage {
+  background: #969696;
+  color: #ffffff;
+  align-self: flex-start;
+}
+
+// 客服訊息特定樣式 - 鏡像反轉圓角
+// 修改客服單條訊息時的圓角 - 完全圓形
+.agentMessage.bubble-single {
+  border-radius: 15px; // 所有角都是15px，沒有尖角
+}
+
+// 另外，確保通用的單獨訊息樣式也是15px圓角
+.bubble-single {
+  border-radius: 15px;
+}
+
+.agentMessage.bubble-first {
+  border-radius: 15px 15px 15px 5px;
+}
+
+.agentMessage.bubble-middle {
+  border-radius: 5px 15px 15px 5px;
+}
+
+.agentMessage.bubble-last {
+  border-radius: 5px 15px 15px 15px;
+}
+
+// 用戶單條訊息時的圓角 - 僅左下角尖
+.userMessage.bubble-single {
+  border-radius: 15px;
+}
+
+// 已有的用戶訊息樣式可以取消註解，確保左側尖角效果
+.userMessage.bubble-first {
+  border-radius: 15px 15px 5px 15px;
+}
+
+// 頭像容器
+.avatarContainer {
+  margin: 0; // 移除多餘的間距
+  display: flex;
+  align-items: center; // 確保頭像垂直居中
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+}
+
+// 用戶訊息頭像在右側
+.userMessageRow .avatarContainer {
+  right: 1px; // 從10px減少到5px，更靠右
+}
+
+// 客服訊息頭像在左側
+.agentMessageRow .avatarContainer {
+  left: 1px; // 從10px減少到5px，更靠左
+}
+
+// 訊息內容
+.messageContent {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: break-word; // 確保長內容能夠換行
+}
+
+// 訊息狀態標誌位置
+.userMessage .messageStatus {
+  position: absolute;
+  left: -32px;
+  bottom: 4px;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.readIcon {
+  color: #7e7267;
+}
+
+.unreadIcon {
+  color: #adb5bd;
+}
+
+.userMessage .readIcon {
+  color: #7e7267;
+}
+
+.userMessage .unreadIcon {
+  color: #adb5bd;
+}
+
+.chatFooter {
+  padding: 6px;
+  background-color: white;
+  border-top: 1px solid #eee;
+}
+
+.messageForm {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inputContainer {
+  flex: 1;
+  background: #e2e2e2;
+  border-radius: 20px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+}
+
+.inputButton {
+  background: none;
+  border: none;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.inputButton:hover {
+  color: #1e3c54;
+}
+
+.messageInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+  padding: 0;
+}
+
+.messageInput:focus {
+  outline: none;
+}
+
+.messageInput::placeholder {
+  color: #484848;
+}
+
+.sendButton {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border: 1px solid #4476ff00;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+  background-color: transparent;
+}
+
+.sendButton:hover {
+  transform: scale(1.05);
+}
+
+.sendButton:disabled {
+  cursor: not-allowed;
+}
+
+.imageButton {
+  border: 1px solid #4476ff00;
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.emojiButton {
+  border: 1px solid #4476ff00;
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+// 添加頭像相關樣式
+.avatarContainer {
+  margin: 0 2px; // 頭像與訊息的間距
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// 確保訊息容器能正確顯示
+.messagesContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+// 添加訊息文字樣式，確保長文字會自動換行
+.messageText {
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap; // 保留換行符並允許文字換行
+  word-wrap: break-word; // 允許長單詞在必要時換行
+  overflow-wrap: break-word; // 確保內容不會溢出容器
+  word-break: break-word; // 在必要時允許單詞內換行
+  max-width: 100%; // 確保文字不超出訊息容器
+}
+
+// 時間標記樣式
+.timeLabel {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  color: #777;
+  font-size: 12px;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+    margin: auto 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chatWindow {
+    width: calc(100vw - 40px);
+    max-width: 320px;
+    right: 10px;
+  }
+}
