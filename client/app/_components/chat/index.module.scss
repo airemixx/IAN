@@ -183,13 +183,16 @@
   margin-bottom: 2px; // 從12px減少到8px
   gap: 8px; // 提供頭像與訊息之間的間距
   position: relative; // 讓頭像可以絕對定位
+  overflow: visible !important;
 }
 
 // 用戶訊息行靠右對齊，移除右側頭像空間
 .userMessageRow {
+  position: relative !important; // 讓子元素絕對定位能參考 .userMessageRow
   justify-content: flex-end;
   padding-right: 10px; // 大幅減少右側內邊距，因為不再需要頭像空間
-  padding-left: 30px; // 保持左側邊距小一點
+  padding-left: 45px ; // 進一步增加左側間距
+  overflow: visible !important;
 }
 
 // 客服訊息行靠左對齊，保留頭像空間
@@ -204,10 +207,10 @@
   max-width: 80%;
   padding: 8px 12px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  position: relative;
+  position: relative; // 確保訊息本身也有相對定位
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible !important;
   word-break: break-word; // 在訊息容器層級也添加換行控制
 }
 
@@ -262,6 +265,7 @@
   color: white;
   align-self: flex-end;
   margin-right: 0; // 移除右側外邊距
+  position: relative;
 }
 
 // 客服訊息樣式
@@ -335,29 +339,27 @@
 }
 
 // 訊息狀態標誌位置
-.userMessage .messageStatus {
+.messageStatus {
   position: absolute;
-  left: -32px;
-  bottom: 4px;
-  display: flex;
-  align-items: center;
-  z-index: 10;
+  left: -30px;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%; // 圓形背景
+  z-index: 9999; // 非常高的層級
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .readIcon {
-  color: #7e7267;
+  color: #7e7267 !important; // 使用明亮的藍色
+  opacity: 1;
 }
 
 .unreadIcon {
-  color: #adb5bd;
-}
-
-.userMessage .readIcon {
-  color: #7e7267;
-}
-
-.userMessage .unreadIcon {
-  color: #adb5bd;
+  color: #aaa !important;
+  opacity: 1;
 }
 
 .chatFooter {
@@ -496,7 +498,7 @@
   &::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid #e0e0e0;
+    // border-bottom: 1px solid #e0e0e0;
     margin: auto 10px;
   }
 }

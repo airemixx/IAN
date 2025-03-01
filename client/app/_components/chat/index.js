@@ -3,7 +3,7 @@
 import React from "react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "react-bootstrap"
-import { Send, X, Check, CheckAll } from "react-bootstrap-icons"
+import { X, Check, CheckAll } from "react-bootstrap-icons"
 import { CSSTransition } from "react-transition-group"
 import styles from "./index.module.scss"
 
@@ -233,22 +233,23 @@ export default function ChatWidget() {
                           </div>
                         )}
 
-                        <div
-                          className={`${styles.message} ${message.sender === "user" ? styles.userMessage : styles.agentMessage} ${styles[`bubble-${bubblePosition}`]}`}
-                        >
-                          <div className={styles.messageContent}>
+                          <div
+                            className={`${styles.message} ${message.sender === "user" ? styles.userMessage : styles.agentMessage} ${styles[`bubble-${bubblePosition}`]}`}
+                          >
+                            {/* 已讀標誌放在這裡，直接在訊息行內部 */}
                             {message.sender === "user" && (
                               <div className={styles.messageStatus}>
                                 {message.read ? (
-                                  <CheckAll size={16} className={styles.readIcon} />
+                                  <CheckAll size={18} className={styles.readIcon} />
                                 ) : (
-                                  <Check size={16} className={styles.unreadIcon} />
+                                  <Check size={18} className={styles.unreadIcon} />
                                 )}
                               </div>
                             )}
-                            <div className={styles.messageText}>{message.text}</div>
+                            <div className={styles.messageContent}>
+                              <div className={styles.messageText}>{message.text}</div>
+                            </div>
                           </div>
-                        </div>
                       </div>
                     </React.Fragment>
                   );
