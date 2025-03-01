@@ -4,7 +4,6 @@
 
 import { useState } from 'react'
 import RentShopping from '../rent-shopping/page'
-import { min } from 'date-fns'
 
 export default function RentTabs({ rental, onDateChange, onFeeChange }) {
   const [activeTab, setActiveTab] = useState('rent')

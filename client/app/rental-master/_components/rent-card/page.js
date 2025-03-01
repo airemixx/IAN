@@ -4,13 +4,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { IoStar } from 'react-icons/io5'
-import { FaRegCommentDots } from 'react-icons/fa'
 import FavoriteButton from '../rent-favorite/page' // ✅ 引入收藏按鈕元件
 
 export default function RentCard({ rental, shouldAnimate }) {
   const router = useRouter()
   const [isHovered, setIsHovered] = useState(false)
+
 
   return (
     <div
@@ -23,23 +22,16 @@ export default function RentCard({ rental, shouldAnimate }) {
       <div
         className="k-card position-relative w-100 border rounded-1 overflow-hidden"
         style={{ cursor: 'pointer' }}
-        onClick={() => router.push(`/rental/${rental.id}`)} // ✅ 點擊後導向 [id] 頁面
+        onClick={() => router.push(`/rental-master/${rental.id}`)} // ✅ 點擊後導向 [id] 頁面
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="position-absolute top-0 start-0 k-type-bg text-white fw-bold py-1 px-4">
           {rental.category}
         </div>
-
-        <div className="position-absolute top-0 end-0 fw-bold pt-2 pe-3 d-flex flex-column align-items-start" style={{ fontSize: '1.05rem' }}>
-          <span className="k-warn-text">
-            <IoStar className='k-star me-1' />{rental.rating.toFixed(1)}
-          </span>
-          <span className="ms k-main-text" >
-            <FaRegCommentDots className='k-comment me-1' />{rental.reviewsCount}
-          </span>
+        <div className="position-absolute top-0 end-0 k-warn-text fw-bold pt-2 pe-3">
+          {rental.status}
         </div>
-
         <div className="mt-4">
           <img
             src={

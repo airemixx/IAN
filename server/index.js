@@ -16,7 +16,8 @@ import coursesRouter from './routes/courses.js'
 import teachersRouter from './routes/teachers.js'
 import authRouter from "./routes/auth.js";
 import productRoutes from './routes/product.js'
-import rentalRouter from './routes//rental.js'
+import rentalRouter from './routes/rental.js'
+import rentalMasterRouter from './routes/rental-master.js'
 import ecpayRouter from './routes/ecpay.js'
 import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
@@ -111,6 +112,7 @@ app.use("/api/teacher-upload", teacherUploadRouter);
 app.use("/uploads", express.static(path.join(process.cwd(), "/public/uploads")));
 
 app.use('/api/rental', rentalRouter)
+app.use('/api/rental-master', rentalMasterRouter)
 
 app.use('/api/coupon', couponRouter)
 app.use('/api/ecpay', ecpayRouter)

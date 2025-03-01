@@ -3,6 +3,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
 import RentPicture from '../rent-picture/page'
 import RentTabs from '../rent-tabs/page'
@@ -15,16 +16,63 @@ export default function RentDetail() {
   const [rental, setRental] = useState(null)
   const [reviews, setReviews] = useState([]) // ✅ 新增評論狀態
   const [recommendations, setRecommendations] = useState([])
-  const [loading, setLoading] = useState(true)
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [totalFee, setTotalFee] = useState(0);
   const [originFee, setOriginFee] = useState(0);
+  const [user, setUser] = useState(null); // 用戶資訊 (包含 level 權限)
+  const [loading, setLoading] = useState(true); // 載入狀態
+  const router = useRouter(); // ✅ 正確初始化 router
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('loginWithToken');
+        if (!token) {
+          console.warn('沒有 Token，跳轉到登入頁面');
+          router.push('/login');
+          return;
+        }
+
+        console.log('正在驗證用戶身份...');
+        const res = await fetch('http://localhost:8000/api/rental-master/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) {
+          throw new Error(`API 錯誤: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log('✅ 取得用戶資訊:', data);
+
+        if (!data || data.user?.level === undefined) {
+          console.error('❌ API 回傳錯誤，沒有 level 資訊', data);
+          router.push('/');
+          return;
+        }
+
+        setUser(data.user); // 🟢 設置正確的 user 資料
+
+        if (data.user.level !== 99) {
+          console.warn('⚠️ 權限不足，只有管理員 (Level 99) 才能進入此頁面，跳轉到 /');
+          router.push('/');
+        }
+      } catch (error) {
+        console.error('❌ 獲取用戶資訊失敗:', error);
+        router.push('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [router]);
 
   useEffect(() => {
     if (!id) return
 
-    fetch(`http://localhost:8000/api/rental/${id}`)
+    fetch(`http://localhost:8000/api/rental-master/${id}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -57,6 +105,7 @@ export default function RentDetail() {
     setTotalFee(totalFee);
   };
 
+
   if (loading) return <p className="text-center mt-5">🚀 資料載入中...</p>
   if (!rental)
     return <p className="text-center text-danger mt-5">❌ 找不到商品</p>
@@ -75,6 +124,7 @@ export default function RentDetail() {
                 {rental.brand} {rental.name || '無資料'}
               </h2>
               <p className="k-main-text h4 ms-2 mt-2">
+
                 {originFee > totalFee && (
                   <small className="text-muted me-1" style={{ textDecoration: 'line-through' }}>
                     NT$ {originFee.toLocaleString()}

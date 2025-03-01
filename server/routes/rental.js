@@ -22,7 +22,6 @@ const auth = (req, res, next) => {
   }
 }
 
-
 // 📌 **統一 API - 獲取商品資料 & 篩選選項**
 router.get('/', async (req, res) => {
   try {
@@ -111,7 +110,7 @@ router.get('/', async (req, res) => {
                 FROM user_rentals ur
                 WHERE ur.status = '已完成'
                 AND ur.comment IS NOT NULL
-                AND TRIM(ur.comment) != ''
+                AND ur.comment_at IS NOT NULL  -- ✅ 過濾軟刪除評論
                 GROUP BY ur.rent_id
             ) AS reviews ON reviews.rent_id = r.id
 
@@ -191,7 +190,7 @@ router.get('/', async (req, res) => {
     // ✅ **商品分組，包含評論數據**
     rentalQuery += `
             GROUP BY r.id
-            ORDER BY total_reviews DESC, average_rating DESC
+            ORDER BY r.id ASC
         `;
 
     const [rentals] = await pool.query(rentalQuery, queryParams)
@@ -270,8 +269,8 @@ router.get('/:id', async (req, res) => {
       `
           SELECT 
               ur.user_id, 
-              COALESCE(u.nickname, u.name) AS name,
-              IFNULL(u.head, '/uploads/users.webp') AS avatar,
+              IF(TRIM(u.nickname) = '', u.name, u.nickname) AS name,
+              IF(u.head IS NULL OR TRIM(u.head) = '', '/uploads/users.webp', u.head) AS avatar,
               ur.rating, 
               ur.comment, 
               ur.comment_at,
@@ -281,7 +280,7 @@ router.get('/:id', async (req, res) => {
           WHERE ur.rent_id = ?
           AND ur.status = '已完成'
           AND ur.comment IS NOT NULL
-          AND TRIM(ur.comment) != ''
+          AND ur.comment_at IS NOT NULL  -- ✅ 過濾軟刪除評論
           ORDER BY ur.comment_at DESC
           `,
       [id]
@@ -290,19 +289,33 @@ router.get('/:id', async (req, res) => {
     // 3.獲取推薦商品（基於 `rent_recommend`）
     const [recommendations] = await pool.query(
       `
-    SELECT 
-        r.*, 
-        GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
-        GROUP_CONCAT(DISTINCT t.tags) AS hashtags
-    FROM rent_recommend rr
-    INNER JOIN rental r ON rr.recommend_id = r.id
-    LEFT JOIN rent_image ri ON r.id = ri.rent_id
-    LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
-    LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
-    WHERE rr.rent_id = ?
-    GROUP BY r.id
-    ORDER BY rr.sequence ASC -- 確保推薦順序
-    `,
+        SELECT 
+            r.*, 
+            GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
+            GROUP_CONCAT(DISTINCT t.tags) AS hashtags,
+            IFNULL(reviews.total_reviews, 0) AS total_reviews,
+            IFNULL(reviews.average_rating, 0) AS average_rating
+        FROM rent_recommend rr
+        INNER JOIN rental r ON rr.recommend_id = r.id
+        LEFT JOIN rent_image ri ON r.id = ri.rent_id
+        LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
+        LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
+        LEFT JOIN (
+            SELECT 
+                ur.rent_id, 
+                COUNT(*) AS total_reviews, 
+                ROUND(AVG(ur.rating), 1) AS average_rating
+            FROM user_rentals ur
+            WHERE ur.status = '已完成'
+            AND ur.comment IS NOT NULL
+            AND ur.comment_at IS NOT NULL
+            GROUP BY ur.rent_id
+        ) AS reviews ON reviews.rent_id = r.id
+
+        WHERE rr.rent_id = ?
+        GROUP BY r.id
+        ORDER BY rr.sequence ASC;    
+      `,
       [id]
     )
 
@@ -321,31 +334,6 @@ router.get('/:id', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ 資料庫錯誤:', error)
-    res.status(500).json({ success: false, error: '伺服器錯誤' })
-  }
-})
-
-// ✅ 新增收藏 (允許多商品收藏)
-router.post('/collection', auth, async (req, res) => {
-  try {
-    const { rent_id } = req.body
-    const user_id = req.user.id
-
-    if (!rent_id) {
-      return res.status(400).json({ success: false, error: 'rent_id 為必填項目' })
-    }
-
-    await pool.query(
-      'INSERT INTO collection (user_id, rent_id, created_at) VALUES (?, ?, NOW())',
-      [user_id, rent_id]
-    )
-
-    res.json({ success: true, message: '已成功收藏租借商品' })
-  } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      return res.status(400).json({ success: false, message: '該商品已經收藏' })
-    }
-    console.error('新增收藏錯誤:', error)
     res.status(500).json({ success: false, error: '伺服器錯誤' })
   }
 })
@@ -395,7 +383,7 @@ router.get('/collection/:rent_id', auth, async (req, res) => {
 })
 
 
-// 評論
+// 評論 (之後會需要改) 還是需要唯一值ID
 router.post('/reviews', auth, async (req, res) => {
   try {
     const rent_id = parseInt(req.body.rent_id, 10) || 0;

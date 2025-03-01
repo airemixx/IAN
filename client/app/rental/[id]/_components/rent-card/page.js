@@ -4,11 +4,16 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { IoStar } from 'react-icons/io5'
+import { FaRegCommentDots } from 'react-icons/fa'
 import FavoriteButton from '../rent-favorite/page' // ✅ 引入收藏按鈕元件
 
 export default function RentCard({ rental }) {
   const router = useRouter()
   const [isHovered, setIsHovered] = useState(false)
+
+  console.log('🚀 RentCard 收到的 rental:', rental);
+
 
   return (
     <div className="col mb-2">
@@ -22,9 +27,16 @@ export default function RentCard({ rental }) {
         <div className="position-absolute top-0 start-0 k-type-bg-2 text-white fw-bold py-1 px-4">
           {rental.category}
         </div>
-        <div className="position-absolute top-0 end-0 k-warn-dark-text  fw-bold pt-2 pe-3">
-          {rental.status}
+
+        <div className="position-absolute top-0 end-0 fw-bold pt-2 pe-3 d-flex flex-column align-items-start" style={{ fontSize: '1.1rem' }}>
+          <span className="k-warn-text">
+            <IoStar className='k-star me-1' />{rental.average_rating}
+          </span>
+          <span className="ms k-main-text" >
+            <FaRegCommentDots className='k-comment me-1' />{rental.total_reviews}
+          </span>
         </div>
+
         <div className="mt-4">
           <img
             src={
