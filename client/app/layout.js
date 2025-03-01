@@ -85,24 +85,19 @@ export default function RootLayout({ children }) {
             style={{ marginTop: '80px' }}
           />
           {!isTeacherPage && (
-            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage}/>
+            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
           )}
           <AppProvider>
             {' '}
             <main className="root-content">{children}</main>
           </AppProvider>
-          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage}/>}
+          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}
         </div>
 
         {/* top按鈕 */}
         {showButton && (
-<<<<<<< HEAD
           <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob'>
             <IoIosArrowUp size={25} className="hvr-icon" />
-=======
-          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob d-none d-xl-block'>
-            <IoIosArrowUp size={25}   className="hvr-icon"/>
->>>>>>> ba6203c02061e1eff0d3a6e8b2df48f51c73f5d9
           </button>
         )}
       </body>
