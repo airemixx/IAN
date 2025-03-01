@@ -28,27 +28,6 @@ export default function FilterSidebar({ onFilterChange }) {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  useEffect(() => {
-    const footer = document.getElementById("footer");
-
-    function checkFooterVisibility() {
-      if (!footer) return;
-      const footerRect = footer.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      if (footerRect.top < windowHeight) {
-        setIsFilterButtonHidden(true);
-      } else {
-        setIsFilterButtonHidden(false);
-      }
-    }
-
-    if (isMobile) {
-      window.addEventListener("scroll", checkFooterVisibility);
-      return () => window.removeEventListener("scroll", checkFooterVisibility);
-    }
-  }, [isMobile]);
-
   // 取得篩選條件
   useEffect(() => {
     async function fetchFilters() {

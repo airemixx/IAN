@@ -10,6 +10,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import sessionFileStore from 'session-file-store'
 import session from 'express-session'
+import db from './db.js'
 
 import path from 'path'
 import coursesRouter from './routes/courses.js'
@@ -30,6 +31,7 @@ import courseCtUploadRouter from './routes/courses-ct-upload.js'
 import courseCvUploadRouter from './routes/courses-cv-upload.js'
 import teacherUploadRouter from './routes/teacher-upload.js'
 import couponRouter from './routes/coupon.js'
+import collect from './routes/collect.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -125,6 +127,7 @@ app.use('/api/article_comments', commentsRouter)
 app.use('/api/likes', likesRouter)
 
 app.use('/api/users', users)
+app.use('/api/collect', collect)
 
 
 

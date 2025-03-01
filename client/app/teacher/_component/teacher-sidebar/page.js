@@ -74,25 +74,31 @@ export default function TeacherSidebar() {
         </div>
 
         {/* 📌 講師資訊 */}
-        <div className={styles['teacher-data']}>
-          <div className={styles['teacher-sticker']}>
-            <img
-              src={teacher?.image || '/images/teachers/default-avatar.jpg'}
-              alt="講師頭像"
-            />
+        <Link href="/teacher/teacher-edit">
+          <div className={styles['teacher-data']}>
+            <div className={styles['teacher-sticker']}>
+              <img
+                src={teacher?.image || '/images/teachers/default-avatar.jpg'}
+                alt="講師頭像"
+              />
+            </div>
+            <h2 className={styles['teacher-name']}>
+              {teacher?.name || 'Loading...'}
+            </h2>
+            <p className={styles['teacher-email']}>
+              {teacher?.email || 'Loading...'}
+            </p>
           </div>
-          <h2 className={styles['teacher-name']}>
-            {teacher?.name || 'Loading...'}
-          </h2>
-          <p className={styles['teacher-email']}>
-            {teacher?.email || 'Loading...'}
-          </p>
-        </div>
+        </Link>
 
         {/* 📌 控制中心 */}
         <div className={styles['e-control-center']}>
           <ul>
-            <li className={pathname === '/teacher/teacher-edit' ? styles.active : ''}>
+            <li
+              className={
+                pathname === '/teacher/teacher-edit' ? styles.active : ''
+              }
+            >
               <Link href="/teacher/teacher-edit">
                 <FaAddressBook /> 講師資料
               </Link>
@@ -112,7 +118,11 @@ export default function TeacherSidebar() {
               </Link>
             </li>
 
-            <li className={pathname === '/teacher/course/course-add' ? styles.active : ''}>
+            <li
+              className={
+                pathname === '/teacher/course/course-add' ? styles.active : ''
+              }
+            >
               <Link href="/teacher/course/course-add">
                 <FaPlusSquare /> 新增課程
               </Link>

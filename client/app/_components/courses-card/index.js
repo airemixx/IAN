@@ -2,17 +2,20 @@
 
 import React from 'react'
 import styles from './CoursesCard.module.scss'
+// import { Link } from 'react-bootstrap-icons'
+import Link from 'next/link'
 
 export default function CoursesCardIndex() {
   const courses = [
     {
-      img: "images/HomePage-images/course-2.jpg",
-      title: "相機外閃的神奇攝影術",
-      instructor: "張馬克",
-      rating: "5.0",
-      reviews: "(12)",
-      duration: "3:00",
-      price: "NT$1,790",
+      img: "images/course-cover/course_46_1.avif",
+      title: "初心者！Lightroom數位暗房基礎後製",
+      instructor: "王喜米",
+      rating: "4.5",
+      reviews: "(1)",
+      duration: "7:40",
+      price: "NT$ 999",
+      link:"/courses/46"
     },
     {
       img: "images/HomePage-images/course-2.jpg",
@@ -20,17 +23,19 @@ export default function CoursesCardIndex() {
       instructor: "張馬克",
       rating: "5.0",
       reviews: "(12)",
-      duration: "3:00",
+      duration: "6:10",
       price: "NT$1,790",
+      link:"/courses/38"
     },
     {
-      img: "images/HomePage-images/course-2.jpg",
-      title: "相機外閃的神奇攝影術",
+      img: "images/course-cover/course_12_1.avif",
+      title: "堯中人像攝影創作：掌握光影發掘人像質感",
       instructor: "張馬克",
-      rating: "5.0",
-      reviews: "(12)",
-      duration: "3:00",
-      price: "NT$1,790",
+      rating: "4.5",
+      reviews: "(1)",
+      duration: "6:30",
+      price: "NT$2,180",
+      link:"/courses/12"
     },
   ]
 
@@ -41,6 +46,7 @@ export default function CoursesCardIndex() {
         <div className="row d-flex align-items-stretch">
           {courses.map((course, index) => (
             <div className="col-md-4 d-flex" key={index}>
+            <Link href={course.link} className={styles.noUnderline}>
               <div className={styles.courseCard}>
                 <img src={course.img} className={`card-img-top ${styles.courseImg}`} alt={course.title} />
                 <div className={`mt-3 ${styles.courseCardBody}`}>
@@ -58,6 +64,7 @@ export default function CoursesCardIndex() {
                   <p className={styles.courseCardText}>{course.price}</p>
                 </div>
               </div>
+              </Link>
             </div>
           ))}
         </div>

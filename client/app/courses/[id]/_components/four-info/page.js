@@ -12,7 +12,7 @@ export default function FourInfo({ course }) {
             <div className={styles['four-course-info']}>
               <div className={styles['info-content']}>
                 <div className={styles['title-text']}>課程內容</div>
-                <div className={styles['content-text']}>{course.chapter}</div>
+                <div className={styles['content-text']}>{course.chapter|| "0 章 0 單元"}</div>
               </div>
               <div className={styles['line']}></div>
               <div className={styles['info-content']}>
@@ -35,8 +35,8 @@ export default function FourInfo({ course }) {
                   {course.comment_count.toLocaleString('en-US')} 則評價
                 </div>
                 <div className={styles['rating']}>
-                  <p>4.8</p>
-                  <StarRating rating="4.8" />
+                <p>{parseFloat(course.rating || 0).toFixed(1)}</p>
+                  <StarRating rating={course.rating || 0} />
                 </div>
               </div>
             </div>

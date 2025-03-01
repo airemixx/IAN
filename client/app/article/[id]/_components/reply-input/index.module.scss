@@ -5,6 +5,20 @@
     border: none;
   }
 }
+
+.btn-needs-login {
+  background: #7E7267;
+  border-radius: 25px;
+  color: white;
+  border: 1px solid #ffffff00;
+  &:hover {
+    background: #ffffff;
+    color: #7E7267;
+    border: 1px solid #7E7267;
+  }
+}
+
+
 .y-comment-area-icons {
   button {
     width: 100%;

@@ -6,34 +6,24 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
-
+import { jwtDecode } from 'jwt-decode'
+import moment from "moment";
 export default function CheckoutFormStep1({ slItem }) {
+  const token = localStorage.getItem("loginWithToken")
+  const decoded = jwtDecode(token);
+
   const [price, setPrice] = useState(0);
   const router = useRouter(); // 取得 Next.js router
   const [show, setShow] = useState(false);
   const [checkState, setCheckState] = useState(false)
-  const [cpName, setCpName] = useState("") 
+  const [cpName, setCpName] = useState("")
+  const [couponData, setCouponData] = useState([]); // 儲存優惠券資料
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
   const handleClose = () => {
     setCheckState(false)
     setShow(false)
   };
-  
-  async function handleCheck() {
-    setCheckState(!checkState)
-    if(!checkState){
-      setCheckState(true)
-      setShow(true)
-      const resData = await fetch("/api/coupon",{
-        method:"GET",
-      })
-      const res = await resData.json()
-      console.log(res);
-    }
-  }
-  function handsumbit(){
-    setShow(false)
-    setCpName("asdadasdasdasd")
-  }
+
   // 計算 totalPrice
   useEffect(() => {
 
@@ -47,7 +37,7 @@ export default function CheckoutFormStep1({ slItem }) {
   function handleClick() {
     if (slItem && slItem.length > 0) {
       localStorage.setItem("cartItems", JSON.stringify(slItem));
-      
+
       // 確保數據已寫入後再跳轉
       setTimeout(() => {
         router.push("/cart/cart-step2");
@@ -57,25 +47,89 @@ export default function CheckoutFormStep1({ slItem }) {
     }
   }
 
+  async function handleCheck() {
+    setCheckState(!checkState)
+    if (!checkState) {
+      setCheckState(true)
+      setShow(true)
+      await fetchCoupon(); // 取得優惠券資訊
+    }else{
+      setCpName('')
+    }
+  }
+
+  function handsumbit() {
+    setShow(false)
+  }
+
+
+
+  async function fetchCoupon() {
+    try {
+      const response = await fetch(`/api/coupon?id=${decoded.id}`, {
+        method: "GET",
+      });
+
+      if (response.status === 200) {
+        const data = await response.json();
+        setCouponData(data.result); // 儲存優惠券資訊
+        console.log(data);
+      } else {
+        console.error("獲取失敗:", await response.text());
+      }
+    } catch (error) {
+      console.error("請求錯誤:", error);
+    }
+  }
+
+  function handleCouponSelect(coupon) {
+    if (selectedCoupon === coupon.code) {
+      // 如果點擊的是已選中的優惠券，則取消選取
+      setSelectedCoupon(null);
+      setCpName(""); // 清空優惠券名稱
+    } else {
+      // 否則，設置新的選取優惠券
+      setSelectedCoupon(coupon.code);
+      setCpName(coupon.code);
+    }
+  }
+
   return (
     <div className={`${styles["j-payStep"]} col-sm-11 col-md-9 col-lg-4 col-xl-4 mb-5 ms-lg-0 d-flex flex-column align-items-center`}>
       <div className={`${styles["j-pCount"]} border-bottom mb-3 d-flex flex-column gap-2`}>
         <div className={`${styles["j-pTitle"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>摘要</div>
         <div className={`${styles["j-ifCouponUse"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
-          <input className="form-check-input" type="checkbox" id="flexCheck" onChange={handleCheck} checked={checkState}/>
+          <input className="form-check-input" type="checkbox" id="flexCheck" onChange={handleCheck} checked={checkState} />
           <label className="form-check-label" htmlFor="flexCheck">
-            {/* <svg xmlns="http://www.w3.org/2000/svg" width={24} height={25} viewBox="0 0 24 25" fill="none">
-              <circle cx={12} cy="12.5" r={11} stroke="#003150" strokeWidth={2} />
-              <circle cx={12} cy="12.5" r="7.5" fill="#003150" />
-            </svg> */}
             是否使用優惠券
           </label>
         </div>
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className={`${styles["j-model"]}`}>
           <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+          <Modal.Body>
+            <div className="d-flex flex-wrap">
+              {couponData.length > 0 ? (
+                couponData.map((coupon, index) => (
+                  <div
+                    key={index}
+                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 ${cpName === coupon.code ? styles["j-selected"] : ""}`}
+                    onClick={() => handleCouponSelect(coupon)}
+                  >
+                    <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
+                    <span className={`position-absolute ${styles["j-cpEndDate"]}`}>
+                      {moment(coupon.end_date).format("YYYY-MM-DD HH:mm:ss")}
+                    </span>
+                    <span>{coupon.cpName}</span>
+                  </div>
+                ))
+              ) : (
+                <p>沒有可用的優惠券</p>
+              )}
+            </div>
+
+          </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Close
@@ -88,7 +142,7 @@ export default function CheckoutFormStep1({ slItem }) {
         {/* <!-- Modal --> */}
 
         <div className={`${styles["couponName"]} d-flex flex-column ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
-        {cpName}
+          {cpName}
         </div>
         <div className={`${styles["subTotalBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["subTotal"]}>小計</div>

@@ -21,10 +21,10 @@ router.use(cors(corsOptions))
 
 // 取得所有文章（僅撈出尚未刪除的文章）
 router.get('/', async (req, res) => {
-  const { year, month, category, search, tag, user_id } = req.query
+  const { year, month, category, search, tag, user_id } = req.query;
 
   let query = `
-    SELECT 
+    SELECT
       a.*,
       c.name AS category_name,
       GROUP_CONCAT(t.tag_name SEPARATOR ',') AS tags,
@@ -41,59 +41,58 @@ router.get('/', async (req, res) => {
     LEFT JOIN article_tags at ON a.id = at.article_id
     LEFT JOIN tag t ON at.tag_id = t.id
     JOIN users u ON a.user_id = u.id
-  `
+  `;
 
-  // 一律只撈出 is_deleted 為 0 的文章
   const conditions = ['a.is_deleted = 0'];
   const queryParams = [
-    tag || '',              // CASE WHEN t.tag_name = ?
-    `%${search || ''}%`,    // WHEN a.title LIKE ?
-    `%${search || ''}%`,    // WHEN a.content LIKE ?
-  ]
+    tag || '',
+    `%${search || ''}%`,
+    `%${search || ''}%`,
+  ];
 
   if (year) {
-    conditions.push('YEAR(a.created_at) = ?')
-    queryParams.push(year)
+    conditions.push('YEAR(a.created_at) = ?');
+    queryParams.push(year);
   }
   if (month) {
-    conditions.push('MONTH(a.created_at) = ?')
-    queryParams.push(month)
+    conditions.push('MONTH(a.created_at) = ?');
+    queryParams.push(month);
   }
   if (category) {
-    conditions.push('a.category_id = ?')
-    queryParams.push(category)
+    conditions.push('a.category_id = ?');
+    queryParams.push(category);
   }
   if (user_id) {
-    conditions.push('a.user_id = ?')
-    queryParams.push(user_id)
+    conditions.push('a.user_id = ?');
+    queryParams.push(user_id); // 確保 user_id 被正確添加到查詢參數
   }
-  // 當 search 但非 tag 搜尋時，額外搜尋標題與內文
+
   if (search && !tag) {
-    conditions.push('(t.tag_name LIKE ? OR a.title LIKE ? OR a.content LIKE ?)')
-    queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`)
+    conditions.push('(t.tag_name LIKE ? OR a.title LIKE ? OR a.content LIKE ?)');
+    queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
 
   if (conditions.length > 0) {
-    query += ' WHERE ' + conditions.join(' AND ')
+    query += ' WHERE ' + conditions.join(' AND ');
   }
 
   if (tag) {
-    query += ' GROUP BY a.id HAVING FIND_IN_SET(?, tags)'
-    queryParams.push(tag)
+    query += ' GROUP BY a.id HAVING FIND_IN_SET(?, tags)';
+    queryParams.push(tag);
   } else {
-    query += ' GROUP BY a.id'
+    query += ' GROUP BY a.id';
   }
 
-  query += ' ORDER BY relevance ASC, a.created_at DESC'
+  query += ' ORDER BY relevance ASC, a.created_at DESC';
 
   try {
-    const [rows] = await pool.query(query, queryParams)
-    res.status(200).json({ status: 'success', data: rows })
+    const [rows] = await pool.query(query, queryParams);
+    res.status(200).json({ status: 'success', data: rows });
   } catch (err) {
     res.status(500).json({
       status: 'error',
       message: err.message || '取得文章失敗',
-    })
+    });
   }
 })
 
@@ -600,6 +599,120 @@ router.delete('/:articleId/tags/:tagId', async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ status: 'error', message: '刪除失敗' });
+  }
+});
+
+// 查詢文章收藏狀態
+router.get('/collection/:articleId', checkToken, async (req, res) => {
+  const { articleId } = req.params;
+  const userId = req.decoded.id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 'error',
+      message: '請先登入'
+    });
+  }
+
+  try {
+    const [rows] = await pool.query(
+      'SELECT 1 FROM collection WHERE user_id = ? AND article_id = ?',
+      [userId, articleId]
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      isFavorite: rows.length > 0
+    });
+  } catch (error) {
+    console.error('查詢收藏狀態錯誤:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: '查詢收藏狀態失敗'
+    });
+  }
+});
+
+// 新增文章收藏
+router.post('/collection', checkToken, async (req, res) => {
+  const { article_id } = req.body;
+  const userId = req.decoded.id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 'error',
+      message: '請先登入'
+    });
+  }
+
+  if (!article_id) {
+    return res.status(400).json({
+      status: 'error',
+      message: '文章ID不能為空'
+    });
+  }
+
+  try {
+    // 先檢查是否已經收藏，避免重複收藏
+    const [existingRows] = await pool.query(
+      'SELECT 1 FROM collection WHERE user_id = ? AND article_id = ?',
+      [userId, article_id]
+    );
+
+    if (existingRows.length > 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: '已經收藏過此文章'
+      });
+    }
+
+    // 新增收藏記錄
+    await pool.query(
+      'INSERT INTO collection (user_id, article_id, created_at) VALUES (?, ?, NOW())',
+      [userId, article_id]
+    );
+
+    return res.status(201).json({
+      status: 'success',
+      message: '成功加入收藏'
+    });
+  } catch (error) {
+    console.error('文章收藏錯誤:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: '文章收藏失敗'
+    });
+  }
+});
+
+// 刪除文章收藏
+router.delete('/collection/:articleId', checkToken, async (req, res) => {
+  const { articleId } = req.params;
+  const userId = req.decoded.id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 'error',
+      message: '請先登入'
+    });
+  }
+
+  try {
+    await pool.query(
+      'DELETE FROM collection WHERE user_id = ? AND article_id = ?',
+      [userId, articleId]
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      message: '成功取消收藏'
+    });
+  } catch (error) {
+    console.error('取消收藏錯誤:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: '取消收藏失敗'
+    });
   }
 });
 

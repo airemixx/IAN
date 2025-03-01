@@ -18,6 +18,9 @@ const useArticles = (filter = {}) => {
         if (filter.category) queryParams.append('category', filter.category) //如果有分類就加入queryParams
         if (filter.tag) queryParams.append('tag', filter.tag) //如果有標籤就加入queryParams
         if (filter.search) queryParams.append('search', filter.search) //如果有搜尋就加入queryParams
+        if (filter.user_id) {
+          queryParams.append('user_id', filter.user_id); // 確保 user_id 被正確添加到 URL
+        }
 
         if (queryParams.toString()) {
           url += '?' + queryParams.toString() //如果有queryParams就加入url
@@ -35,7 +38,7 @@ const useArticles = (filter = {}) => {
     }
 
     fetchArticles()
-  },[JSON.stringify(filter)])
+  }, [JSON.stringify(filter)]) // 確保 filter 是依賴項
 
   return { articles, error, loading }
 }

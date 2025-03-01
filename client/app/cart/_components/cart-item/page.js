@@ -3,7 +3,7 @@ import ProductDetails from "../product-details/page";
 import { useEffect, useState } from "react";
 
 export default function CartItem({ id, itemData, page }) {
-  const { image, brand, model, price, specs, quantity } = itemData;
+  const { image, brand, name, price, specs, quantity } = itemData;
   // 初始化狀態
   const [newQuan, setNewQuan] = useState(quantity);
 
@@ -77,12 +77,12 @@ export default function CartItem({ id, itemData, page }) {
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
           <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center position-relative">
-            <div className={`${styles['j-content']} d-flex flex-column flex-sm-row ${page == 1 ? 'justify-content-between' : 'justify-content-around'} align-items-center `}>
+            <div className={`${styles['j-content']} d-flex flex-column flex-sm-row justify-content-around align-items-center `}>
               <div className={`${styles['j-itemDetail']} d-flex flex-sm-column ms-sm-3 ms-xl-0`}>
                 <div className="ms-lg-2 ms-xl-0">
                   <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
                   <br />
-                  <span className={`${styles['j-model']} ${styles['j-publicFont']}`}>{model}</span>
+                  <span className={`${styles['j-model']} ${styles['j-publicFont']}`}>{name}</span>
                 </div>
                 <button
                   className={`${styles['j-detailcollapse']} ms-lg-2 ms-xl-0`}
