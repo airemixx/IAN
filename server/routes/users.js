@@ -705,8 +705,9 @@ router.get("/favorites/me", checkToken, async (req, res) => {
 
     // ✅ 如果沒有任何收藏
     if (products.length === 0 && courses.length === 0 && rents.length === 0 && articles.length === 0) {
-      return res.status(404).json({ message: "沒有收藏的商品、課程、租賃與文章" });
+      return res.json({ products: [], courses: [], rents: [], articles: [] });
     }
+    
 
     res.json({ products, courses, rents, articles });
   } catch (error) {
