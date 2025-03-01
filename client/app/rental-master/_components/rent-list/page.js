@@ -1,4 +1,7 @@
+// rent-list
+
 'use client'
+
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import RentPagination from '../rent-pagination/page'
@@ -20,7 +23,55 @@ export default function RentList() {
   const [totalPages, setTotalPages] = useState(1) // 總頁數
   const [sorting, setSorting] = useState('') // 排序方式
   const [shouldAnimate, setShouldAnimate] = useState(false);  // 判斷動畫觸發
+  const [user, setUser] = useState(null); // 用戶資訊 (包含 level 權限)
+  const [loading, setLoading] = useState(true); // 載入狀態
   const router = useRouter(); // ✅ 正確初始化 router
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('loginWithToken');
+        if (!token) {
+          console.warn('沒有 Token，跳轉到登入頁面');
+          router.push('/login');
+          return;
+        }
+
+        console.log('正在驗證用戶身份...');
+        const res = await fetch('http://localhost:8000/api/rental-master/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) {
+          throw new Error(`API 錯誤: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log('✅ 取得用戶資訊:', data);
+
+        if (!data || data.user?.level === undefined) {
+          console.error('❌ API 回傳錯誤，沒有 level 資訊', data);
+          router.push('/');
+          return;
+        }
+
+        setUser(data.user); // 🟢 設置正確的 user 資料
+
+        if (data.user.level !== 99) {
+          console.warn('⚠️ 權限不足，只有管理員 (Level 99) 才能進入此頁面，跳轉到 /');
+          router.push('/');
+        }
+      } catch (error) {
+        console.error('❌ 獲取用戶資訊失敗:', error);
+        router.push('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [router]);
+
 
   // 📌 **篩選條件**
   const [filters, setFilters] = useState({
@@ -100,7 +151,7 @@ export default function RentList() {
       filters.brands.forEach((brand) => params.append('brands', brand))
 
       const res = await fetch(
-        `http://localhost:8000/api/rental?${params.toString()}`
+        `http://localhost:8000/api/rental-master?${params.toString()}`
       )
       const data = await res.json()
 
@@ -137,11 +188,16 @@ export default function RentList() {
     return 0;
   });
 
-
   // 📌 **計算當前頁面的商品範圍**
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const visibleItems = sortedRentals.slice(indexOfFirstItem, indexOfLastItem)
+
+  if (loading) return <p className="text-center mt-5">🚀 資料載入中...</p>
+
+  if (!user || user.level !== 99) {
+    return null; // 確保未授權用戶不會看到頁面內容
+  }
 
   return (
     <div className="row">
@@ -168,16 +224,7 @@ export default function RentList() {
         {/* 📌 商品清單 */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1">
           {visibleItems.map((rental) => (
-            <RentCard
-              key={rental.id}
-              rental={{
-                ...rental,
-                rating: Number(rental.average_rating) || 0, // 確保 rating 是數字
-                reviewsCount: rental.total_reviews || 0, // 確保評論數不為 null
-              }}
-              shouldAnimate={shouldAnimate}
-            />
-
+            <RentCard key={rental.id} rental={rental} shouldAnimate={shouldAnimate} />
           ))}
         </div>
 

@@ -15,7 +15,7 @@ export default function FavoriteButton({ rentId, rental }) {
     if (!token) return
 
     // 檢查是否已收藏
-    fetch(`/api/rental/collection/${rentId}`, {
+    fetch(`/api/rental-master/collection/${rentId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -45,8 +45,8 @@ export default function FavoriteButton({ rentId, rental }) {
           const popup = Swal.getPopup();
           if (popup) {
             const decorationBar = document.createElement('div');
-            decorationBar.className = 'k-auth-swal-top-bar';
-            popup.prepend(decorationBar); // 裝飾條
+            decorationBar.className = 'k-auth-swal-top-bar'; // 添加裝飾條的類別
+            popup.prepend(decorationBar); // 在視窗頂部插入裝飾條
           }
           falseSound.play(); // 播放音效
         },
@@ -54,7 +54,7 @@ export default function FavoriteButton({ rentId, rental }) {
         icon: 'warning',
         iconColor: '#fff',
         title: '請先登入',
-        text: '登入後即可租借商品',
+        text: '登入後即可收藏商品',
         background: '#23425a',
         confirmButtonText: '前往登入',
         cancelButtonText: '稍後前往',
@@ -66,7 +66,7 @@ export default function FavoriteButton({ rentId, rental }) {
           cancelButton: 'k-auth-swal-btn-2'
         },
         willClose: () => {
-          falseSound.stop(); // 關閉視窗時停止音效 (適用長音效)
+          falseSound.stop(); // 關閉視窗時停止音效 (適用於長音效)
         }
       }).then((result) => {
         if (result.isConfirmed) {
@@ -77,7 +77,7 @@ export default function FavoriteButton({ rentId, rental }) {
     }
 
     try {
-      const response = await fetch(`/api/rental/collection`, {
+      const response = await fetch(`/api/rental-master/collection`, {
         method: isFavorite ? 'DELETE' : 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export default function FavoriteButton({ rentId, rental }) {
           timerProgressBar: true,
           showCloseButton: true,
           closeButtonHtml: '&times;', // "×" 符號
-          timer: 1500,
+          timer: 1450,
           toast: true,
           position: 'top-end',
           customClass: {
@@ -166,14 +166,13 @@ export default function FavoriteButton({ rentId, rental }) {
     }
   }
 
-
   return (
     <button onClick={toggleFavorite} className='k-favorite-icon'>
       {isFavorite ? (
 
-        <FaHeart size={22} color="#e58e41" /> // ✅ 實心愛心 (已收藏)
+        <FaHeart size={22} color="#ca6d1b" /> // ✅ 實心愛心 (已收藏)
       ) : (
-        <FaRegHeart size={22} color="#e58e41" /> // ✅ 空心愛心 (未收藏)
+        <FaRegHeart size={22} color="#ca6d1b" /> // ✅ 空心愛心 (未收藏)
       )}
     </button>
   )

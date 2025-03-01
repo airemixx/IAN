@@ -15,7 +15,7 @@ export default function FavoriteButton({ rentId, rental }) {
     if (!token) return
 
     // 檢查是否已收藏
-    fetch(`/api/rental/collection/${rentId}`, {
+    fetch(`/api/rental-master/collection/${rentId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -77,7 +77,7 @@ export default function FavoriteButton({ rentId, rental }) {
     }
 
     try {
-      const response = await fetch(`/api/rental/collection`, {
+      const response = await fetch(`/api/rental-master/collection`, {
         method: isFavorite ? 'DELETE' : 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,11 +1,12 @@
 import express from 'express'
 import pool from '../db.js'
 import jwt from 'jsonwebtoken'
+import authenticate from '../middlewares.js'
 
 const router = express.Router()
 
 // 會員認證(回傳Token含式)
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
 
   if (!token) {
@@ -14,13 +15,79 @@ const auth = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
-    req.user = decoded
-    next()
+    req.user = decoded// 包含 user.id 等基礎資訊
+
+    // 🟢 **從資料庫撈取會員等級 (`level`)**
+    const [userResult] = await pool.query(
+      'SELECT level FROM users WHERE id = ?',
+      [req.user.id]
+    );
+    if (userResult.length === 0) {
+      return res.status(404).json({ success: false, error: '找不到用戶資料' });
+    }
+
+    // 注入用戶的 `level` 權限
+    req.user.level = userResult[0].level;
+
+    next() // 通過認證，繼續下一個處理程序
+
   } catch (error) {
     console.error('JWT 驗證失敗:', error.name, error.message)
     return res.status(403).json({ success: false, error: '無效的 Token' })
   }
 }
+
+// 管理員權限驗證 API (僅限 level=99)
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    // 🔒 **直接在 API 中驗證 level**
+    if (!req.user || req.user.level !== 99) {
+      console.warn("⚠️ 權限不足，僅限管理員 (level=99) 訪問");
+      return res.status(403).json({ success: false, error: '僅限管理員訪問 (Level 99)' });
+    }
+
+    // ✅ 回傳用戶基本資料 (前端可用於顯示或權限驗證)
+    res.json({
+      success: true,
+      user: {
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        level: req.user.level,
+      }
+    });
+  } catch (error) {
+    console.error('❌ API 錯誤:', error);
+    res.status(500).json({ success: false, error: '伺服器錯誤' });
+  }
+});
+
+// 📌 獲取所有會員 (level = 0) 資料 API
+router.get('/users', async (req, res) => {
+  try {
+    const [users] = await pool.query(
+      `
+      SELECT 
+        u.id AS user_id, 
+        IF(TRIM(u.nickname) = '', u.name, u.nickname) AS name,
+        IF(u.head IS NULL OR TRIM(u.head) = '', '/uploads/users.webp', u.head) AS avatar
+      FROM users u
+      WHERE u.level = 0
+      ORDER BY u.id ASC
+      `
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, error: '找不到會員資料' });
+    }
+
+    res.json({ success: true, users });
+  } catch (error) {
+    console.error('❌ 獲取會員資料庫錯誤:', error);
+    res.status(500).json({ success: false, error: '伺服器錯誤' });
+  }
+});
+
 
 // 📌 **統一 API - 獲取商品資料 & 篩選選項**
 router.get('/', async (req, res) => {
@@ -110,7 +177,7 @@ router.get('/', async (req, res) => {
                 FROM user_rentals ur
                 WHERE ur.status = '已完成'
                 AND ur.comment IS NOT NULL
-                AND ur.comment_at IS NOT NULL  -- ✅ 過濾軟刪除評論
+                AND TRIM(ur.comment) != ''
                 GROUP BY ur.rent_id
             ) AS reviews ON reviews.rent_id = r.id
 
@@ -193,6 +260,7 @@ router.get('/', async (req, res) => {
             ORDER BY r.id ASC
         `;
 
+
     const [rentals] = await pool.query(rentalQuery, queryParams)
     rentals.forEach((rental) => {
       rental.images = rental.images ? rental.images.split(',') : []
@@ -232,12 +300,12 @@ router.get('/', async (req, res) => {
   }
 })
 
-// 1.獲取單一租借商品詳細資訊（包含圖片與 Hashtag）
+// 取得商品詳細資訊
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params
 
-    // 取得商品詳細資訊
+    // 1.獲取單一租借商品詳細資訊（包含圖片與 Hashtag）
     const [rental] = await pool.query(
       `
       SELECT 
@@ -268,19 +336,20 @@ router.get('/:id', async (req, res) => {
     const [reviews] = await pool.query(
       `
           SELECT 
+              ur.id,   -- ✅ 確保返回評論的唯一 ID
+              ur.rent_id,
               ur.user_id, 
               IF(TRIM(u.nickname) = '', u.name, u.nickname) AS name,
               IF(u.head IS NULL OR TRIM(u.head) = '', '/uploads/users.webp', u.head) AS avatar,
               ur.rating, 
               ur.comment, 
-              ur.comment_at,
-              ur.rent_id
+              ur.comment_at
           FROM user_rentals ur
           INNER JOIN users u ON ur.user_id = u.id
           WHERE ur.rent_id = ?
           AND ur.status = '已完成'
           AND ur.comment IS NOT NULL
-          AND ur.comment_at IS NOT NULL  -- ✅ 過濾軟刪除評論
+          AND TRIM(ur.comment) != ''
           ORDER BY ur.comment_at DESC
           `,
       [id]
@@ -289,33 +358,19 @@ router.get('/:id', async (req, res) => {
     // 3.獲取推薦商品（基於 `rent_recommend`）
     const [recommendations] = await pool.query(
       `
-        SELECT 
-            r.*, 
-            GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
-            GROUP_CONCAT(DISTINCT t.tags) AS hashtags,
-            IFNULL(reviews.total_reviews, 0) AS total_reviews,
-            IFNULL(reviews.average_rating, 0) AS average_rating
-        FROM rent_recommend rr
-        INNER JOIN rental r ON rr.recommend_id = r.id
-        LEFT JOIN rent_image ri ON r.id = ri.rent_id
-        LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
-        LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
-        LEFT JOIN (
-            SELECT 
-                ur.rent_id, 
-                COUNT(*) AS total_reviews, 
-                ROUND(AVG(ur.rating), 1) AS average_rating
-            FROM user_rentals ur
-            WHERE ur.status = '已完成'
-            AND ur.comment IS NOT NULL
-            AND ur.comment_at IS NOT NULL
-            GROUP BY ur.rent_id
-        ) AS reviews ON reviews.rent_id = r.id
-
-        WHERE rr.rent_id = ?
-        GROUP BY r.id
-        ORDER BY rr.sequence ASC;    
-      `,
+    SELECT 
+        r.*, 
+        GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
+        GROUP_CONCAT(DISTINCT t.tags) AS hashtags
+    FROM rent_recommend rr
+    INNER JOIN rental r ON rr.recommend_id = r.id
+    LEFT JOIN rent_image ri ON r.id = ri.rent_id
+    LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
+    LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
+    WHERE rr.rent_id = ?
+    GROUP BY r.id
+    ORDER BY rr.sequence ASC -- 確保推薦順序
+    `,
       [id]
     )
 
@@ -334,6 +389,31 @@ router.get('/:id', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ 資料庫錯誤:', error)
+    res.status(500).json({ success: false, error: '伺服器錯誤' })
+  }
+})
+
+// ✅ 新增收藏 (允許多商品收藏)
+router.post('/collection', auth, async (req, res) => {
+  try {
+    const { rent_id } = req.body
+    const user_id = req.user.id
+
+    if (!rent_id) {
+      return res.status(400).json({ success: false, error: 'rent_id 為必填項目' })
+    }
+
+    await pool.query(
+      'INSERT INTO collection (user_id, rent_id, created_at) VALUES (?, ?, NOW())',
+      [user_id, rent_id]
+    )
+
+    res.json({ success: true, message: '已成功收藏租借商品' })
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ success: false, message: '該商品已經收藏' })
+    }
+    console.error('新增收藏錯誤:', error)
     res.status(500).json({ success: false, error: '伺服器錯誤' })
   }
 })
@@ -382,8 +462,7 @@ router.get('/collection/:rent_id', auth, async (req, res) => {
   }
 })
 
-
-// 評論 (之後會需要改) 還是需要唯一值ID
+// 評論 (之後會需要改)
 router.post('/reviews', auth, async (req, res) => {
   try {
     const rent_id = parseInt(req.body.rent_id, 10) || 0;
@@ -423,6 +502,137 @@ router.post('/reviews', auth, async (req, res) => {
     res.json({ success: true, message: '評論已成功提交' });
   } catch (error) {
     console.error('新增評論錯誤:', error);
+    res.status(500).json({ success: false, error: '伺服器錯誤' });
+  }
+});
+
+// 修改評論 API (假設頁面已經保證只有 level=99 才能訪問)
+router.put('/reviews/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params; // 評論 ID
+    const { comment, rating } = req.body;
+
+    if (!comment || rating === undefined) {
+      return res.status(400).json({ success: false, error: '評論內容與評分不得為空' });
+    }
+
+    console.log('🛠️ 正在更新評論:', { id, comment, rating });
+
+    // 🛠️ 直接更新評論內容與評分，不影響原始的 comment_at 時間
+    const [result] = await pool.query(
+      `
+      UPDATE user_rentals 
+      SET comment = ?, rating = ? 
+      WHERE id = ?
+      `,
+      [comment, rating, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, error: '評論不存在或無法更新' });
+    }
+
+    res.json({ success: true, message: '評論已成功更新，時間保持不變' });
+  } catch (error) {
+    console.error('❌ 更新評論 API 錯誤:', error);
+    res.status(500).json({ success: false, error: '伺服器錯誤' });
+  }
+});
+
+// 修改評論 API (使用評論的唯一 ID 更新評論)
+router.put('/reviews', auth, async (req, res) => {
+  try {
+    const { comment, rating, reviewId, newUserId, commentAt } = req.body;
+
+    console.log('💡 訂單 ID (reviewId):', reviewId);
+    console.log('💡 新評論者 ID (newUserId):', newUserId);
+    console.log('💡 新的評論內容:', comment);
+    console.log('💡 新的評分:', rating);
+    console.log('💡 更新的時間:', commentAt);
+
+    if (!reviewId || !newUserId || !comment || rating === undefined) {
+      console.warn('⚠️ 評論 ID、評論者 ID、內容或評分不得為空');
+      return res.status(400).json({ success: false, error: '評論 ID、內容或評分不得為空' });
+    }
+
+    // 🛠️ 確認評論是否存在
+    const [existingReview] = await pool.query(
+      'SELECT * FROM user_rentals WHERE id = ?',
+      [reviewId]
+    );
+
+    if (existingReview.length === 0) {
+      console.warn('❌ 評論不存在或無法更新');
+      return res.status(404).json({ success: false, error: '評論不存在或無法更新' });
+    }
+
+    // ✅ 確保 `commentAt` 為 null 或合法的 datetime
+    const formattedCommentAt = commentAt ? new Date(commentAt) : null;
+
+    // ✅ 只更新特定評論 (使用唯一評論 ID)
+    const [result] = await pool.query(
+      `
+      UPDATE user_rentals 
+      SET comment = ?, rating = ?, user_id = ?, comment_at = ?
+      WHERE id = ?
+      `,
+      [comment, rating, newUserId, formattedCommentAt, reviewId]
+    );
+
+    console.log('✅ 更新評論結果:', result);
+
+    if (result.affectedRows === 0) {
+      console.warn('❌ 更新失敗，評論可能不存在');
+      return res.status(404).json({ success: false, error: '評論不存在或無法更新' });
+    }
+
+    res.json({ success: true, message: '評論已成功更新，時間保持不變' });
+  } catch (error) {
+    console.error('❌ 更新評論 API 錯誤:', error.message);
+    res.status(500).json({ success: false, error: '伺服器錯誤' });
+  }
+});
+
+
+// 📌 獲取特定商品的所有評論 API (GET /reviews/:rent_id)
+router.get('/reviews/:rent_id', async (req, res) => {
+  const { rent_id } = req.params;
+
+  console.log('🔍 後端接收到的商品 ID (rent_id):', rent_id);
+
+  if (!rent_id) {
+    return res.status(400).json({ success: false, error: '無效的商品 ID' });
+  }
+
+  try {
+    const [reviews] = await pool.query(
+      `SELECT 
+              ur.id,   -- ✅ 確保返回評論的唯一 ID
+              ur.rent_id,
+              ur.user_id, 
+              IF(TRIM(u.nickname) = '', u.name, u.nickname) AS name,
+              IF(u.head IS NULL OR TRIM(u.head) = '', '/uploads/users.webp', u.head) AS avatar,
+              ur.rating, 
+              ur.comment, 
+              ur.comment_at
+          FROM user_rentals ur
+          INNER JOIN users u ON ur.user_id = u.id
+          WHERE ur.rent_id = ?
+          AND ur.status = '已完成'
+          AND ur.comment IS NOT NULL
+          AND TRIM(ur.comment) != ''
+          ORDER BY ur.comment_at DESC
+          `,
+      [rent_id]
+    );
+
+    if (reviews.length === 0) {
+      return res.status(404).json({ success: false, error: '找不到評論資料' });
+    }
+
+    res.json({ success: true, reviews });
+  } catch (error) {
+    console.error('❌ 取得評論資料庫錯誤:', error);
     res.status(500).json({ success: false, error: '伺服器錯誤' });
   }
 });

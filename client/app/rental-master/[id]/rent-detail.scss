@@ -52,7 +52,11 @@
   border: 1px solid #ced4da;
   box-shadow: none;
 }
-
+// 排序框
+.form-select:focus {
+  border: 1px solid #ced4da;
+  box-shadow: none;
+}
 /* 全頁面 */
 .k-body {
   background-color: #f6f7f9;
@@ -215,6 +219,15 @@
   line-height: 1; // 避免圖示影響行高
   margin-top: -0.1rem;
 }
+.k-pen {
+  vertical-align: middle; // 確保圖示與文字垂直置中
+  line-height: 1; // 避免圖示影響行高
+  margin-top: -0.3rem;
+}
+.k-no-time {
+  position: relative;
+  top: -1px;
+}
 /* 下半部 */
 .k-recommend-title {
   display: flex;
@@ -258,18 +271,6 @@
 .k-type-bg-2 {
   color: #fff;
   background-color: #143146;
-}
-// 商品星星
-.k-star {
-  vertical-align: middle; // 確保圖示與文字垂直置中
-  line-height: 1; // 避免圖示影響行高
-  margin-top: -0.16rem;
-}
-// 商品評論
-.k-comment {
-  vertical-align: middle; // 確保圖示與文字垂直置中
-  line-height: 1; // 避免圖示影響行高
-  margin-top: -0.1rem;
 }
 // 商品收藏
 .k-favorite-icon {
@@ -387,4 +388,27 @@
   background: linear-gradient(90deg, #e58e41, #f1cf99);
   height: 10px;
   border-radius: 5px;
+}
+// 彈窗評論修改
+.k-review-swal-popup {
+  width: 450px;
+}
+.k-review-swal-actions {
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 20px;
+  margin-top: 10px;
+}
+.k-review-swal-btn-1 {
+  background-color: #5292c5;
+  border-radius: 50px;
+}
+.k-review-swal-btn-2 {
+  background-color: #807871;
+  border-radius: 50px;
+}
+.k-swal-label {
+  text-align: left; /* 保證靠左對齊 */
+  margin-bottom: 5px; /* 調整間距 */
+  font-weight: 500; /* 讓字體看起來更專業 */
 }
