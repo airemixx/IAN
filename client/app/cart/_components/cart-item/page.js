@@ -72,13 +72,13 @@ export default function CartItem({ id, itemData, page }) {
   return (
     <div className="d-flex flex-grow-1">
       <div className="d-flex flex-grow-1 flex-column">
-        <div className={`${styles['j-cartItem']} d-flex flex-grow-1 flex-column flex-sm-column flex-xl-row align-items-center align-items-sm-center`}>
+        <div className={`${styles['j-cartItem']} d-flex flex-grow-1 flex-column flex-sm-column flex-xl-row align-items-center align-items-sm-center position-relative`}>
           <div className={`${styles['j-cameraImg']} m-2 `}>
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
-          <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center position-relative">
-            <div className={`${styles['j-content']} d-flex flex-column flex-sm-row justify-content-around align-items-center `}>
-              <div className={`${styles['j-itemDetail']} d-flex flex-sm-column ms-sm-3 ms-xl-0`}>
+          <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
+            <div className={`${styles['j-content']} d-flex justify-content-around align-items-center flex-grow-1`}>
+              <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0`}>
                 <div className="ms-lg-2 ms-xl-0">
                   <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
                   <br />
@@ -102,12 +102,12 @@ export default function CartItem({ id, itemData, page }) {
               </div> : ''}
               <p className={`${styles['j-price']} me-3 `}>價格: {price}元</p>
             </div>
-            {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
-              <button className="btn" onClick={handleDeleteItem}>
-                ✕
-              </button>
-            </div> : ''}
           </div>
+          {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
+            <button className="btn" onClick={handleDeleteItem}>
+              ✕
+            </button>
+          </div> : ''}
         </div>
         <div>
           <ProductDetails id={id} specs={specs} />
