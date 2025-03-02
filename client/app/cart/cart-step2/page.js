@@ -44,7 +44,7 @@ export default function cartPageTwo() {
               {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
               {cartProduct.map((item, index) => (
                 <div
-                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : ""}`}
+                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}
                   key={index}>
                   <CartItem key={index} id={index} itemData={item} page={2} />
                 </div>
@@ -55,7 +55,7 @@ export default function cartPageTwo() {
               {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
               {cartLession.map((lession, index) => (
                 <div key={index}
-                  className={`j-input-box d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : ""}`}>
+                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}>
                   <LessonItem key={index} lessionitem={lession} />
                 </div>
               ))}
@@ -65,7 +65,7 @@ export default function cartPageTwo() {
               {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
               {cartRent.map((rental, index) => (
                 <div key={index}
-                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? "j-nextBox" : ""}`}>
+                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}>
                   <RentItem key={index} rentalitem={rental} />
                 </div>
               ))}
