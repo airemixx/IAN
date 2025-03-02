@@ -148,7 +148,7 @@
     flex-direction: column;
   }
 
-  aside {
+  .y-aside {
     display: none;
   }
 }
