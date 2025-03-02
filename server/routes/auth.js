@@ -4,10 +4,64 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import db from "../db.js";
 
+import { verifyFirebaseToken } from "../firebaseAdmin.js";
+
 const router = express.Router();
 const secretKey = process.env.JWT_SECRET_KEY;
 
-// 🔹 登入 API，提供 `account` & `password`，回傳 `level`
+// Google 登入
+router.post("/google", async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) return res.status(400).json({ message: "Token 必須提供" });
+
+  try {
+    // ✅ 驗證 Firebase Token
+    const userData = await verifyFirebaseToken(token);
+    if (!userData) return res.status(401).json({ message: "無效的 Token" });
+
+    const { uid, email, name, picture } = userData; // ✅ 取得 Google 照片 URL
+
+    // ✅ 檢查使用者是否已存在
+    const sqlCheck = "SELECT * FROM users WHERE mail = ?";
+    const [rows] = await db.execute(sqlCheck, [email]);
+
+    let user;
+
+    if (rows.length > 0) {
+      // ✅ 使用者已存在，更新大頭貼
+      user = rows[0];
+      const sqlUpdate = "UPDATE users SET head = ? WHERE mail = ?";
+      await db.execute(sqlUpdate, [picture, email]);
+    } else {
+      // ✅ 使用者不存在，新增使用者
+      const hashedPassword = await bcrypt.hash(uid, 10); // 設定一個隨機密碼
+      const sqlInsert = "INSERT INTO users (mail, password, name, head) VALUES (?, ?, ?, ?)";
+      const [result] = await db.execute(sqlInsert, [email, hashedPassword, name, picture]);
+
+      user = { id: result.insertId, mail: email, name, head: picture };
+    }
+
+    // ✅ 生成 JWT Token
+    const authToken = jwt.sign(
+      { id: user.id, mail: user.mail, name: user.name, head: user.head },
+      secretKey,
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: { token: authToken, user },
+      message: "Google 登入成功",
+    });
+  } catch (err) {
+    console.error("❌ Google 登入錯誤:", err);
+    res.status(500).json({ status: "error", message: "Google 登入失敗" });
+  }
+});
+//google end////
+
+// 🔹 登入 API，提供 `mail` & `password`，回傳 `level`
 router.post("/login", async (req, res) => {
   const { account, password } = req.body;
 
