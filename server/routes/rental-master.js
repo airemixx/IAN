@@ -358,18 +358,32 @@ router.get('/:id', async (req, res) => {
     // 3.獲取推薦商品（基於 `rent_recommend`）
     const [recommendations] = await pool.query(
       `
-    SELECT 
-        r.*, 
-        GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
-        GROUP_CONCAT(DISTINCT t.tags) AS hashtags
-    FROM rent_recommend rr
-    INNER JOIN rental r ON rr.recommend_id = r.id
-    LEFT JOIN rent_image ri ON r.id = ri.rent_id
-    LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
-    LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
-    WHERE rr.rent_id = ?
-    GROUP BY r.id
-    ORDER BY rr.sequence ASC -- 確保推薦順序
+        SELECT 
+            r.*, 
+            GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
+            GROUP_CONCAT(DISTINCT t.tags) AS hashtags,
+            IFNULL(reviews.total_reviews, 0) AS total_reviews,
+            IFNULL(reviews.average_rating, 0) AS average_rating
+        FROM rent_recommend rr
+        INNER JOIN rental r ON rr.recommend_id = r.id
+        LEFT JOIN rent_image ri ON r.id = ri.rent_id
+        LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
+        LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
+        LEFT JOIN (
+            SELECT 
+                ur.rent_id, 
+                COUNT(*) AS total_reviews, 
+                ROUND(AVG(ur.rating), 1) AS average_rating
+            FROM user_rentals ur
+            WHERE ur.status = '已完成'
+            AND ur.comment IS NOT NULL
+            AND ur.comment_at IS NOT NULL
+            GROUP BY ur.rent_id
+        ) AS reviews ON reviews.rent_id = r.id
+
+        WHERE rr.rent_id = ?
+        GROUP BY r.id
+        ORDER BY rr.sequence ASC;    
     `,
       [id]
     )

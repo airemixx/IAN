@@ -224,7 +224,14 @@ export default function RentList() {
         {/* 📌 商品清單 */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1">
           {visibleItems.map((rental) => (
-            <RentCard key={rental.id} rental={rental} shouldAnimate={shouldAnimate} />
+            <RentCard
+              key={rental.id}
+              rental={{
+                ...rental,
+                rating: Number(rental.average_rating) || 0, // 確保 rating 是數字
+                reviewsCount: rental.total_reviews || 0, // 確保評論數不為 null
+              }}
+              shouldAnimate={shouldAnimate} />
           ))}
         </div>
 

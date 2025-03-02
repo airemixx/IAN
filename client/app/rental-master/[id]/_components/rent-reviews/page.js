@@ -42,12 +42,30 @@ export default function RentReviews({ reviews = [] }) {
     setItemsPerPage(itemsPerPage + 3)
   }
 
-  // 📌 格式化時間 (轉為 UI 顯示 YYYY/MM/DD)
+  // 📌 格式化時間 (帶完整DateTime 但只顯示 YYYY/MM/DD)
   const formatDate = (timestamp) => {
-    if (!timestamp) return '未設定'
-    const date = new Date(timestamp)
-    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`
-  }
+    if (!timestamp) return '未設定';
+
+    // 📌 確保時間解析為本地時間
+    const date = new Date(timestamp);
+
+    // ✅ 保留完整時間，但 UI 只顯示 YYYY/MM/DD
+    return {
+      full: `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`,
+      display: `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`
+    };
+  };
+
+  // 📌 格式化時間
+  const toSwalDateTime = (timestamp) => {
+    if (!timestamp) return '';
+
+    // 📌 確保時間解析為本地時間
+    const date = new Date(timestamp);
+
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+  };
+
 
   // 📌 編輯評論 (SweetAlert2 彈窗 + 星星評分)
   const handleEdit = async (review) => {
@@ -139,7 +157,7 @@ export default function RentReviews({ reviews = [] }) {
 
           <label class="my-2 d-block k-swal-label">留言時間</label>
           <div class="input-group">
-              <input type="datetime-local" id="comment-at" class="form-control" value="${review.comment_at ? new Date(review.comment_at).toISOString().slice(0, 19) : ''}" step="1"/>
+              <input type="datetime-local" id="comment-at" class="form-control" value="${toSwalDateTime(review.comment_at)}" step="1"/>
               <button id="clear-date" class="btn btn-danger">x</button>
           </div>
 
@@ -171,7 +189,6 @@ export default function RentReviews({ reviews = [] }) {
           console.error('❌ 缺少 reviewId，無法更新評論！');
           return false;
         }
-
         return {
           comment,
           rating: currentRating,
@@ -204,13 +221,10 @@ export default function RentReviews({ reviews = [] }) {
 
           const data = await res.json();
 
-          // if (data.success) {
-          //   setReviewList([...data.reviews]); // ✅ 確保 `useState` 更新
-          // }
           if (data.success && Array.isArray(data.reviews)) {
             setReviewList(data.reviews.map(review => ({
               ...review,
-              comment_at: review.comment_at ? formatDate(review.comment_at) : null // 確保 null 值正確處理
+              comment_at: review.comment_at ? toSwalDateTime(review.comment_at) : null // 確保 null 值正確處理
             })));
           }
         } catch (error) {
@@ -274,7 +288,10 @@ export default function RentReviews({ reviews = [] }) {
             />
             <div>
               <strong className="me-1">{review.name}</strong>
-              <small className="text-muted">{review.comment_at ? formatDate(review.comment_at) : <span className="k-no-time">🚫</span>}</small>
+              <small className="text-muted" title={review.comment_at ? formatDate(review.comment_at).full : ''}>
+                {review.comment_at ? formatDate(review.comment_at).display : <span className="k-no-time">🚫</span>}
+              </small>
+
               <span>
                 <FaRegPenToSquare
                   className="k-main-text cursor-pointer k-pen ms-1"
