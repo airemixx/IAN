@@ -160,7 +160,7 @@ export default function UserPage() {
             <div className={`d-flex justify-content-between mt-3 ${styles.userStats}`}>
               <div className={styles.statItem}>
                 <div className={styles.statValue}>
-                  {articles.reduce((sum, article) => sum + (article.likes_count || 0), 0)}
+                  {articles.reduce((sum, article) => sum + (article.like_count || 0), 0)}
                 </div>
                 <div className={styles.statLabel}>獲讚數</div>
               </div>
