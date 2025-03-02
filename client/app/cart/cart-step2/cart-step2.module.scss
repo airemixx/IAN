@@ -33,20 +33,13 @@
 }
 
 @media(max-width:390px) {
-    .container {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .container .j-shoppingCartBox {
-      display: flex;
-      flex-direction: column;
-    }
+  .j-cartTitle{
+    background-color: #003150;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    color: #fff;
+  }
   
-    .shoppingItemsMoblieBox {
-      width: 390px;
-    }
-
     .j-itemBox{
       background-color: #003150;
       border-radius: 20px;
@@ -65,17 +58,4 @@
     .footer {
       display: block;
     }
-
-    .copyright{
-      text-align: center;
-    }
-    
-    .copyright .right-links {
-      display: none;
-    }
-
-    .copyright .right-links .copyRight {
-      display: block;
-    }
-    
   }

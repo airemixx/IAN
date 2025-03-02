@@ -3,6 +3,7 @@ import Link from 'next/link'
 import styles from './register.module.scss'
 import React, { useState } from 'react'
 import { useRouter } from "next/navigation";
+import Swal from 'sweetalert2';
 
 
 export default function RegisterPage() {
@@ -89,7 +90,12 @@ export default function RegisterPage() {
             avatar: null,
           });
           setAvatarPreview('/uploads/users.webp');
-          alert('✅ 帳戶創建成功！請登入');
+          Swal.fire({
+            icon: "success",
+            title: "帳號註冊成功！",
+            text: "請登陸", // 🚀 **這裡改成 `result.message`，避免 `data` 未定義錯誤**
+            confirmButtonText: "確定",
+          });
           resolve();
         });
 

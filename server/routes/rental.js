@@ -89,18 +89,35 @@ router.get('/', async (req, res) => {
 
     // ✅ **組織商品查詢語句**
     let rentalQuery = `
-      SELECT 
-        r.*, 
-        GROUP_CONCAT(DISTINCT ri.url ORDER BY COALESCE(ri.sequence, 999) ASC) AS images,
-        GROUP_CONCAT(DISTINCT t.tags) AS hashtags
-      FROM rental r
-      LEFT JOIN rent_image ri ON r.id = ri.rent_id
-      LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
-      LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
-      WHERE 1=1
-    `
+            SELECT 
+                r.*, 
+                GROUP_CONCAT(DISTINCT ri.url ORDER BY COALESCE(ri.sequence, 999) ASC) AS images,
+                GROUP_CONCAT(DISTINCT t.tags) AS hashtags,
+                IFNULL(reviews.total_reviews, 0) AS total_reviews,
+                IFNULL(reviews.average_rating, 0) AS average_rating
+            FROM rental r
+            
+            LEFT JOIN rent_image ri ON r.id = ri.rent_id
+            LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
+            LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
 
-    let queryParams = []
+            -- 🚦 單獨計算評論數據，避免重複統計
+            LEFT JOIN (
+                SELECT 
+                    ur.rent_id, 
+                    COUNT(*) AS total_reviews, 
+                    ROUND(AVG(ur.rating), 1) AS average_rating
+                FROM user_rentals ur
+                WHERE ur.status = '已完成'
+                AND ur.comment IS NOT NULL
+                AND ur.comment_at IS NOT NULL  -- ✅ 過濾軟刪除評論
+                GROUP BY ur.rent_id
+            ) AS reviews ON reviews.rent_id = r.id
+
+            WHERE 1=1
+        `;
+
+    let queryParams = [];
 
     // 🔍 **搜尋功能 (支援名稱、摘要、標籤模糊搜尋)**
     if (query) {
@@ -170,7 +187,11 @@ router.get('/', async (req, res) => {
       }
     }
 
-    rentalQuery += ` GROUP BY r.id`
+    // ✅ **商品分組，包含評論數據**
+    rentalQuery += `
+            GROUP BY r.id
+            ORDER BY r.id ASC
+        `;
 
     const [rentals] = await pool.query(rentalQuery, queryParams)
     rentals.forEach((rental) => {
@@ -211,7 +232,7 @@ router.get('/', async (req, res) => {
   }
 })
 
-// 獲取單一租借商品詳細資訊（包含圖片與 Hashtag）
+// 1.獲取單一租借商品詳細資訊（包含圖片與 Hashtag）
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params
@@ -241,32 +262,76 @@ router.get('/:id', async (req, res) => {
     rental[0].images = rental[0].images ? rental[0].images.split(',') : []
     rental[0].hashtags = rental[0].hashtags ? rental[0].hashtags.split(',') : []
 
-    // **獲取推薦商品（基於 `rent_recommend`）**
+
+
+    // 2. 獲取商品評論
+    const [reviews] = await pool.query(
+      `
+          SELECT 
+              ur.user_id, 
+              IF(TRIM(u.nickname) = '', u.name, u.nickname) AS name,
+              IF(u.head IS NULL OR TRIM(u.head) = '', '/uploads/users.webp', u.head) AS avatar,
+              ur.rating, 
+              ur.comment, 
+              ur.comment_at,
+              ur.rent_id
+          FROM user_rentals ur
+          INNER JOIN users u ON ur.user_id = u.id
+          WHERE ur.rent_id = ?
+          AND ur.status = '已完成'
+          AND ur.comment IS NOT NULL
+          AND ur.comment_at IS NOT NULL  -- ✅ 過濾軟刪除評論
+          ORDER BY ur.comment_at DESC
+          `,
+      [id]
+    );
+
+    // 3.獲取推薦商品（基於 `rent_recommend`）
     const [recommendations] = await pool.query(
       `
-      SELECT 
-          r.*, 
-          GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
-          GROUP_CONCAT(DISTINCT t.tags) AS hashtags
-      FROM rent_recommend rr
-      INNER JOIN rental r ON rr.recommend_id = r.id
-      LEFT JOIN rent_image ri ON r.id = ri.rent_id
-      LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
-      LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
-      WHERE rr.rent_id = ?
-      GROUP BY r.id
-      ORDER BY rr.sequence ASC -- 確保推薦順序
+        SELECT 
+            r.*, 
+            GROUP_CONCAT(DISTINCT ri.url ORDER BY ri.sequence ASC) AS images,
+            GROUP_CONCAT(DISTINCT t.tags) AS hashtags,
+            IFNULL(reviews.total_reviews, 0) AS total_reviews,
+            IFNULL(reviews.average_rating, 0) AS average_rating
+        FROM rent_recommend rr
+        INNER JOIN rental r ON rr.recommend_id = r.id
+        LEFT JOIN rent_image ri ON r.id = ri.rent_id
+        LEFT JOIN rent_hashtag rh ON r.id = rh.rent_id
+        LEFT JOIN rent_tags t ON rh.rent_tags_id = t.id
+        LEFT JOIN (
+            SELECT 
+                ur.rent_id, 
+                COUNT(*) AS total_reviews, 
+                ROUND(AVG(ur.rating), 1) AS average_rating
+            FROM user_rentals ur
+            WHERE ur.status = '已完成'
+            AND ur.comment IS NOT NULL
+            AND ur.comment_at IS NOT NULL
+            GROUP BY ur.rent_id
+        ) AS reviews ON reviews.rent_id = r.id
+
+        WHERE rr.rent_id = ?
+        GROUP BY r.id
+        ORDER BY rr.sequence ASC;    
       `,
       [id]
     )
 
+    // 🚦 **格式化推薦商品的圖片和標籤數據**
     recommendations.forEach((rental) => {
       rental.images = rental.images ? rental.images.split(',') : []
       rental.hashtags = rental.hashtags ? rental.hashtags.split(',') : []
     })
 
-    // **回傳完整數據**
-    res.json({ success: true, data: rental[0], recommendations })
+    // 🚦 **回傳完整數據**
+    res.json({
+      success: true,
+      data: rental[0],
+      reviews,
+      recommendations,
+    });
   } catch (error) {
     console.error('❌ 資料庫錯誤:', error)
     res.status(500).json({ success: false, error: '伺服器錯誤' })
@@ -341,5 +406,52 @@ router.get('/collection/:rent_id', auth, async (req, res) => {
     res.status(500).json({ success: false, error: '伺服器錯誤' })
   }
 })
+
+
+// 評論 (之後會需要改) 還是需要唯一值ID
+router.post('/reviews', auth, async (req, res) => {
+  try {
+    const rent_id = parseInt(req.body.rent_id, 10) || 0;
+    const rating = parseInt(req.body.rating, 10) || 0;
+    const comment = req.body.comment?.trim() || '';
+    const user_id = req.user.id;
+
+    console.log('rent_id:', rent_id);
+    console.log('user_id:', user_id);
+    console.log('rating:', rating);
+    console.log('comment:', comment);
+
+    if (rent_id <= 0 || rating <= 0 || !comment) {
+      return res.status(400).json({ success: false, error: '評論資料不完整' });
+    }
+
+    // 檢查是否有「已完成」但「尚未評論」的租借記錄
+    const [rentalCheck] = await pool.query(
+      'SELECT * FROM user_rentals WHERE rent_id = ? AND user_id = ? AND status = "已完成"',
+      [rent_id, user_id]
+    );
+
+    console.log('查詢到的租借記錄:', rentalCheck);
+
+    if (rentalCheck.length === 0) {
+      return res.status(400).json({ success: false, error: '您尚未完成該商品的租借，無法留言' });
+    }
+
+    // 更新評論，將 comment_at 設置為當前時間
+    await pool.query(
+      `UPDATE user_rentals 
+           SET rating = ?, comment = ?, comment_at = NOW() 
+           WHERE rent_id = ? AND user_id = ?`,
+      [rating, comment, rent_id, user_id]
+    );
+
+    res.json({ success: true, message: '評論已成功提交' });
+  } catch (error) {
+    console.error('新增評論錯誤:', error);
+    res.status(500).json({ success: false, error: '伺服器錯誤' });
+  }
+});
+
+
 
 export default router

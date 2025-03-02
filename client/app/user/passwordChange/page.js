@@ -6,6 +6,7 @@ import Sidenav from '../_components/Sidenav/page'
 import React , { useState } from "react";
 import { Router } from 'react-bootstrap-icons';
 import { useRouter } from "next/navigation";
+import Swal from 'sweetalert2';
 
 
 
@@ -27,12 +28,13 @@ export default function UserPage(props) {
       e.preventDefault();
       
       if (!currentPassword || !newPassword || !confirmPassword) {
-        alert('請填寫所有欄位');
+        setErrorMessage("請填寫所有密碼欄位");
         return;
       }
+      
 
       if (newPassword !== confirmPassword) {
-        alert('新密碼與確認密碼不一致');
+        setErrorMessage("新密碼與確認密碼不一致");
         return;
       }
 
@@ -62,13 +64,17 @@ export default function UserPage(props) {
         throw new Error(result.message);
       }
 
-      alert('密碼更新成功！');
+      Swal.fire({
+                  icon: "success",
+                  title: "密碼更新成功！",
+                  confirmButtonText: "確定",
+                });
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       router.push('/user');
     } catch (error) {
-      console.error('❌ 更新密碼失敗:', error);
+      // console.error('❌ 更新密碼失敗:', error);
       // 錯誤訊息已透過 setErrorMessage 設定
     } finally {
       setUpdating(false);
@@ -95,7 +101,6 @@ export default function UserPage(props) {
                 <input
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                required 
                 type="password" className={`form-control ${styles.formControl}`} />
               </div>
               
@@ -104,7 +109,6 @@ export default function UserPage(props) {
                 <input 
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                required
                 type="password" className={`form-control ${styles.formControl}`} />
               </div>
               
@@ -113,7 +117,6 @@ export default function UserPage(props) {
                 <input
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                required
                 type="password" className={`form-control ${styles.formControl}`} />
               </div>
 

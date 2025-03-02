@@ -13,13 +13,13 @@ import RentRecommend from '../rent-recommend/page'
 export default function RentDetail() {
   const { id } = useParams()
   const [rental, setRental] = useState(null)
+  const [reviews, setReviews] = useState([]) // ✅ 新增評論狀態
   const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [totalFee, setTotalFee] = useState(0);
   const [originFee, setOriginFee] = useState(0);
-  // const [discountedTotalFee, setDiscountedTotalFee] = useState(0);
 
   useEffect(() => {
     if (!id) return
@@ -31,6 +31,7 @@ export default function RentDetail() {
           setRental(data.data)
           setTotalFee(data.data.fee); // 預設顯示單日金額
           setOriginFee(data.data.fee); // 預設顯示單日金額
+          setReviews(data.reviews || []) // ✅ 設定評論數據
           setRecommendations(data.recommendations) // ✅ 取得推薦商品
         } else {
           console.error('商品資料加載失敗:', data.error)
@@ -56,7 +57,6 @@ export default function RentDetail() {
     setTotalFee(totalFee);
   };
 
-
   if (loading) return <p className="text-center mt-5">🚀 資料載入中...</p>
   if (!rental)
     return <p className="text-center text-danger mt-5">❌ 找不到商品</p>
@@ -75,7 +75,6 @@ export default function RentDetail() {
                 {rental.brand} {rental.name || '無資料'}
               </h2>
               <p className="k-main-text h4 ms-2 mt-2">
-
                 {originFee > totalFee && (
                   <small className="text-muted me-1" style={{ textDecoration: 'line-through' }}>
                     NT$ {originFee.toLocaleString()}
@@ -87,7 +86,7 @@ export default function RentDetail() {
                 onDateChange={handleDateChange}
                 onFeeChange={handleFeeChange} />
               <RentHashtag hashtags={rental.hashtags} />
-              <RentReviews rentalId={rental.id} />
+              <RentReviews reviews={reviews} />
             </div>
           </div>
         </main>

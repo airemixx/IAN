@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
 import { jwtDecode } from 'jwt-decode'
 import moment from "moment";
+import Swal from "sweetalert2";
 export default function CheckoutFormStep1({ slItem }) {
   const token = localStorage.getItem("loginWithToken")
   const decoded = jwtDecode(token);
@@ -43,7 +44,13 @@ export default function CheckoutFormStep1({ slItem }) {
         router.push("/cart/cart-step2");
       }, 100); // 加入微小延遲確保 localStorage 寫入完成
     } else {
-      alert("購物車內沒有商品，請添加商品後再結帳！");
+      Swal.fire({
+        icon: "error",
+        title: "抱歉",
+        text: "購物車內沒有商品，請添加商品後再結帳！",
+      });
+      
+      
     }
   }
 

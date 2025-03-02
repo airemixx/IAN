@@ -14,6 +14,8 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import styles from './_components/content/index.module.scss'
 import dynamic from 'next/dynamic'
+import usePublicAuth from '../../../hooks/usePublicAuth';
+import AuthModal from './_components/auth-modal'
 
 const ReactContentLoader = dynamic(() => import('react-content-loader'), {
   ssr: false,
@@ -34,6 +36,8 @@ function getFontSize(size) {
 
 export default function ArticleDetail() {
   const { id } = useParams()
+  // 重命名 setUser 為 setAuthUser 避免衝突
+  const { token, user: authUser, isAuthenticated, setToken, setUser: setAuthUser } = usePublicAuth();
   const [fontSize, setFontSize] = useState('medium')
   const [categoryName, setCategoryName] = useState('')
   const [articleTitle, setArticleTitle] = useState('')
@@ -46,12 +50,21 @@ export default function ArticleDetail() {
   const [categoryId, setCategoryId] = useState(null)
   const [tags, setTags] = useState([])
   const [refreshComments, setRefreshComments] = useState(0)
-  const [user, setUser] = useState({});
+  // 使用 articleUser 代替 user
+  const [articleUser, setArticleUser] = useState({});
   const [loading, setLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const changeFontSize = (size) => {
     setFontSize(size)
   }
+
+  // 更新登入成功的處理函數
+  const handleLoginSuccess = (userData, newToken) => {
+    setAuthUser(userData); // 使用重命名的函數
+    setToken(newToken);
+    setShowAuthModal(false);
+  };
 
   useEffect(() => {
     // 初始化 AOS 設定
@@ -93,7 +106,7 @@ export default function ArticleDetail() {
           setCategoryId(response.data.category_id)
           setTags(response.data.tags)
           // 直接使用 API 回傳的 user 物件
-          setUser(response.data.user)
+          setArticleUser(response.data.user)
           return fetch(`http://localhost:8000/api/articles/categories`)
             .then((res) => {
               if (!res.ok) {
@@ -189,7 +202,7 @@ export default function ArticleDetail() {
             articleSubTitle={articleSubTitle}
             createdAt={createdAt}
             imagePath={imagePath}
-            user={user} // 傳入 user
+            user={articleUser} // 傳入 user
             loading={loading}
           />
         </section>
@@ -218,9 +231,24 @@ export default function ArticleDetail() {
             ) : (
               <>
                 <Content content={articleContent} fontSize={getFontSize(fontSize)} />
-                <TagLikeShareBtn articleId={id} />
-                <ReplyInput articleId={id} parentId={null} onCommentSubmitted={handleCommentSubmitted} />
-                <CommentsArea articleId={id} refreshTrigger={refreshComments} />
+                <TagLikeShareBtn
+                  articleId={id}
+                  isAuthenticated={isAuthenticated}
+                  showAuthModal={() => setShowAuthModal(true)}
+                />
+                <ReplyInput
+                  articleId={id}
+                  parentId={null}
+                  onCommentSubmitted={handleCommentSubmitted}
+                  isAuthenticated={isAuthenticated}
+                  showAuthModal={() => setShowAuthModal(true)}
+                />
+                <CommentsArea
+                  articleId={id}
+                  refreshTrigger={refreshComments}
+                  isAuthenticated={isAuthenticated}
+                  showAuthModal={() => setShowAuthModal(true)}
+                />
               </>
             )}
           </article>
@@ -234,6 +262,11 @@ export default function ArticleDetail() {
         </div>
       </div>
       <Recommends />
+      <AuthModal
+        show={showAuthModal}
+        onHide={() => setShowAuthModal(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
     </div>
   )
 }
