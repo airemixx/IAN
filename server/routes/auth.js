@@ -39,12 +39,27 @@ router.post("/google", async (req, res) => {
       const sqlInsert = "INSERT INTO users (mail, password, name, head) VALUES (?, ?, ?, ?)";
       const [result] = await db.execute(sqlInsert, [email, hashedPassword, name, picture]);
 
-      user = { id: result.insertId, mail: email, name, head: picture };
+      user = { id: result.insertId, account: email, name, head: picture };
     }
 
     // ✅ 生成 JWT Token
     const authToken = jwt.sign(
-      { id: user.id, mail: user.mail, name: user.name, head: user.head },
+      { 
+        id: user.id,
+        account: user.account,
+        name: user.name,
+        nickname: user.nickname || "",
+        mail: user.mail,
+        head: user.head,
+        level: user.level,
+        birthday: user.birthday
+          ? (() => {
+            const date = new Date(user.birthday);
+            date.setDate(date.getDate() + 1); // ✅ 加一天
+            return date.toISOString().split("T")[0]; // ✅ 轉回 `YYYY-MM-DD`
+          })()
+          : "",
+      },
       secretKey,
       { expiresIn: "7d" }
     );
