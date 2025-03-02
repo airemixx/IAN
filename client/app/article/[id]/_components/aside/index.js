@@ -41,7 +41,7 @@ function AsideComponent({ categoryId, title, subtitle, content, articleId }) {
 
   return (
     <>
-      <aside>
+      <aside className="y-aside">
         <div className="px-4 rounded">
           <div className="mb-4 title">
             <div className={style['y-title-line']} />
