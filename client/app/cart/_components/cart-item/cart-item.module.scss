@@ -74,6 +74,11 @@
   }
 }
 @media(max-width:1200px) {
+  .j-cameraImg img{
+    width: 150px;
+    height: 150px;
+  }
+
   .j-delBtn{
     bottom: 170%;
     left: 90%;
@@ -81,6 +86,11 @@
   
 }
 @media(max-width:576px) {
+  .j-cameraImg img{
+    width: 150px;
+    height: 150px;
+  }
+
   .j-cartItem {
     height: auto;
    }

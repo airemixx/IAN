@@ -14,11 +14,11 @@ export default function cartPageOne() {
   const router = useRouter()
   const token = localStorage.getItem('loginWithToken')
   if (!token) {
-    
+
     setTimeout(() => {
       router.push('/login')
-    },2000)
-    return 
+    }, 2000)
+    return
   }
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function cartPageOne() {
 
   Object.values(rentStorage).map((v, i) => {
     cartRent.push({
-      type:'rent',
+      type: 'rent',
       id: i,
       brand: v.brand,
       product_id: v.rentalId,
@@ -75,7 +75,7 @@ export default function cartPageOne() {
 
   Object.values(lessionStorage).map((v, i) => {
     cartLession.push({
-      type:'lession',
+      type: 'lession',
       id: i,
       product_id: v.id,
       image: v.image,
@@ -84,14 +84,14 @@ export default function cartPageOne() {
       quantity: v.quantity,
     })
   })
- 
+
 
   const [checkAll, setCheckAll] = useState(false)
   const [checkedItems, setCheckedItems] = useState({})
   const [slItems, setSltems] = useState([])
   const allItems = [...cartProduct, ...cartLession, ...cartRent]
   const [selectedItems, setSelectedItems] = useState([]) // 用來存放選中的項目
-  
+
   // 全選或取消全選
   const handleCheckAll = () => {
     const checkState = !checkAll
@@ -127,7 +127,7 @@ export default function cartPageOne() {
     setCheckAll(newSelects.length === allItems.length)
   }
   let isCartEmpty = false;
-  if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0 ) {
+  if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0) {
     isCartEmpty = true;
   }
 
@@ -192,7 +192,7 @@ export default function cartPageOne() {
                           htmlFor={`lessonItem-${index}`}
                           className="ms-2 d-flex flex-grow-1"
                         >
-                          <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} page={1}/>
+                          <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} page={1} />
                         </label>
                       </div>
                     )
@@ -219,7 +219,7 @@ export default function cartPageOne() {
                           htmlFor={`rentItem-${index}`}
                           className="ms-2 d-flex flex-grow-1"
                         >
-                          <RentItem key={index} rentalitem={rental} id={rentalIndex} length={(cartProduct.length+cartLession.length)} page={1}/>
+                          <RentItem key={index} rentalitem={rental} id={rentalIndex} length={(cartProduct.length + cartLession.length)} page={1} />
                         </label>
                       </div>
                     )
@@ -227,7 +227,7 @@ export default function cartPageOne() {
                 </div>
               </div>
               <div className="j-cartItemsBox d-sm-none d-block p-0">
-              <div>
+                <div>
                   <input
                     type="checkbox"
                     id="checkAll"
@@ -280,7 +280,7 @@ export default function cartPageOne() {
                           htmlFor={`lessonItem-${index}`}
                           className="ms-2 d-flex flex-grow-1"
                         >
-                          <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} page={1}/>
+                          <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} page={1} />
                         </label>
                       </div>
                     )
@@ -307,7 +307,7 @@ export default function cartPageOne() {
                           htmlFor={`rentItem-${index}`}
                           className="ms-2 d-flex flex-grow-1"
                         >
-                          <RentItem key={index} rentalitem={rental} id={rentalIndex} length={(cartProduct.length+cartLession.length)} page={1}/>
+                          <RentItem key={index} rentalitem={rental} id={rentalIndex} length={(cartProduct.length + cartLession.length)} page={1} />
                         </label>
                       </div>
                     )
