@@ -4,8 +4,9 @@ import styles from './login.module.scss'
 import React, { useState, useEffect } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import { useRouter } from 'next/navigation'
+import GoogleLoginButton from "./_components/GoogleLoginButton";
 
-export default function UserPage() {
+export default function loginPage() {
   const router = useRouter()
   const appKey = 'loginWithToken'
   const [token, setToken] = useState(null)
@@ -139,6 +140,13 @@ export default function UserPage() {
                   </button>
                 </div>
               </form>
+
+              <div className="flex justify-start">
+                <GoogleLoginButton />
+              </div>
+              <div className="flex justify-start">
+                忘記密碼 ?
+              </div>
             </div>
           </div>
         </div>
