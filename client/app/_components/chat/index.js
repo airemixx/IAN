@@ -64,6 +64,14 @@ export default function ChatWidget() {
   const nodeRef = useRef(null)
   const buttonRef = useRef(null)
   const [isNearBottom, setIsNearBottom] = useState(true);
+  const [isImageHovered, setIsImageHovered] = useState(false);
+  const [isEmojiHovered, setIsEmojiHovered] = useState(false);
+
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const [enlargeImage, setEnlargeImage] = useState(null);
 
   const scrollToBottom = () => {
     if (chatBodyRef.current) {
@@ -128,32 +136,153 @@ export default function ChatWidget() {
   }
 
   const handleSendMessage = (e) => {
-    e.preventDefault()
-    if (newMessage.trim() === "") return
+    e.preventDefault();
 
-    const userMessage = {
+    // 檢查是否有文字消息或文件
+    const hasText = newMessage.trim() !== "";
+    const hasFiles = selectedFiles.length > 0;
+
+    if (!hasText && !hasFiles) return;
+
+    // 如果有文字消息，先發送文字
+    if (hasText) {
+      const textMessage = {
+        id: Date.now().toString(),
+        text: newMessage,
+        sender: "user",
+        timestamp: new Date(),
+        read: false,
+      };
+
+      setMessages(prev => [...prev, textMessage]);
+      setNewMessage("");
+    }
+
+    // 如果有文件，發送所有文件
+    if (hasFiles) {
+      const fileMessages = selectedFiles.map((fileObj, index) => ({
+        id: Date.now().toString() + index,
+        text: fileObj.type === 'image' ? '圖片訊息' : '影片訊息',
+        fileUrl: fileObj.url,
+        fileType: fileObj.type,
+        sender: "user",
+        timestamp: new Date(Date.now() + index * 100), // 略微錯開時間戳避免ID衝突
+        read: false,
+      }));
+
+      setMessages(prev => [...prev, ...fileMessages]);
+
+      // 清空文件列表並關閉預覽
+      setSelectedFiles([]);
+      setIsPreviewOpen(false);
+
+      // 為每個發送的文件添加客服回覆
+      setTimeout(() => {
+        const agentMessage = {
+          id: (Date.now() + 1000).toString(),
+          text: fileMessages.length > 1
+            ? `收到您的${fileMessages.length}張圖片/影片`
+            : fileMessages[0].fileType === 'image' ? "收到您的圖片" : "收到您的影片",
+          sender: "agent",
+          timestamp: new Date(Date.now() + 1000),
+          read: true,
+        };
+        setMessages(prev => [...prev, agentMessage]);
+      }, 1000);
+    }
+
+    // 滾動到底部
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  }
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+
+    // 檢查並處理文件
+    const validFiles = files.filter(file => {
+      // 驗證文件類型
+      const isImage = file.type.startsWith('image/');
+      const isVideo = file.type.startsWith('video/');
+
+      // 如果是影片，檢查是否已有影片文件
+      if (isVideo && (selectedFiles.some(f => f.type.startsWith('video/')) || files.filter(f => f.type.startsWith('video/')).length > 1)) {
+        alert('一次只能上傳一個影片');
+        return false;
+      }
+
+      return isImage || isVideo;
+    });
+
+    // 為每個文件添加 URL 和 ID
+    const filesWithPreview = validFiles.map(file => ({
+      file,
+      id: Date.now() + Math.random().toString(36).substring(2),
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith('image/') ? 'image' : 'video'
+    }));
+
+    setSelectedFiles(prev => [...prev, ...filesWithPreview]);
+    setIsPreviewOpen(true);
+
+    // 清空 input 以便重複選擇相同文件
+    e.target.value = null;
+  };
+
+  const removeFile = (id) => {
+    setSelectedFiles(prev => {
+      const filtered = prev.filter(file => file.id !== id);
+      if (filtered.length === 0) {
+        setIsPreviewOpen(false);
+      }
+      return filtered;
+    });
+  };
+
+  const sendFileMessage = (fileObj) => {
+    const isImage = fileObj.type === 'image';
+
+    const fileMessage = {
       id: Date.now().toString(),
-      text: newMessage,
+      text: isImage ? '圖片訊息' : '影片訊息',
+      fileUrl: fileObj.url,
+      fileType: fileObj.type,
       sender: "user",
       timestamp: new Date(),
       read: false,
+    };
+
+    setMessages(prev => [...prev, fileMessage]);
+
+    // 移除已發送的文件
+    setSelectedFiles(prev => prev.filter(file => file.id !== fileObj.id));
+
+    // 如果沒有剩餘文件，關閉預覽
+    if (selectedFiles.length <= 1) {
+      setIsPreviewOpen(false);
     }
 
-    setMessages((prev) => [...prev, userMessage])
-    setNewMessage("")
-    setIsNearBottom(true);
-
+    // 添加模擬客服回覆
     setTimeout(() => {
       const agentMessage = {
         id: (Date.now() + 1).toString(),
-        text: "收到您的訊息，我們會盡快處理。",
+        text: isImage ? "收到您的圖片" : "收到您的影片",
         sender: "agent",
         timestamp: new Date(),
         read: true,
-      }
-      setMessages((prev) => [...prev, agentMessage])
-    }, 1000)
-  }
+      };
+      setMessages(prev => [...prev, agentMessage]);
+    }, 1000);
+  };
+
+  const handleImageClick = (imageUrl) => {
+    setEnlargeImage(imageUrl);
+  };
+
+  const closeImageViewer = () => {
+    setEnlargeImage(null);
+  };
 
   return (
     <div className={styles.chatWidgetContainer}>
@@ -233,23 +362,39 @@ export default function ChatWidget() {
                           </div>
                         )}
 
-                          <div
-                            className={`${styles.message} ${message.sender === "user" ? styles.userMessage : styles.agentMessage} ${styles[`bubble-${bubblePosition}`]}`}
-                          >
-                            {/* 已讀標誌放在這裡，直接在訊息行內部 */}
-                            {message.sender === "user" && (
-                              <div className={styles.messageStatus}>
-                                {message.read ? (
-                                  <CheckAll size={18} className={styles.readIcon} />
-                                ) : (
-                                  <Check size={18} className={styles.unreadIcon} />
-                                )}
-                              </div>
-                            )}
-                            <div className={styles.messageContent}>
-                              <div className={styles.messageText}>{message.text}</div>
+                        <div
+                          className={`${styles.message} ${message.sender === "user" ? styles.userMessage : styles.agentMessage} ${styles[`bubble-${bubblePosition}`]}`}
+                        >
+                          {/* 已讀標誌放在這裡，直接在訊息行內部 */}
+                          {message.sender === "user" && (
+                            <div className={styles.messageStatus}>
+                              {message.read ? (
+                                <CheckAll size={18} className={styles.readIcon} />
+                              ) : (
+                                <Check size={18} className={styles.unreadIcon} />
+                              )}
                             </div>
+                          )}
+                          <div className={styles.messageContent}>
+                            {message.fileType ? (
+                              message.fileType === 'image' ? (
+                                <img
+                                  src={message.fileUrl}
+                                  alt="圖片訊息"
+                                  className={styles.messageImage}
+                                  onClick={() => handleImageClick(message.fileUrl)}
+                                />
+                              ) : (
+                                <video controls className={styles.messageVideo}>
+                                  <source src={message.fileUrl} type="video/mp4" />
+                                  您的瀏覽器不支持影片播放
+                                </video>
+                              )
+                            ) : (
+                              <div className={styles.messageText}>{message.text}</div>
+                            )}
                           </div>
+                        </div>
                       </div>
                     </React.Fragment>
                   );
@@ -259,6 +404,29 @@ export default function ChatWidget() {
             </div>
 
             <div className={styles.chatFooter}>
+              {isPreviewOpen && (
+                <div className={styles.filePreviewArea}>
+                  {selectedFiles.map((fileObj) => (
+                    <div key={fileObj.id} className={styles.filePreviewItem}>
+                      <button
+                        className={styles.removeFileButton}
+                        onClick={() => removeFile(fileObj.id)}
+                      >
+                        <X size={14} />
+                      </button>
+                      {fileObj.type === 'image' ? (
+                        <img src={fileObj.url} alt="預覽" />
+                      ) : (
+                        <video>
+                          <source src={fileObj.url} type={fileObj.file.type} />
+                          您的瀏覽器不支持影片預覽
+                        </video>
+                      )}
+                      {/* 移除單獨的發送按鈕 */}
+                    </div>
+                  ))}
+                </div>
+              )}
               <form onSubmit={handleSendMessage} className={styles.messageForm}>
                 <div className={styles.inputContainer}>
                   <input
@@ -270,13 +438,48 @@ export default function ChatWidget() {
                   />
                 </div>
                 <div className="image-send-emoji-btn d-flex align-items-center">
-                  <button type="button" className={styles.emojiButton}>
-                    <img src="/images/chatRoom/emoji-origin.svg" alt="" />
+                  <button
+                    type="button"
+                    className={styles.emojiButton}
+                    onMouseEnter={() => setIsEmojiHovered(true)}
+                    onMouseLeave={() => setIsEmojiHovered(false)}
+                  >
+                    <img
+                      src={isEmojiHovered
+                        ? "/images/chatRoom/emoji-active.svg"
+                        : "/images/chatRoom/emoji-origin.svg"}
+                      alt=""
+                    />
                   </button>
-                  <button type="button" className={styles.imageButton}>
-                    <img src="/images/chatRoom/image-update-origin.svg" alt="" />
-                  </button>
-                  <button type="submit" className={styles.sendButton} disabled={newMessage.trim() === ""}>
+                  <>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      multiple
+                      accept="image/*,video/*"
+                      onChange={handleFileSelect}
+                      style={{ display: 'none' }}
+                    />
+                    <button
+                      type="button"
+                      className={styles.imageButton}
+                      onMouseEnter={() => setIsImageHovered(true)}
+                      onMouseLeave={() => setIsImageHovered(false)}
+                      onClick={() => fileInputRef.current.click()}
+                    >
+                      <img
+                        src={isImageHovered
+                          ? "/images/chatRoom/image-update-active.svg"
+                          : "/images/chatRoom/image-update-origin.svg"}
+                        alt="上傳圖片或影片"
+                      />
+                    </button>
+                  </>
+                  <button
+                    type="submit"
+                    className={styles.sendButton}
+                    disabled={newMessage.trim() === "" && selectedFiles.length === 0}
+                  >
                     <img src="/images/chatRoom/send-origin.svg" alt="" />
                   </button>
                 </div>
@@ -304,6 +507,17 @@ export default function ChatWidget() {
           </Button>
         </CSSTransition>
       </div>
+
+      {enlargeImage && (
+        <div className={styles.imageViewerOverlay} onClick={closeImageViewer}>
+          <div className={styles.imageViewerContent} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.imageViewerClose} onClick={closeImageViewer}>
+              <X size={24} />
+            </button>
+            <img src={enlargeImage} alt="放大圖片" className={styles.enlargedImage} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

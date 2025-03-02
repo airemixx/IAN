@@ -183,16 +183,16 @@
   margin-bottom: 2px; // 從12px減少到8px
   gap: 8px; // 提供頭像與訊息之間的間距
   position: relative; // 讓頭像可以絕對定位
-  overflow: visible !important;
+  overflow: visible;
 }
 
 // 用戶訊息行靠右對齊，移除右側頭像空間
 .userMessageRow {
-  position: relative !important; // 讓子元素絕對定位能參考 .userMessageRow
+  position: relative; // 讓子元素絕對定位能參考 .userMessageRow
   justify-content: flex-end;
   padding-right: 10px; // 大幅減少右側內邊距，因為不再需要頭像空間
-  padding-left: 45px ; // 進一步增加左側間距
-  overflow: visible !important;
+  padding-left: 45px; // 進一步增加左側間距
+  overflow: visible;
 }
 
 // 客服訊息行靠左對齊，保留頭像空間
@@ -210,7 +210,7 @@
   position: relative; // 確保訊息本身也有相對定位
   display: flex;
   flex-direction: column;
-  overflow: visible !important;
+  overflow: visible;
   word-break: break-word; // 在訊息容器層級也添加換行控制
 }
 
@@ -347,18 +347,18 @@
   height: 24px;
   border-radius: 50%; // 圓形背景
   z-index: 9999; // 非常高的層級
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .readIcon {
-  color: #7e7267 !important; // 使用明亮的藍色
+  color: #7e7267; // 使用明亮的藍色
   opacity: 1;
 }
 
 .unreadIcon {
-  color: #aaa !important;
+  color: #aaa;
   opacity: 1;
 }
 
@@ -417,10 +417,10 @@
 }
 
 .sendButton {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -431,6 +431,14 @@
   transition: all 0.2s;
   padding: 0;
   background-color: transparent;
+  position: relative;
+  margin: 0 8px;
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
 }
 
 .sendButton:hover {
@@ -442,17 +450,47 @@
 }
 
 .imageButton {
-  border: 1px solid #4476ff00;
+  border: none;
   border-radius: 50%;
   background-color: transparent;
   cursor: pointer;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 8px;
+  overflow: visible;
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+  }
 }
 
 .emojiButton {
-  border: 1px solid #4476ff00;
+  border: none;
   border-radius: 50%;
   background-color: transparent;
   cursor: pointer;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 8px;
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
 }
 
 // 添加頭像相關樣式
@@ -500,6 +538,166 @@
     flex: 1;
     // border-bottom: 1px solid #e0e0e0;
     margin: auto 10px;
+  }
+}
+
+.image-send-emoji-btn {
+  display: flex;
+  align-items: center;
+  height: 40px; // 固定高度
+  flex-shrink: 0; // 防止壓縮
+}
+
+// 文件預覽區域
+.filePreviewArea {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+// 文件預覽項目
+.filePreviewItem {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  img,
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // 只保留移除文件按鈕
+  .removeFileButton {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    padding: 0;
+
+    &:hover {
+      background-color: red;
+    }
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    // 添加這一行確保影片預覽有控制條
+    &::-webkit-media-controls {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+  }
+
+  // 為影片預覽項目特別設定
+  &.videoPreview {
+    width: 80px; // 保持與其他預覽項相同寬度
+    height: 45px; // 16:9比例 (80 * 9/16 = 45)
+  }
+}
+
+// 訊息中的圖片和影片樣式
+.messageImage {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.messageVideo {
+  width: 240px; // 設定固定寬度
+  height: 135px; // 16:9比例下的高度 (240 * 9/16 = 135)
+  border-radius: 8px;
+  object-fit: contain; // 確保影片內容不被裁切
+  background-color: #000; // 黑色背景，填充影片外的空間
+
+  // 確保控制條可見
+  &::-webkit-media-controls {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// 圖片查看器樣式
+.imageViewerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.imageViewerContent {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.enlargedImage {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.3s ease;
+}
+
+.imageViewerClose {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+// 動畫效果
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
   }
 }
 
