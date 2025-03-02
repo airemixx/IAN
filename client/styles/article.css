@@ -124,18 +124,6 @@
   border: 1px solid #159c36;
 }
 
-aside {
-  align-self: flex-start;
-  /* position: sticky; */
-  top: 0;
-  width: 100%;
-  max-width: 375px;
-  margin: 0 auto;
-  background-color: #ffffff00;
-  height: 100vh;
-  /* overflow-y: auto;
-  overflow-x: hidden; */
-}
 .y-aside {
   align-self: flex-start;
   position: sticky;
