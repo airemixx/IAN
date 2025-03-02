@@ -244,16 +244,12 @@ router.get('/addresses/me', checkToken, async (req, res) => {
       [user_id]
     );
 
-    if (rows.length === 0) {
-      return res.status(404).json({
-        status: 'error',
-        message: '該用戶沒有地址紀錄',
-      });
-    }
+    
 
     res.status(200).json({
       status: 'success',
       data: rows, // ✅ 返回所有住址
+      message: rows.length > 0 ? '獲取地址成功' : '該用戶沒有地址紀錄'
     });
   } catch (error) {
     console.error('❌ 獲取所有住址失敗:', error);
@@ -359,7 +355,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
   const { account } = req.params;
   console.log(account);
 
-  const { name, password, head, birthday, currentPassword } = req.body;
+  const { name, nickname, password, head, birthday, currentPassword } = req.body;
 
   try {
     if (account != req.decoded.account) throw new Error("沒有修改權限");
@@ -370,6 +366,20 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
     if (name) {
       updateFields.push("`name` = ?");
       value.push(name);
+    }
+    if (nickname) {
+      // 🔥 **檢查 nickname 是否已被使用**
+      const [existingNicknames] = await db.execute(
+        "SELECT id FROM users WHERE nickname = ? AND account != ?",
+        [nickname, account]
+      );
+    
+      if (existingNicknames.length > 0) {
+        throw new Error("此暱稱已被使用，請選擇其他暱稱");
+      }
+    
+      updateFields.push("`nickname` = ?");
+      value.push(nickname);
     }
     if (head) {
       updateFields.push("`head` = ?");
@@ -705,8 +715,9 @@ router.get("/favorites/me", checkToken, async (req, res) => {
 
     // ✅ 如果沒有任何收藏
     if (products.length === 0 && courses.length === 0 && rents.length === 0 && articles.length === 0) {
-      return res.status(404).json({ message: "沒有收藏的商品、課程、租賃與文章" });
+      return res.json({ products: [], courses: [], rents: [], articles: [] });
     }
+    
 
     res.json({ products, courses, rents, articles });
   } catch (error) {

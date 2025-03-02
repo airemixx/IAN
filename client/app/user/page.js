@@ -7,9 +7,11 @@ import Sidenav from './_components/Sidenav/page'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
+
 export default function UserPage(props) {
   const { token, user = {}, loading, setUser, setToken } = useAuth()
   const [name, setName] = useState('')
+  const [nickname, setNickname] = useState('')
   const [birthday, setBirthday] = useState('')
   const [password, setPassword] = useState('')
   const [updating, setUpdating] = useState(false)
@@ -24,6 +26,7 @@ export default function UserPage(props) {
 
     if (user && Object.keys(user).length > 0) {
       setName(user.name || '');
+      setNickname(user.nickname || '');
 
       let birthdayFormatted = "";
       if (user.birthday) {
@@ -142,6 +145,7 @@ export default function UserPage(props) {
           },
           body: JSON.stringify({
             name,
+            nickname,
             password: password || undefined,
             birthday: birthday
               ? (typeof birthday === "string"
@@ -158,7 +162,13 @@ export default function UserPage(props) {
 
       if (result.status !== 'success') throw new Error(result.message);
 
-      alert("更新成功！");
+      // ✅ **更新成功，使用 Swal 彈出成功訊息**
+    Swal.fire({
+      icon: "success",
+      title: "更新成功！",
+      text: result.message, // 從 API 回應顯示成功訊息
+      confirmButtonText: "確定",
+    });
 
       // 🔥 **步驟 1：檢查後端是否提供新的 Token**
       if (result.token) {
@@ -175,8 +185,13 @@ export default function UserPage(props) {
       // 🔥 **步驟 3：導向 `/user` 頁面**
       // window.location.href = "/user";
     } catch (error) {
-      console.error("❌ 更新失敗:", error);
-      alert("更新失敗，請稍後再試");
+      // ❌ **更新失敗，使用 Swal 彈出錯誤訊息**
+    Swal.fire({
+      icon: "error",
+      title: "更新失敗",
+      text: error.message || "請稍後再試",
+      confirmButtonText: "確定",
+    });
     } finally {
       setUpdating(false);
     }
@@ -234,8 +249,8 @@ export default function UserPage(props) {
           `<li style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
             📍 ${address.address}
             <div>
-              <button class="edit-btn" data-id="${address.id}" style="margin-right: 5px; background: #ffc107; border: none; padding: 3px 8px; cursor: pointer;">✏️</button>
-              <button class="delete-btn" data-id="${address.id}" style="background: #dc3545; border: none; padding: 3px 8px; cursor: pointer;">🗑</button>
+              <button class="edit-btn" data-id="${address.id}" style="margin-right: 5px; background:rgb(255, 207, 49); border: none; padding: 3px 8px; cursor: pointer;">✏️</button>
+              <button class="delete-btn" data-id="${address.id}" style="background:rgb(231, 0, 23); border: none; padding: 3px 8px; cursor: pointer;">🗑</button>
             </div>
           </li>`
         ).join('')}
@@ -255,6 +270,8 @@ export default function UserPage(props) {
     showCancelButton: true,
     confirmButtonText: '新增',
     cancelButtonText: '關閉',
+    confirmButtonColor: "#143146", 
+    cancelButtonColor: "#807871",
     didOpen: () => {
       // ✅ 綁定「編輯」按鈕
       document.querySelectorAll('.edit-btn').forEach(button => {
@@ -531,7 +548,7 @@ export default function UserPage(props) {
                         type="email"
                         className={`form-control ${styles.customInput}`}
                         disabled
-                        value={user?.mail || ''}
+                        value={user?.account || ''}
                         readOnly
                       />
                     </div>
@@ -550,9 +567,9 @@ export default function UserPage(props) {
                       <input
                         type="text"
                         className={`form-control ${styles.customInput}`}
-                        disabled
-                        value={user?.nickname || ''}
-                        readOnly
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
+                        required
                       />
                     </div>
 
@@ -560,9 +577,9 @@ export default function UserPage(props) {
                       <label className="form-label">出生日期</label>
                       <input
                         type="date"
+                        className={`form-control ${styles.customInput}`}
                         value={birthday || ""} // ✅ `YYYY-MM-DD` 格式
                         onChange={(e) => setBirthday(e.target.value)} // ✅ 確保不會帶時間
-                        className="form-control"
                       />
                     </div>
                     <button

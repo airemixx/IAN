@@ -17,7 +17,6 @@ const defaultImages = [
 ]
 
 export default function RentPicture({ images = [] }) {
-  console.log('接收到的 images:', images)
   // 如果 API 沒有圖片，則使用預設圖片
   const finalImages =
     images.length > 0

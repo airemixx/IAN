@@ -3,72 +3,52 @@
 'use client'
 
 import { useState } from 'react'
+import { IoStar, IoStarHalf, IoStarOutline } from 'react-icons/io5'
 
-const reviews = [
-  {
-    name: '中壢大谷祥平',
-    avatar: 'https://ui-avatars.com/api/?name=中壢大谷祥平&background=random',
-    rating: 4,
-    comment:
-      '桃園棒球場第一排 拿出這台直接高調\n客服聲音一聽就正妹 加個IG直接給五星',
-  },
-  {
-    name: '卡哇七寶媽',
-    avatar: 'https://ui-avatars.com/api/?name=卡哇七寶媽&background=random',
-    rating: 5,
-    comment:
-      '宅配到府真的超推!!!\n上次運動會帶這支很方便，不用額外組鏡頭，費用也很值在，下次會再來租借👍👍',
-  },
-  {
-    name: '彤彤',
-    avatar: 'https://ui-avatars.com/api/?name=彤彤&background=random',
-    rating: 5,
-    comment: '大學專題一起借，可以直接寄社辦 很方便!!!',
-  },
-  {
-    name: '中壢大谷祥平',
-    avatar: 'https://ui-avatars.com/api/?name=中壢大谷祥平&background=random',
-    rating: 4,
-    comment:
-      '桃園棒球場第一排 拿出這台直接高調\n客服聲音一聽就正妹 加個IG直接給五星',
-  },
-  {
-    name: '卡哇七寶媽',
-    avatar: 'https://ui-avatars.com/api/?name=卡哇七寶媽&background=random',
-    rating: 5,
-    comment:
-      '宅配到府真的超推!!!\n上次運動會帶這支很方便，不用額外組鏡頭，費用也很值在，下次會再來租借👍👍',
-  },
-  {
-    name: '彤彤',
-    avatar: 'https://ui-avatars.com/api/?name=彤彤&background=random',
-    rating: 5,
-    comment: '大學專題一起借，可以直接寄社辦 很方便!!!',
-  },
-  // Add more reviews as needed...
-]
-
-export default function RentReviews() {
+export default function RentReviews({ reviews = [] }) {
   const [itemsPerPage, setItemsPerPage] = useState(3)
 
-  // Handle "Show More" button click
+  // 📌計算平均評分
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+      : 0
+
+  // 📌計算星星顯示（包括半星處理）
+  const getStarDisplay = (rating) => {
+    const stars = []
+    for (let i = 1; i <= 5; i++) {
+      if (rating >= i - 0.3) {
+        stars.push(<IoStar key={i} className="k-warn-text" />)
+      } else if (rating >= i - 0.8) {
+        stars.push(<IoStarHalf key={i} className="k-warn-text" />)
+      } else {
+        stars.push(<IoStarOutline key={i} className="k-warn-text" />)
+      }
+    }
+    return <span>{stars}</span>
+  }
+
+  // 📌顯示更多評論 (每次顯示3條)
   const showMore = () => {
-    setItemsPerPage(itemsPerPage + 3) // Increase by 3 reviews each time
+    setItemsPerPage(itemsPerPage + 3)
   }
 
   return (
     <div className="mt-4">
       <h5>評價</h5>
       <div className="d-flex align-items-center">
-        <span className="k-warn-text">★★★★★</span>
-        <span className="ms-2">4.0 (25 條評論)</span>
+        <span className="k-star">{getStarDisplay(averageRating)}</span>
+        <span className="k-warn-text ms-2">{averageRating.toFixed(1)} 分</span>
+        <span className="ms-2">{reviews.length} 條評論</span>
       </div>
       <div className="mt-3" id="reviewContainer">
         {reviews.slice(0, itemsPerPage).map((review, index) => (
           <div key={index} className="border p-3 mb-3 d-flex">
             <img
-              src={review.avatar}
+              src={review.avatar || '/uploads/users.webp'}
               alt={review.name}
+              onError={(e) => e.target.src = '/uploads/users.webp'}
               className="rounded-circle me-3"
               width="50"
               height="50"
@@ -83,18 +63,22 @@ export default function RentReviews() {
                   </span>
                 ))}
               </p>
-              <span className="k-warn-text">
-                {'★'.repeat(review.rating)}
-                {'☆'.repeat(5 - review.rating)}
-              </span>
+              <span className='k-star'>{getStarDisplay(review.rating)}</span>
+
             </div>
           </div>
         ))}
-        <div className="d-flex justify-content-end">
-          <button className="btn btn-outline-warning k-main-radius" onClick={showMore}>
-            顯示更多
-          </button>
-        </div>
+
+        {itemsPerPage < reviews.length && (
+          <div className="d-flex justify-content-end">
+            <button
+              className="btn btn-outline-warning k-main-radius"
+              onClick={showMore}
+            >
+              顯示更多
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

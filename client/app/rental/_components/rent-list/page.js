@@ -1,3 +1,5 @@
+// rent-list
+
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -18,11 +20,9 @@ export default function RentList() {
   const [currentPage, setCurrentPage] = useState(1) // 目前頁數
   const [itemsPerPage, setItemsPerPage] = useState(12) // 每頁顯示數量
   const [totalPages, setTotalPages] = useState(1) // 總頁數
-  const [sorting, setSorting] = useState('') // 排序方式（asc: 價格由低到高, desc: 由高到低）
+  const [sorting, setSorting] = useState('') // 排序方式
   const [shouldAnimate, setShouldAnimate] = useState(false);  // 判斷動畫觸發
   const router = useRouter(); // ✅ 正確初始化 router
-
-
 
   // 📌 **篩選條件**
   const [filters, setFilters] = useState({
@@ -132,10 +132,13 @@ export default function RentList() {
 
   // 📌 **商品排序功能**
   const sortedRentals = [...filteredRentals].sort((a, b) => {
-    if (sorting === 'asc') return a.fee - b.fee // 由低到高
-    if (sorting === 'desc') return b.fee - a.fee // 由高到低
-    return 0
-  })
+    if (sorting === 'fee_asc') return a.fee - b.fee; // 價格由低到高
+    if (sorting === 'fee_desc') return b.fee - a.fee; // 價格由高到低
+    if (sorting === 'rating_desc') return b.average_rating - a.average_rating; // 評分高到低
+    if (sorting === 'reviews_desc') return b.total_reviews - a.total_reviews; // 評論數量多到少
+    return 0;
+  });
+
 
   // 📌 **計算當前頁面的商品範圍**
   const indexOfLastItem = currentPage * itemsPerPage
@@ -167,7 +170,16 @@ export default function RentList() {
         {/* 📌 商品清單 */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mt-1">
           {visibleItems.map((rental) => (
-            <RentCard key={rental.id} rental={rental} shouldAnimate={shouldAnimate} />
+            <RentCard
+              key={rental.id}
+              rental={{
+                ...rental,
+                rating: Number(rental.average_rating) || 0, // 確保 rating 是數字
+                reviewsCount: rental.total_reviews || 0, // 確保評論數不為 null
+              }}
+              shouldAnimate={shouldAnimate}
+            />
+
           ))}
         </div>
 

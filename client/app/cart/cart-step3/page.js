@@ -36,7 +36,7 @@ export default function cartPageThree() {
     }
   })
   let isCartEmpty = false;
-  if (Object.values(localStorage.getItem('cartItems')).length) {
+  if (Object.values(localStorage.getItem('cartItems')).length == 0) {
     isCartEmpty = true;
   }
   return (

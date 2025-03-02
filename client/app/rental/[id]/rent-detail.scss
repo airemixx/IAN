@@ -96,7 +96,7 @@
 /* 左半邊 */
 .k-picture-bg {
   background: #fff;
-  max-width: 580px;
+  max-width: 594px;
   margin: auto;
   img {
     max-width: 100%;
@@ -114,8 +114,8 @@
     margin-right: 50px;
   }
   @media (min-width: 1200px) {
-    margin-left: 25px;
-    margin-right: 25px;
+    margin-left: 22px;
+    margin-right: 22px;
   }
   @media (min-width: 1399px) {
     margin-left: 75px;
@@ -146,6 +146,7 @@
 .k-picture-container {
   transition: all 0.3s ease;
   height: auto;
+  min-height: 710px;
 }
 // (大螢幕)
 .sticky .k-picture-sticky {
@@ -208,7 +209,12 @@
     cursor: default;
   }
 }
-
+// 商品評論
+.k-star {
+  vertical-align: middle; // 確保圖示與文字垂直置中
+  line-height: 1; // 避免圖示影響行高
+  margin-top: -0.1rem;
+}
 /* 下半部 */
 .k-recommend-title {
   display: flex;
@@ -252,6 +258,18 @@
 .k-type-bg-2 {
   color: #fff;
   background-color: #143146;
+}
+// 商品星星
+.k-star {
+  vertical-align: middle; // 確保圖示與文字垂直置中
+  line-height: 1; // 避免圖示影響行高
+  margin-top: -0.16rem;
+}
+// 商品評論
+.k-comment {
+  vertical-align: middle; // 確保圖示與文字垂直置中
+  line-height: 1; // 避免圖示影響行高
+  margin-top: -0.1rem;
 }
 // 商品收藏
 .k-favorite-icon {

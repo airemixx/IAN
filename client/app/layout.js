@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import AppProvider from '@/hooks/app-provider'
 import { CompareProvider } from "@/app/product/_context/CompareContext";
 import { IoIosArrowUp } from "react-icons/io";
-import "hover.css";
+// import "hover.css";
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -85,19 +85,19 @@ export default function RootLayout({ children }) {
             style={{ marginTop: '80px' }}
           />
           {!isTeacherPage && (
-            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage}/>
+            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
           )}
           <AppProvider>
             {' '}
             <main className="root-content">{children}</main>
           </AppProvider>
-          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage}/>}
+          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}
         </div>
 
         {/* top按鈕 */}
         {showButton && (
-          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob d-none d-xl-block'>
-            <IoIosArrowUp size={25}   className="hvr-icon"/>
+          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob'>
+            <IoIosArrowUp size={25} className="hvr-icon" />
           </button>
         )}
       </body>
