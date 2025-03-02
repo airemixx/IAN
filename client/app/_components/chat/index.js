@@ -6,6 +6,8 @@ import { Button } from "react-bootstrap"
 import { X, Check, CheckAll } from "react-bootstrap-icons"
 import { CSSTransition } from "react-transition-group"
 import styles from "./index.module.scss"
+import EmojiPicker, { SkinTones } from 'emoji-picker-react';
+import emojiRegex from 'emoji-regex';
 
 // 檢查兩個日期是否是同一天
 const isSameDay = (date1, date2) => {
@@ -47,6 +49,8 @@ const formatMessageTime = (timestamp) => {
   }
 };
 
+const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([
@@ -66,6 +70,8 @@ export default function ChatWidget() {
   const [isNearBottom, setIsNearBottom] = useState(true);
   const [isImageHovered, setIsImageHovered] = useState(false);
   const [isEmojiHovered, setIsEmojiHovered] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef(null);
 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -284,6 +290,38 @@ export default function ChatWidget() {
     setEnlargeImage(null);
   };
 
+  const onEmojiClick = (emojiData) => {
+    // 在游標位置插入 emoji
+    setNewMessage(prev =>
+      prev.substring(0, document.getElementById('messageInput').selectionStart) +
+      emojiData.emoji +
+      prev.substring(document.getElementById('messageInput').selectionEnd)
+    );
+  };
+
+  const toggleEmojiPicker = (e) => {
+    e.preventDefault();
+    setShowEmojiPicker(!showEmojiPicker);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target) &&
+        !e.target.classList.contains(styles.emojiButton) &&
+        !e.target.closest(`.${styles.emojiButton}`)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
+
   return (
     <div className={styles.chatWidgetContainer}>
       <CSSTransition
@@ -339,6 +377,8 @@ export default function ChatWidget() {
 
                   const showAvatar = !isNextSameSender;
 
+                  const regex = emojiRegex();
+
                   return (
                     <React.Fragment key={message.id}>
                       {/* 時間標記 */}
@@ -391,7 +431,64 @@ export default function ChatWidget() {
                                 </video>
                               )
                             ) : (
-                              <div className={styles.messageText}>{message.text}</div>
+                              <div className={styles.messageText}>
+                                {
+                                  // 使用更精確的替換方案
+                                  (() => {
+                                    // 先找出所有的 emoji 位置
+                                    const emojis = [];
+                                    const regex = emojiRegex();
+                                    let match;
+                                    while ((match = regex.exec(message.text)) !== null) {
+                                      emojis.push({
+                                        emoji: match[0],
+                                        index: match.index,
+                                        length: match[0].length
+                                      });
+                                    }
+
+                                    // 如果沒有 emoji，直接返回文字
+                                    if (emojis.length === 0) {
+                                      return <span className={styles.plainText}>{message.text}</span>;
+                                    }
+
+                                    // 有 emoji 的情況，組合文字和表情符號
+                                    const result = [];
+                                    let lastIndex = 0;
+
+                                    emojis.forEach((item, i) => {
+                                      // 添加 emoji 前面的純文字
+                                      if (lastIndex < item.index) {
+                                        result.push(
+                                          <span key={`text-${i}`} className={styles.plainText}>
+                                            {message.text.substring(lastIndex, item.index)}
+                                          </span>
+                                        );
+                                      }
+
+                                      // 添加 emoji
+                                      result.push(
+                                        <span key={`emoji-${i}`} className={styles.emoji}>
+                                          {item.emoji}
+                                        </span>
+                                      );
+
+                                      lastIndex = item.index + item.length;
+                                    });
+
+                                    // 添加最後一段純文字 (如果有的話)
+                                    if (lastIndex < message.text.length) {
+                                      result.push(
+                                        <span key={`text-last`} className={styles.plainText}>
+                                          {message.text.substring(lastIndex)}
+                                        </span>
+                                      );
+                                    }
+
+                                    return result;
+                                  })()
+                                }
+                              </div>
                             )}
                           </div>
                         </div>
@@ -430,6 +527,7 @@ export default function ChatWidget() {
               <form onSubmit={handleSendMessage} className={styles.messageForm}>
                 <div className={styles.inputContainer}>
                   <input
+                    id="messageInput"
                     type="text"
                     placeholder="輸入訊息..."
                     value={newMessage}
@@ -438,19 +536,37 @@ export default function ChatWidget() {
                   />
                 </div>
                 <div className="image-send-emoji-btn d-flex align-items-center">
-                  <button
-                    type="button"
-                    className={styles.emojiButton}
-                    onMouseEnter={() => setIsEmojiHovered(true)}
-                    onMouseLeave={() => setIsEmojiHovered(false)}
-                  >
-                    <img
-                      src={isEmojiHovered
-                        ? "/images/chatRoom/emoji-active.svg"
-                        : "/images/chatRoom/emoji-origin.svg"}
-                      alt=""
-                    />
-                  </button>
+                  <div className={styles.emojiButtonContainer}>
+                    <button
+                      type="button"
+                      className={styles.emojiButton}
+                      onMouseEnter={() => setIsEmojiHovered(true)}
+                      onMouseLeave={() => setIsEmojiHovered(false)}
+                      onClick={toggleEmojiPicker}
+                    >
+                      <img
+                        src={isEmojiHovered
+                          ? "/images/chatRoom/emoji-active.svg"
+                          : "/images/chatRoom/emoji-origin.svg"}
+                        alt=""
+                      />
+                    </button>
+                    {showEmojiPicker && (
+                      <div className={styles.emojiPickerContainer} ref={emojiPickerRef}>
+                        <EmojiPicker
+                          onEmojiClick={onEmojiClick}
+                          width={300}
+                          height={400}
+                          defaultSkinTone={SkinTones.MEDIUM}
+                          searchDisabled
+                          previewConfig={{ showPreview: false }}
+                          theme="light" // 或 'dark' 或 'auto'
+                          emojiStyle="native"
+                          categories={['smileys_people', 'animals_nature', 'food_drink', 'travel_places', 'activities', 'objects', 'symbols', 'flags']}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <>
                     <input
                       type="file"

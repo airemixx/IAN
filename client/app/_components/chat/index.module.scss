@@ -512,15 +512,38 @@
   flex-direction: column;
 }
 
-// 添加訊息文字樣式，確保長文字會自動換行
+// 修改訊息文字容器樣式，取消flex佈局
 .messageText {
   font-size: 14px;
   line-height: 1.4;
-  white-space: pre-wrap; // 保留換行符並允許文字換行
-  word-wrap: break-word; // 允許長單詞在必要時換行
-  overflow-wrap: break-word; // 確保內容不會溢出容器
-  word-break: break-word; // 在必要時允許單詞內換行
-  max-width: 100%; // 確保文字不超出訊息容器
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline; // 使用 baseline 代替 center，提供更自然的文字基線對齊
+}
+
+// 普通文字樣式
+.plainText {
+  font-size: 14px !important;
+  line-height: 1.4;
+  font-family: inherit;
+  display: inline;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0;
+}
+
+// Emoji 樣式
+.emoji {
+  font-size: 20px !important;
+  display: inline-block;
+  vertical-align: center;//
+  line-height: 1;
+  padding: 0;
 }
 
 // 時間標記樣式
@@ -545,14 +568,6 @@
   display: flex;
   align-items: center;
   height: 40px; // 固定高度
-  flex-shrink: 0; // 防止壓縮
-}
-
-// 文件預覽區域
-.filePreviewArea {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   padding: 10px;
   background-color: #f5f5f5;
   border-top: 1px solid #e0e0e0;
@@ -607,7 +622,7 @@
     // 添加這一行確保影片預覽有控制條
     &::-webkit-media-controls {
       display: flex !important;
-      visibility: visible !important;
+      visibility: visible ;
       opacity: 1 !important;
     }
   }
@@ -698,6 +713,36 @@
   }
   to {
     transform: scale(1);
+  }
+}
+
+// emoji 按鈕容器
+.emojiButtonContainer {
+  position: relative;
+}
+
+// emoji 選擇器容器
+.emojiPickerContainer {
+  position: absolute;
+  bottom: 100%; // 放在按鈕上方
+  left: -240px; // 水平居中調整
+  margin-bottom: 10px;
+  z-index: 9999; // 確保在最頂層
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+
+  // 添加向下的小三角形
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 250px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid white;
   }
 }
 
