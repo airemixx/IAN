@@ -23,7 +23,7 @@ router.post("/google", async (req, res) => {
     const { uid, email, name, picture } = userData; // ✅ 取得 Google 照片 URL
 
     // ✅ 檢查使用者是否已存在
-    const sqlCheck = "SELECT * FROM users WHERE mail = ?";
+    const sqlCheck = "SELECT * FROM users WHERE account = ?";
     const [rows] = await db.execute(sqlCheck, [email]);
 
     let user;
@@ -31,12 +31,12 @@ router.post("/google", async (req, res) => {
     if (rows.length > 0) {
       // ✅ 使用者已存在，更新大頭貼
       user = rows[0];
-      const sqlUpdate = "UPDATE users SET head = ? WHERE mail = ?";
+      const sqlUpdate = "UPDATE users SET head = ? WHERE account = ?";
       await db.execute(sqlUpdate, [picture, email]);
     } else {
       // ✅ 使用者不存在，新增使用者
       const hashedPassword = await bcrypt.hash(uid, 10); // 設定一個隨機密碼
-      const sqlInsert = "INSERT INTO users (mail, password, name, head) VALUES (?, ?, ?, ?)";
+      const sqlInsert = "INSERT INTO users (account, password, name, head) VALUES (?, ?, ?, ?)";
       const [result] = await db.execute(sqlInsert, [email, hashedPassword, name, picture]);
 
       user = { id: result.insertId, account: email, name, head: picture };
