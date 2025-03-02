@@ -65,7 +65,8 @@
 }
 
 .j-delBtn{
-  left: 90%;
+  left: 93%;
+  top: 1%;
 }
 
 @media(max-width:1400px) {
@@ -94,17 +95,9 @@
   .j-cartItem {
     height: auto;
    }
-  .j-delBtn{
-    bottom: 130%;
-    left: 145%;
-  }
 }
 @media(max-width:390px) {
   .j-cartItem {
     height: auto;
    }
-  .j-delBtn{
-    bottom: 135%;
-    left: 120%;
-  }
 }

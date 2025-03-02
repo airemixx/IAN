@@ -72,7 +72,7 @@ export default function CartItem({ id, itemData, page }) {
   return (
     <div className="d-flex flex-grow-1">
       <div className="d-flex flex-grow-1 flex-column">
-        <div className={`${styles['j-cartItem']} d-flex flex-grow-1 flex-column flex-sm-column flex-xl-row align-items-center align-items-sm-center`}>
+        <div className={`${styles['j-cartItem']} d-flex flex-grow-1 flex-column flex-sm-column flex-xl-row align-items-center align-items-sm-center position-relative`}>
           <div className={`${styles['j-cameraImg']} m-2 `}>
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
@@ -102,12 +102,12 @@ export default function CartItem({ id, itemData, page }) {
               </div> : ''}
               <p className={`${styles['j-price']} me-3 `}>價格: {price}元</p>
             </div>
-            {page == 1 ? <div className={`${styles['j-delBtn']} `}>
-              <button className="btn" onClick={handleDeleteItem}>
-                ✕
-              </button>
-            </div> : ''}
           </div>
+          {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
+            <button className="btn" onClick={handleDeleteItem}>
+              ✕
+            </button>
+          </div> : ''}
         </div>
         <div>
           <ProductDetails id={id} specs={specs} />
