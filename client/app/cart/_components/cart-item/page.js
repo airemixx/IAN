@@ -77,7 +77,7 @@ export default function CartItem({ id, itemData, page }) {
             <img src={image} alt={brand} className="object-fit-contain" />
           </div>
           <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center position-relative">
-            <div className={`${styles['j-content']} d-flex flex-column flex-sm-row justify-content-around align-items-center `}>
+            <div className={`${styles['j-content']} d-flex flex-column flex-sm-row justify-content-around align-items-center flex-grow-1`}>
               <div className={`${styles['j-itemDetail']} d-flex flex-sm-column ms-sm-3 ms-xl-0`}>
                 <div className="ms-lg-2 ms-xl-0">
                   <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
