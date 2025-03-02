@@ -136,12 +136,41 @@ export default function UserPage() {
     router.push(`/article/${articleId}`)
   }
 
+  // 在 return 語句中修改布局結構
   return (
     <div className={`container py-4 ${styles.container}`}>
       <div className={`row ${styles.marginTop}`}>
         <Sidenav />
         <div className="col-md-9">
-          <h1 className="mb-4">我的文章</h1>
+          {/* <h1 className="mb-4">我的文章</h1> */}
+
+          {/* 用戶資訊卡片 - 添加在這裡 */}
+          <div className={`${styles.userInfoCard} mb-4`}>
+            <div className="d-flex align-items-center">
+              <img
+                src={user?.head || "/images/default-avatar.jpg"}
+                alt="使用者頭像"
+                className={styles.userAvatar}
+              />
+              <div className="ms-3">
+                <h5 className={styles.userName}>{user?.nickname || '使用者'}</h5>
+              </div>
+            </div>
+
+            <div className={`d-flex justify-content-between mt-3 ${styles.userStats}`}>
+              <div className={styles.statItem}>
+                <div className={styles.statValue}>
+                  {articles.reduce((sum, article) => sum + (article.likes_count || 0), 0)}
+                </div>
+                <div className={styles.statLabel}>獲讚數</div>
+              </div>
+              <div className={styles.statItem}>
+                <div className={styles.statValue}>{articles.length}</div>
+                <div className={styles.statLabel}>篇文章</div>
+              </div>
+            </div>
+          </div>
+
           <div className="d-flex flex-column gap-4">
             {/* 新增文章卡片 */}
             <Link href="/user/article/add-article" style={{ textDecoration: 'none' }}>
