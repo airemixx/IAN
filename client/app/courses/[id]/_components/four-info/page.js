@@ -2,8 +2,17 @@
 
 import styles from './four-info.module.scss'
 import StarRating from '../../../_components/star-rating/page'
+import Link from 'next/link'
 
 export default function FourInfo({ course }) {
+
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id)
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
+
   return (
     <>
       <div className={styles['four-course-info-container']}>
@@ -31,6 +40,14 @@ export default function FourInfo({ course }) {
               </div>
               <div className={styles['line']}></div>
               <div className={styles['info-content']}>
+              <a
+              href="#"
+              // className={styles['course-info-teacher']}
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToSection('course-rating')
+              }}
+            >
                 <div className={styles['title-text']}>
                   {course.comment_count.toLocaleString('en-US')} 則評價
                 </div>
@@ -38,6 +55,7 @@ export default function FourInfo({ course }) {
                 <p>{parseFloat(course.rating || 0).toFixed(1)}</p>
                   <StarRating rating={course.rating || 0} />
                 </div>
+                </a>
               </div>
             </div>
           </div>

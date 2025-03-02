@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-/* 定義變數 */
 :root {
   --primary-color: #143146;
   --primary-color-med: #23425a;
@@ -340,6 +339,7 @@ nav {
   font-size: 18px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+  z-index: 100;
 
   &:hover {
     opacity: 1;
@@ -448,6 +448,48 @@ footer-title {
   color: #000;
  
 }
+
+/* --- 滾輪樣式 --- */
+/* 整體滾動條 */
+::-webkit-scrollbar {
+  width: 13px; 
+  height: 10px; 
+}
+
+/* 滾動條背景 */
+::-webkit-scrollbar-track {
+  background: var(--secondary-color-lig2);
+  padding: 0 5px;
+}
+
+/* 滑塊（拖動的部分） */
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color-med);
+  border-radius: 10px;
+}
+
+/* 滑塊懸停效果 */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color-dark);
+}
+
+::-webkit-scrollbar-button:vertical:decrement {
+  background: var(--secondary-color-lig2);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="%23807871" viewBox="0 0 8 8"><polygon points="4,0 0,4 8,4"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 16px; /* 調整按鈕大小 */
+}
+
+/* 下滾按鈕 */
+::-webkit-scrollbar-button:vertical:increment {
+  background: var(--secondary-color-lig2);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="%23807871" viewBox="0 0 8 8"><polygon points="0,0 8,0 4,4"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 16px;
+}
+
 /* 響應式樣式 */
 @media screen and (max-width: 1200px) {
 

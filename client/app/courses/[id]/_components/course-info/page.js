@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
 import styles from './course-info.module.scss'
 import FavoriteButtonG from '../favorite-button-g/page'
 import { toast } from 'react-toastify'
-
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+// import { ReactTyped } from 'react-typed'
 
 export default function CourseInfo({ course }) {
   const [cart, setCart] = useState([])
@@ -19,7 +21,7 @@ export default function CourseInfo({ course }) {
     }
   }, [])
 
-  const router = useRouter();
+  const router = useRouter()
 
   //立即購買
   const handleBuyNow = () => {
@@ -114,6 +116,14 @@ export default function CourseInfo({ course }) {
     }
   }
 
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // 動畫持續時間（毫秒）
+      once: false, // 是否只執行一次
+      offset: 100, // 觸發動畫前的偏移量
+    })
+  }, [])
+
   return (
     <section className={styles['course-info-container']}>
       <div className="container">
@@ -150,11 +160,21 @@ export default function CourseInfo({ course }) {
 
         {/* 課程資訊 */}
         <div className={`row ${styles['course-info']}`}>
-          <div className={`col-md-6 ${styles['course-img']}`}>
+          <div
+            className={`col-md-6 ${styles['course-img']}`}
+            data-aos="fade-zoom-in"
+          >
             <img src={course.image_url} alt="" />
           </div>
           <div className={`col-md-6 ${styles['course-detail']}`}>
-            <h1> {course.title}</h1>
+            <h1>
+            {/* <ReactTyped
+        strings={[course.title]} 
+        typeSpeed={50} 
+        showCursor={true}
+      /> */}
+      {course.title} 
+            </h1>
             <a
               href="#"
               className={styles['course-info-teacher']}
@@ -187,10 +207,7 @@ export default function CourseInfo({ course }) {
                   className={`${styles['cart-btn']} hvr-icon-pulse`}
                   onClick={handleAddToCart} // ✅ 綁定加入購物車事件
                 >
-                  <img
-                    src="/images/icon/cart-btn.svg"
-                    alt=""
-                  />
+                  <img src="/images/icon/cart-btn.svg" alt="" />
                   <p>加入購物車</p>
                 </button>
                 <FavoriteButtonG courseId={course.id} />
