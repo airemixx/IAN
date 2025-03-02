@@ -577,9 +577,9 @@ export default function UserPage(props) {
                       <label className="form-label">出生日期</label>
                       <input
                         type="date"
+                        className={`form-control ${styles.customInput}`}
                         value={birthday || ""} // ✅ `YYYY-MM-DD` 格式
                         onChange={(e) => setBirthday(e.target.value)} // ✅ 確保不會帶時間
-                        className="form-control"
                       />
                     </div>
                     <button
