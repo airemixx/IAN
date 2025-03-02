@@ -338,6 +338,31 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+// ✅ 新增收藏 (允許多商品收藏)
+router.post('/collection', auth, async (req, res) => {
+  try {
+    const { rent_id } = req.body
+    const user_id = req.user.id
+
+    if (!rent_id) {
+      return res.status(400).json({ success: false, error: 'rent_id 為必填項目' })
+    }
+
+    await pool.query(
+      'INSERT INTO collection (user_id, rent_id, created_at) VALUES (?, ?, NOW())',
+      [user_id, rent_id]
+    )
+
+    res.json({ success: true, message: '已成功收藏租借商品' })
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ success: false, message: '該商品已經收藏' })
+    }
+    console.error('新增收藏錯誤:', error)
+    res.status(500).json({ success: false, error: '伺服器錯誤' })
+  }
+})
+
 // ✅ 取消收藏
 router.delete('/collection', auth, async (req, res) => {
   try {
