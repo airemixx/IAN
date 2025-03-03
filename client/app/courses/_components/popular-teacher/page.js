@@ -57,7 +57,7 @@ export default function PopularTeacher() {
 
   return (
     <section className={styles['popular-teacher']}>
-      <div className="teacher-container">
+      <div className="container">
         <div className={styles['teacher-title']} data-aos="fade-right">
           <div className={styles['title-block']}></div>
           <h2>熱門講師</h2>
