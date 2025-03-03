@@ -17,10 +17,10 @@ router.get("/", async (req, res) => {
     try {
         // 插入資料
         const [result] = await pool.execute(
-            `SELECT * FROM addresses WHERE user_id = ?;
+            `SELECT ad.address, u.name FROM addresses ad inner Join  users u on u.id = ad.user_id WHERE user_id = ?;
          `,[userId]
         );
-
+        console.log(result);
         res.status(200).json({ success: true, message: "ˇ地址獲取成功", result });
     } catch (error) {
         console.error("地址獲取失敗:", error);

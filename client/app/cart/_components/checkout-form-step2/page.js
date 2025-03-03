@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./shopping-cart-step2.module.scss";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+
 export default function CheckoutFormStep2() {
     const router = useRouter();
     const [formData, setFormData] = useState({
@@ -11,18 +12,38 @@ export default function CheckoutFormStep2() {
     });
 
     const [errors, setErrors] = useState({});
-    const [selectedOption, setSelectedOption] = useState(""); // 下拉選單選擇的值
-    const [buyerOptions, setBuyerOptions] = useState([]); // 存 API 資料
-    const id = jwtDecode(localStorage.getItem("loginWithToken")).id;
-    // 取得訂購人預設資料
+    const [selectedOption, setSelectedOption] = useState(null); // 選擇的 buyer 物件
+    const [buyerOptions, setBuyerOptions] = useState([]); // API 回傳的訂購人資料
+
+    // 取得使用者 ID，避免 jwtDecode 出錯
+    const token = localStorage.getItem("loginWithToken");
+    const id = token ? jwtDecode(token).id : null;
+
     useEffect(() => {
+        if (!id) return;
+
         fetch(`/api/address?id=${id}`)
             .then((res) => res.json())
             .then((data) => {
-                setBuyerOptions(data);
+                const buyerList = Array.isArray(data?.result) ? data.result : [];
+                setBuyerOptions(buyerList);
             })
-            .catch((error) => console.error("獲取資料失敗:", error));
-    }, []);
+            .catch((error) => {
+                console.error("獲取資料失敗:", error);
+                setBuyerOptions([]); // 避免 UI 崩潰
+            });
+    }, [id]);
+
+    // 當選擇的訂購人變更時，自動填入 input 欄位
+    useEffect(() => {
+        if (selectedOption) {
+            setFormData({
+                name: selectedOption.name || "",
+                address: selectedOption.address || "",
+                phone: selectedOption.phone || ""
+            });
+        }
+    }, [selectedOption]);
 
     const handleChange = (e) => {
         setFormData({
@@ -36,20 +57,9 @@ export default function CheckoutFormStep2() {
     };
 
     const handleSelectChange = (e) => {
-        const selectedValue = e.target.value;
-        setSelectedOption(selectedValue);
-
-        // 根據選擇的 ID 找到對應的資料並填入表單
-        const selectedBuyer = buyerOptions.find((buyer) => buyer.id === selectedValue);
-        if (selectedBuyer) {
-            setFormData({
-                name: selectedBuyer.name,
-                address: selectedBuyer.address,
-                phone: selectedBuyer.phone
-            });
-        } else {
-            setFormData({ name: "", address: "", phone: "" }); // 清空表單
-        }
+        const selectedId = e.target.value;
+        const buyer = buyerOptions.find((b) => String(b.id) === selectedId);
+        setSelectedOption(buyer || null);
     };
 
     const validateForm = () => {
@@ -69,22 +79,20 @@ export default function CheckoutFormStep2() {
             router.push("/cart/cart-step3");
         }
     };
-    const buyerAddress = Object.values(buyerOptions)
-    console.log(buyerAddress.length);
+
     return (
-        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 mt-4 me-lg-0 `}>
+        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 mt-4 me-lg-0`}>
             <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className={`${styles['j-payTitle']}`}>結帳</div>
                 <select
                     className="form-select w-auto"
-                    value={selectedOption}
                     onChange={handleSelectChange}
-                    key={1}
+                    defaultValue=""
                 >
-                    <option value="">請選擇</option>
-                    {buyerAddress.map((buyer) => (
+                    <option value="" disabled>請選擇住址</option>
+                    {buyerOptions.map((buyer) => (
                         <option key={buyer.id} value={buyer.id}>
-                            {buyer.name}
+                            {buyer.address}
                         </option>
                     ))}
                 </select>

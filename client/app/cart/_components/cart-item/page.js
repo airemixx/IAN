@@ -101,7 +101,7 @@ export default function CartItem({ id, itemData, page }) {
                   <button className={`${styles['j-increase']} btn pb-0 ps-0 pt-0`}
                     onClick={handleClickInc}>+</button>
                 </div> : ''}
-                <p className={`${styles['j-price']} me-sm-3`}>價格: {price}元</p>
+                <p className={`${styles['j-price']} me-sm-3`}>價格: {price * newQuan}元</p>
               </div>
             </div>
             {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
@@ -156,7 +156,7 @@ export default function CartItem({ id, itemData, page }) {
                 <button className={`${styles['j-increase']} btn pb-0 ps-0 pt-0`}
                   onClick={handleClickInc}>+</button>
               </div> : ''}
-              <p className={`${styles['j-price']} `}>價格: {price}元</p>
+              <p className={`${styles['j-price']} `}>價格: {price * newQuan}元</p>
             </div>
           <div>
             <ProductDetails id={id} specs={specs} />
