@@ -25,16 +25,16 @@ export default function TeacherSidebar() {
 
   console.log('🔍 Current pathname:', pathname)
 
-  // ✅ 監聽 `teacher` 變化，確保 Sidebar 更新
+  // 監聽 `teacher` 變化，確保 Sidebar 更新
   useEffect(() => {
     if (!teacher) {
-      fetchTeacherById('me') // ✅ 取得當前登入的講師資料
+      fetchTeacherById('me')
     }
     const storedToken = localStorage.getItem(appKey)
     setToken(storedToken)
   }, [teacher])
 
-  // 🔹 登出處理
+  // 登出處理
   const handleLogout = async (e) => {
     e.preventDefault()
     if (!token) return
@@ -52,7 +52,7 @@ export default function TeacherSidebar() {
       setToken(null)
       setUser(null)
 
-      router.push('/login') // ✅ 跳轉至登入頁面
+      router.push('/login')
     } catch (err) {
       console.error('❌ 登出失敗:', err)
       alert(err.message)
@@ -68,10 +68,12 @@ export default function TeacherSidebar() {
         </button>
 
         {/* 📌 Logo 區塊 */}
+        <Link href="/">
         <div className={styles['logo']}>
           <img src="/images/icon/lenstudio-logo.svg" alt="Lenstudio Logo" />
           <hr />
         </div>
+        </Link>
 
         {/* 📌 講師資訊 */}
         <Link href="/teacher/teacher-edit">

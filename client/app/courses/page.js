@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation' // ✅ 確保導入
+import { useSearchParams } from 'next/navigation'
 import styles from './course-list.module.scss'
 import CoursesBanner from './_components/courses-banner/page'
 import CoursesCategory from './_components/courses-category/page'
