@@ -21,7 +21,7 @@ export default function RentCard() {
       return;
     }
 
-    fetch("http://localhost:8000/api/myrent/rent", { 
+    fetch("http://localhost:8000/api/myorders/rent", { 
       method: "GET",
       headers: {
         "Content-Type": "application/json",
