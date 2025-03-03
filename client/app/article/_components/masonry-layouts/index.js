@@ -4,12 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './index.module.scss';
 import Link from 'next/link';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function MasonryLayouts() {
   const router = useRouter();
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
+    AOS.init({ once: true });
+
     const fetchArticles = async () => {
       try {
         // 只取 user_id=48 的文章資料
@@ -41,12 +45,20 @@ export default function MasonryLayouts() {
 
   // renderCard 根據 variant 決定使用小圖或大圖（調整順序由設計決定）
   const renderCard = (article, variant) => (
-    <div className="article-card pb-3" key={article.id}>
+    <div
+      className="article-card pb-3"
+      key={article.id}
+      data-aos="fade-in"
+      data-aos-duration="400"
+    >
       {variant === 'small' ? (
         <div
           className={styles["article-card-2-image"]}
           onClick={() => handleArticleClick(article.id)}
           style={{ cursor: 'pointer' }}
+          data-aos="fade-in"
+          data-aos-delay="0"
+          data-aos-duration="400"
         >
           <img src={article.image_path} alt="" className="w-full h-auto" />
         </div>
@@ -55,11 +67,19 @@ export default function MasonryLayouts() {
           className={styles["article-card-1-image"]}
           onClick={() => handleArticleClick(article.id)}
           style={{ cursor: 'pointer' }}
+          data-aos="fade-in"
+          data-aos-delay="0"
+          data-aos-duration="400"
         >
           <img src={article.image_path} alt="" className="w-full h-auto" />
         </div>
       )}
-      <div className={styles["article-card-content"]}>
+      <div
+        className={styles["article-card-content"]}
+        data-aos="fade-in"
+        data-aos-delay="0"
+        data-aos-duration="300"
+      >
         <div className={styles["article-card-category"]}>
           <a href="">{article.category_name}</a>
         </div>

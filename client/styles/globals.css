@@ -29,9 +29,10 @@
   --ck-content-min-height: 500px !important;
 }
 
-html,
-body {
-  height: 100%;
+
+
+html, body {
+  height: 100%; 
 }
 
 body {
@@ -210,8 +211,8 @@ nav {
 .search-button {
   margin-left: 1.5rem;
   padding: 0.4rem 2rem;
-  border: 1px solid #7e726700;
-  background: #7e7267;
+  border:1px solid #7e726700;
+  background: #7E7267;
   color: #fff;
   border-radius: 25px;
   cursor: pointer;
@@ -220,8 +221,8 @@ nav {
 
 .search-button:hover {
   background: #ffffff;
-  color: #7e7267;
-  border: 1px solid #7e7267;
+  color: #7E7267;
+  border:1px solid #7E7267;
 }
 
 /* 透明緩衝區 */
@@ -311,19 +312,20 @@ nav {
 
 /* ---content--- */
 
-.layout-container {
+.layout-container{
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 200vh; 
 }
 
 .root-content {
-  flex: 1;
+  flex: 1; 
 }
 
 /* --- top btn --- */
 
 .scroll-top-btn {
+  
   position: fixed;
   bottom: 30px;
   right: 30px;
@@ -350,6 +352,7 @@ nav {
 .hvr-icon {
   margin-top: -3px; /* 向上移動 3px，可根據需要調整 */
 }
+
 
 /* ---footer--- */
 footer {
@@ -423,8 +426,6 @@ footer-title {
   font-size: 0.9rem;
   font-weight: 300;
 }
-
-
 .copyright a {
   color: #ffffff;
   text-decoration: none;
@@ -438,6 +439,7 @@ footer-title {
   margin: 0 10px;
   font-size: 0.8rem;
 }
+
 
 .copyrightColor{
   background-color: #f6f6f6;
@@ -492,7 +494,6 @@ footer-title {
 
 /* 響應式樣式 */
 @media screen and (max-width: 1200px) {
-
   header .nav-fixed-1 {
     display: flex;
     align-items: center;
@@ -647,7 +648,9 @@ footer-title {
   cursor: pointer;
   z-index: 10;
   opacity: 0;
-  transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.2s ease-in-out;
 }
 
 .e-card-img:hover .e-favorite-icon {
@@ -655,18 +658,19 @@ footer-title {
   transform: scale(1.1);
 }
 
+
 /*  全局 Toast 樣式 */
 .custom-toast-container .Toastify__toast {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
-  justify-content: flex-start;
+  justify-content: flex-start
 }
 
 /*  成功類型 Toast */
 .Toastify__toast--success {
-  background: var(--primary-color-med) !important;
+  background: var(--primary-color-med) !important; 
   color: var(--white) !important;
   box-shadow: var(--box-shadow);
 }
@@ -678,7 +682,7 @@ footer-title {
 /*  錯誤類型 Toast */
 
 .Toastify__toast--warning {
-  background: var(--secondary-color-med) !important;
+  background: var(--secondary-color-med) !important; 
   color: var(--primary-color) !important;
   box-shadow: var(--box-shadow);
 }
@@ -688,7 +692,7 @@ footer-title {
 }
 
 .Toastify__toast--error {
-  background: var(--warning-color) !important;
+  background: var(--warning-color) !important; 
   color: var(--white) !important;
 }
 
@@ -698,7 +702,7 @@ footer-title {
 
 /*  資訊類型 Toast */
 .Toastify__toast--info {
-  background: var(--secondary-color-dark) !important;
+  background: var(--secondary-color-dark) !important; 
   color: var(--white) !important;
 }
 
@@ -706,28 +710,29 @@ footer-title {
   fill: var(--secondary-color-med) !important;
 }
 
+
 /* ckeditor */
 
 /* .ck{
   border: 1xp solid var(--secondary-color-med) !important;
 } */
 
-.ck-toolbar__separator {
+.ck-toolbar__separator{
   border: 1xp solid var(--secondary-color-med) !important;
 }
 
-.ck.ck-toolbar .ck.ck-toolbar__separator {
+.ck.ck-toolbar .ck.ck-toolbar__separator{
   background: var(--white) !important;
 }
 
-.ck-button:hover {
+.ck-button:hover{
   border-radius: 50px !important;
-  background-color: var(--secondary-color-lig) !important;
+  background-color: var(--secondary-color-lig)!important;
   color: black;
 }
 
 .ck-editor__editable_inline {
-  min-height: 650px;
+  min-height:650px;
 }
 
 .ck-editor__editable h3 {
@@ -735,3 +740,4 @@ footer-title {
   font-weight: bold;
   color: var(--primary-color);
 }
+
