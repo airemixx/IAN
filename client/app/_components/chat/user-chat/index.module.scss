@@ -1,3 +1,7 @@
+@use "sass:color";
+@import '../shared/_variables';
+@import '../shared/_mixins';
+
 .chatWidgetContainer {
   position: fixed;
   bottom: 20px;
@@ -29,7 +33,7 @@
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
-  background-color: #fc671a !important;
+  background-color: color.adjust(#fc671a, $lightness: -10%) !important;
   line-height: 1 !important;
   transform: scale(1);
   overflow: hidden !important; /* 確保內容不會溢出 */
@@ -37,7 +41,7 @@
 
 .chatButton:hover {
   transform: scale(1.05);
-  background-color: darken(#fc671a, 5%) !important;
+  background-color: color.adjust(#fc671a, $lightness: -5%) !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -45,7 +49,7 @@
 .chatButton:focus,
 .chatButton:focus-visible {
   transform: scale(0.95);
-  background-color: darken(#fc671a, 10%) !important;
+  background-color: color.adjust(#fc671a, $lightness: -10%) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
   border: none !important;
   outline: none !important;
@@ -212,6 +216,7 @@
   flex-direction: column;
   overflow: visible;
   word-break: break-word; // 在訊息容器層級也添加換行控制
+  @include message-bubble;
 }
 
 // IG風格訊息氣泡圓角樣式
@@ -266,6 +271,7 @@
   align-self: flex-end;
   margin-right: 0; // 移除右側外邊距
   position: relative;
+  @include user-bubble;
 }
 
 // 客服訊息樣式
@@ -273,6 +279,7 @@
   background: #969696;
   color: #ffffff;
   align-self: flex-start;
+  @include agent-bubble;
 }
 
 // 客服訊息特定樣式 - 鏡像反轉圓角
@@ -326,7 +333,7 @@
 
 // 客服訊息頭像在左側
 .agentMessageRow .avatarContainer {
-  left: 1px; // 從10px減少到5px，更靠左
+  left: 5px; // 從10px減少到5px，更靠左
 }
 
 // 訊息內容
@@ -494,13 +501,13 @@
 }
 
 // 添加頭像相關樣式
-.avatarContainer {
-  margin: 0 2px; // 頭像與訊息的間距
-}
-
 .avatar {
-  width: 30px;
-  height: 30px;
+  width: 30px !important; // 加入 !important 確保優先級
+  height: 30px !important;
+  min-width: 30px !important; // 防止彈性盒子拉伸
+  min-height: 30px !important;
+  max-width: 30px !important; // 防止超出限制
+  max-height: 30px !important;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -541,7 +548,7 @@
 .emoji {
   font-size: 20px !important;
   display: inline-block;
-  vertical-align: center;//
+  vertical-align: center; //
   line-height: 1;
   padding: 0;
 }
@@ -550,18 +557,10 @@
 .timeLabel {
   display: flex;
   justify-content: center;
-  margin: 20px 0;
-  color: #777;
-  font-size: 12px;
-  position: relative;
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    // border-bottom: 1px solid #e0e0e0;
-    margin: auto 10px;
-  }
+  content: '';
+  flex: 1;
+  // border-bottom: 1px solid #e0e0e0;
+  margin: auto 10px;
 }
 
 .image-send-emoji-btn {
@@ -622,7 +621,7 @@
     // 添加這一行確保影片預覽有控制條
     &::-webkit-media-controls {
       display: flex !important;
-      visibility: visible ;
+      visibility: visible;
       opacity: 1 !important;
     }
   }
@@ -669,17 +668,19 @@
   align-items: center;
   z-index: 10000;
   animation: fadeIn 0.3s ease;
+  margin-top: 30px;
 }
 
 .imageViewerContent {
   position: relative;
   max-width: 90%;
-  max-height: 90%;
+  max-height: calc(90% - 90px); // 調整最大高度，考慮 header
+  margin-top: 40px; // 添加上方間距
 }
 
 .enlargedImage {
   max-width: 100%;
-  max-height: 90vh;
+  max-height: 80vh;
   object-fit: contain;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   animation: zoomIn 0.3s ease;
@@ -752,4 +753,8 @@
     max-width: 320px;
     right: 10px;
   }
+}
+
+.onlineIndicator {
+  @include online-indicator;
 }

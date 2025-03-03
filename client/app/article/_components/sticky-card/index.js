@@ -75,7 +75,7 @@ export default function StickyCard() {
           <a href="">{article.category_name}</a>
         </div>
         <h4 className={`${styles["card-title"]} mb-2`}>
-          <a href="">{article.title}</a>
+          <a href={`/article/${article.id}`}>{article.title}</a>
         </h4>
         <div className={`${styles["card-author"]} mb-1 text-sm`}>
           {article.nickname ? article.nickname : article.author_name}

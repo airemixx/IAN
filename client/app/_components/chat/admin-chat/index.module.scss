@@ -1,0 +1,53 @@
+@import '../shared/_variables';
+@import '../shared/_mixins';
+
+.adminChatContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.adminChatWindow {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.userListSection {
+  width: 280px;
+  border-right: 1px solid $border-color;
+  background-color: $light-bg;
+  display: flex;
+  flex-direction: column;
+}
+
+// ... 其他管理员聊天特有的样式，如用户列表、搜索框等
+
+// 重用共享样式
+.message {
+  @include message-bubble;
+}
+
+.userMessage {
+  @include user-bubble;
+}
+
+.agentMessage {
+  @include agent-bubble;
+}
+
+.avatar {
+  @include avatar-style;
+}
+
+.onlineIndicator {
+  @include online-indicator;
+}
