@@ -31,11 +31,13 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                         <div className={`${styles['j-lessonImg']} mt-2 d-flex ms-2 me-2 me-xxl-4`}>
                             <img src={image} alt={name} className={` object-fit-contain`} />
                         </div>
-                        <div className="d-flex align-items-center flex-lg-row  justify-content-sm-center flex-grow-1">
-                            <div>
-                                <span className={`d-flex justify-content-center ${styles['j-lsText']} ms-3 me-2 `}>{name}</span>
+                        <div className="d-flex align-items-center flex-lg-row flex-grow-1">
+                            <div >
+                                <span className={`${styles['j-lsTitle']} ms-3 me-2`}>
+                                    {name}
+                                </span>
                             </div>
-                            <div>
+                            <div className="d-flex flex-grow-1 justify-content-center ps-md-4 ps-lg-5 ms-xxl-4">
                                 <p className={`ps-xxl-4 ms-xxl-2 ms-1 mt-2 mb-2 ${styles['j-lsText']}`}>價格:{price}元</p>
                             </div>
                         </div>
@@ -47,7 +49,7 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                     </div> : ''}
                 </div>
             </div>
-           
+
         </>
 
     );

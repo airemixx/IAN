@@ -14,6 +14,7 @@ export default function CheckoutFormStep2() {
     const [errors, setErrors] = useState({});
     const [selectedOption, setSelectedOption] = useState(null); // 選擇的 buyer 物件
     const [buyerOptions, setBuyerOptions] = useState([]); // API 回傳的訂購人資料
+    const [totalAmount, setTotalAmount] = useState(0); // 新增總價狀態
 
     // 取得使用者 ID，避免 jwtDecode 出錯
     const token = localStorage.getItem("loginWithToken");
@@ -33,6 +34,14 @@ export default function CheckoutFormStep2() {
                 setBuyerOptions([]); // 避免 UI 崩潰
             });
     }, [id]);
+
+    // 計算購物車總價
+    useEffect(() => {
+        const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
+        const cartItems = Object.values(cartData);
+        const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        setTotalAmount(total);
+    }, []);
 
     // 當選擇的訂購人變更時，自動填入 input 欄位
     useEffect(() => {
@@ -117,9 +126,16 @@ export default function CheckoutFormStep2() {
                     </div>
                 ))}
             </div>
+
+            {/* 顯示總價 */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <p className="fw-bold">總價：</p>
+                <p className="fw-bold">${totalAmount.toLocaleString()}</p>
+            </div>
+
             <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center`}>
                 <button
-                    className={`${styles['j-btn']} btn text-alig-center d-flex flex-grow-1 justify-content-center`}
+                    className={`${styles['j-btn']} btn text-align-center d-flex flex-grow-1 justify-content-center`}
                     onClick={handleSubmit}
                 >
                     繼續

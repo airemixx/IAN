@@ -1,8 +1,15 @@
 .j-lsText {
   font-size: 14px;
   color: black;
+  
 }
-
+.j-lsTitle{
+  font-size: 14px;
+  color: black;
+  max-width: 150px;
+  display: block;
+  overflow-wrap: break-word;
+}
 .j-cartItem {
   border-radius: 20px;
   background-color: #fff;
@@ -37,6 +44,6 @@
 
 @media (max-width: 768px) {
   .j-lsText {
-    font-size: 12px;
+    font-size: 15px;
   }
 }
