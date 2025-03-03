@@ -189,7 +189,7 @@ export default function CourseEdit() {
 
   const handleEditorChange = (event, editor) => {
     const data = editor.getData()
-    console.log('編輯器內容變更:', data) // ✅ 確保 CKEditor 內容有變更
+    console.log('編輯器內容變更:', data) 
     setCourse((prev) => ({ ...prev, content: data }))
   }
 

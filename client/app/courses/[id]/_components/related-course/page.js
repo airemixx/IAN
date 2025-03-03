@@ -12,7 +12,7 @@ export default function RelatedCourses({ course }) {
   const [isFavorite, setIsFavorite] = useState(false)
 
   useEffect(() => {
-    if (!course || !course.category) return // ✅ 確保 category 存在
+    if (!course || !course.category || !course.id) return 
 
     const fetchRelatedCourses = async () => {
       try {
@@ -22,8 +22,12 @@ export default function RelatedCourses({ course }) {
         const res = await fetch(API_URL)
         if (!res.ok) throw new Error(`❌ API 錯誤: ${res.statusText}`)
 
-        const data = await res.json()
+        let data = await res.json()
         console.log('✅ API 回傳相關課程:', data)
+
+    
+        data = data.filter(relatedCourse => relatedCourse.id !== course.id)
+
         setRelatedCourses(data)
       } catch (error) {
         console.error('❌ 獲取相關課程失敗:', error)
@@ -33,7 +37,7 @@ export default function RelatedCourses({ course }) {
     }
 
     fetchRelatedCourses()
-  }, [course.category]) // ✅ 監聽 category 變化
+  }, [course.category, course.id]) 
 
   if (loading) return <p>載入中...</p>
   if (relatedCourses.length === 0) return <p>沒有找到相關課程</p>

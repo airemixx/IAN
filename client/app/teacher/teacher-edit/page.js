@@ -141,7 +141,7 @@ export default function TeacherEdit() {
       {teacher !== null ? (
         <form className={styles['teacher-edit']} onSubmit={handleSubmit}>
           <div className="row">
-            <div className="col-md-4">
+            <div className="col col-md-4">
               <div className={styles['form-group']}>
                 <label>
                   講師照片 <span className={styles['required']}>*</span>
