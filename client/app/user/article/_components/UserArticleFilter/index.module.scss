@@ -19,6 +19,11 @@
     text-decoration: underline;
     border: none;
     color: #000;
+
+    &:hover {
+      color: #666666;
+      text-decoration: underline;
+    }
   }
 }
 

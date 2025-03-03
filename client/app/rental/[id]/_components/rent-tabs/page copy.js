@@ -20,7 +20,7 @@ export default function RentTabs({ rental, onDateChange, onFeeChange }) {
           租借內容
         </button>
         <button
-          className={`btn btn-primary tab-radius me-1 ${activeTab === 'spec' ? 'active' : ''
+          className={`btn btn-primary tab-radius ${activeTab === 'spec' ? 'active' : ''
             }`}
           onClick={() => setActiveTab('spec')}
         >

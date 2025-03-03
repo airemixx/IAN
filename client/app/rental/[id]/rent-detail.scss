@@ -47,6 +47,23 @@
     border-color: #e58e41;
   }
 }
+.btn-outline-info {
+  color: #807871;
+  border-color: #807871;
+  transition: none;
+  &:hover,
+  &:active,
+  &:active:focus,
+  &:active:hover {
+    color: #fff;
+    background-color: #807871;
+    border-color: #807871;
+  }
+  &:disabled {
+    color: #807871;
+    border-color: #807871;
+  }
+}
 // 輸入框
 .form-control:focus {
   border: 1px solid #ced4da;
@@ -152,6 +169,9 @@
 .sticky .k-picture-sticky {
   position: sticky;
   top: 144px;
+  @media (max-width: 1540px) {
+    top: 100px;
+  }
 }
 // (小螢幕)
 .relative .k-picture-sticky {
@@ -174,7 +194,9 @@
     background: #143146;
   }
 }
-
+.k-card-radius {
+  border-radius: 0 0 5px 5px;
+}
 // 資料並排
 .k-append-grid {
   display: grid;
@@ -196,6 +218,24 @@
 .k-tbody tr:last-child td {
   border-bottom: none;
   padding-bottom: 0 !important;
+}
+// 須知按鈕
+.k-policy-btn {
+  padding: 0 5px;
+  border: transparent;
+  background: transparent;
+  color: #23425a;
+  font-size: 22px;
+  vertical-align: middle; // 確保圖示與文字垂直置中
+  line-height: 1; // 避免圖示影響行高
+  margin-top: -0.37rem;
+  &:hover,
+  &:active,
+  &:active:focus,
+  &:active:hover,
+  &:disabled {
+    color: #143146;
+  }
 }
 // 商品標籤
 .k-tag-bg {
@@ -310,6 +350,34 @@
 }
 .k-auth-swal-btn-2 {
   background-color: #807871;
+  border-radius: 50px;
+}
+
+// 彈窗(policy)
+.k-policy-swal-top-bar {
+  width: 100%;
+  height: 34px; // 裝飾條的高度
+  background: repeating-linear-gradient(
+    45deg,
+    #fff,
+    #fff 24px,
+    #5292c5 10px,
+    #5292c5 48px
+  );
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+}
+.k-policy-swal-icon {
+  top: 10px;
+}
+.k-policy-swal-popup {
+  padding-top: 10px !important; // 裝飾條
+  overflow: hidden; //  確保裝飾條不會超出邊界
+}
+.k-policy-swal-btn {
+  background-color: #5292c5;
   border-radius: 50px;
 }
 

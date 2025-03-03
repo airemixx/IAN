@@ -23,6 +23,7 @@ import ecpayRouter from './routes/ecpay.js'
 import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
 import likesRouter from './routes/likes.js'
+import userRentalsRouter from './routes/user-rentals.js'
 import users from './routes/users.js'
 import ordersRouter from './routes/orders.js'
 import linePayRouter from './routes/linePay.js'
@@ -128,6 +129,7 @@ app.use('/api/comments', commentsRouter)
 app.use('/api/article_comments', commentsRouter)
 app.use('/api/likes', likesRouter)
 
+app.use('/api/user/rental', userRentalsRouter)
 app.use('/api/users', users)
 app.use('/api/collect', collect)
 

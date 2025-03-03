@@ -358,3 +358,38 @@
 .moreBtnContainer:hover .moreOptions {
   display: block;
 }
+
+.userInfoCard {
+  background-color: white;
+  border-radius: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+
+}
+
+.userName {
+  font-weight: 600;
+  margin: 0;
+}
+
+.userStats {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.statItem {
+  text-align: center;
+  flex: 1;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+}
+.statLabel {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 5px;
+}

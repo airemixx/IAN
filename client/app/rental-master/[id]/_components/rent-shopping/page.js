@@ -5,6 +5,9 @@
 import { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { Howl } from 'howler'
+import { RiInformationFill } from "react-icons/ri";
+
+
 
 export default function RentShopping({ rental, onDateChange, onFeeChange }) {
   // 日期相關的狀態
@@ -125,24 +128,6 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
     return disabledDates
   }
 
-  // // 計算總金額
-  // useEffect(() => {
-  //   if (startDate && endDate) {
-  //     const start = new Date(startDate);
-  //     const end = new Date(endDate);
-  //     const diffTime = Math.abs(end - start);
-  //     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  //     const calculatedFee = diffDays * rental.fee;
-  //     setTotalFee(calculatedFee);
-  //     console.log('總金額計算:', calculatedFee);
-  //     onDateChange(startDate, endDate);
-  //     onFeeChange(calculatedFee);
-  //   } else {
-  //     setTotalFee(0);
-  //     onFeeChange(0);
-  //   }
-  // }, [startDate, endDate, rental.fee, onDateChange, onFeeChange]);
-
   // 🧮 計算總金額，包含禮拜日的折扣邏輯
   useEffect(() => {
     if (startDate && endDate) {
@@ -186,6 +171,153 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
     }
   }, [startDate, endDate, rental.fee, onDateChange, onFeeChange]);
 
+  // 📜 租借須知
+  const handleShowPolicy = () => {
+    Swal.fire({
+      didOpen: () => {
+        const popup = Swal.getPopup();
+        if (popup) {
+          const decorationBar = document.createElement('div');
+          decorationBar.className = 'k-policy-swal-top-bar'; // 添加裝飾條的類別
+          popup.prepend(decorationBar); // 在視窗頂部插入裝飾條
+        }
+      },
+      color: '#fff',
+      icon: 'info',
+      iconColor: '#fff',
+      title: '租借須知',
+      html: `
+      <p class="mb-1">請確認並遵守租借條款，避免產生額外費用。</p>
+      <ul style="text-align: left; padding-left: 71px;">
+        <li>請留意配送時間，請勿造成人員不便。</li>
+        <li>週日由於物流無法配，故無法下單。</li>
+        <li>租借日若包含週日，給予當日半價優惠。</li>
+        <li>若有損壞，可能需支付維修費。</li>
+        <li>超過租期未歸還，將依超時費用計算。</li>
+      </ul>
+    `,
+      background: '#23425a',
+      confirmButtonText: '瞭解',
+      customClass: {
+        icon: 'k-policy-swal-icon',
+        popup: 'k-policy-swal-popup',
+        title: 'k-policy-swal-title',
+        confirmButton: 'k-policy-swal-btn'
+      }
+    });
+  };
+
+  // 🚀 直接租借邏輯
+  const handleRentNow = () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('loginWithToken') : null
+
+    // 錯誤音效
+    const falseSound = new Howl({
+      src: ['/sounds/false.mp3'], // 音效來源 (支援多格式陣列)
+      volume: 0.4, // 調整音量 (0.0 ~ 1.0)
+      loop: false // 是否重複播放
+    });
+
+    if (!token) {
+      Swal.fire({
+        didOpen: () => {
+          const popup = Swal.getPopup();
+          if (popup) {
+            const decorationBar = document.createElement('div');
+            decorationBar.className = 'k-auth-swal-top-bar'; // 添加裝飾條的類別
+            popup.prepend(decorationBar); // 在視窗頂部插入裝飾條
+          }
+          falseSound.play(); // 播放音效
+        },
+        color: '#fff',
+        icon: 'warning',
+        iconColor: '#fff',
+        title: '請先登入',
+        text: '登入後即可租借商品',
+        background: '#23425a',
+        confirmButtonText: '前往登入',
+        cancelButtonText: '稍後前往',
+        showCancelButton: true,
+        customClass: {
+          icon: 'k-auth-swal-icon',
+          popup: 'k-auth-swal-popup',
+          confirmButton: 'k-auth-swal-btn-1',
+          cancelButton: 'k-auth-swal-btn-2'
+        },
+        willClose: () => {
+          falseSound.stop(); // 關閉視窗時停止音效 (適用於長音效)
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login'
+        }
+      })
+      return
+    }
+
+    // 驗證日期是否已選擇
+    if (!startDate || !endDate) {
+      Swal.fire({
+        didOpen: () => {
+          const popup = Swal.getPopup();
+          if (popup) {
+            const decorationBar = document.createElement('div');
+            decorationBar.className = 'k-auth-swal-top-bar'; // 添加裝飾條的類別
+            popup.prepend(decorationBar); // 在視窗頂部插入裝飾條
+          }
+          falseSound.play(); // 播放音效
+        },
+        color: '#fff',
+        icon: 'warning',
+        iconColor: '#fff',
+        title: '請選擇租借日期',
+        text: '開始與結束日期皆為必填項目',
+        confirmButtonText: '前往填寫',
+        background: '#23425a',
+        customClass: {
+          icon: 'k-auth-swal-icon',
+          popup: 'k-auth-swal-popup',
+          confirmButton: 'k-auth-swal-btn-1',
+        },
+        willClose: () => {
+          falseSound.stop(); // 關閉視窗時停止音效 (適用於長音效)
+        }
+      })
+      return
+    }
+
+    // 解析現有的購物車內容
+    const cart = JSON.parse(localStorage.getItem('rent_cart')) || []
+    const existingItem = cart.find((item) => item.rentalId === rental.id)
+
+    // 傳遞圖片
+    const imageUrl = rental?.images?.[0]
+      ? `images/rental/${rental.images[0]}`
+      : '/images/rental/test/Leica-Q3-0.png' // 當沒有圖片時顯示預設圖片 
+
+
+    if (existingItem) {
+      existingItem.start = startDate
+      existingItem.end = endDate
+      existingItem.image = imageUrl // 🆕 更新圖片資料
+      existingItem.fee = totalFee; // 直接將計算後的總金額傳遞
+    } else {
+      cart.push({
+        rentalId: rental.id,
+        brand: rental.brand,
+        name: rental.name,
+        fee: totalFee, // 傳遞運算過的總金額（折扣後）
+        start: startDate,
+        end: endDate,
+        image: imageUrl // 🆕 新增圖片資料
+      })
+    }
+
+    localStorage.setItem('rent_cart', JSON.stringify(cart))
+
+    // 🚀 直接跳轉到 `/cart`
+    window.location.href = '/cart';
+  }
 
   // 🛒 加入購物車邏輯
   const handleAddToCart = () => {
@@ -341,7 +473,15 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
 
   return (
     <div className="mt-3">
-      <h5 className="card-title k-main-text">租借時段</h5>
+      <h5 className="card-title k-main-text"><span>租借時段</span>
+        <button
+          className="k-policy-btn"
+          onClick={handleShowPolicy}
+        >
+          <RiInformationFill />
+
+        </button>
+      </h5>
       <div className="mt-2 m-3">
         <label htmlFor="startDate">開始日期</label>
         <input
@@ -378,7 +518,13 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
       </div>
 
       <div className="d-flex justify-content-end m-1">
-        <button className="btn btn-primary k-main-radius me-1">
+        <button
+          className="btn btn-primary k-main-radius me-1"
+          onClick={handleRentNow}
+          disabled={
+            isSunday(startDate) ||
+            isSunday(endDate)
+          }>
           立即租借
         </button>
         <button

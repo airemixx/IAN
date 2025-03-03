@@ -224,23 +224,36 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
     <div
       className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}
     >
-      <input
-        type="text"
-        id="comment"
-        className="p-2 py-3"
-        placeholder="留言"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            handleSubmit()
-          }
-        }}
-        style={{
-          // 若文字開頭為 '@' 則設定 fontWeight 
-          fontWeight: comment.trim().startsWith('@') ? 700 : 'normal'
-        }}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <img
+          src={user?.head || "/images/user.png"}
+          alt="用戶頭像"
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            objectFit: 'cover',
+            border: '1px solid #ddd'
+          }}
+        />
+
+        <input
+          type="text"
+          id="comment"
+          className="p-2 py-3"
+          placeholder="我有話想說...."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSubmit()
+            }
+          }}
+          style={{
+            fontWeight: comment.trim().startsWith('@') ? 700 : 'normal'
+          }}
+        />
+      </div>
       <input
         type="file"
         accept="image/*,video/*"

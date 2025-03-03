@@ -3,12 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './index.module.scss';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function StickyCard() {
   const router = useRouter();
   const [article, setArticle] = useState(null);
 
   useEffect(() => {
+    // 初始化 AOS，使用與 MasonryLayouts 相同的配置
+    AOS.init({ once: true });
+
     const fetchArticle = async () => {
       try {
         // 從 API 取得 user_id=48 的文章資料
@@ -45,19 +50,32 @@ export default function StickyCard() {
       className={styles["card-custom"]}
       onClick={handleClick}
       style={{ cursor: 'pointer' }}
+      data-aos="fade-in"
+      data-aos-duration="400"
     >
       <img
         src={article.image_path}
         alt="Background"
         className={styles["card-background"]}
+        data-aos="fade-in"
+        data-aos-delay="100"
+        data-aos-duration="400"
       />
-      <div className={`${styles["card-overlay"]} absolute inset-0`}></div>
-      <div className={`${styles["card-content"]} absolute`}>
+      <div
+        className={`${styles["card-overlay"]}`}
+      // 移除 AOS 屬性，讓 hover 效果可以正常工作
+      ></div>
+      <div
+        className={`${styles["card-content"]} absolute`}
+        data-aos="fade-in"
+        data-aos-delay="200"
+        data-aos-duration="500"
+      >
         <div className={styles["card-category"]}>
           <a href="">{article.category_name}</a>
         </div>
         <h4 className={`${styles["card-title"]} mb-2`}>
-          <a href="">{article.title}</a>
+          <a href={`/article/${article.id}`}>{article.title}</a>
         </h4>
         <div className={`${styles["card-author"]} mb-1 text-sm`}>
           {article.nickname ? article.nickname : article.author_name}
