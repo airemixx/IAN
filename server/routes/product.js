@@ -108,7 +108,7 @@ router.get("/", async (req, res) => {
     res.json(rows);
   } catch (error) {
     console.error("獲取商品錯誤:", error);
-    res.status(500).json({ error: "無法獲取商品", details: error.message });
+    res.json({ error: "無法獲取商品", details: error.message });
   }
 });
 
@@ -117,7 +117,7 @@ router.get("/test", async (req, res) => {
     res.json({ message: "API is working!" });
   } catch (error) {
     console.error("測試路由錯誤:", error);
-    res.status(500).json({ error: "無法獲取測試資料", details: error.message });
+    res.json({ error: "無法獲取測試資料", details: error.message });
   }
 });
 
@@ -136,7 +136,7 @@ router.get("/ads", async (req, res) => {
     res.json(ads);
   } catch (error) {
     console.error("獲取廣告錯誤:", error);
-    res.status(500).json({ error: "無法獲取廣告", details: error.message });
+    res.json({ error: "無法獲取廣告", details: error.message });
   }
 });
 
@@ -158,7 +158,7 @@ router.get("/filters", async (req, res) => {
 
   } catch (error) {
     console.error("獲取篩選條件錯誤:", error);
-    res.status(500).json({ error: "無法獲取篩選條件", details: error.message });
+    res.json({ error: "無法獲取篩選條件", details: error.message });
   }
 })
 
@@ -172,7 +172,7 @@ router.get("/brand", async (req, res) => {
     res.json(brand);
   } catch (error) {
     console.error("取得品牌時發生錯誤:", error);
-    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+    res.json({ error: "伺服器錯誤", details: error.message });
   }
 });
 
@@ -199,7 +199,7 @@ router.get("/:id", async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ error: "商品未找到" });
+      return res.json({ error: "商品未找到" });
     }
 
     const [images] = await connection.query(
@@ -231,7 +231,7 @@ router.get("/:id", async (req, res) => {
 
   } catch (error) {
     console.error("取得商品错误:", error);
-    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+    res.json({ error: "伺服器錯誤", details: error.message });
   }
 });
 
@@ -258,7 +258,7 @@ router.get("/related/:brand_id/:current_id", async (req, res) => {
     res.json(products);
   } catch (error) {
     console.error("取得相關產品錯誤:", error);
-    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+    res.json({ error: "伺服器錯誤", details: error.message });
   }
 });
 
@@ -273,13 +273,13 @@ router.get("/spec/:id", async (req, res) => {
     connection.release();
 
     if (!rows || rows.length === 0) {
-      return res.status(404).json({ error: `找不到 product_id = ${id} 的規格` });
+      return res.json({ error: `找不到 product_id = ${id} 的規格` });
     }
 
     res.json(rows[0]);
   } catch (error) {
     console.error("伺服器錯誤:", error);
-    res.status(500).json({ error: "伺服器錯誤，請檢查 API" });
+    res.json({ error: "伺服器錯誤，請檢查 API" });
   }
 });
 
@@ -289,7 +289,7 @@ const authenticateUser = (req, res, next) => {
 
   if (!token) {
     console.error("錯誤: 缺少 Token");
-    return res.status(401).json({ error: "未授權，請先登入" });
+    return res.json({ error: "未授權，請先登入" });
   }
 
   try {
@@ -300,7 +300,7 @@ const authenticateUser = (req, res, next) => {
     next();
   } catch (error) {
     console.error("Token 驗證失敗:", error);
-    return res.status(403).json({ error: "無效的 Token" });
+    return res.json({ error: "無效的 Token" });
   }
 };
 
@@ -328,7 +328,7 @@ router.post('/update-product-id', async (req, res) => {
     return res.json({ status: 'success', productId });
   } catch (err) {
     console.error('更新 product_id 錯誤:', err.stack);
-    return res.status(500).json({ status: 'error', message: err.message });
+    return res.json({ status: 'error', message: err.message });
   }
 });
 
@@ -339,7 +339,7 @@ router.post("/collection", authenticateUser, async (req, res) => {
     const user_id = req.user.id;
 
     if (!product_id) {
-      return res.status(400).json({ error: "缺少 product_id" });
+      return res.json({ error: "缺少 product_id" });
     }
 
     console.log("🔹 接收到的收藏請求:", { user_id, product_id });
@@ -350,7 +350,7 @@ router.post("/collection", authenticateUser, async (req, res) => {
     );
 
     if (existing.length > 0) {
-      return res.status(400).json({ message: "此商品已收藏" });
+      return res.json({ message: "此商品已收藏" });
     }
 
     const [result] = await pool.query(
@@ -362,7 +362,7 @@ router.post("/collection", authenticateUser, async (req, res) => {
     res.json({ message: "成功加入收藏", data: result });
   } catch (error) {
     console.error("收藏失敗:", error);
-    res.status(500).json({ error: "伺服器錯誤" });
+    res.json({ error: "伺服器錯誤" });
   }
 });
 
@@ -373,7 +373,7 @@ router.delete("/collection", authenticateUser, async (req, res) => {
     const user_id = req.user.id;
 
     if (!product_id) {
-      return res.status(400).json({ error: "缺少 product_id" });
+      return res.json({ error: "缺少 product_id" });
     }
 
     console.log("🔹 刪除收藏請求:", { user_id, product_id });
@@ -385,7 +385,7 @@ router.delete("/collection", authenticateUser, async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "收藏記錄不存在" });
+      return res.json({ error: "收藏記錄不存在" });
     }
 
     console.log("收藏刪除成功:", result);
@@ -393,7 +393,7 @@ router.delete("/collection", authenticateUser, async (req, res) => {
 
   } catch (error) {
     console.error("刪除收藏失敗:", error);
-    res.status(500).json({ error: "伺服器錯誤" });
+    res.json({ error: "伺服器錯誤" });
   }
 });
 
@@ -410,9 +410,8 @@ router.get("/collection/:productId", authenticateUser, async (req, res) => {
     res.json({ isFavorite: result.length > 0 });
   } catch (error) {
     console.error("獲取收藏狀態失敗:", error);
-    res.status(500).json({ error: "伺服器錯誤" });
+    res.json({ error: "伺服器錯誤" });
   }
 });
-
 
 export default router;
