@@ -1,6 +1,9 @@
+// rent-card
+
 import React, { useState, useEffect } from 'react';
 import styles from "./RentCard.module.scss";
 import Link from 'next/link'
+import RentReviews from '../rent-reviews/page';
 
 export default function RentCard() {
   const [rentals, setRentals] = useState([]);
@@ -21,7 +24,7 @@ export default function RentCard() {
       return;
     }
 
-    fetch("http://localhost:8000/api/myorders/rent", { 
+    fetch("http://localhost:8000/api/myorders/rent", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +43,7 @@ export default function RentCard() {
       })
       .then(data => {
         console.log("API 回應資料:", data);
-        setRentals(data.products || []); 
+        setRentals(data.products.map(rental => ({ ...rental, comment_at: rental.comment_at || null })) || []);
         setLoading(false);
       })
       .catch(error => {
@@ -65,43 +68,39 @@ export default function RentCard() {
         {rentals.length === 0 ? (
           <div className="text-center">暫無租賃紀錄</div>
         ) : (
-          rentals.map((rental) => (
-            <div key={rental.rental_order_id} className="col-12 col-md-6 col-lg-4">
-              <div className={`p-4 ${styles.collectionCard}`}>
-                <div 
-                  className={`text-end ${styles.maturity}`} 
-                  style={{ color: rental.status === "已完成" ? "green" : "red" }}
-                >
-                  {rental.status}
-                </div>
-                {/* ✅ 確保圖片可用 */}
-                <img 
-                  src={rental.image_url || "/images/product/default.png"} 
-                  alt={rental.product_name} 
-                  className="mb-3 img-fluid"
-                />
-                <div className={styles.cardDivider} />
-                <h6 className={styles.textGray}>{rental.brand_name}</h6>
-                <h5 className="mb-3">{rental.product_name}</h5>
-                <div>
-                  <h6>租賃日期: {formatDate(rental.start_date)}</h6>
-                  <h6 className={styles.maturity}>  到期日期:   {formatDate(rental.end_date)}</h6>
+          rentals.map((rental) => {
+            return (
+              <div key={rental.rental_order_id} className="col-12 col-md-6 col-lg-4">
+                <div className={`p-4 ${styles.collectionCard}`}>
+                  <div className={`text-end ${styles.maturity}`} style={{ color: rental.status === "已完成" ? "green" : "red" }}>
+                    {rental.status}
+                  </div>
+                  <img src={rental.image_url || "/images/product/default.png"} alt={rental.product_name} className="mb-3 img-fluid" />
+                  <div className={styles.cardDivider} />
+                  <h6 className={styles.textGray}>{rental.brand_name}</h6>
+                  <h5 className="mb-3">{rental.product_name}</h5>
+                  <div>
+                    <h6>租賃日期: {formatDate(rental.start_date)}</h6>
+                    <h6 className={styles.maturity}>到期日期: {formatDate(rental.end_date)}</h6>
+                  </div>
+                  <RentReviews key={rental.rental_order_id} reviews={[{ ...rental, id: rental.rental_order_id }]} />
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
 
+
         {/* ✅ 添加收藏區塊 */}
-  
+
         <div className="col-12 col-md-6 col-lg-4">
-        <Link href="/rental" className={`${styles.noUnderline}`}>
-          <div className={`${styles.addCollection} ${styles.collectionCard}`}>
-            <div className="text-center">
-              <div className={`${styles.addCircle} mx-auto mb-2`} />
-              <h5>尋找租賃相機</h5>
+          <Link href="/rental" className={`${styles.noUnderline}`}>
+            <div className={`${styles.addCollection} ${styles.collectionCard}`}>
+              <div className="text-center">
+                <div className={`${styles.addCircle} mx-auto mb-2`} />
+                <h5>尋找租賃相機</h5>
+              </div>
             </div>
-          </div>
           </Link>
         </div>
       </div>
