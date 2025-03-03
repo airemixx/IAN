@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { jwtDecode } from 'jwt-decode';
 import moment from "moment";
 import Swal from "sweetalert2";
@@ -19,12 +19,8 @@ export default function CheckoutFormStep1({ slItem }) {
   const [checkState, setCheckState] = useState(false);
   const [cpName, setCpName] = useState("");
   const [couponData, setCouponData] = useState([]);
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const [selectedCoupons, setSelectedCoupons] = useState([]);
 
-  const handleClose = () => {
-    setCheckState(false);
-    setShow(false);
-  };
 
   // 計算原始價格
   useEffect(() => {
@@ -33,6 +29,15 @@ export default function CheckoutFormStep1({ slItem }) {
       setPrice(itemPrice);
     }
   }, [slItem]);
+
+  const handleClose = () => {
+    setCheckState(false);
+    setShow(false);
+  };
+
+  function handsumbit() {
+    setShow(false);
+  }
 
   function handleClick() {
     if (slItem && slItem.length > 0) {
@@ -51,21 +56,19 @@ export default function CheckoutFormStep1({ slItem }) {
   }
 
   async function handleCheck() {
-    setCheckState(!checkState);
     if (!checkState) {
       setCheckState(true);
       setShow(true);
       await fetchCoupon();
     } else {
+      // 取消選取優惠券時，清空狀態
+      setCheckState(false);
       setCpName("");
-      setDiscount(0); // 取消優惠券，折扣歸零
-      setSelectedCoupon(null);
+      setDiscount(0);
+      setSelectedCoupons([]);
     }
   }
 
-  function handsumbit() {
-    setShow(false);
-  }
 
   async function fetchCoupon() {
     try {
@@ -85,22 +88,66 @@ export default function CheckoutFormStep1({ slItem }) {
   }
 
   function handleCouponSelect(coupon) {
-    if (selectedCoupon === coupon.code) {
-      setSelectedCoupon(null);
-      setCpName("");
-      setDiscount(0); // 取消折扣
-    } else {
-      setSelectedCoupon(coupon.code);
-      setCpName(coupon.cpName);
-      console.log(coupon.disType);
-      if (coupon.disType === "fixed") {
-        setDiscount(coupon.discount); // 固定折扣金額 (如 NT$1500)
-      } else if (coupon.disType === "percent") {
-        const percentOff = (price * coupon.discount) / 100; // 計算折扣金額
-        setDiscount(Math.min(percentOff, price)); // 確保不超過原價
-      }
+    let productTotal = 0;
+    let lessionTotal = 0;
+
+    // 計算不同 type 商品的總價
+    if (slItem && Array.isArray(slItem)) {
+      slItem.forEach((item) => {
+        if (item.type === "product") {
+          productTotal += item.price * item.quantity;
+        } else if (item.type === "lession") {
+          lessionTotal += item.price * item.quantity;
+        }
+      });
     }
+
+    // 檢查優惠券條件
+    if (coupon.disType === "fixed" && productTotal < 50000) {
+      Swal.fire({
+        icon: "warning",
+        title: "優惠券條件不符合",
+        text: "此優惠券需購買滿 NT$50,000 的商品（類型: 產品）",
+      });
+      return;
+    }
+
+    if (coupon.disType === "percent" && lessionTotal < 2000) {
+      Swal.fire({
+        icon: "warning",
+        title: "優惠券條件不符合",
+        text: "此優惠券需購買滿 NT$2,000 的商品（類型: 課程）",
+      });
+      return;
+    }
+
+    // 更新選擇的優惠券陣列
+    setSelectedCoupons((prevCoupons) => {
+      let updatedCoupons = [...prevCoupons];
+
+      const index = updatedCoupons.findIndex((c) => c.code === coupon.code);
+      if (index !== -1) {
+        updatedCoupons.splice(index, 1); // 取消選擇
+      } else {
+        updatedCoupons.push(coupon); // 新增優惠券
+      }
+
+      // 計算總折扣
+      let totalDiscount = updatedCoupons.reduce((acc, c) => {
+        if (c.disType === "fixed") {
+          return acc + 1500;
+        } else if (c.disType === "percent") {
+          return acc + Math.floor((lessionTotal * 5) / 100);
+        }
+        return acc;
+      }, 0);
+
+      setDiscount(Math.min(totalDiscount, price)); // 折扣不能超過總價
+      return updatedCoupons;
+    });
   }
+
+
 
   // 計算折扣後的總額（確保不低於 0）
   const totalPrice = Math.max(price - discount, 0);
@@ -115,6 +162,7 @@ export default function CheckoutFormStep1({ slItem }) {
             是否使用優惠券
           </label>
         </div>
+
         <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className={`${styles["j-model"]}`}>
           <Modal.Header closeButton>
             <Modal.Title>選擇優惠券</Modal.Title>
@@ -125,7 +173,8 @@ export default function CheckoutFormStep1({ slItem }) {
                 couponData.map((coupon, index) => (
                   <div
                     key={index}
-                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 ${cpName === coupon.cpName ? styles["j-selected"] : ""}`}
+                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 
+        ${selectedCoupons === coupon.code ? styles["j-selected"] : ""}`}
                     onClick={() => handleCouponSelect(coupon)}
                   >
                     <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
@@ -133,7 +182,6 @@ export default function CheckoutFormStep1({ slItem }) {
                       {moment(coupon.end_date).format("YYYY-MM-DD HH:mm:ss")}
                     </span>
                     <span>{coupon.cpName}</span>
-                    
                   </div>
                 ))
               ) : (
@@ -151,8 +199,12 @@ export default function CheckoutFormStep1({ slItem }) {
           </Modal.Footer>
         </Modal>
 
-        <div className={`${styles["couponName"]} d-flex flex-column ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
-          {cpName ? `已選擇優惠券: ${cpName}` : "未使用優惠券"}
+        <div className={`${styles["couponName"]} d-flex flex-column`}>
+          {selectedCoupons.length > 0 ? (
+            <span>已選擇優惠券: {selectedCoupons.map(c => c.cpName).join(", ")}</span>
+          ) : (
+            "未使用優惠券"
+          )}
         </div>
         <div className={`${styles["subTotalBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["subTotal"]}>小計</div>

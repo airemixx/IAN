@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
     try {
         // 插入資料
         const [result] = await pool.execute(
-            `SELECT u.id as code, c.discount_Type as disType, c.type, c.name as cpName, c.start_date, c.end_date, c.discount, c.img FROM users u 
+            `SELECT uc.id as code, c.discount_type as disType, c.type, c.name as cpName, c.start_date, c.end_date, c.discount, c.img FROM users u 
             inner Join user_coupon uc on uc.user_id = u.id 
             inner Join coupon c on c.id = uc.coupon_id WHERE u.id = ?;
          `,[userId]

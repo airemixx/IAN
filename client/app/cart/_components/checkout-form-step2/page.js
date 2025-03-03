@@ -58,7 +58,7 @@ export default function CheckoutFormStep2() {
 
     const handleSelectChange = (e) => {
         const selectedId = e.target.value;
-        const buyer = buyerOptions.find((b) => String(b.id) === selectedId);
+        const buyer = buyerOptions.find((b) => String(b.address) === selectedId);
         setSelectedOption(buyer || null);
     };
 
