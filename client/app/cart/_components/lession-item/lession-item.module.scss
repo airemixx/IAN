@@ -34,16 +34,25 @@
   .j-lsText {
     font-size: 16px;
   }
+  .j-lsTitle{
+    max-width: 240px;
+  }
 }
 
 @media (max-width: 1200px) {
   .j-delBtn {
     left: 90%;
   }
+  .j-lsTitle{
+    max-width: 200px;
+  }
 }
 
 @media (max-width: 768px) {
   .j-lsText {
     font-size: 15px;
+  }
+  .j-lsTitle{
+    max-width: 160px;
   }
 }

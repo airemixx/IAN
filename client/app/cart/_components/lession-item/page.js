@@ -25,7 +25,7 @@ export default function LessonItem({ lessionitem, page, length, id }) {
     }
     return (
         <>
-            <div className="d-flex flex-grow-1">
+            <div className="d-none d-sm-block d-flex flex-grow-1">
                 <div className={`${styles['j-cartItemBox']} d-flex flex-grow-1 justify-content-between position-relative`}>
                     <div className={"d-flex flex-grow-1"}>
                         <div className={`${styles['j-lessonImg']} mt-2 d-flex ms-2 me-2 me-xxl-4`}>
@@ -37,8 +37,8 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                                     {name}
                                 </span>
                             </div>
-                            <div className="d-flex flex-grow-1 justify-content-center ps-md-4 ps-lg-5 ms-xxl-4">
-                                <p className={`ps-xxl-4 ms-xxl-2 ms-1 mt-2 mb-2 ${styles['j-lsText']}`}>價格:{price}元</p>
+                            <div className="d-flex flex-grow-1 justify-content-center ps-md-4 ps-lg-0 ps-xxl-2">
+                                <p className={`ms-1 mt-2 mb-2 ${styles['j-lsText']}`}>價格:{price}元</p>
                             </div>
                         </div>
                     </div>
@@ -49,7 +49,30 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                     </div> : ''}
                 </div>
             </div>
-
+            <div className="d-sm-none d-block d-flex flex-grow-1">
+                <div className={`${styles['j-cartItemBox']} d-flex flex-grow-1 justify-content-between position-relative`}>
+                    <div className={"d-flex flex-grow-1"}>
+                        <div className={`${styles['j-lessonImg']} mt-2 d-flex ms-2 me-2 me-xxl-4`}>
+                            <img src={image} alt={name} className={` object-fit-contain`} />
+                        </div>
+                        <div className="d-flex flex-column align-items-center flex-grow-1  justify-content-center">
+                            <div >
+                                <span className={`${styles['j-lsTitle']} mt-2 ms-3 me-2`}>
+                                    {name}
+                                </span>
+                            </div>
+                            <div className="d-flex justify-content-center ps-md-4 ps-lg-5 ms-xxl-4">
+                                <p className={`ps-xxl-4 ms-xxl-2 ms-1 mt-2 ${styles['j-lsText']}`}>價格:{price}元</p>
+                            </div>
+                        </div>
+                    </div>
+                    {page ? <div className={`${styles['j-delBtn']} position-absolute`}>
+                        <button className="btn" onClick={handleDeleteItem}>
+                            ✕
+                        </button>
+                    </div> : ''}
+                </div>
+            </div>
         </>
 
     );
