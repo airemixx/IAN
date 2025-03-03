@@ -34,6 +34,7 @@ import courseCvUploadRouter from './routes/courses-cv-upload.js'
 import teacherUploadRouter from './routes/teacher-upload.js'
 import couponRouter from './routes/coupon.js'
 import collect from './routes/collect.js'
+import myorders from './routes/myorders.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -132,6 +133,7 @@ app.use('/api/likes', likesRouter)
 app.use('/api/user/rental', userRentalsRouter)
 app.use('/api/users', users)
 app.use('/api/collect', collect)
+app.use('/api/myorders', myorders)
 
 
 
