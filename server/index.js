@@ -26,6 +26,7 @@ import likesRouter from './routes/likes.js'
 import users from './routes/users.js'
 import ordersRouter from './routes/orders.js'
 import linePayRouter from './routes/linePay.js'
+import addressRouter from './routes/address.js'
 import { serverConfig } from './config/server.config.js'
 import courseCtUploadRouter from './routes/courses-ct-upload.js'
 import courseCvUploadRouter from './routes/courses-cv-upload.js'
@@ -116,6 +117,7 @@ app.use("/uploads", express.static(path.join(process.cwd(), "/public/uploads")))
 app.use('/api/rental', rentalRouter)
 app.use('/api/rental-master', rentalMasterRouter)
 
+app.use('/api/address', addressRouter)
 app.use('/api/coupon', couponRouter)
 app.use('/api/ecpay', ecpayRouter)
 app.use('/api/linePay', linePayRouter)

@@ -70,49 +70,100 @@ export default function CartItem({ id, itemData, page }) {
     }
   }
   return (
-    <div className="d-flex flex-grow-1">
-      <div className="d-flex flex-grow-1 flex-column">
-        <div className={`${styles['j-cartItem']} d-flex flex-grow-1 flex-column flex-sm-column flex-xl-row align-items-center align-items-sm-center position-relative`}>
-          <div className={`${styles['j-cameraImg']} m-2 `}>
-            <img src={image} alt={brand} className="object-fit-contain" />
-          </div>
-          <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
-            <div className={`${styles['j-content']} d-flex justify-content-around align-items-center flex-grow-1`}>
-              <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0`}>
-                <div className="ms-lg-2 ms-xl-0">
-                  <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
-                  <br />
-                  <span className={`${styles['j-model']} ${styles['j-publicFont']}`}>{name}</span>
-                </div>
-                <button
-                  className={`${styles['j-detailcollapse']} ms-lg-2 ms-xl-0`}
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target={`#collapseExample${id}`}
-                >
-                  +詳細資訊
-                </button>
-              </div>
-              {page == 1 ? <div className={`${styles['j-amount']} d-flex flex-row align-items-center justify-content-center justify-content-sm-start`}>
-                <button className={`${styles['j-increase']} btn pb-0 ps-0 pt-0`}
-                  onClick={handleClickInc}>+</button>
-                <p className={`${styles['j-amount-text']} mb-0 ${styles['j-publicFont']} text-center`}>{newQuan}</p>
-                <button className={`${styles['j-decrease']} btn pb-0 ps-2 pt-0`}
-                  onClick={handleClickDec}>-</button>
-              </div> : ''}
-              <p className={`${styles['j-price']} me-3 `}>價格: {price}元</p>
+    <>
+      <div className="d-none d-sm-block d-flex flex-grow-1">
+        <div className="d-flex flex-grow-1 flex-column">
+          <div className={`${styles['j-cartItem']} d-flex flex-grow-1  flex-xl-row align-items-center align-items-sm-center position-relative`}>
+            <div className={`${styles['j-cameraImg']} m-2 `}>
+              <img src={image} alt={brand} className="object-fit-contain" />
             </div>
+            <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
+              <div className={`${styles['j-content']} d-flex justify-content-around align-items-center flex-grow-1`}>
+                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0`}>
+                  <div className="ms-lg-2 ms-xl-0">
+                    <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
+                    <br />
+                    <span className={`${styles['j-model']} ${styles['j-publicFont']}`}>{name}</span>
+                  </div>
+                  <button
+                    className={`${styles['j-detailcollapse']} ms-lg-2 ms-xl-0`}
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target={`#collapseExample${id}`}
+                  >
+                    +詳細資訊
+                  </button>
+                </div>
+                {page == 1 ? <div className={`${styles['j-amount']} d-flex flex-row align-items-center justify-content-center justify-content-sm-start ms-xxl-4 me-ccl-4`}>
+                  <button className={`${styles['j-decrease']} btn pb-0 ps-2 pt-0 pe-0`}
+                    onClick={handleClickDec}>-</button>
+                  <p className={`${styles['j-amount-text']} mb-0 ${styles['j-publicFont']} text-center`}>{newQuan}</p>
+                  <button className={`${styles['j-increase']} btn pb-0 ps-0 pt-0`}
+                    onClick={handleClickInc}>+</button>
+                </div> : ''}
+                <p className={`${styles['j-price']} me-sm-3`}>價格: {price}元</p>
+              </div>
+            </div>
+            {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
+              <button className="btn" onClick={handleDeleteItem}>
+                ✕
+              </button>
+            </div> : ''}
           </div>
-          {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
-            <button className="btn" onClick={handleDeleteItem}>
-              ✕
-            </button>
-          </div> : ''}
-        </div>
-        <div>
-          <ProductDetails id={id} specs={specs} />
+          <div>
+            <ProductDetails id={id} specs={specs} />
+          </div>
         </div>
       </div>
-    </div>
+      <div className="d-sm-none d-block d-flex flex-grow-1">
+        <div className="d-flex flex-grow-1 flex-column">
+          <div className={`${styles['j-cartItem']} d-flex flex-grow-1  flex-xl-row align-items-center align-items-sm-center position-relative`}>
+            <div className={`${styles['j-cameraImg']} m-2 `}>
+              <img src={image} alt={brand} className="object-fit-contain" />
+            </div>
+            <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
+              <div className={`${styles['j-content']} d-flex justify-content-around align-items-center flex-grow-1`}>
+                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0`}>
+                  <div className="ms-lg-2 ms-xl-0">
+                    <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
+                    <br />
+                    <span className={`${styles['j-model']} ${styles['j-publicFont']}`}>{name}</span>
+                  </div>
+                  <button
+                    className={`${styles['j-detailcollapse']} ms-lg-2 ms-xl-0`}
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target={`#collapseExample${id}`}
+                  >
+                    +詳細資訊
+                  </button>
+                </div>
+
+              </div>
+            </div>
+            
+            {page == 1 ? <div className={`${styles['j-delBtn']} position-absolute`}>
+              <button className="btn" onClick={handleDeleteItem}>
+                ✕
+              </button>
+            </div> : ''}
+          </div>
+          <div className="d-flex justify-content-around mb-3">
+              {page == 1 ? <div className={`${styles['j-amount']} d-flex flex-row align-items-center justify-content-center justify-content-sm-start`}>
+                <button className={`${styles['j-decrease']} btn pb-0 ps-2 pt-0 pe-0`}
+                  onClick={handleClickDec}>-</button>
+                <p className={`${styles['j-amount-text']} mb-0 ${styles['j-publicFont']} text-center`}>{newQuan}</p>
+                <button className={`${styles['j-increase']} btn pb-0 ps-0 pt-0`}
+                  onClick={handleClickInc}>+</button>
+              </div> : ''}
+              <p className={`${styles['j-price']} `}>價格: {price}元</p>
+            </div>
+          <div>
+            <ProductDetails id={id} specs={specs} />
+          </div>
+        </div>
+      </div>
+    </>
+
   );
 }

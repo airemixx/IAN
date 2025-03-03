@@ -8,12 +8,6 @@
   
 }
 
-.shoppingRent {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
 .j-rentImg {
   margin: 8px;
   display: flex;
@@ -21,8 +15,8 @@
 }
 
 .j-rentImg img {
-  width: 185px;
-  height: 199px;
+  width: 109px;
+  height: 89px;
 }
 
 .j-rentCameraBrand {
@@ -32,7 +26,6 @@
   font-weight: 400;
   line-height: normal;
   align-items: center;
-  margin-bottom: 12px;
 }
 
 .j-rentDeadLine {
@@ -49,7 +42,14 @@
 .j-delBtn{
   left: 92.5%;
 }
-
+@media (max-width: 1400px){
+  .j-rtText{
+    font-size: 14px;
+  }
+  .j-rentDeadLine{
+    font-size: 14px;
+  }
+}
 @media (max-width: 1200px){
   .j-delBtn{
     left: 90%;

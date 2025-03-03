@@ -137,7 +137,7 @@ export default function cartPageOne() {
         <div className={`container ${styles['j-bodyHeight']}`}>
           <CartTitle count={(cartProduct.length + cartLession.length + cartRent.length)} />
           <div className="row d-flex justify-content-center">
-            <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-6 p-0`}>
+            <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-7 col-xl-6 p-0`}>
               <div className="j-cartItemsBox d-none d-sm-block p-0">
                 <div>
                   <input
