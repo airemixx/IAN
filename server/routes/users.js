@@ -727,6 +727,42 @@ router.get("/favorites/me", checkToken, async (req, res) => {
 });
 
 //collect end //
+
+//user rent//
+router.get("/rent", checkToken, async (req, res) => {
+  try {
+    const connection = await db.getConnection();
+    const userId = req.decoded.id;
+
+    console.log(`🔍 取得租賃資料，使用者 ID: ${userId}`);
+
+    // SQL 查詢用戶的租賃訂單，包含商品名稱與圖片
+    const [products] = await connection.query(
+      `SELECT rentals.id, rentals.rent_id, rentals.rent_fee, rentals.start_date, rentals.end_date, rentals.status, 
+              rentals.rating, rentals.comment, rentals.comment_at, users.name AS user_name, 
+              products.product_name, products.image_url 
+       FROM rentals 
+       JOIN users ON rentals.user_id = users.id
+       LEFT JOIN products ON rentals.rent_id = products.id
+       WHERE rentals.user_id = ?
+       ORDER BY rentals.start_date DESC`,
+      [userId]
+    );
+
+    connection.release(); // ✅ 釋放連線
+
+    if (products.length === 0) {
+      return res.json({ products: [] });
+    }
+
+    res.json({ products });
+  } catch (error) {
+    console.error("🚨 取得租賃訂單錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
+
+//user end //
 function checkToken(req, res, next) {
   let token = req.get("Authorization");
   if (!token) return res.status(401).json({
