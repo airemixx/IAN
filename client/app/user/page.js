@@ -6,6 +6,7 @@ import useAuth from '@/hooks/use-auth'
 import Sidenav from './_components/Sidenav/page'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { MdEdit, MdDelete } from "react-icons/md";
 
 
 export default function UserPage(props) {
@@ -249,14 +250,26 @@ export default function UserPage(props) {
           `<li style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
             📍 ${address.address}
             <div>
-              <button class="edit-btn" data-id="${address.id}" style="margin-right: 5px; background:rgb(255, 207, 49); border: none; padding: 3px 8px; cursor: pointer;">✏️</button>
-              <button class="delete-btn" data-id="${address.id}" style="background:rgb(231, 0, 23); border: none; padding: 3px 8px; cursor: pointer;">🗑</button>
+              <button class="edit-btn" data-id="${address.id}" style="margin-right: 5px; background:rgb(255, 255, 255); border: none; padding: 3px 8px; cursor: pointer;">
+              <img
+              src="/images/icon/pen.png" 
+              width="20px"
+              alt="icon"
+              />
+              </button>
+              <button class="delete-btn" data-id="${address.id}" style="background:rgb(255, 255, 255); border: none; padding: 3px 8px; cursor: pointer;">
+              <img
+              src="/images/icon/delete.png" 
+              width="20px"
+              alt="icon"
+              />
+              </button>
             </div>
           </li>`
         ).join('')}
       </ul>`
   }
-
+  
   // ✅ 顯示 Swal 彈窗，包含住址列表和輸入框
   const { value: address } = await MySwal.fire({
     title: '管理住址',
@@ -543,7 +556,7 @@ export default function UserPage(props) {
                       </div>
                     </div>
                     <div className="mb-3">
-                      <label className="form-label">電郵地址</label>
+                      <label className="form-label">電子郵件</label>
                       <input
                         type="email"
                         className={`form-control ${styles.customInput}`}
@@ -553,7 +566,7 @@ export default function UserPage(props) {
                       />
                     </div>
                     <div className="mb-3">
-                      <label className="form-label">名字 *</label>
+                      <label className="form-label">姓名 *</label>
                       <input
                         type="text"
                         className={`form-control ${styles.customInput}`}
