@@ -62,20 +62,21 @@
 
   .j-cp {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 2px dashed transparent;
     cursor: pointer;
     padding: 10px;
     border-radius: 10px;
     background: #fff;
-    border: 2px solid transparent; // 預設無邊框
   
     &:hover {
+      border-color: #003150;
       transform: translateY(-5px); // 滑鼠移入時讓元素向上浮動 5px
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); // 增加陰影，使其更有立體感
     }
   }
   
   .j-selected {
-    border: 3px solid #003150; // 選中的優惠券會有橙色邊框
+    border: 3px solid #003150;
     box-shadow: 0 4px 15px #003150; // 增加較強烈的陰影
     transform: translateY(-5px); // 同樣浮動 5px，讓選中狀態有視覺一致性
   }

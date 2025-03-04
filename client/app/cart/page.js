@@ -126,6 +126,17 @@ export default function cartPageOne() {
     setSelectedItems(newSelects)
     setCheckAll(newSelects.length === allItems.length)
   }
+
+  const handleQuantityChange = (id, newQuantity) => {
+    const updatedItems = selectedItems.map(item => {
+      if (item.id === id) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    setSelectedItems(updatedItems);
+  };
+
   let isCartEmpty = false;
   if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0) {
     isCartEmpty = true;
@@ -167,7 +178,7 @@ export default function cartPageOne() {
                         htmlFor={`cartItem-${index}`}
                         className="ms-2 d-flex flex-grow-1"
                       >
-                        <CartItem key={index} id={index} itemData={item} page={1} />
+                        <CartItem key={index} id={index} itemData={item} page={1} onQuantityChange={handleQuantityChange}/>
                       </label>
                     </div>
                   ))}

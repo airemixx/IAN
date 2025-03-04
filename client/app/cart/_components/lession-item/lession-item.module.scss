@@ -1,5 +1,5 @@
 .j-lsText {
-  font-size: 14px;
+  font-size: 16px;
   color: black;
   
 }
@@ -30,27 +30,32 @@
 .j-delBtn {
   left: 92.5%;
 }
+
+@media (min-width: 1200px) {
+  .j-lsTitle{
+    max-width: 205px;
+  }
+}
+
 @media (min-width: 1400px) {
   .j-lsText {
     font-size: 16px;
   }
   .j-lsTitle{
-    max-width: 240px;
+    max-width: 250px;
   }
+  
 }
 
 @media (max-width: 1200px) {
-  .j-delBtn {
-    left: 90%;
-  }
   .j-lsTitle{
-    max-width: 200px;
+    max-width: 205px;
   }
 }
 
 @media (max-width: 768px) {
   .j-lsText {
-    font-size: 15px;
+    font-size: 16px;
   }
   .j-lsTitle{
     max-width: 160px;
