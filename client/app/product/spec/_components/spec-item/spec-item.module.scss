@@ -14,22 +14,36 @@
   cursor: pointer;
 }
 
+.imageTop {
+  width: 230px;
+  height: 170px;
+  overflow: hidden;
+}
+
+.price {
+  padding-top: 10px;
+}
+
 .productContainer {
   display: flex;
   max-width: 1440px;
   justify-content: flex-end;
-  margin-left: 172px;
+    // border: 1px solid red;
 
   .productBox {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 30%;
+    // border: 1px solid rgb(14, 16, 121);
+
 
     img {
+      display: block;
+      margin: 0 auto;
       width: 80%;
     }
-
+    
     h5 {
       font-weight: bold;
       color: #062f4f;
@@ -42,6 +56,7 @@
     .remove {
       color: black;
       font-weight: bold;
+      padding-top: 10px;
       cursor: pointer;
 
       &:hover {
@@ -57,21 +72,31 @@
     justify-content: center;
     color: #bbb;
     font-size: 1.2rem;
-    height: 400px;
+    height: 300px;
     width: 300px;
   }
 }
 
 @media (max-width: 391px) {
+  .imageTop {
+    width: 120px;
+    height: 100px;
+    overflow: hidden;
+  }
   .productContainer {
-    margin: auto;
-    margin-top: 30px;
-    margin-left: -35px;
-    width: 385px;
+    width: 376px;
+    // border: 1px solid red;
 
     .productBox {
+      // border: 1px solid red;
       text-align: center;
-      width: 26.5%;
+      width: 30%;
+
+      img {
+        display: block;
+        margin: 0 auto;
+        width: 85%;
+      }
 
       h5 {
         font-weight: bold;

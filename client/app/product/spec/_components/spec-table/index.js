@@ -20,7 +20,7 @@ export default function ComponentsCompareTable() {
       <tr>
           <th>比較項目</th>
           {filledCompareList.map((product, index) => (
-            <th key={product?.id || `empty-${index}`}>{product ? product.name : "-"}</th>
+            <td key={product?.id || `empty-${index}`}>{product ? product.name : "-"}</td>
           ))}
         </tr>
       </thead>

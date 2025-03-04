@@ -25,10 +25,10 @@ export default function CarouselIndex(props) {
 
         {/* 🔹 輪播內容 */}
         <div className="carousel-inner">
-          <div className="carousel-item">
+          <div className="carousel-item active">
             <img src="images/product/ff80808193438b04019343a38b6d0000_Alpha-universe_pc_d00004604.jpg" className="d-block w-100" alt="..." />
           </div>
-          <div className="carousel-item active">
+          <div className="carousel-item">
             <img src="images/product/ff80808191504b7801919770a5531e0c_SEL85F14GM2_pc_31e0c2520.jpg" className="d-block w-100" alt="..." />
           </div>
           <div className="carousel-item">
