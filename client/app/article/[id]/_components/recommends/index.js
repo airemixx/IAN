@@ -73,27 +73,43 @@ function ProductCard({ course }) {
 // 主元件
 export default function Recommends() {
   const [recommendCourses, setRecommendCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchRecommendCourses = async () => {
+    try {
+      console.log('正在獲取推薦課程...');
+      const response = await fetch('/api/courses/recommend');
+      console.log('推薦課程 API 響應狀態:', response.status);
+      
+      if (!response.ok) {
+        console.warn(`API 返回錯誤: ${response.status}`);
+        return [];
+      }
+      
+      const data = await response.json();
+      console.log('獲取到的課程數據:', data ? data.length : 'none');
+      return data || [];
+    } catch (error) {
+      console.error('獲取推薦課程失敗:', error);
+      return []; // 出錯時返回空數組
+    }
+  };
 
   useEffect(() => {
-    // 初始化 AOS
-    AOS.init({
-      duration: 1000,
-      once: true,
-      offset: 100,
-    });
-
-    const fetchRecommendCourses = async () => {
+    const loadCourses = async () => {
+      setLoading(true);
       try {
-        const res = await fetch('/api/courses?sort=popular');
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
-        setRecommendCourses(data.slice(0, 4));
+        const courses = await fetchRecommendCourses();
+        setRecommendCourses(courses);
       } catch (error) {
-        console.error('無法載入推薦課程:', error);
+        console.error('載入推薦課程時出錯:', error);
+        setRecommendCourses([]);
+      } finally {
+        setLoading(false);
       }
     };
-
-    fetchRecommendCourses();
+    
+    loadCourses();
   }, []);
 
   return (

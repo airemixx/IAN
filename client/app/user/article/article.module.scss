@@ -364,7 +364,6 @@
   border-radius: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-
 }
 
 .userName {
@@ -384,9 +383,14 @@
 }
 
 .statValue {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #7e7267;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #a5a5a5;
+  }
 }
 .statLabel {
   font-size: 0.9rem;
