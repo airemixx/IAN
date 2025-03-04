@@ -127,6 +127,23 @@ export default function FroalaEditorWrapper() {
               console.log('文件上傳前', files)
               return true
             },
+            'image.error': function (error, response) {
+              console.error('圖片上傳錯誤:', error, response);
+              // 顯示錯誤訊息給使用者
+              alert('圖片上傳失敗: ' + (response?.error || error?.message || '未知錯誤'));
+            },
+            'video.error': function (error, response) {
+              console.error('影片上傳錯誤:', error, response);
+              alert('影片上傳失敗: ' + (response?.error || error?.message || '未知錯誤'));
+            },
+            'file.error': function (error, response) {
+              console.error('檔案上傳錯誤:', error, response);
+              alert('檔案上傳失敗: ' + (response?.error || error?.message || '未知錯誤'));
+            },
+            'image.uploaded': function (response) {
+              console.log('圖片上傳成功，返回的資料:', response);
+              // 可以在這裡添加自定義處理邏輯
+            },
           },
           zIndex: 1050,
           toolbarSticky: true,
