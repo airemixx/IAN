@@ -20,7 +20,7 @@ router.get('/categories', async (req, res) => {
     res.json(categories.map((cat) => ({ name: cat.category })))
   } catch (error) {
     console.error('❌ 無法取得分類:', error.message)
-    res.status(500).json({ error: '伺服器錯誤' })
+    res.json({ error: '伺服器錯誤' })
   }
 })
 
@@ -74,7 +74,7 @@ router.get('/', async (req, res) => {
     res.json(courses)
   } catch (error) {
     console.error('❌ 取得課程失敗:', error.stack)
-    res.status(500).json({ error: '無法取得課程資料', details: error.message })
+    res.json({ error: '無法取得課程資料', details: error.message })
   }
 })
 
@@ -104,7 +104,7 @@ router.get('/:id', async (req, res) => {
     res.json(rows[0])
   } catch (error) {
     console.error('❌ 無法獲取課程:', error)
-    res.status(500).json({ error: '無法獲取課程' })
+    res.json({ error: '無法獲取課程' })
   }
 })
 
@@ -128,7 +128,7 @@ router.get('/:id/comments', async (req, res) => {
     res.json(comments);
   } catch (error) {
     console.error('❌ 無法獲取課程評論:', error);
-    res.status(500).json({ error: '無法獲取課程評論' });
+    res.status(200).json({ error: '無法獲取課程評論' });
   }
 });
 
@@ -156,7 +156,7 @@ router.get('/related/:category', async (req, res) => {
     res.json(rows)
   } catch (error) {
     console.error('❌ 無法獲取相關課程:', error)
-    res.status(500).json({ error: '無法獲取相關課程' })
+    res.json({ error: '無法獲取相關課程' })
   }
 })
 
@@ -213,7 +213,7 @@ router.put('/:id', authenticate, async (req, res) => {
     res.json({ message: '✅ 課程更新成功！' })
   } catch (error) {
     console.error('❌ 更新課程失敗:', error)
-    res.status(500).json({ error: '無法更新課程' })
+    res.json({ error: '無法更新課程' })
   }
 })
 
@@ -264,34 +264,34 @@ router.post('/', authenticate, async (req, res) => {
     res.json({ message: '✅ 課程新增成功！', courseId: result.insertId })
   } catch (error) {
     console.error('❌ 新增課程失敗:', error)
-    res.status(500).json({ error: '無法新增課程' })
+    res.json({ error: '無法新增課程' })
   }
 })
 
 router.get('/collection/:courseId', authenticate, async (req, res) => {
   try {
-      console.log("🛠 API 端點收到 req.userId:", req.userId);
+    console.log("🛠 API 端點收到 req.userId:", req.userId);
 
-      if (!req.userId) {
-          console.error("❌ req.userId 未定義");
-          return res.status(401).json({ message: "未授權，請先登入 (req.userId 無效)" });
-      }
+    if (!req.userId) {
+      console.error("❌ req.userId 未定義");
+      return res.status(401).json({ message: "未授權，請先登入 (req.userId 無效)" });
+    }
 
-      const userId = req.userId; // ✅ 取得 `user_id`
-      const { courseId } = req.params; // ✅ 取得 `course_id`
+    const userId = req.userId; // ✅ 取得 `user_id`
+    const { courseId } = req.params; // ✅ 取得 `course_id`
 
-      // console.log(` 取得用戶 ${userId} 的收藏狀態，課程 ID: ${courseId}`);
+    // console.log(` 取得用戶 ${userId} 的收藏狀態，課程 ID: ${courseId}`);
 
-      // 查詢該用戶是否收藏了該課程
-      const [result] = await pool.query(
-          'SELECT id FROM collection WHERE user_id = ? AND course_id = ?',
-          [userId, courseId]
-      );
+    // 查詢該用戶是否收藏了該課程
+    const [result] = await pool.query(
+      'SELECT id FROM collection WHERE user_id = ? AND course_id = ?',
+      [userId, courseId]
+    );
 
-      res.json({ isFavorite: result.length > 0 }); // ✅ 回傳布林值
+    res.json({ isFavorite: result.length > 0 }); // ✅ 回傳布林值
   } catch (error) {
-      console.error('❌ 取得課程收藏狀態失敗:', error);
-      res.status(500).json({ message: '伺服器錯誤' });
+    console.error('❌ 取得課程收藏狀態失敗:', error);
+    res.json({ message: '伺服器錯誤' });
   }
 });
 
@@ -299,34 +299,34 @@ router.get('/collection/:courseId', authenticate, async (req, res) => {
 // 新增收藏
 router.post('/collection', authenticate, async (req, res) => {
   try {
-      console.log("🔍 接收的 `req.body`:", req.body);
-      console.log("🔍 req.user:", req.user);
+    console.log("🔍 接收的 `req.body`:", req.body);
+    console.log("🔍 req.user:", req.user);
 
-      if (!req.user || !req.user.id) {
-          console.error("❌ req.user.id 未定義");
-          return res.status(401).json({ message: "未授權，請先登入 (req.user.id 無效)" });
-      }
+    if (!req.user || !req.user.id) {
+      console.error("❌ req.user.id 未定義");
+      return res.status(401).json({ message: "未授權，請先登入 (req.user.id 無效)" });
+    }
 
-      const userId = req.user.id;
-      const { course_id } = req.body;
+    const userId = req.user.id;
+    const { course_id } = req.body;
 
-      // ✅ 檢查 `course_id` 是否為 `undefined` 或 `null`
-      if (!course_id) {
-          console.error("❌ course_id 未提供或為無效值:", course_id);
-          return res.status(400).json({ message: "請提供有效的 course_id" });
-      }
+    // ✅ 檢查 `course_id` 是否為 `undefined` 或 `null`
+    if (!course_id) {
+      console.error("❌ course_id 未提供或為無效值:", course_id);
+      return res.status(400).json({ message: "請提供有效的 course_id" });
+    }
 
-      console.log(`✅ 新增收藏 - 用戶 ID: ${userId}, 課程 ID: ${course_id}`);
+    console.log(`✅ 新增收藏 - 用戶 ID: ${userId}, 課程 ID: ${course_id}`);
 
-      const [result] = await pool.query(
-          'INSERT INTO collection (user_id, course_id) VALUES (?, ?)',
-          [userId, course_id]
-      );
+    const [result] = await pool.query(
+      'INSERT INTO collection (user_id, course_id) VALUES (?, ?)',
+      [userId, course_id]
+    );
 
-      res.json({ message: "收藏成功", insertId: result.insertId });
+    res.json({ message: "收藏成功", insertId: result.insertId });
   } catch (error) {
-      console.error('❌ 收藏失敗:', error);
-      res.status(500).json({ message: '伺服器錯誤' });
+    console.error('❌ 收藏失敗:', error);
+    res.status(200).json({ message: '伺服器錯誤' });
   }
 });
 
@@ -370,7 +370,7 @@ router.delete('/collection/:courseId', authenticate, async (req, res) => {
     res.json({ message: "已取消收藏" });
   } catch (error) {
     console.error("❌ 取消收藏失敗:", error);
-    res.status(500).json({ message: "伺服器錯誤" });
+    res.status(200).json({ message: "伺服器錯誤" });
   }
 });
 
