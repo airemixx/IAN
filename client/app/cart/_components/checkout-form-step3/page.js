@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { jwtDecode } from "jwt-decode";
 import moment from "moment"
+import Swal from "sweetalert2";
 
 export default function CheckoutFormStep3() {
 
@@ -21,6 +22,15 @@ export default function CheckoutFormStep3() {
     });
     const token = localStorage.getItem("loginWithToken");
     const decoded = jwtDecode(token);
+    const [totalAmount, setTotalAmount] = useState(0);
+
+    useEffect(() => {
+        const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
+        const cartItems = Object.values(cartData);
+        const amount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        setTotalAmount(amount);
+    }, []);
+
     useEffect(() => {
         const savedData = localStorage.getItem("buyerData");
         if (savedData) {
@@ -62,33 +72,38 @@ export default function CheckoutFormStep3() {
     };
 
     const goLinePay = async (amount) => {
-        // 先連到node伺服器後端，取得LINE Pay付款網址
         const res = await fetch(
             `${apiURL}/linePay/reserve?amount=${amount}`,
             {
                 method: 'GET',
-                // 讓fetch能夠傳送cookie
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
                 },
             }
-        )
+        );
 
-        const resData = await res.json()
-
-        console.log(resData)
+        const resData = await res.json();
+        console.log(resData);
 
         if (resData.status === 'success') {
-            if (window.confirm('確認要導向至LINE Pay進行付款?')) {
-                //導向至LINE Pay付款頁面
-                window.location.href = resData.data.paymentUrl
-            }
+            Swal.fire({
+                title: "確認付款",
+                text: "是否前往 LINE Pay 付款？",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "確定",
+                cancelButtonText: "取消",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = resData.data.paymentUrl;
+                }
+            });
         } else {
-            toast.error('付款失敗')
+            toast.error("付款失敗");
         }
-    }
+    };
 
     const handleConfirm = async (transactionId) => {
         try {
@@ -122,9 +137,9 @@ export default function CheckoutFormStep3() {
     };
     async function LineInsertDB() {
         try {
-            
+
             const orderData = {
-                merchantTradeNo: `line${moment().format('YYYYMMDDhhmmss')}`,
+                merchantTradeNo: `od${moment().format('YYYYMMDDhhmmss')}`,
                 buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
                 cartItems: JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
                 userId: decoded.id
@@ -153,6 +168,7 @@ export default function CheckoutFormStep3() {
         }
 
     }
+
     const goECPay = async (amount, items) => {
         try {
             const res = await fetch(`${apiURL}/${paymentMethod}?amount=${amount}&items=${encodeURIComponent(items)}`, {
@@ -176,13 +192,22 @@ export default function CheckoutFormStep3() {
                     input.value = resData.data.params[key];
 
                     form.appendChild(input);
-
                 }
 
                 document.body.appendChild(form);
-                if (window.confirm(`確認要導向至 ${paymentMethod.toUpperCase()} 進行付款?`)) {
-                    form.submit();
-                }
+
+                Swal.fire({
+                    title: "確認付款",
+                    text: `是否前往 ${paymentMethod.toUpperCase()} 付款？`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "確定",
+                    cancelButtonText: "取消",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             } else {
                 toast.error("付款失敗，請稍後再試！");
             }
@@ -190,11 +215,12 @@ export default function CheckoutFormStep3() {
             console.error("付款請求失敗:", error);
             toast.error("發生錯誤，請稍後再試！");
         }
-    }
+    };
 
     return (
-        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 ms-xl-5 mt-xl-5 pt-xl-5 mt-sm-5">
+        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 ms-xl-5 mt-xl-5 mt-sm-5">
             <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3 mt-5`}>結帳</p>
+
             <div className={`${styles['addressDetail']} d-flex flex-column mb-3 ps-3`}>
                 <div className="d-flex mb-3">
                     <span className={styles['j-adDetailtitle']}>送貨方式：</span>
@@ -214,6 +240,10 @@ export default function CheckoutFormStep3() {
 
             <div className={`${styles['j-payStep']} d-flex flex-column`}>
                 <div className={styles['j-payTitle']}>付款</div>
+                <div className={`${styles['totalAmount']} d-flex justify-content-between w-100 pe-1 py-2`}>
+                    <span >總價：</span>
+                    <span >${totalAmount.toLocaleString()}</span>
+                </div>
                 <div className={styles['j-payContent']}>
                     <p className="mb-0">請選擇你的付款方式。之後，您將轉向相關服務頁面已完成你的訂單</p>
                 </div>

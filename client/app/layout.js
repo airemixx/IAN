@@ -83,7 +83,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
-        <div className={isExcluded ? '' : 'layout-container'}>
+        <div className={`${isCartPage ? "layout-cart-container" : "layout-container"}`}>
           <ToastContainer
             position="top-right"
             autoClose={3000}

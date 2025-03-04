@@ -1,32 +1,58 @@
-.j-lsText{
+.j-lsText {
+  font-size: 14px;
   color: black;
-}
-.j-cartItemBox {
-  border-radius: 20px;
-  background-color: #fff;
   
 }
-.j-lessonImg{
-  width: 90%;
+.j-lsTitle{
+  font-size: 14px;
+  color: black;
+  max-width: 150px;
+  display: block;
+  overflow-wrap: break-word;
 }
-.j-lessonImg img {
-  width: 100%;
-  height: 90%;
- 
+.j-cartItem {
+  border-radius: 20px;
+  background-color: #fff;
+  gap: 10px;
 }
 
-.j-delBtn>button:active,
-.j-delBtnfocus>button:focus,
-.j-delBtn>button:not(.j-cartItem){
+.j-lessonImg img {
+  width: 109px;
+  height: 89px;
+}
+
+.j-delBtn > button:active,
+.j-delBtnfocus > button:focus,
+.j-delBtn > button:not(.j-cartItem) {
   border: none;
 }
 
-.j-delBtn{
+.j-delBtn {
   left: 92.5%;
 }
+@media (min-width: 1400px) {
+  .j-lsText {
+    font-size: 16px;
+  }
+  .j-lsTitle{
+    max-width: 240px;
+  }
+}
 
-@media (max-width: 1200px){
-  .j-delBtn{
+@media (max-width: 1200px) {
+  .j-delBtn {
     left: 90%;
+  }
+  .j-lsTitle{
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .j-lsText {
+    font-size: 15px;
+  }
+  .j-lsTitle{
+    max-width: 160px;
   }
 }
