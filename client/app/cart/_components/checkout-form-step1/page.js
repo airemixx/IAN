@@ -7,6 +7,7 @@ import styles from "./price-summary.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { toast, ToastContainer } from "react-toastify";
 
 export default function CheckoutFormStep1({ slItem }) {
   const token = localStorage.getItem("loginWithToken");
@@ -103,21 +104,13 @@ export default function CheckoutFormStep1({ slItem }) {
     }
 
     // 檢查優惠券條件
-    if (coupon.disType === "fixed" && productTotal < 50000) {
-      Swal.fire({
-        icon: "warning",
-        title: "優惠券條件不符合",
-        text: "此優惠券需購買滿 NT$50,000 的商品（類型: 產品）",
-      });
+    if (coupon.disType === "fixed" && productTotal < coupon.discount) {
+      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 產品）`);
       return;
     }
 
-    if (coupon.disType === "percent" && lessionTotal < 2000) {
-      Swal.fire({
-        icon: "warning",
-        title: "優惠券條件不符合",
-        text: "此優惠券需購買滿 NT$2,000 的商品（類型: 課程）",
-      });
+    if (coupon.disType === "percent" && lessionTotal < coupon.discount) {
+      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 課程）`);
       return;
     }
 
@@ -153,17 +146,17 @@ export default function CheckoutFormStep1({ slItem }) {
   const totalPrice = Math.max(price - discount, 0);
 
   return (
+
     <div className={`${styles["j-payStep"]} col-sm-11 col-md-9 col-lg-4 col-xl-4 mb-5 ms-lg-0 d-flex flex-column align-items-center`}>
       <div className={`${styles["j-pCount"]} border-bottom mb-3 d-flex flex-column gap-2`}>
         <div className={`${styles["j-pTitle"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>摘要</div>
         <div className={`${styles["j-ifCouponUse"]} ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
-          <input className="form-check-input" type="checkbox" id="flexCheck" onChange={handleCheck} checked={checkState} />
-          <label className="form-check-label" htmlFor="flexCheck">
+          <input className={`form-check-input ${styles['j-ckBox']} focus-ring focus-ring-light`} type="checkbox" id="flexCheck" onChange={handleCheck} checked={checkState} />
+          <label className="form-check-label mt-1" htmlFor="flexCheck">
             是否使用優惠券
           </label>
         </div>
-
-        <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className={`${styles["j-model"]}`}>
+        <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className={`${styles["j-model"]} mt-5 pt-5`}>
           <Modal.Header closeButton>
             <Modal.Title>選擇優惠券</Modal.Title>
           </Modal.Header>
@@ -173,8 +166,8 @@ export default function CheckoutFormStep1({ slItem }) {
                 couponData.map((coupon, index) => (
                   <div
                     key={index}
-                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 
-        ${selectedCoupons === coupon.code ? styles["j-selected"] : ""}`}
+                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-lg-6
+            ${selectedCoupons.some(c => c.code === coupon.code) ? styles["j-selected"] : ""}`}
                     onClick={() => handleCouponSelect(coupon)}
                   >
                     <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
@@ -189,19 +182,20 @@ export default function CheckoutFormStep1({ slItem }) {
               )}
             </div>
           </Modal.Body>
+
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button className={`${styles['j-btnCancel']}`} onClick={handleClose} >
               關閉
             </Button>
-            <Button variant="primary" onClick={handsumbit}>
+            <Button className={`${styles['j-btnOk']}`} onClick={handsumbit}>
               確定
             </Button>
           </Modal.Footer>
         </Modal>
 
-        <div className={`${styles["couponName"]} d-flex flex-column`}>
+        <div className={`${styles["couponName"]} d-flex flex-column ms-lg-3 ms-xl-0`}>
           {selectedCoupons.length > 0 ? (
-            <span>已選擇優惠券: {selectedCoupons.map(c => c.cpName).join(", ")}</span>
+            <span >已選擇優惠券: {selectedCoupons.map(c => c.cpName).join(", ")}</span>
           ) : (
             "未使用優惠券"
           )}
@@ -224,6 +218,7 @@ export default function CheckoutFormStep1({ slItem }) {
           結帳
         </button>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} className={`${styles['j-toast']}`} />
     </div>
   );
 }

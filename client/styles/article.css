@@ -1,5 +1,5 @@
 ::-webkit-scrollbar {
-  width: 2px;
+  width: 0;
 }
 ::-webkit-scrollbar-thumb {
   background-color: #7e726700;

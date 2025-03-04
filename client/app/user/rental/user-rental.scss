@@ -1,0 +1,66 @@
+.btn-info {
+  color: #fff;
+  background: #5292c5;
+  border-color: #5292c5;
+  transition: none;
+  &:hover,
+  &:active,
+  &:active:focus,
+  &:active:hover,
+  &:disabled {
+    color: #fff;
+    opacity: 0.9;
+    background: #5292c5;
+    border-color: #5292c5;
+  }
+}
+// 大部分按鈕 圓角
+.k-main-radius {
+  border-radius: 50px;
+}
+// 文字顏色
+.k-main-text {
+  color: #23425a;
+}
+.k-warn-text {
+  color: #e58e41;
+}
+.k-warn-dark-text {
+  color: #ca6d1b;
+}
+.k-status-text {
+  color: #d0b088;
+}
+.k-aux-color-1 {
+  color: #8f8f8f;
+}
+.k-aux-color-2 {
+  color: #7e7267;
+}
+.k-aux-color-3 {
+  color: #f1cf99;
+}
+
+// 彈窗評論修改
+.k-review-swal-popup {
+  width: 450px;
+}
+.k-review-swal-actions {
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 20px;
+  margin-top: 10px;
+}
+.k-review-swal-btn-1 {
+  background-color: #5292c5;
+  border-radius: 50px;
+}
+.k-review-swal-btn-2 {
+  background-color: #807871;
+  border-radius: 50px;
+}
+.k-swal-label {
+  text-align: left;
+  margin-bottom: 5px;
+  font-weight: 500;
+}

@@ -38,9 +38,11 @@ export default function ECPayCallback() {
         if (response.status == 200) {
           setOrderSaved(true);
           console.log('訂單已成功存入資料庫');
-          // localStorage.removeItem('cart')
-          // localStorage.removeItem('cartItems')
-          // localStorage.removeItem('buyerData')
+          localStorage.removeItem('cart')
+          localStorage.removeItem('rent_cart')
+          localStorage.removeItem('shoppingCart')
+          localStorage.removeItem('cartItems')
+          localStorage.removeItem('buyerData')
         } else {
           console.error('存入失敗:', await response.text());
         }
@@ -49,11 +51,11 @@ export default function ECPayCallback() {
       }
     };
     saveOrderToDB();
-      // const timer = setTimeout(() => {
-      //   window.location.href = "/"; // 替換成你的目標頁面 URL
-      // }, 3000);
+      const timer = setTimeout(() => {
+        window.location.href = "/"; // 替換成你的目標頁面 URL
+      }, 3000);
   
-      // return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
+      return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
   }, [searchParams]);
   if (isDev) console.log('RtnCode', searchParams?.get('RtnCode'))
 

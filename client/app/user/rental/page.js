@@ -1,11 +1,12 @@
 'use client';
 
-import Link from 'next/link';
 import styles from './rental.module.scss'; // 引入 CSS Modules
 import React from 'react';
 import useAuth from '@/hooks/use-auth';
 import Sidenav from '../_components/Sidenav/page';
 import Rentcard from './_components/rent-card/page'
+
+import './user-rental.scss'
 
 export default function UserPage() {
   const { token, user, loading } = useAuth();
@@ -21,16 +22,16 @@ export default function UserPage() {
 
         {/* Main Content */}
         <div className="col-lg-9">
-          <h1 className="mb-4">我的租賃</h1>
+          <h1 className={`mb-4 ${styles.h1}`}>我的租賃</h1>
 
           {/* 租賃 Section */}
-          
-          <Rentcard/>
-          
+
+          <Rentcard />
+
         </div>
-        
+
       </div>
-      
+
     </div>
   );
 }

@@ -90,8 +90,7 @@ export default function UserPage(props) {
         {/* 主要內容 */}
         <main className={`col-md-9 ${styles.mainContent}`}>
           <div className="mb-4">
-            <h4 className={styles.backLink}><Link href="/user"><img src="/images/icon/arrow-left.svg" alt="icon" style={{width: '20px', height: '20px'}} /> 返回</Link></h4>
-            <h1 className="margin">更改我的密碼</h1>
+            <h1 className={`margin ${styles.h1}`}>更改我的密碼</h1>
           </div>
           
           <div className={styles.formContainer}>
@@ -126,9 +125,11 @@ export default function UserPage(props) {
                   {errorMessage}
                 </div>
               )}
-              
+              <Link href="/user"><button  className={styles.btnWhite}>
+              返回
+              </button></Link>
               <button type="submit" className={styles.btnChange}>
-                更改我的密碼
+                更改密碼
               </button>
             </form>
           </div>

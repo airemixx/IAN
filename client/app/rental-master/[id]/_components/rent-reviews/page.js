@@ -174,8 +174,8 @@ export default function RentReviews({ reviews = [] }) {
       customClass: {
         actions: 'd-flex justify-content-ends k-review-swal-actions',
         popup: 'k-review-swal-popup',
-        confirmButton: 'k-auth-swal-btn-1',
-        cancelButton: 'k-auth-swal-btn-2'
+        confirmButton: 'k-review-swal-btn-1',
+        cancelButton: 'k-review-swal-btn-2'
       },
       preConfirm: () => {
         const comment = document.getElementById('comment').value

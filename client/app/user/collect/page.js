@@ -61,7 +61,7 @@ export default function CollectPage() {
       <div className={`row ${styles.marginTop}`}>
         <Sidenav />
         <div className="col-lg-9">
-          <h1 className="mb-4">我的收藏</h1>
+          <h1 className={`mb-4 ${styles.h1}`}>我的收藏</h1>
 
           {/* 產品收藏 */}
           <section className="mb-5">
