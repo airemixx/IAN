@@ -35,90 +35,93 @@ export default function cartPageTwo() {
   })
 
   return (
-    <div className={`container ${styles['j-bodyHeight']}`}>
-      <div className={`${styles['j-heightspace']}`}></div>
-      <div className="row d-flex justify-content-center pt-2">
-        <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-4 me-xxl-2 col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-6`}>
-          <div className={`${styles['j-cartItemsBox']} d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3`}>
-            <div className={`mt-2 mb-5 ${styles['j-itemBox']}`}>
-              {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
-              {cartProduct.map((item, index) => (
-                <div
-                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}
-                  key={index}>
-                  <CartItem key={index} id={index} itemData={item} page={2} />
-                </div>
-              ))}
-            </div>
-
-            <div className={`mt-2 mb-5 ${styles['j-itemBox']}`}>
-              {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
-              {cartLession.map((lession, index) => (
-                <div key={index}
-                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}>
-                  <LessonItem key={index} lessionitem={lession} />
-                </div>
-              ))}
-            </div>
-
-            <div className={`mt-2 ${styles['j-itemBox']}`}>
-              {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
-              {cartRent.map((rental, index) => (
-                <div key={index}
-                  className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}>
-                  <RentItem key={index} rentalitem={rental} />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={`${styles['j-cartItemsBox']} d-sm-none d-block p-0 d-flex flex-grow-1 flex-column`}>
-            {cartProduct.length == 0 ? '' :
-              <div className="mt-2 mb-5">
+    <div className={`${styles['j-page-wrapper']}`}>
+      <div className="container" >
+        <div className={`${styles['j-heightspace']}`}></div>
+        <div className="row d-flex justify-content-center pt-2">
+          <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-xl-5 me-xxl-2 col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-6`}>
+            <div className={`${styles['j-cartItemsBox']} d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3`}>
+              <div className={`mt-2 mb-5 ${styles['j-itemBox']}`}>
                 {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
                 {cartProduct.map((item, index) => (
                   <div
                     className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
-                    key={index}
-                  >
-                    <CartItem key={index} id={index} itemData={item} />
+                    key={index}>
+                    <CartItem key={index} id={index} itemData={item} page={2} />
                   </div>
                 ))}
-              </div>}
+              </div>
 
-            {cartLession.length == 0 ? '' :
-              <div className="mt-2 mb-5">
+              <div className={`mt-2 mb-5 ${styles['j-itemBox']}`}>
                 {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
-                {cartLession.map((lession, index) => {
-                  const lessonIndex = index + cartProduct.length
-                  return (
-                    <div
-                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
-                      key={index}>
-                      <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} />
-                    </div>
-                  )
-                })}
-              </div>}
-            {cartRent.length == 0 ? '' :
-              <div className="mt-2 mb-5">
+                {cartLession.map((lession, index) => (
+                  <div key={index}
+                    className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}>
+                    <LessonItem key={index} lessionitem={lession} />
+                  </div>
+                ))}
+              </div>
+
+              <div className={`mt-2 ${styles['j-itemBox']}`}>
                 {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
-                {cartRent.map((rental, index) => {
-                  const rentalIndex =
-                    index + cartProduct.length + cartLession.length
-                  return (
+                {cartRent.map((rental, index) => (
+                  <div key={index}
+                    className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}>
+                    <RentItem key={index} rentalitem={rental} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={`${styles['j-cartItemsBox']} d-sm-none d-block p-0 d-flex flex-grow-1 flex-column`}>
+              {cartProduct.length == 0 ? '' :
+                <div className="mt-2 mb-5">
+                  {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
+                  {cartProduct.map((item, index) => (
                     <div
                       className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
-                      key={index}>
-                      <RentItem key={index} rentalitem={rental} id={rentalIndex} length={(cartProduct.length + cartLession.length)} />
+                      key={index}
+                    >
+                      <CartItem key={index} id={index} itemData={item} />
                     </div>
-                  )
-                })}
-              </div>}
+                  ))}
+                </div>}
+
+              {cartLession.length == 0 ? '' :
+                <div className="mt-2 mb-5">
+                  {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
+                  {cartLession.map((lession, index) => {
+                    const lessonIndex = index + cartProduct.length
+                    return (
+                      <div
+                        className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
+                        key={index}>
+                        <LessonItem key={index} id={lessonIndex} lessionitem={lession} length={cartProduct.length} />
+                      </div>
+                    )
+                  })}
+                </div>}
+              {cartRent.length == 0 ? '' :
+                <div className="mt-2 mb-5">
+                  {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
+                  {cartRent.map((rental, index) => {
+                    const rentalIndex =
+                      index + cartProduct.length + cartLession.length
+                    return (
+                      <div
+                        className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
+                        key={index}>
+                        <RentItem key={index} rentalitem={rental} id={rentalIndex} length={(cartProduct.length + cartLession.length)} />
+                      </div>
+                    )
+                  })}
+                </div>}
+            </div>
           </div>
+          <CheckoutFormStep2 />
         </div>
-        <CheckoutFormStep2 />
       </div>
     </div>
+
   )
 }

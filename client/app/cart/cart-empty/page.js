@@ -11,7 +11,7 @@ export default function CartEmptyPage(){
     return(
         
         <>
-        {isCartEmpty ? <div className="container d-xs-flex flex-sm-column pt-5">
+        {isCartEmpty ? <div className={"container d-xs-flex flex-sm-column pt-5"}>
                 <div className="j-shoppingCartTitleBox mb-5 row justify-content-center mt-5 pt-5">
                     <div className="col-12 text-center">
                         <h1 className="j-shoppingCartTitle m-0 ">我的購物車</h1>

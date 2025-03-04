@@ -218,8 +218,8 @@ export default function CheckoutFormStep3() {
     };
 
     return (
-        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 ms-xl-5 mt-xl-5">
-            <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3 mt-5`}>結帳</p>
+        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 mt-xl-5">
+            <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3`}>結帳</p>
 
             <div className={`${styles['addressDetail']} d-flex flex-column mb-3 ps-3`}>
                 <div className="d-flex mb-3">
