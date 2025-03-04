@@ -68,13 +68,16 @@ export default function NewsCard({ articles }) {
       <ul className={`list-unstyled ${styles['y-news-list']}`}>
         {filteredArticles.map((article, index) => (
           <li className={styles['y-news-item']} key={index}>
-            <div className={styles['y-news-image-container']}>
-              <img
-                src={article.image_path}
-                className={styles['y-news-image']}
-                alt={article.title}
-              />
-            </div>
+            {/* 將圖片容器包裝在錨標籤內 */}
+            <a href={`/article/${article.id}`}>
+              <div className={styles['y-news-image-container']}>
+                <img
+                  src={article.image_path}
+                  className={styles['y-news-image']}
+                  alt={article.title}
+                />
+              </div>
+            </a>
             <div>
               <p className={styles['y-news-tag']}>{article.category_name}</p>
               <a

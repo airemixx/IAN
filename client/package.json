@@ -33,6 +33,7 @@
     "firebase": "^11.4.0",
     "froala-editor": "^4.4.0",
     "gsap": "^3.12.7",
+    "hamburger-react": "^2.5.2",
     "hover.css": "^2.3.2",
     "howler": "^2.2.4",
     "i": "^0.3.7",
