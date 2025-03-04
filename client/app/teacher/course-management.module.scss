@@ -77,7 +77,7 @@
 
 .search-btn {
   position: absolute;
-  left: 305px;
+  right: 8px;
   background: none;
   border: none;
   padding-bottom: 3px;
@@ -193,7 +193,7 @@
     display: block;
     width: 100%;
     transition: transform 0.3s ease;
-    border-radius: inherit; 
+    border-radius: inherit;
   }
 
   // 🔹 遮色片（預設隱藏）
@@ -228,5 +228,93 @@
       opacity: 1; // 顯示遮色片
       border-radius: 5px;
     }
+  }
+}
+
+@media (max-width: 1600px) {
+  .center-content {
+    padding: 1.8rem 1.8rem;
+  }
+}
+
+@media (max-width: 1500px) {
+  .center-content {
+    padding: 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .control-btns{
+    margin-bottom: 1rem;
+  }
+  .btns-left{
+    margin-bottom: 0.5rem;
+  }
+  .search-input {
+    width: 100%;
+  }
+  .control-btns {
+    display: block;
+  }
+  .center-content {
+    padding: 1rem 1rem;
+  }
+
+  .table-container thead {
+    display: none; /* ✅ 隱藏表頭 */
+  }
+
+  .table-container tbody,
+  .table-container tr {
+    display: block;
+    width: 100%;
+  }
+
+  .table-container tr {
+    border: none;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    height: auto;
+  }
+
+  .table-container td::before {
+    content: attr(data-label); /* ✅ 使用 `data-label` 來顯示標題 */
+    font-weight: bold;
+    color: var(--secondary-color-dark);
+    flex-shrink: 0;
+  }
+
+  /* 🟢 圖片區塊 */
+  .table-container .course-img {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-top: 2rem;
+  }
+
+  .table-container .course-img img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 5px;
+  }
+
+  .table-container .state-circle {
+    flex-direction: row;
+  }
+
+  .table-container td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.8rem 1rem;
+  }
+
+  .table-container td::before {
+    content: attr(data-label);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--secondary-color-dark);
+    margin-bottom: 5px;
   }
 }

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  console.log("🔍 收到 Authorization Header:", authHeader);
+  // console.log("🔍 收到 Authorization Header:", authHeader);
 
   if (!authHeader) {
     console.log("⚠️ 未提供 Token，允許訪問公開 API");
@@ -11,7 +11,7 @@ const authenticate = (req, res, next) => {
   }  
   
   const token = authHeader.split(" ")[1]; // 取得 Token
-  console.log("🔍 解析出的 Token:", token);
+  // console.log("🔍 解析出的 Token:", token);
 
   if (!token) {
     console.log("⚠️ Token 格式錯誤，但允許訪問公開 API");
@@ -21,7 +21,7 @@ const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY); // 解析 Token
-    console.log("✅ Token 解析成功:", decoded);
+    // console.log("✅ Token 解析成功:", decoded);
 
     req.decoded = decoded; // ✅ 設定 req.decoded
     req.userId = decoded.id; // ✅ 設定 userId

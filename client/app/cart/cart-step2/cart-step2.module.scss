@@ -1,6 +1,7 @@
-.j-bodyHeight{
-  height: 100vh;
+.j-page-wrapper{
+  min-height: 93vh;
 }
+
 
 .j-cartTitle{
   background-color: #003150;
@@ -29,11 +30,6 @@
   padding: 3.0rem;
 }
 
-@media(max-width:1400px){
-  .j-bodyHeight{
-    height: auto;
-  }
-}
 
 @media(max-width:390px) {
   .j-cartTitle{

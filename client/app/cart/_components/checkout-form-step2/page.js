@@ -90,7 +90,7 @@ export default function CheckoutFormStep2() {
     };
 
     return (
-        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 mt-4 me-lg-0`}>
+        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 mt-5 me-lg-0`}>
             <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className={`${styles['j-payTitle']}`}>結帳</div>
                 <select
@@ -130,7 +130,7 @@ export default function CheckoutFormStep2() {
             {/* 顯示總價 */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <p className="fw-bold">總價：</p>
-                <p className="fw-bold">${totalAmount.toLocaleString()}</p>
+                <p className={`${styles['j-price']} fw-bold`}>${totalAmount.toLocaleString()}元</p>
             </div>
 
             <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center`}>

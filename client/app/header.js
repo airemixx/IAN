@@ -86,11 +86,8 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
         <div className="menu-icon">
           <img src="/images/icon/menu.svg" alt="menu" />
         </div>
-        <nav className={`${isCartPage ? 'd-flex justify-content-end' : ''}`}>
-            {isCartPage ? (
-           ''
-          ) : (
-            <ul className="nav-left">
+        <nav className={`d-flex justify-content-end`}>
+          <ul className="nav-left">
             <li>
               <Link href="/">首頁</Link>
             </li>
@@ -208,7 +205,7 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <Link href="/rental">租借服務</Link>
             </li>
             <li className={pathname === "/courses" ? ".nav-active" : ""}>
-            <Link href="/courses">影像學院</Link>
+              <Link href="/courses">影像學院</Link>
             </li>
             <li>
               <Link href="/article">影像誌</Link>
@@ -217,7 +214,6 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <a href="#">聯絡我們</a>
             </li>
           </ul>
-          )}
           
           <ul className="nav-right">
             <li>

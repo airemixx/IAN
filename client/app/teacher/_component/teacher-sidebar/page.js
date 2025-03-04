@@ -72,12 +72,11 @@ export default function TeacherSidebar() {
       {/* // 遮色片 */}
       {isOpen && <div className={styles.overlay} onClick={toggleSidebar}></div>}
 
-      <div className="col-md-3 col-xl-2 d-none d-xxl-block sidebar-container">
+      <div className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
         <div className={styles['center-sidebar']}>
-          {/* ❌ 關閉側邊欄按鈕 */}
-          <button className={styles['close-sidebar-btn'] + ' d-md-none'}>
+          {/* <button className={styles['close-sidebar-btn'] + ' d-md-none'}>
             <FaTimes />
-          </button>
+          </button> */}
 
           {/* 📌 Logo 區塊 */}
           <Link href="/">

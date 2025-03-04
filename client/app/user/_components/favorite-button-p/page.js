@@ -131,7 +131,7 @@ export default function FavoriteButtonG({ productId, courseId, articleId, rentId
       className={`${styles.favoriteIcon} ${className || ""}`}
     >
       {isFavorite ? (
-        <FaHeart size={22} color="#d0b088" />
+        <FaHeart size={22} color="#e58e41" />
       ) : (
         <FaRegHeart size={22} color="gray" />
       )}

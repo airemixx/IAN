@@ -1,7 +1,10 @@
-.j-bodyHeight{
-  height: 100vh;
+.j-page-wrapper{
+  min-height: 93vh;
 }
 
+.j-heightspace{
+  padding: 3.0rem;
+}
 .j-cartTitle{
   background-color: #003150;
   border-top-left-radius: 20px;
@@ -35,9 +38,6 @@
 }
 
 @media (max-width: 1200px){
-  .j-shoppingCartBox {
-    margin-top: 10%;
-  }
   .j-bodyHeight{
     height: auto;
   }
