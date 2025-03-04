@@ -11,22 +11,26 @@
 
   th {
     text-align: center;
-    width: 19%;
+    width: 10%;
   }
 
   td {
-    width: 23%;
+    width: 29%;
   }
 
   @media (max-width: 391px) {
-    table {
-      max-width: 100%;
+    .comparisonTable {
+      overflow-x: auto; /* ✅ 允許手機上滾動 */
+      display: block;
     }
-
-    th,
-    td {
+  
+    th, td {
+      // width: auto; /* ✅ 讓欄位根據內容調整 */
       padding: 8px;
       font-size: 0.85rem;
+      word-wrap: break-word;
+      // border: 1px solid red;
     }
   }
+  
 }

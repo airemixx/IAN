@@ -1,74 +1,73 @@
-"use client"; // Next.js 13+ 必須加上這行，讓 useRouter 正確運行
-
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { jwtDecode } from 'jwt-decode';
+import moment from "moment";
+import Swal from "sweetalert2";
 import styles from "./price-summary.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // 使用 useRouter 來進行導向
-import { jwtDecode } from 'jwt-decode'
-import moment from "moment";
-import Swal from "sweetalert2";
+
 export default function CheckoutFormStep1({ slItem }) {
-  const token = localStorage.getItem("loginWithToken")
+  const token = localStorage.getItem("loginWithToken");
   const decoded = jwtDecode(token);
 
   const [price, setPrice] = useState(0);
-  const router = useRouter(); // 取得 Next.js router
+  const [discount, setDiscount] = useState(0); // 折扣金額
+  const router = useRouter();
   const [show, setShow] = useState(false);
-  const [checkState, setCheckState] = useState(false)
-  const [cpName, setCpName] = useState("")
-  const [couponData, setCouponData] = useState([]); // 儲存優惠券資料
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
-  const handleClose = () => {
-    setCheckState(false)
-    setShow(false)
-  };
+  const [checkState, setCheckState] = useState(false);
+  const [cpName, setCpName] = useState("");
+  const [couponData, setCouponData] = useState([]);
+  const [selectedCoupons, setSelectedCoupons] = useState([]);
 
-  // 計算 totalPrice
+
+  // 計算原始價格
   useEffect(() => {
-
     if (slItem && Array.isArray(slItem)) {
-      const itemPrice =
-        slItem.reduce((acc, item) => acc + ((item.price * item.quantity) || 0), 0)
+      const itemPrice = slItem.reduce((acc, item) => acc + ((item.price * item.quantity) || 0), 0);
       setPrice(itemPrice);
     }
-  }, [slItem]); // 只有當 slItem 變更時才更新 price
+  }, [slItem]);
+
+  const handleClose = () => {
+    setCheckState(false);
+    setShow(false);
+  };
+
+  function handsumbit() {
+    setShow(false);
+  }
 
   function handleClick() {
     if (slItem && slItem.length > 0) {
       localStorage.setItem("cartItems", JSON.stringify(slItem));
 
-      // 確保數據已寫入後再跳轉
       setTimeout(() => {
         router.push("/cart/cart-step2");
-      }, 100); // 加入微小延遲確保 localStorage 寫入完成
+      }, 100);
     } else {
       Swal.fire({
         icon: "error",
         title: "抱歉",
         text: "購物車內沒有商品，請添加商品後再結帳！",
       });
-      
-      
     }
   }
 
   async function handleCheck() {
-    setCheckState(!checkState)
     if (!checkState) {
-      setCheckState(true)
-      setShow(true)
-      await fetchCoupon(); // 取得優惠券資訊
-    }else{
-      setCpName('')
+      setCheckState(true);
+      setShow(true);
+      await fetchCoupon();
+    } else {
+      // 取消選取優惠券時，清空狀態
+      setCheckState(false);
+      setCpName("");
+      setDiscount(0);
+      setSelectedCoupons([]);
     }
   }
-
-  function handsumbit() {
-    setShow(false)
-  }
-
 
 
   async function fetchCoupon() {
@@ -79,8 +78,7 @@ export default function CheckoutFormStep1({ slItem }) {
 
       if (response.status === 200) {
         const data = await response.json();
-        setCouponData(data.result); // 儲存優惠券資訊
-        console.log(data);
+        setCouponData(data.result);
       } else {
         console.error("獲取失敗:", await response.text());
       }
@@ -90,16 +88,69 @@ export default function CheckoutFormStep1({ slItem }) {
   }
 
   function handleCouponSelect(coupon) {
-    if (selectedCoupon === coupon.code) {
-      // 如果點擊的是已選中的優惠券，則取消選取
-      setSelectedCoupon(null);
-      setCpName(""); // 清空優惠券名稱
-    } else {
-      // 否則，設置新的選取優惠券
-      setSelectedCoupon(coupon.code);
-      setCpName(coupon.code);
+    let productTotal = 0;
+    let lessionTotal = 0;
+
+    // 計算不同 type 商品的總價
+    if (slItem && Array.isArray(slItem)) {
+      slItem.forEach((item) => {
+        if (item.type === "product") {
+          productTotal += item.price * item.quantity;
+        } else if (item.type === "lession") {
+          lessionTotal += item.price * item.quantity;
+        }
+      });
     }
+
+    // 檢查優惠券條件
+    if (coupon.disType === "fixed" && productTotal < 50000) {
+      Swal.fire({
+        icon: "warning",
+        title: "優惠券條件不符合",
+        text: "此優惠券需購買滿 NT$50,000 的商品（類型: 產品）",
+      });
+      return;
+    }
+
+    if (coupon.disType === "percent" && lessionTotal < 2000) {
+      Swal.fire({
+        icon: "warning",
+        title: "優惠券條件不符合",
+        text: "此優惠券需購買滿 NT$2,000 的商品（類型: 課程）",
+      });
+      return;
+    }
+
+    // 更新選擇的優惠券陣列
+    setSelectedCoupons((prevCoupons) => {
+      let updatedCoupons = [...prevCoupons];
+
+      const index = updatedCoupons.findIndex((c) => c.code === coupon.code);
+      if (index !== -1) {
+        updatedCoupons.splice(index, 1); // 取消選擇
+      } else {
+        updatedCoupons.push(coupon); // 新增優惠券
+      }
+
+      // 計算總折扣
+      let totalDiscount = updatedCoupons.reduce((acc, c) => {
+        if (c.disType === "fixed") {
+          return acc + 1500;
+        } else if (c.disType === "percent") {
+          return acc + Math.floor((lessionTotal * 5) / 100);
+        }
+        return acc;
+      }, 0);
+
+      setDiscount(Math.min(totalDiscount, price)); // 折扣不能超過總價
+      return updatedCoupons;
+    });
   }
+
+
+
+  // 計算折扣後的總額（確保不低於 0）
+  const totalPrice = Math.max(price - discount, 0);
 
   return (
     <div className={`${styles["j-payStep"]} col-sm-11 col-md-9 col-lg-4 col-xl-4 mb-5 ms-lg-0 d-flex flex-column align-items-center`}>
@@ -111,9 +162,10 @@ export default function CheckoutFormStep1({ slItem }) {
             是否使用優惠券
           </label>
         </div>
+
         <Modal show={show} onHide={handleClose} backdrop="static" size="lg" className={`${styles["j-model"]}`}>
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>選擇優惠券</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="d-flex flex-wrap">
@@ -121,7 +173,8 @@ export default function CheckoutFormStep1({ slItem }) {
                 couponData.map((coupon, index) => (
                   <div
                     key={index}
-                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 ${cpName === coupon.code ? styles["j-selected"] : ""}`}
+                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 
+        ${selectedCoupons === coupon.code ? styles["j-selected"] : ""}`}
                     onClick={() => handleCouponSelect(coupon)}
                   >
                     <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
@@ -135,29 +188,35 @@ export default function CheckoutFormStep1({ slItem }) {
                 <p>沒有可用的優惠券</p>
               )}
             </div>
-
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
-              Close
+              關閉
             </Button>
             <Button variant="primary" onClick={handsumbit}>
-              ok
+              確定
             </Button>
           </Modal.Footer>
         </Modal>
-        {/* <!-- Modal --> */}
 
-        <div className={`${styles["couponName"]} d-flex flex-column ${styles["j-publicFont"]} ms-lg-3 ms-xl-0`}>
-          {cpName}
+        <div className={`${styles["couponName"]} d-flex flex-column`}>
+          {selectedCoupons.length > 0 ? (
+            <span>已選擇優惠券: {selectedCoupons.map(c => c.cpName).join(", ")}</span>
+          ) : (
+            "未使用優惠券"
+          )}
         </div>
         <div className={`${styles["subTotalBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["subTotal"]}>小計</div>
           <div className={styles["subPrice"]}>NT${price}</div>
         </div>
+        <div className={`${styles["discountBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
+          <div className={styles["discount"]}>折扣</div>
+          <div className={styles["discountPrice"]}>- NT${discount}</div>
+        </div>
         <div className={`${styles["totalPriceBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["total"]}>總額</div>
-          <div className={styles["totalPrice"]}>NT${price}</div>
+          <div className={styles["totalPrice"]}>NT${totalPrice}</div>
         </div>
       </div>
       <div className={`${styles["j-Checkout"]} d-flex justify-content-center align-items-center align-self-stretch`}>

@@ -75,8 +75,8 @@
   }
   
   .j-selected {
-    border: 3px solid #ff9800; // 選中的優惠券會有橙色邊框
-    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.5); // 增加較強烈的陰影
+    border: 3px solid #003150; // 選中的優惠券會有橙色邊框
+    box-shadow: 0 4px 15px #003150; // 增加較強烈的陰影
     transform: translateY(-5px); // 同樣浮動 5px，讓選中狀態有視覺一致性
   }
 
