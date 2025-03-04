@@ -18,8 +18,8 @@
 
 .chatButton {
   position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
+  bottom: 80px !important;
+  right: 30px !important;
   width: 56px !important;
   height: 56px !important;
   min-width: 50px !important;
@@ -33,7 +33,7 @@
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
-  background-color: color.adjust(#fc671a, $lightness: -10%) !important;
+  background-color: color.adjust(#6c6c6c, $lightness: -10%) !important;
   line-height: 1 !important;
   transform: scale(1);
   overflow: hidden !important; /* 確保內容不會溢出 */
@@ -41,7 +41,7 @@
 
 .chatButton:hover {
   transform: scale(1.05);
-  background-color: color.adjust(#fd5907, $lightness: -5%) !important;
+  background-color: color.adjust(#8f8f8f, $lightness: -5%) !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -49,60 +49,61 @@
 .chatButton:focus,
 .chatButton:focus-visible {
   transform: scale(0.95);
-  background-color: color.adjust(#b64913, $lightness: -10%) !important;
+  background-color: color.adjust(rgb(62, 61, 61), $lightness: -10%) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
   border: none !important;
   outline: none !important;
 }
 //按鈕部分
 
-// 修改 chatWindow 為懸浮視窗樣式
+// 去除聊天視窗圓角
 .chatWindow {
   position: fixed;
-  bottom: 85px;
+  bottom: 90px;
   right: 20px;
-  width: 800px;
+  width: 390px;
   height: 500px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 0;
   overflow: hidden;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  background: #7e7267;
+  color: #333;
   transform-origin: bottom right;
-  z-index: 1000;
 }
 
-// 動畫效果
 .chatWindowEnter {
   opacity: 0;
-  transform: scale(0.7);
+  transform: translateY(20px);
 }
 
 .chatWindowEnterActive {
   opacity: 1;
-  transform: scale(1);
-  transition: all 0.3s;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
 }
 
 .chatWindowExit {
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(0);
 }
 
 .chatWindowExitActive {
   opacity: 0;
-  transform: scale(0.7);
-  transition: all 0.3s;
+  transform: translateY(20px);
+  transition: opacity 300ms, transform 300ms;
 }
 
 .chatButtonEnter {
   opacity: 0;
-  transform: scale(0.7);
+  transform: scale(0.8);
 }
 
 .chatButtonEnterActive {
   opacity: 1;
   transform: scale(1);
-  transition: all 0.3s;
+  transition: opacity 300ms, transform 300ms;
 }
 
 .chatButtonExit {
@@ -112,212 +113,49 @@
 
 .chatButtonExitActive {
   opacity: 0;
-  transform: scale(0.7);
-  transition: all 0.3s;
+  transform: scale(0.8);
+  transition: opacity 300ms, transform 300ms;
 }
 
-// 修改主佈局為更嚴格的 flex 佈局
 .mainChat {
   display: flex;
-  flex-direction: row;
-  height: 100%;
-  width: 100%;
-  overflow: hidden; // 添加此行防止內容溢出
-}
-
-// 修改用戶列表區域
-.userListSection {
-  width: 260px; // 使用固定寬度而不是 flex
-  min-width: 200px; // 設置最小寬度
-  height: 100%;
-  border-right: 1px solid #e0e0e0;
-  display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
-  overflow-x: hidden; // 防止水平溢出
-}
-
-// 用戶列表頭部
-.userListHeader {
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  h4 {
-    margin: 0;
-    font-size: 16px;
-    color: $secondary-color;
-  }
-}
-
-.searchContainer {
-  display: flex;
-  align-items: center;
-  background-color: white;
-  border-radius: 20px;
-  padding: 8px 12px;
-  border: 1px solid #e0e0e0;
-}
-
-.searchIcon {
-  color: #adb5bd;
-  margin-right: 8px;
-}
-
-.searchInput {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 14px;
-}
-
-// 用戶列表
-.userList {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0;
-}
-
-.userItem {
-  display: flex;
-  padding: 12px 15px;
-  border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
-
-  &.activeUser {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-}
-
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 12px;
+  height: 100%;
   position: relative;
-
-  img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-  }
 }
 
-.userInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0; // 防止子元素溢出
-}
-
-.userNameRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.userName {
-  font-weight: 600;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.messageTime {
-  font-size: 12px;
-  color: #6c757d;
-  white-space: nowrap;
-}
-
-.lastMessageRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.lastMessage {
-  font-size: 13px;
-  color: #6c757d;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 85%;
-}
-
-.unreadBadge {
-  background-color: $hover-color;
-  color: white;
-  border-radius: 50%;
-  min-width: 18px;
-  height: 18px;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-}
-
-.onlineStatus {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid white;
-
-  &.online {
-    background-color: #20c997;
-  }
-
-  &.offline {
-    background-color: #adb5bd;
-  }
-}
-
-// 修改聊天區域
-.chatSection {
-  flex: 1; // 簡化為 flex: 1
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: white;
-  overflow: hidden; // 防止溢出
-}
-
-// 修改原有樣式
+// 去除 header 圓角
 .chatHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background-color: $primary-color;
+  padding: 16px;
+  background-color: #7e7267;
   color: white;
   height: 50px;
-  border-radius: 0; // 移除圓角
+  border-top-left-radius: 0; // 從 15px 改為 0
+  border-top-right-radius: 0; // 從 15px 改為 0
+}
+
+// 添加 hamburger 按鈕容器樣式
+.hamburgerContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 0;
 }
 
 .headerUserInfo {
   display: flex;
   align-items: center;
+  flex: 1;
+  justify-content: center; // 使用戶名居中
 }
 
+// 調整用戶名稱樣式
 .userName {
   font-weight: 600;
-  margin-left: 8px;
   font-size: 16px;
+  color: white;
 }
 
 .iconButton {
@@ -331,50 +169,28 @@
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.2s;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-  }
 }
 
-.noUserSelected {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f8f9fa;
-  color: #6c757d;
-
-  p {
-    font-size: 16px;
-    margin-top: 20px;
-  }
+.iconButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-// 確保聊天內容區域不會溢出
 .chatBody {
   flex: 1;
-  padding: 10px;
+  padding: 0; // 從2px減少到0px
   overflow-y: auto;
-  overflow-x: hidden; // 防止水平溢出
   background-color: #f8f9fa;
-  width: 100%; // 確保寬度 100%
 }
 
 .chatBody > div {
   padding: 5px 0;
 }
 
-// 確保消息容器寬度正確
 .messagesContainer {
   display: flex;
   flex-direction: column;
   padding: 0;
   margin: 0;
-  width: 100%;
-  max-width: 100%; // 確保不超過父容器
 }
 
 // 訊息行容器 - 確保所有訊息垂直居中對齊
@@ -382,33 +198,31 @@
   display: flex;
   align-items: center; // 垂直置中對齊
   margin-bottom: 2px; // 從12px減少到8px
-  gap: 5px; // 提供頭像與訊息之間的間距
+  gap: 8px; // 提供頭像與訊息之間的間距
   position: relative; // 讓頭像可以絕對定位
   overflow: visible;
-  width: 100%; // 確保寬度 100%
-  max-width: 100%; // 確保不超過父容器
-  box-sizing: border-box; // 確保邊框和內邊距計入寬度
 }
 
-// 用戶訊息行靠左對齊，預留頭像空間
+// 修改用戶訊息行樣式 - 現在在左側
 .userMessageRow {
   position: relative;
-  justify-content: flex-start;
-  padding-left: 40px; // 與 user-chat 一致
+  justify-content: flex-start; // 改為左對齊
+  padding-left: 40px; // 保留頭像空間
   padding-right: 10px;
   overflow: visible;
 }
 
-// 客服訊息行靠右對齊，不需頭像空間
+// 修改客服訊息行樣式 - 現在在右側
 .agentMessageRow {
-  justify-content: flex-end; // 確保靠右對齊
+  justify-content: flex-end; // 改為右對齊
   padding-right: 10px;
-  padding-left: 10px;
+  padding-left: 45px; // 增加左側間距
+  overflow: visible;
 }
 
 // 訊息本體 - 統一基本樣式
 .message {
-  max-width: 75%; // 從 80% 減少到 75%
+  max-width: 80%;
   padding: 8px 12px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   position: relative; // 確保訊息本身也有相對定位
@@ -441,11 +255,11 @@
 }
 
 .userMessage.bubble-middle {
-  border-radius: 5px 15px 15px 5px;
+  border-radius: 15px 5px 5px 15px;
 }
 
 .userMessage.bubble-last {
-  border-radius: 5px 15px 15px 15px;
+  border-radius: 15px 5px 15px 15px;
 }
 
 // 連續訊息的間距調整
@@ -464,29 +278,28 @@
   margin-top: 1px;
 }
 
-// 用戶訊息樣式
+// 交換用戶和客服訊息樣式
 .userMessage {
-  background: #e6e6e6;
-  color: #333;
+  background: #969696; // 原來的客服灰色
+  color: #ffffff;
   align-self: flex-start;
-  margin-left: 5px; // 減少與頭像間距
-  border-radius: 15px 15px 15px 5px; // 左下角尖
-  @include user-bubble;
+  @include agent-bubble; // 使用原客服氣泡樣式
 }
 
 // 客服訊息樣式
 .agentMessage {
-  background: $secondary-color;
+  background: #1e3c54; // 原來的用戶藍色
   color: white;
   align-self: flex-end;
-  border-radius: 15px 15px 5px 15px; // 右下角尖
-  @include agent-bubble;
+  @include user-bubble; // 使用原用戶氣泡樣式
+  position: relative;
+  margin-left: 25px; // 為左側已讀圖標留出空間
 }
 
 // 客服訊息特定樣式 - 鏡像反轉圓角
 // 修改客服單條訊息時的圓角 - 完全圓形
 .agentMessage.bubble-single {
-  border-radius: 15px;
+  border-radius: 15px; // 所有角都是15px，沒有尖角
 }
 
 // 另外，確保通用的單獨訊息樣式也是15px圓角
@@ -516,9 +329,17 @@
   border-radius: 15px 15px 15px 5px;
 }
 
+.userMessage.bubble-middle {
+  border-radius: 5px 15px 15px 5px;
+}
+
+.userMessage.bubble-last {
+  border-radius: 5px 15px 15px 15px;
+}
+
 // 頭像容器
 .avatarContainer {
-  margin: 0;
+  margin: 0; // 移除多餘的間距
   display: flex;
   align-items: center; // 確保頭像垂直居中
   position: absolute;
@@ -529,8 +350,7 @@
 
 // 用戶訊息頭像在左側
 .userMessageRow .avatarContainer {
-  left: 5px; // 與 user-chat 一致的距離
-  right: auto;
+  left: 5px; // 用戶頭像在左側
 }
 
 // 客服訊息頭像在左側
@@ -550,29 +370,23 @@
 // 訊息狀態標誌位置
 .messageStatus {
   position: absolute;
-  left: -30px;
+  left: -25px; // 設定為負值使其顯示在訊息外側左邊
   bottom: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%; // 圓形背景
-  z-index: 9999; // 非常高的層級
+  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .readIcon {
-  color: #7e7267; // 使用明亮的藍色
-  opacity: 1;
+  color: #1e3c54; // 使用藍色突顯已讀圖標
 }
 
 .unreadIcon {
-  color: #aaa;
-  opacity: 1;
+  color: #666;
 }
 
 .chatFooter {
-  padding: 8px;
+  padding: 6px;
   background-color: white;
   border-top: 1px solid #eee;
 }
@@ -757,8 +571,8 @@
 
 // 時間標記樣式
 .timeLabel {
-  display: flex;
   font-size: 12px;
+  display: flex;
   justify-content: center;
   content: '';
   flex: 1;

@@ -303,18 +303,25 @@ router.post('/related', cors(corsOptions), async (req, res) => {
         SELECT a.*, c.name as category_name
         FROM article a
         LEFT JOIN article_category c ON a.category_id = c.id
-        WHERE a.is_deleted = 0 AND a.id != ?
+        WHERE a.is_deleted = 0 
+        ${articleId ? 'AND a.id != ?' : ''}
         ORDER BY a.created_at DESC
-        LIMIT ?
+        LIMIT 10
       `
-      let latestParams = [parseInt(articleId, 10), limit - rows.length]
+      // 使用較大數量(10)來確保有足夠的候選文章
+      let latestParams = articleId ? [parseInt(articleId, 10), 10] : [10]
 
       const [latestRows] = await pool.query(latestQuery, latestParams)
 
       const combinedRows = [...rows]
       for (const latestRow of latestRows) {
+        // 確保不重複添加已有的文章
         if (!combinedRows.find((row) => row.id === latestRow.id)) {
           combinedRows.push(latestRow)
+          // 如果已經達到所需數量，就跳出循環
+          if (combinedRows.length >= limit) {
+            break
+          }
         }
       }
       rows = combinedRows
