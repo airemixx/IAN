@@ -1,5 +1,5 @@
 import express, { json } from "express";
-import db from "../db.js";
+import pool from "../db.js";
 import authenticate from '../middlewares.js';
 import jwt from "jsonwebtoken";
 
@@ -22,7 +22,7 @@ const router = express.Router();
 
 router.get("/rent", checkToken, async (req, res) => {
   try {
-    const connection = await db.getConnection();
+    const connection = await pool.getConnection();
     const userId = req.decoded.id;
 
     console.log("🔍 獲取用戶 ID:", userId);
@@ -114,6 +114,9 @@ function checkToken(req, res, next) {
 // 更新評論 API
 router.put('/rent/reviews/:id', authenticate, async (req, res) => {
   try {
+    console.log("🔍 收到的評論資料:", req.body); // ✅ 這行新增來 debug
+
+
     const { id } = req.params;
     const { comment, rating } = req.body;
     const userId = req.user.id;
@@ -121,6 +124,8 @@ router.put('/rent/reviews/:id', authenticate, async (req, res) => {
     if (!comment || rating === undefined) {
       return res.status(400).json({ success: false, error: '評論內容與評分不得為空' });
     }
+
+
 
     // 檢查訂單是否符合條件
     const [rental] = await pool.query(
