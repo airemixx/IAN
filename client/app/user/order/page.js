@@ -19,7 +19,7 @@ export default function UserPage(props) {
       <Sidenav />
       {/* 主要內容區 */}
       <div className="col-md-8">
-        <h1 className="mb-4">我的訂單(2)</h1>
+        <h1 className={`mb-4 ${styles.h1}`}>我的訂單(2)</h1>
         {/* 訂單卡片 1 */}
         <div className={styles.orderCard}>
           <div className="d-flex justify-content-between mb-3">
