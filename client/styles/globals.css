@@ -317,7 +317,9 @@ nav {
   flex-direction: column;
   min-height: 200vh; 
 }
-
+.layout-cart-container{
+  min-height: 0; 
+}
 .root-content {
   flex: 1; 
 }

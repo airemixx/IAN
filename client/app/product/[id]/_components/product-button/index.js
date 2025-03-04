@@ -13,13 +13,9 @@ export default function CompareButton({ product, isHovered }) {
     if (isInCompareList) {
       removeFromCompare(product.id);
       Swal.fire({
-        // icon: "info",
+        icon: "info",
         title: "已移除比較清單",
         text: `${product.name} 已從比較清單中移除！`,
-        imageUrl: product.image_url,
-        imageWidth: 350,
-        imageHeight: 300,
-        imageAlt: product.name,
         timer: 1500,
         showConfirmButton: false,
         customClass: {
@@ -36,13 +32,9 @@ export default function CompareButton({ product, isHovered }) {
       } else {
         addToCompare(product);
         Swal.fire({
-          // icon: "success",
+          icon: "success",
           title: "成功加入比較清單！",
           text: `${product.name} 已加入比較！`,
-          imageUrl: product.image_url,
-          imageWidth: 350,
-          imageHeight: 300,
-          imageAlt: product.name,
           timer: 1500,
           showConfirmButton: false,
           customClass: {

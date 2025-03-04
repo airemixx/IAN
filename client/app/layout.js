@@ -12,9 +12,8 @@ import TeacherFooter from './teacher/_component/teacher-footer/page'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AppProvider from '@/hooks/app-provider'
-import { CompareProvider } from "@/app/product/_context/CompareContext";
-import { IoIosArrowUp } from "react-icons/io";
-// import "hover.css";
+import { CompareProvider } from '@/app/product/_context/CompareContext'
+import { IoIosArrowUp } from 'react-icons/io'
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -31,14 +30,12 @@ export default function RootLayout({ children }) {
   const pathname = usePathname()
 
   const isTeacherPage = useMemo(
-    () => pathname?.startsWith('/teacher'),
+    () => pathname && pathname.startsWith('/teacher'),
     [pathname]
-  )
+  );
+  
 
-  const isCartPage = useMemo(
-    () => pathname?.startsWith('/cart'),
-    [pathname]
-  )
+  const isCartPage = useMemo(() => pathname?.startsWith('/cart'), [pathname])
   // top按鈕
   const [showButton, setShowButton] = useState(false)
 
@@ -47,32 +44,46 @@ export default function RootLayout({ children }) {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
-
-
+      const isMobile = window.innerWidth < 1200; // 1200以下不顯示
+  
+      if (isMobile) {
+        setShowButton(false); // 手機版直接隱藏按鈕
+        return;
+      }
+  
+      // 滾動超過 300px 顯示按鈕
       if (scrollY > 300) {
         setShowButton(true);
       } else {
         setShowButton(false);
       }
-
+  
+      // 滾到底部 50px 內隱藏按鈕
       if (scrollY + windowHeight >= documentHeight - 50) {
         setShowButton(false);
       }
     };
-
+  
     window.addEventListener("scroll", handleScroll);
+  
+    // 頁面載入時也檢查一次
+    handleScroll();
+  
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" }); 
   };
+  
 
+  // 老師頁面不用layout
+  const isExcluded = pathname.includes('/teacher')
 
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
-        <div className="layout-container">
+        <div className={`${isCartPage ? "layout-cart-container" : "layout-container"}`}>
           <ToastContainer
             position="top-right"
             autoClose={3000}
@@ -85,17 +96,25 @@ export default function RootLayout({ children }) {
             style={{ marginTop: '80px' }}
           />
           {!isTeacherPage && (
-            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
+            <Header
+              searchOpen={searchOpen}
+              setSearchOpen={setSearchOpen}
+              isCartPage={isCartPage}
+            />
           )}
           <AppProvider>
-            <main className="root-content">{children}</main>
+            <main className={isExcluded ? '' : 'root-content'}>{children}</main>
           </AppProvider>
-          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}
+          {isTeacherPage ? (
+            <TeacherFooter />
+          ) : (
+            <Footer isCartPage={isCartPage} />
+          )}
         </div>
 
         {/* top按鈕 */}
         {showButton && (
-          <button onClick={scrollToTop} className='scroll-top-btn hvr-icon-bob'>
+          <button onClick={scrollToTop} className="scroll-top-btn hvr-icon-bob">
             <IoIosArrowUp size={25} className="hvr-icon" />
           </button>
         )}

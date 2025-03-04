@@ -63,7 +63,7 @@ export default function CourseRating() {
           if (modalContent && targetComment) {
             const rect = targetComment.getBoundingClientRect()
             const scrollToPosition =
-              modalContent.scrollTop + rect.top - modalContent.clientHeight / 3
+            targetComment.offsetTop - modalContent.clientHeight / 2 + targetComment.clientHeight / 2
 
             modalContent.scrollTo({
               top: scrollToPosition,

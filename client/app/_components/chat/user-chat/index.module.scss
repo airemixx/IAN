@@ -555,12 +555,13 @@
 
 // 時間標記樣式
 .timeLabel {
+  font-size: 12px;
   display: flex;
   justify-content: center;
   content: '';
   flex: 1;
   // border-bottom: 1px solid #e0e0e0;
-  margin: auto 10px;
+  margin: 10px auto;
 }
 
 .image-send-emoji-btn {

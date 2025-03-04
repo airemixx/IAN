@@ -117,12 +117,12 @@
 
 @media screen and (max-width: 576px) {
 
-  .popular-teacher > .teacher-container {
+  .popular-teacher > .container {
     padding: 0 !important;
   }
 
   .teacher-title {
-    padding-left: 32px;
+    padding-left: 16px;
   }
 
   .teacher-wrapper {
@@ -135,7 +135,7 @@
   .teacher-list {
     flex: 0 0 80vw; /* 每個卡片佔 80% 視窗寬度 */
     max-width: 80vw; /* 讓卡片最大寬度為 80% 視窗寬度 */
-    margin-left: 32px;
+    margin-left: 16px;
   }
   .teacher-card {
     margin-bottom: 3rem;

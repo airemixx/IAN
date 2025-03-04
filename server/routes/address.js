@@ -17,16 +17,14 @@ router.get("/", async (req, res) => {
     try {
         // 插入資料
         const [result] = await pool.execute(
-            `SELECT uc.id as code, c.discount_type as disType, c.type, c.name as cpName, c.start_date, c.end_date, c.discount, c.img FROM users u 
-            inner Join user_coupon uc on uc.user_id = u.id 
-            inner Join coupon c on c.id = uc.coupon_id WHERE u.id = ?;
+            `SELECT ad.address, u.name FROM addresses ad inner Join  users u on u.id = ad.user_id WHERE user_id = ?;
          `,[userId]
         );
-
-        res.status(200).json({ success: true, message: "優惠券獲取成功", result });
+        console.log(result);
+        res.status(200).json({ success: true, message: "ˇ地址獲取成功", result });
     } catch (error) {
-        console.error("優惠券獲取失敗:", error);
-        res.status(500).json({ success: false, message: "優惠券獲取失敗", error });
+        console.error("地址獲取失敗:", error);
+        res.json({ success: false, message: "優地址獲取失敗", error });
     }
 })
 

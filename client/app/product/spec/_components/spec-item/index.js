@@ -1,57 +1,60 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useCompare } from "@/app/product/_context/CompareContext";
-import CartButton from "../cart-button";
-import styles from "./spec-item.module.scss";
+'use client'
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useCompare } from '@/app/product/_context/CompareContext'
+import CartButton from '../cart-button'
+import styles from './spec-item.module.scss'
 
 export default function ComponentsCompareItem() {
-  const { compareList, addToCompare, removeFromCompare, updateCompare } = useCompare();
-  const [allProducts, setAllProducts] = useState([]); // 所有商品
+  const { compareList, addToCompare, removeFromCompare, updateCompare } =
+    useCompare()
+  const [allProducts, setAllProducts] = useState([]) // 所有商品
 
   // **獲取所有商品**
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch("http://localhost:8000/api/product");
-        const data = await res.json();
-        setAllProducts(data);
+        const res = await fetch('http://localhost:8000/api/product')
+        const data = await res.json()
+        setAllProducts(data)
       } catch (error) {
-        console.error("獲取商品失敗", error);
+        console.error('獲取商品失敗', error)
       }
     }
-    fetchProducts();
-  }, []);
+    fetchProducts()
+  }, [])
 
   // **處理選擇商品**
   const handleSelectChange = (event, index) => {
-    const productId = event.target.value;
-    if (!productId) return;
+    const productId = event.target.value
+    if (!productId) return
 
-    const selectedProduct = allProducts.find((p) => p.id === Number(productId));
+    const selectedProduct = allProducts.find((p) => p.id === Number(productId))
 
     if (selectedProduct) {
       if (index < compareList.length) {
         // **如果該位置已有商品，替換它**
-        updateCompare(index, selectedProduct);
+        updateCompare(index, selectedProduct)
       } else {
         // **如果該位置是空的，則新增**
-        addToCompare(selectedProduct);
+        addToCompare(selectedProduct)
       }
     }
-  };
+  }
 
   return (
     <div>
       <h1 className={styles.compareTitle}>比較相機機型</h1>
       <div className={styles.productContainer}>
         {Array.from({ length: 3 }).map((_, index) => {
-          const product = compareList[index]; // 取得目前比較的商品
+          const product = compareList[index] // 取得目前比較的商品
           return (
             <div key={index} className={styles.productBox}>
               {product ? (
                 <>
-                  <img src={product.image_url} alt={product.name} />
+                  <div className={styles.imageTop}>
+                    <img src={product.image_url} alt={product.name} />
+                  </div>
                   <select
                     className={styles.productSelect}
                     name={`productSelect-${index}`}
@@ -67,21 +70,27 @@ export default function ComponentsCompareItem() {
                         </option>
                       ))}
                   </select>
-                  <p>NT${product.price.toLocaleString()}</p>
+                  <p className={styles.price}>NT${product.price.toLocaleString()}</p>
                   <CartButton product={product} />
-                  <button className={`btn btn-link btn-sm ${styles.remove}`} onClick={() => removeFromCompare(product.id)}>
+                  <button
+                    className={`btn btn-link btn-sm ${styles.remove}`}
+                    onClick={() => removeFromCompare(product.id)}
+                  >
                     移除
                   </button>
                 </>
               ) : (
-                <Link href="/product" className={`${styles.productBox} ${styles.emptyBox}`}>
+                <Link
+                  href="/product"
+                  className={`${styles.productBox} ${styles.emptyBox}`}
+                >
                   + 添加商品
                 </Link>
               )}
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
