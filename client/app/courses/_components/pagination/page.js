@@ -49,7 +49,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
   }
 
   return (
-    <section className={styles['pages-container']} data-aos="fade-up">
+    <section className={styles['pages-container']} >
       {/* 最前頁按鈕 */}
       {totalPages > 5 && (
         <button

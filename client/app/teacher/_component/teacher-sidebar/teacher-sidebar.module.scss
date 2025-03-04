@@ -5,22 +5,25 @@
   max-height: 100vh;
 }
 
-.center-sidebar {
+.sidebar {
   position: fixed;
   top: 0;
-  left: -250px;
+  left: 0;
   width: 16.5%;
   background-color: var(--primary-color);
   height: 100vh;
   padding: 2rem;
   z-index: 100;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .burgerMenu {
+  display: none;
   position: fixed;
   top: 15px;
-  left: 15px;
+  right: 15px;
   background: none;
+  color: var(--primary-color);
   border: none;
   font-size: 24px;
   cursor: pointer;
@@ -32,13 +35,14 @@
 }
 
 .overlay {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5); // 半透明黑色背景
-  z-index: 1000;
+  z-index: 110;
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -376,21 +380,15 @@
   font-size: 0.8rem;
 }
 
-
-
-
-@media (max-width: 1200px) {
-  /* 展開時 */
-  .center-sidebar.show {
-    left: 0;
-  }
-
-  /* 內容區推開 */
-  .center-sidebar.show + .center-content {
-    margin-left: 250px;
-  }
-
+@media (max-width: 1400px) {
   /* 收合按鈕 */
+  .sidebar {
+    width: 30%;
+    background-color: var(--primary-color);
+    height: 100vh;
+    padding: 2rem;
+    z-index: 150;
+  }
   .close-sidebar-btn {
     position: absolute;
     top: 15px;
@@ -400,5 +398,34 @@
     font-size: 24px;
     color: white;
     cursor: pointer;
+  }
+  .burgerMenu {
+    display: block !important;
+  }
+  .sidebar {
+    left: -500px; // 隱藏在左側
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .overlay {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  /* 收合按鈕 */
+  .sidebar {
+    width: 50%;
+  }
+  .teacher-data .teacher-email {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  /* 收合按鈕 */
+  .sidebar {
+    width: 60%;
   }
 }
