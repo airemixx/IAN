@@ -1,6 +1,7 @@
 import express, { json } from "express";
-import jwt from "jsonwebtoken";
 import db from "../db.js";
+import authenticate from '../middlewares.js';
+import jwt from "jsonwebtoken";
 
 const portNum = 3005;
 
@@ -108,5 +109,52 @@ function checkToken(req, res, next) {
   });
 }
 
+/* PK專用 */
+
+// 更新評論 API
+router.put('/rent/reviews/:id', authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { comment, rating } = req.body;
+    const userId = req.user.id;
+
+    if (!comment || rating === undefined) {
+      return res.status(400).json({ success: false, error: '評論內容與評分不得為空' });
+    }
+
+    // 檢查訂單是否符合條件
+    const [rental] = await pool.query(
+      `SELECT status, comment_at FROM user_rentals WHERE id = ? AND user_id = ?`,
+      [id, userId]
+    );
+
+    if (rental.length === 0) {
+      return res.status(404).json({ success: false, error: '找不到符合條件的訂單' });
+    }
+
+    const { status, comment_at } = rental[0];
+
+    if (status !== '已完成') {
+      return res.status(400).json({ success: false, error: '僅已完成的訂單才能評論' });
+    }
+
+    if (comment_at !== null) {
+      return res.status(400).json({ success: false, error: '評論已提交，無法修改' });
+    }
+
+    // 更新評論與評分，並設定評論時間
+    await pool.query(
+      `UPDATE user_rentals SET comment = ?, rating = ?, comment_at = NOW() WHERE id = ? AND user_id = ?`,
+      [comment, rating, id, userId]
+    );
+
+    res.json({ success: true, message: '評論已成功提交' });
+  } catch (error) {
+    console.error('❌ 更新評論錯誤:', error);
+    res.status(500).json({ success: false, error: '伺服器錯誤' });
+  }
+});
+
+/* PK專用 */
 
 export default router;
