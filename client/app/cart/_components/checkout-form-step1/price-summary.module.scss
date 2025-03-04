@@ -1,88 +1,136 @@
 .j-publicFont {
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.j-payStep {
+  margin-top: 3.5rem;
+  height: 26rem;
+  padding: 60px;
+  border-radius: 20px;
+  background-color: #fff;
+}
+
+.j-pCount {
+  width: 323px;
+}
+
+.j-pTitle {
+  color: #003150;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.j-ifCouponUse {
+  font-size: 16px;
+}
+
+.j-Checkout {
+  height: 50px;
+  border-radius: 50px;
+  background: #003150;
+}
+.j-modle {
+  margin-top: 50rem;
+}
+.j-Checkout .j-btn {
+  &:not(.j-payStep) {
+    border: none;
   }
-  
-  .j-payStep {
-    margin-top: 3.5rem;
-    height: 26rem;
-    padding: 60px;
-    border-radius: 20px;
-    background-color: #fff;
+
+  &:focus {
+    border: none;
   }
-  
-  .j-pCount {
-    width: 323px;
-  }
-  
-  .j-pTitle {
-    color: #003150;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-  }
-  
-  .j-ifCouponUse {
-    font-size: 16px;
-  }
-  
-  .j-Checkout {
-    height: 50px;
-    border-radius: 50px;
-    background: #003150;
-  }
-  .j-modle{
-    margin-top: 50rem;
-  }
-  .j-Checkout .j-btn {
-    &:not(.j-payStep){
-      border: none;
-    }
-  
-    &:focus{
-      border: none;
-    }
-    &:active{
-      border: none;
-      color: #fff;
-    }
-    color: #FFF;
-    font-size: 14px;
-  }
-  .j-cp img{
-    width: 100%;
-  }
-  .j-cpEndDate{
-    bottom: 21%;
-    left: 39%;
+  &:active {
+    border: none;
     color: #fff;
   }
+  color: #fff;
+  font-size: 14px;
+}
+.j-cp img {
+  width: 100%;
+}
+.j-cpEndDate {
+  bottom: 21%;
+  left: 39%;
+  color: #fff;
+}
 
-  .j-cp {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 2px dashed transparent;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 10px;
-    background: #fff;
-  
-    &:hover {
-      border-color: #003150;
-      transform: translateY(-5px); // 滑鼠移入時讓元素向上浮動 5px
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); // 增加陰影，使其更有立體感
-    }
-  }
-  
-  .j-selected {
-    border: 3px solid #003150;
-    box-shadow: 0 4px 15px #003150; // 增加較強烈的陰影
-    transform: translateY(-5px); // 同樣浮動 5px，讓選中狀態有視覺一致性
-  }
+.j-cp {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px dashed transparent;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff;
 
-  @media (max-width: 996px){
-    .j-payStep {
-      margin-top: 0;
-    }
+  &:hover {
+    border-color: #003150;
+    transform: translateY(-5px); // 滑鼠移入時讓元素向上浮動 5px
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); // 增加陰影，使其更有立體感
   }
+}
+
+.j-selected {
+  border: 3px solid #003150;
+  box-shadow: 0 4px 15px #003150; // 增加較強烈的陰影
+  transform: translateY(-5px); // 同樣浮動 5px，讓選中狀態有視覺一致性
+}
+
+.j-ckBox {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #003150;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 當 checkbox 被選取時 */
+.j-ckBox:checked {
+  background-color: #003150;
+  border-color: #003150;
+}
+
+/* 加上勾勾圖示 */
+.j-ckBox:checked::after {
+  content: '✔';
+  font-size: 18px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+
+.j-btnOk, .j-btnOk:active, .j-btnOk:hover, .j-btnOk:focus{
+  background-color: #003150;
+  border-color: #003150;
+}
+
+.j-btnCancel, .j-btnCancel:active, .j-btnCancel:hover, .j-btnCancel:focus{
+  background-color: #ca6d1b;
+  border-color: #ca6d1b;
+}
+@media (max-width: 996px) {
+  .j-payStep {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 400) {
+  .j-cpEndDate {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+}

@@ -88,7 +88,6 @@ export default function cartPageOne() {
 
   const [checkAll, setCheckAll] = useState(false)
   const [checkedItems, setCheckedItems] = useState({})
-  const [slItems, setSltems] = useState([])
   const allItems = [...cartProduct, ...cartLession, ...cartRent]
   const [selectedItems, setSelectedItems] = useState([]) // 用來存放選中的項目
 
@@ -127,15 +126,7 @@ export default function cartPageOne() {
     setCheckAll(newSelects.length === allItems.length)
   }
 
-  const handleQuantityChange = (id, newQuantity) => {
-    const updatedItems = selectedItems.map(item => {
-      if (item.id === id) {
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
-    setSelectedItems(updatedItems);
-  };
+  
 
   let isCartEmpty = false;
   if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0) {
@@ -143,9 +134,9 @@ export default function cartPageOne() {
   }
 
   return (
-    <>
+    <div className={`${styles['j-page-wrapper']}`}>
       {isCartEmpty ? redirect('/cart/cart-empty') :
-        <div className={`container ${styles['j-bodyHeight']}`}>
+        <div className="container">
           <CartTitle count={(cartProduct.length + cartLession.length + cartRent.length)} />
           <div className="row d-flex justify-content-center">
             <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-7 col-xl-6 p-0`}>
@@ -178,7 +169,7 @@ export default function cartPageOne() {
                         htmlFor={`cartItem-${index}`}
                         className="ms-2 d-flex flex-grow-1"
                       >
-                        <CartItem key={index} id={index} itemData={item} page={1} onQuantityChange={handleQuantityChange}/>
+                        <CartItem key={index} id={index} itemData={item} page={1} />
                       </label>
                     </div>
                   ))}
@@ -329,7 +320,7 @@ export default function cartPageOne() {
             <CheckoutFormStep1 slItem={selectedItems} />
           </div>
         </div>}
-
-    </>
+        <div className={`${styles['j-space']}`}></div>
+    </div>
   )
 }

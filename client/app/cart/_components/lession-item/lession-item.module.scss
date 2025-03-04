@@ -1,6 +1,6 @@
 .j-lsText {
   font-size: 16px;
-  color: black;
+  color: #d0b088;
   
 }
 .j-lsTitle{
@@ -35,6 +35,7 @@
   .j-lsTitle{
     max-width: 205px;
   }
+  
 }
 
 @media (min-width: 1400px) {
@@ -50,6 +51,9 @@
 @media (max-width: 1200px) {
   .j-lsTitle{
     max-width: 205px;
+  }
+  .j-delBtn {
+    left: 90%
   }
 }
 
