@@ -1,6 +1,6 @@
 "use client"
 
-import  "./shopping-cart-empty.scss";
+import styles from "./shopping-cart-empty.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Link from "next/link";
 import { redirect } from "next/navigation";

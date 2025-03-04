@@ -113,14 +113,14 @@
   font-weight: bold;
 }
 
-.j-btnOk, .j-btnOk:active, .j-btnOk:hover, .j-btnOk:focus{
-  background-color: #003150;
-  border-color: #003150;
+.j-btnOk, .j-btnOk:visited, .j-btnOk:hover, .j-btnOk:active, .j-btnOk:focus{
+  background-color: #003150 !important;
+  border-color: #003150 !important;
 }
 
-.j-btnCancel, .j-btnCancel:active, .j-btnCancel:hover, .j-btnCancel:focus{
-  background-color: #ca6d1b;
-  border-color: #ca6d1b;
+.j-btnCancel, .j-btnCancel:visited, .j-btnCancel:hover, .j-btnCancel:active, .j-btnCancel:focus{
+  background-color: #ca6d1b !important;
+  border-color: #ca6d1b !important;
 }
 @media (max-width: 996px) {
   .j-payStep {
