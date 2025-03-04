@@ -26,10 +26,10 @@ export default function TeacherRootLayout({ children }) {
         <section className="center-dashboard">
           <div className="container-fluid">
             <div className="row">
-              <div className={styles['col-md-3'] + ' col-md-3 col-lg-2'}>
+              <div className={styles['col-md-3'] + ' col-md-3 col-lg-2 d-none d-xxl-block'}>
                 <TeacherSidebar />
               </div>
-              <div className="col-md-9 col-lg-10">{children}</div>
+              <div className="col-xl-12 col-xxl-10">{children}</div>
             </div>
           </div>
         </section>

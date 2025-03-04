@@ -144,7 +144,6 @@ export default function PriceFixed({ course }) {
       className={`${styles['course-price-fixed']} ${
         isVisible ? styles['show'] : styles['hide']
       }`}
-      data-aos="fade-down"
     >
       <div className={styles['fixed-price']}>
         <div className={styles['discount-price']}>
