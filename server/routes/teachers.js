@@ -313,18 +313,36 @@ router.get("/:teacherId/articles", async (req, res) => {
 
     const userId = teacherRows[0].user_id;
 
-    // 2. 用 user_id 查詢該老師的文章數
+    // 2. 用 user_id 查詢該老師的 nickname
+    const [userRows] = await pool.execute(
+      "SELECT nickname FROM users WHERE id = ?",
+      [userId]
+    );
+
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: "找不到該用戶" });
+    }
+
+    const authorName = userRows[0].nickname;
+
+    // 3. 用 user_id 查詢該老師的文章數
     const [articleRows] = await pool.execute(
       "SELECT COUNT(*) AS articleCount FROM article WHERE user_id = ?",
       [userId]
     );
 
-    res.json({ articleCount: articleRows[0].articleCount });
+    res.json({
+      user_id: userId,
+      author_name: authorName,
+      articleCount: articleRows[0].articleCount
+    });
+
   } catch (error) {
     console.error("無法獲取文章數:", error);
-    res.json({ error: "伺服器錯誤" });
+    res.status(500).json({ error: "伺服器錯誤" });
   }
 });
+
 
 
 export default router
