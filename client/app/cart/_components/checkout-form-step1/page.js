@@ -103,20 +103,20 @@ export default function CheckoutFormStep1({ slItem }) {
     }
 
     // 檢查優惠券條件
-    if (coupon.disType === "fixed" && productTotal < 50000) {
+    if (coupon.disType === "fixed" && productTotal < coupon.discount) {
       Swal.fire({
         icon: "warning",
         title: "優惠券條件不符合",
-        text: "此優惠券需購買滿 NT$50,000 的商品（類型: 產品）",
+        text: `此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 產品）`,
       });
       return;
     }
 
-    if (coupon.disType === "percent" && lessionTotal < 2000) {
+    if (coupon.disType === "percent" && lessionTotal < coupon.discount) {
       Swal.fire({
         icon: "warning",
         title: "優惠券條件不符合",
-        text: "此優惠券需購買滿 NT$2,000 的商品（類型: 課程）",
+        text: `此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 課程）`,
       });
       return;
     }
@@ -173,8 +173,8 @@ export default function CheckoutFormStep1({ slItem }) {
                 couponData.map((coupon, index) => (
                   <div
                     key={index}
-                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6 
-        ${selectedCoupons === coupon.code ? styles["j-selected"] : ""}`}
+                    className={`${styles["j-cp"]} mb-2 d-flex flex-column align-items-center position-relative col-6
+            ${selectedCoupons.some(c => c.code === coupon.code) ? styles["j-selected"] : ""}`}
                     onClick={() => handleCouponSelect(coupon)}
                   >
                     <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
@@ -189,6 +189,7 @@ export default function CheckoutFormStep1({ slItem }) {
               )}
             </div>
           </Modal.Body>
+
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               關閉
@@ -199,9 +200,9 @@ export default function CheckoutFormStep1({ slItem }) {
           </Modal.Footer>
         </Modal>
 
-        <div className={`${styles["couponName"]} d-flex flex-column`}>
+        <div className={`${styles["couponName"]} d-flex flex-column ms-lg-3 ms-xl-0`}>
           {selectedCoupons.length > 0 ? (
-            <span>已選擇優惠券: {selectedCoupons.map(c => c.cpName).join(", ")}</span>
+            <span >已選擇優惠券: {selectedCoupons.map(c => c.cpName).join(", ")}</span>
           ) : (
             "未使用優惠券"
           )}

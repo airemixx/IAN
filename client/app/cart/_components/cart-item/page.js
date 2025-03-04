@@ -2,28 +2,43 @@ import styles from "./cart-item.module.scss";
 import ProductDetails from "../product-details/page";
 import { useEffect, useState } from "react";
 
-export default function CartItem({ id, itemData, page }) {
+export default function CartItem({ id, itemData, page, onQuantityChange  }) {
   const { image, brand, name, price, specs, quantity } = itemData;
-  // 初始化狀態
   const [newQuan, setNewQuan] = useState(quantity);
 
-  // 更新 newQuan 當 quantity 變更時
   useEffect(() => {
     setNewQuan(quantity);
   }, [quantity]);
 
-  // **當 newQuan 變更時，更新 localStorage**
   useEffect(() => {
     let cart = JSON.parse(localStorage.getItem("cart")) || {};
     if (cart[id]) {
       cart[id].quantity = newQuan;
       localStorage.setItem("cart", JSON.stringify(cart));
     }
-  }, [newQuan]); // 只在 newQuan 變更時執行
+    // 通知父組件數量變化
+    if (onQuantityChange) {
+      onQuantityChange(id, newQuan);
+    }
+  }, [newQuan]);
 
-  // **數量增加**
   function handleClickInc() {
     setNewQuan((prev) => prev + 1);
+  }
+
+  function handleClickDec() {
+    if (newQuan === 1) {
+      const confirmDelete = window.confirm("數量為 0，是否要從購物車刪除該商品？");
+      if (confirmDelete) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        delete cart[id];
+        let updatedCart = Object.entries(cart).filter(v => v != null).map(v => v[1]);
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        window.location.reload();
+      }
+    } else {
+      setNewQuan((prev) => prev - 1);
+    }
   }
 
   function handleClickDec() {
@@ -148,15 +163,16 @@ export default function CartItem({ id, itemData, page }) {
               </button>
             </div> : ''}
           </div>
-          <div className="d-flex justify-content-around mb-3">
-              {page == 1 ? <div className={`${styles['j-amount']} d-flex flex-row align-items-center justify-content-center justify-content-sm-start`}>
+          <div className="d-flex justify-content-center mb-3">
+              {page == 1 ? <div className={`${styles['j-amount']} d-flex flex-row align-items-center justify-content-center justify-content-sm-start me-5`}>
+                <span> 數量:</span>
                 <button className={`${styles['j-decrease']} btn pb-0 ps-2 pt-0 pe-0`}
                   onClick={handleClickDec}>-</button>
                 <p className={`${styles['j-amount-text']} mb-0 ${styles['j-publicFont']} text-center`}>{newQuan}</p>
                 <button className={`${styles['j-increase']} btn pb-0 ps-0 pt-0`}
                   onClick={handleClickInc}>+</button>
               </div> : ''}
-              <p className={`${styles['j-price']} `}>價格: {price * newQuan}元</p>
+              <p className={page == 1 ? `${styles['j-price']} me-5` : `${styles['j-price']} ms-5 ps-5`}>價格: {price * newQuan}元</p>
             </div>
           <div>
             <ProductDetails id={id} specs={specs} />

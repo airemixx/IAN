@@ -37,8 +37,8 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                                     {name}
                                 </span>
                             </div>
-                            <div className="d-flex flex-grow-1 justify-content-center ps-md-4 ps-lg-0 ps-xxl-2">
-                                <p className={`ms-1 mt-2 mb-2 ${styles['j-lsText']}`}>價格:{price}元</p>
+                            <div className="d-flex flex-grow-1 justify-content-center  ps-lg-0 ps-xxl-2">
+                                <p className={`ms-xxl-1 mt-2 mb-2 me-md-2 ${styles['j-lsText']}`}>價格:{price}元</p>
                             </div>
                         </div>
                     </div>

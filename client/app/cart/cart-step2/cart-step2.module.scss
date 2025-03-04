@@ -1,5 +1,5 @@
 .j-bodyHeight{
-  height: 100vh;
+  height: auto;
 }
 
 .j-cartTitle{
@@ -29,7 +29,7 @@
   padding: 3.0rem;
 }
 
-@media(max-width:1400px){
+@media(max-width:1200px){
   .j-bodyHeight{
     height: auto;
   }
