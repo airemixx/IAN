@@ -642,12 +642,11 @@ export default function UserPage(props) {
       </div>
               </div>
               <div>
-                <Link href="#" className="text-decoration-none">
+                {/* <Link href="#" className="text-decoration-none">
                   選擇預設送貨地址
-                </Link>
-                <br />
+                </Link> */}
                 <div>
-                  <a onClick={handleAddAddress}>添加新住址</a>
+                  <a onClick={handleAddAddress}>新增/管理住址</a>
                 </div>
               </div>
             </div>
