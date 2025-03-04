@@ -8,6 +8,7 @@ import {
   FaPlusSquare,
   FaQuestionCircle,
   FaSignOutAlt,
+  FaBars,
 } from 'react-icons/fa'
 import styles from './teacher-sidebar.module.scss'
 import { useTeachers } from '@/hooks/use-teachers' // ✅ 使用 Context
@@ -20,6 +21,8 @@ export default function TeacherSidebar() {
   const router = useRouter()
   const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const toggleSidebar = () => setIsOpen(!isOpen)
 
   const appKey = 'loginWithToken'
 
@@ -60,91 +63,101 @@ export default function TeacherSidebar() {
   }
 
   return (
-    <div className="col-md-3 col-lg-2 d-none d-xl-block">
-      <div className={styles['center-sidebar']}>
-        {/* ❌ 關閉側邊欄按鈕 */}
-        <button className={styles['close-sidebar-btn'] + ' d-md-none'}>
-          <FaTimes />
-        </button>
+    <>
+      {/* //漢堡 */}
+      <button className={styles.burgerMenu} onClick={toggleSidebar}>
+        <FaBars />
+      </button>
 
-        {/* 📌 Logo 區塊 */}
-        <Link href="/">
-        <div className={styles['logo']}>
-          <img src="/images/icon/lenstudio-logo.svg" alt="Lenstudio Logo" />
-          <hr />
-        </div>
-        </Link>
+      {/* // 遮色片 */}
+      {isOpen && <div className={styles.overlay} onClick={toggleSidebar}></div>}
 
-        {/* 📌 講師資訊 */}
-        <Link href="/teacher/teacher-edit">
-          <div className={styles['teacher-data']}>
-            <div className={styles['teacher-sticker']}>
-              <img
-                src={teacher?.image || '/images/teachers/default-avatar.jpg'}
-                alt="講師頭像"
-              />
+      <div className="col-md-3 col-xl-2 d-none d-xxl-block sidebar-container">
+        <div className={styles['center-sidebar']}>
+          {/* ❌ 關閉側邊欄按鈕 */}
+          <button className={styles['close-sidebar-btn'] + ' d-md-none'}>
+            <FaTimes />
+          </button>
+
+          {/* 📌 Logo 區塊 */}
+          <Link href="/">
+            <div className={styles['logo']}>
+              <img src="/images/icon/lenstudio-logo.svg" alt="Lenstudio Logo" />
+              <hr />
             </div>
-            <h2 className={styles['teacher-name']}>
-              {teacher?.name || 'Loading...'}
-            </h2>
-            <p className={styles['teacher-email']}>
-              {teacher?.email || 'Loading...'}
-            </p>
-          </div>
-        </Link>
+          </Link>
 
-        {/* 📌 控制中心 */}
-        <div className={styles['e-control-center']}>
-          <ul>
-            <li
-              className={
-                pathname === '/teacher/teacher-edit' ? styles.active : ''
-              }
-            >
-              <Link href="/teacher/teacher-edit">
-                <FaAddressBook /> 講師資料
-              </Link>
-            </li>
+          {/* 📌 講師資訊 */}
+          <Link href="/teacher/teacher-edit">
+            <div className={styles['teacher-data']}>
+              <div className={styles['teacher-sticker']}>
+                <img
+                  src={teacher?.image || '/images/teachers/default-avatar.jpg'}
+                  alt="講師頭像"
+                />
+              </div>
+              <h2 className={styles['teacher-name']}>
+                {teacher?.name || 'Loading...'}
+              </h2>
+              <p className={styles['teacher-email']}>
+                {teacher?.email || 'Loading...'}
+              </p>
+            </div>
+          </Link>
 
-            <li
-              className={
-                pathname === '/teacher' ||
-                (pathname.startsWith('/teacher/course') &&
-                  pathname !== '/teacher/course/course-add')
-                  ? styles.active
-                  : ''
-              }
-            >
-              <Link href="/teacher">
-                <FaChalkboard /> 我的課程
-              </Link>
-            </li>
+          {/* 📌 控制中心 */}
+          <div className={styles['e-control-center']}>
+            <ul>
+              <li
+                className={
+                  pathname === '/teacher/teacher-edit' ? styles.active : ''
+                }
+              >
+                <Link href="/teacher/teacher-edit">
+                  <FaAddressBook /> 講師資料
+                </Link>
+              </li>
 
-            <li
-              className={
-                pathname === '/teacher/course/course-add' ? styles.active : ''
-              }
-            >
-              <Link href="/teacher/course/course-add">
-                <FaPlusSquare /> 新增課程
-              </Link>
-            </li>
+              <li
+                className={
+                  pathname === '/teacher' ||
+                  (pathname.startsWith('/teacher/course') &&
+                    pathname !== '/teacher/course/course-add')
+                    ? styles.active
+                    : ''
+                }
+              >
+                <Link href="/teacher">
+                  <FaChalkboard /> 我的課程
+                </Link>
+              </li>
 
-            <li>
-              <a href="#">
-                <FaQuestionCircle /> 客服中心
+              <li
+                className={
+                  pathname === '/teacher/course/course-add' ? styles.active : ''
+                }
+              >
+                <Link href="/teacher/course/course-add">
+                  <FaPlusSquare /> 新增課程
+                </Link>
+              </li>
+
+              <li>
+                <a href="#">
+                  <FaQuestionCircle /> 客服中心
+                </a>
+              </li>
+            </ul>
+
+            {/* 📌 登出 */}
+            <div className={styles['logout']}>
+              <a href="#" onClick={handleLogout}>
+                <FaSignOutAlt /> 登出
               </a>
-            </li>
-          </ul>
-
-          {/* 📌 登出 */}
-          <div className={styles['logout']}>
-            <a href="#" onClick={handleLogout}>
-              <FaSignOutAlt /> 登出
-            </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
