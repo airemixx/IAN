@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
     () => pathname && pathname.startsWith('/teacher'),
     [pathname]
   );
-  
+
 
   const isCartPage = useMemo(() => pathname?.startsWith('/cart'), [pathname])
   // top按鈕
@@ -45,37 +45,37 @@ export default function RootLayout({ children }) {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       const isMobile = window.innerWidth < 1200; // 1200以下不顯示
-  
+
       if (isMobile) {
         setShowButton(false); // 手機版直接隱藏按鈕
         return;
       }
-  
+
       // 滾動超過 300px 顯示按鈕
       if (scrollY > 300) {
         setShowButton(true);
       } else {
         setShowButton(false);
       }
-  
+
       // 滾到底部 50px 內隱藏按鈕
       if (scrollY + windowHeight >= documentHeight - 50) {
         setShowButton(false);
       }
     };
-  
+
     window.addEventListener("scroll", handleScroll);
-  
+
     // 頁面載入時也檢查一次
     handleScroll();
-  
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
+
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" }); 
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  
+
 
   // 老師頁面不用layout
   const isExcluded = pathname.includes('/teacher')
@@ -83,7 +83,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
-        <div className={`${isCartPage ? "layout-cart-container" : "layout-container"}`}>
+        <div className={isTeacherPage ? "" : isCartPage ? "layout-cart-container" : "layout-container"}>
           <ToastContainer
             position="top-right"
             autoClose={3000}

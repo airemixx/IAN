@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     res.json(rows)
   } catch (error) {
     console.error('❌ 無法獲取講師列表:', error)
-    res.status(500).json({ error: '無法獲取講師列表' })
+    res.json({ error: '無法獲取講師列表' })
   }
 })
 
@@ -92,7 +92,7 @@ router.get('/me', async (req, res) => {
     })
   } catch (error) {
     console.error('❌ 獲取講師資訊失敗:', error)
-    res.status(500).json({ error: '無法獲取講師資訊' })
+    res.json({ error: '無法獲取講師資訊' })
   }
 })
 
@@ -141,7 +141,7 @@ router.put('/me', authenticate, async (req, res) => {
   } catch (error) {
     await connection.rollback() // 回滾交易（如果有錯誤）
     console.error('❌ 更新講師資料失敗:', error)
-    res.status(500).json({ error: '無法更新講師資料', details: error.message })
+    res.json({ error: '無法更新講師資料', details: error.message })
   } finally {
     connection.release() // 釋放連線
   }
@@ -152,7 +152,7 @@ router.put('/me', authenticate, async (req, res) => {
 router.get('/:id', async (req, res) => {
   const teacherId = parseInt(req.params.id, 10)
   if (isNaN(teacherId)) {
-    return res.status(400).json({ error: 'Invalid teacher ID' })
+    return res.json({ error: 'Invalid teacher ID' })
   }
 
   try {
@@ -183,7 +183,7 @@ router.get('/:id', async (req, res) => {
 
     // 如果講師不存在
     if (teacherRows.length === 0) {
-      return res.status(404).json({ error: 'Teacher not found' })
+      return res.json({ error: 'Teacher not found' })
     }
 
     // 合併結果
@@ -192,10 +192,11 @@ router.get('/:id', async (req, res) => {
       courses: courseRows, // ✅ 加入該老師的所有課程
     }
 
+    console.log('✅ 獲取講師資料成功:')
     res.json(teacherData)
   } catch (error) {
     console.error('❌ 獲取講師資料失敗:', error)
-    res.status(500).json({ error: '無法獲取講師資料' })
+    res.json({ error: '無法獲取講師資料' })
   }
 })
 
@@ -219,7 +220,7 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, teacher: teachers[0] })
   } catch (error) {
-    res.status(500).json({ error: '登入失敗' })
+    res.json({ error: '登入失敗' })
   }
 })
 
@@ -291,7 +292,7 @@ router.get('/me/courses', async (req, res) => {
     res.json(courses)
   } catch (error) {
     console.error('❌ 獲取課程失敗:', error)
-    res.status(500).json({ error: '無法獲取課程' })
+    res.json({ error: '無法獲取課程' })
   }
 })
 
@@ -321,7 +322,7 @@ router.get("/:teacherId/articles", async (req, res) => {
     res.json({ articleCount: articleRows[0].articleCount });
   } catch (error) {
     console.error("無法獲取文章數:", error);
-    res.status(500).json({ error: "伺服器錯誤" });
+    res.json({ error: "伺服器錯誤" });
   }
 });
 

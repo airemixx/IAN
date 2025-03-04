@@ -197,3 +197,19 @@
   background-color: var(--gray--200);
   color: black;
 }
+
+
+@media (max-width: 1200px) {
+  .center-content {
+    padding: 2rem 2rem;
+  }
+  .course-edit {
+    padding: 2rem 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .center-content {
+    padding: 2rem 1rem;
+  }
+}

@@ -32,15 +32,15 @@ export default function CourseManagement() {
 
         console.log('正在發送請求到 /api/teachers/me/courses...')
         const res = await fetch('http://localhost:8000/api/teachers/me/courses', {
-          headers: { Authorization: `Bearer ${token}` }, // ✅ 修正 Authorization 格式
+          headers: { Authorization: `Bearer ${token}` }, 
         })
 
-        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`) // ✅ 修正模板字串
+        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`) 
 
         const data = await res.json()
         console.log('✅ 取得課程與使用者資訊:', data)
 
-        if (!data.length || data[0]?.level === undefined) { // ✅ 修正 data[0]?.level 以防錯誤
+        if (!data.length || data[0]?.level === undefined) { 
           console.error('❌ API 回傳錯誤，沒有 level 值', data)
           router.push('/dashboard') // 避免進入錯誤頁面
           return
@@ -94,10 +94,6 @@ export default function CourseManagement() {
 
   return (
     <>
-      <button className="btn btn-dark d-xl-none">
-        <FaBars />
-      </button>
-
       <div className={styles['center-content']}>
         <div className={styles['nav-bar']}>
           <h1>課程管理中心</h1>
@@ -144,10 +140,10 @@ export default function CourseManagement() {
               <tr>
                 <th>課程圖片</th>
                 <th>課程名稱</th>
-                <th>課程分類</th>
+                <th>分類</th>
                 <th>建立日期</th>
                 <th>售價</th>
-                <th>銷售量</th>
+                {/* <th>銷售量</th> */}
                 <th>學生人數</th>
                 <th>發布狀態</th>
                 <th>編輯</th>
@@ -163,7 +159,7 @@ export default function CourseManagement() {
                     '/images/course-cover/default-course.jpg'
                 return (
                   <tr key={course.id}>
-                    <td className={styles['course-img']}>
+                    <td className={styles['course-img']} data-label="課程圖片">
                       <Link
                         href={`/courses/${course.id}`}
                         target="_blank"
@@ -181,24 +177,24 @@ export default function CourseManagement() {
                         </div>
                       </Link>
                     </td>
-                    <td>{course.title}</td>
-                    <td>{course.category}</td>
-                    <td>
+                    <td data-label="課程名稱">{course.title}</td>
+                    <td data-label="分類">{course.category}</td>
+                    <td data-label="建立日期">
                       {new Date(course.created_at).toLocaleDateString('zh-TW', {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',
                       })}
                     </td>
-                    <td>{course.sale_price.toLocaleString()}</td>
-                    <td>
+                    <td data-label="售價">{course.sale_price.toLocaleString()}</td>
+                    {/* <td data-label="銷售量">
                       NT$
                       {(
                         course.sale_price * course.student_count
                       ).toLocaleString()}
-                    </td>
-                    <td>{course.student_count.toLocaleString()}</td>
-                    <td>
+                    </td> */}
+                    <td data-label="學生人數">{course.student_count.toLocaleString()}</td>
+                    <td  data-label="發布狀態">
                       <div className={styles['state-circle']}>
                         <div
                           className={` ${
