@@ -125,7 +125,8 @@ function ReplyItem({
   handleReplyClick, // 新增
   currentReplyTo, // 新增
   token, // 新增
-  userId // 新增
+  userId, // 新增
+  onCommentSubmitted // 新增
 }) {
   // 新增：控制父回覆初次顯示的 loader
   const [showLoader, setShowLoader] = useState(true)
@@ -215,7 +216,7 @@ function ReplyItem({
       originalTime: time,
       isEdited
     });
-    
+
     // 如果有更新時間，確保它是有效的日期對象
     if (updatedTime) {
       try {
@@ -232,9 +233,9 @@ function ReplyItem({
   }, [updatedTime, time, isEdited]);
 
   // 計算顯示時間
-  const timeAgo = formatDistanceToNow(new Date(time), { 
-    locale: zhTW, 
-    addSuffix: true 
+  const timeAgo = formatDistanceToNow(new Date(time), {
+    locale: zhTW,
+    addSuffix: true
   });
   const formattedTime = updatedTime && !isNaN(new Date(updatedTime).getTime())
     ? format(new Date(updatedTime), 'yyyy/MM/dd HH:mm')
@@ -1066,7 +1067,6 @@ function NestedReplyItem({
                 onClick={handleNestedReplyClick}
               >
                 <img src="/images/article/reply-origin.svg" alt="Reply" />
-                <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
               </button>
             </div>
           </div>
@@ -1122,6 +1122,8 @@ function NestedReplyItem({
 export default function CommentsArea({ articleId, refreshTrigger, isAuthenticated, showAuthModal, token, userId }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [count, setCount] = useState(0)
+  const [previousCount, setPreviousCount] = useState(0) // 新增：追蹤上一次留言數量
+  const [isInitialized, setIsInitialized] = useState(false) // 新增：追蹤是否完成初始化
   const [comments, setComments] = useState([])
   const [sortOption, setSortOption] = useState('1')
   const [activeMenuId, setActiveMenuId] = useState(null)
@@ -1130,6 +1132,25 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
   const [currentReplyTo, setCurrentReplyTo] = useState('') // 新增
 
   const toggleComments = () => setIsCollapsed((prev) => !prev)
+
+  // 新增：監控留言數量變化，當有新留言時自動展開
+  useEffect(() => {
+    if (!isInitialized && count > 0) {
+      // 首次載入完成初始化
+      setIsInitialized(true);
+      setPreviousCount(count);
+      setIsCollapsed(false);
+      return;
+    }
+
+    if (isInitialized && count > previousCount) {
+      // 新增留言時，自動展開留言區
+      setIsCollapsed(false);
+    }
+
+    // 更新前一次的留言數量
+    setPreviousCount(count);
+  }, [count, isInitialized]);
 
   useEffect(() => {
     if (!articleId) return
