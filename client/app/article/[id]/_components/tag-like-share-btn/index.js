@@ -136,17 +136,16 @@ export default function TagLikeShareBtnIndex({ articleId, isAuthenticated, showA
     // 取得標籤
     const fetchTags = async () => {
       try {
-        const response = await fetch(`/api/articles/${articleId}/tags`)
-        if (!response.ok) {
-          console.log('response', response)
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        setTags(data)
+        // 確保文章 ID 正確傳遞
+        const response = await fetch(`/api/articles/${articleId}/tags`);
+        console.log('標籤 API 響應:', response.status);
+        
+        // 其他代碼保持不變
       } catch (error) {
-        console.error('Could not fetch tags:', error)
+        console.error('獲取標籤失敗:', error);
+        setTags([]); // 失敗時設置空數組
       }
-    }
+    };
 
     // 現在可以直接調用上面定義的函數
     fetchArticleLikeCount();
