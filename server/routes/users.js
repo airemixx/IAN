@@ -540,21 +540,13 @@ router.post("/login", upload.none(), async (req, res) => {
 });
 
 router.post("/logout", checkToken, (req, res) => {
-  const token = jwt.sign(
-    {
-      account: "",
-      mail: "",
-      head: "",
-    },
-    secretKey,
-    { expiresIn: "-10s" }
-  );
+  res.clearCookie("token"); // 清除 JWT Token（如果儲存在 cookie）
   res.json({
     status: "success",
-    data: { token },
-    message: "登出成功",
+    message: "登出成功，所有資料已清除",
   });
 });
+
 
 router.get("/users/me", checkToken, async (req, res) => {
   try {
