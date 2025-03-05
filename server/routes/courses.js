@@ -11,7 +11,7 @@ router.get('/categories', async (req, res) => {
       'SELECT DISTINCT category FROM courses'
     )
 
-    console.log('📢 查詢到的分類:', categories)
+    // console.log('📢 查詢到的分類:', categories)
 
     if (!categories || categories.length === 0) {
       return res.status(404).json({ error: '找不到分類' })
@@ -27,7 +27,7 @@ router.get('/categories', async (req, res) => {
 // ✅ 取得所有課程（支援搜尋 & 排序 & 分類）
 router.get('/', async (req, res) => {
   try {
-    console.log('🌍 API 收到請求：', req.query)
+    // console.log('🌍 API 收到請求：', req.query)
 
     let { search, sort, category } = req.query
     let query = `
@@ -270,7 +270,7 @@ router.post('/', authenticate, async (req, res) => {
 
 router.get('/collection/:courseId', authenticate, async (req, res) => {
   try {
-    console.log("🛠 API 端點收到 req.userId:", req.userId);
+    // console.log("🛠 API 端點收到 req.userId:", req.userId);
 
     if (!req.userId) {
       console.error("❌ req.userId 未定義");

@@ -16,7 +16,7 @@ export default function RelatedCourses({ course }) {
 
     const fetchRelatedCourses = async () => {
       try {
-        const API_URL = `/api/courses/related/${course.category}`
+        const API_URL = `http://localhost:8000/api/courses/related/${course.category}`
         console.log('🚀 發送 API 請求:', API_URL)
 
         const res = await fetch(API_URL)
