@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react'
 import styles from './courses-filter.module.scss'
 import CourseList from '../courses-list/page'
 import { FaChevronDown } from 'react-icons/fa'
+import { FiSearch,FiRotateCw } from "react-icons/fi";
 
 
 export default function CoursesFilter({ courses, setFilteredCourses }) {
@@ -47,6 +48,12 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
     }
   }
 
+  // 清除搜尋
+  const handleClearSearch = () => {
+    setSearch('')
+    setTempSearch('')
+  }
+
   const handleSortChange = (value) => {
     setSort(value)
     setDropdownOpen(false)
@@ -68,7 +75,7 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
     <section className={`container ${styles['course-list']}`}>
       <div className={styles['search-filter']}>
         <div className={styles['course-search']}>
-          <input
+        <input
             className={styles['search-input']}
             type="text"
             placeholder="搜尋課程、講師"
@@ -85,8 +92,11 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
               }
             }}
           />
-          <button className={styles['search-btn']} onClick={handleSearch}>
-            <img src="/images/icon/search-blue.svg" alt="搜尋" />
+          <button
+            className={styles['search-btn']}
+            onClick={search ? handleClearSearch : handleSearch} // 如果有搜尋內容就清除，沒有就搜尋
+          >
+            {search ? <FiRotateCw size={22} color="#143146" /> : < FiSearch size={22} color="#143146" />}
           </button>
         </div>
 

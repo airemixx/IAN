@@ -148,8 +148,9 @@ router.get('/related/:category', async (req, res) => {
       WHERE c.category = ?  
       GROUP BY c.id, t.name
       ORDER BY RAND()
-      LIMIT 4;
+      LIMIT 5;
     `
+// LIMIT 5 確保過濾掉當前課程後，仍然有 4 筆可用
 
     const [rows] = await pool.execute(sql, [category])
 

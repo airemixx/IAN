@@ -28,7 +28,7 @@ export default function RelatedCourses({ course }) {
     
         data = data.filter(relatedCourse => relatedCourse.id !== course.id)
 
-        setRelatedCourses(data)
+        setRelatedCourses(data.slice(0, 4))
       } catch (error) {
         console.error('❌ 獲取相關課程失敗:', error)
       } finally {

@@ -5,7 +5,7 @@ import useAuthHook from '@/hooks/use-auth'
 import SliderIndex from './_components/slider'
 import ArticleCardIndex from './_components/article-card'
 import ProductCardIndex from './_components/product-card'
-import CoursesCardIndex from './_components/courses-card'
+import CoursesCardIndex2 from './_components/courses-card2'
 import Chat from './_components/chat'
 
 export default function Home() {
@@ -20,7 +20,7 @@ export default function Home() {
       <SliderIndex />
       <ArticleCardIndex />
       <ProductCardIndex />
-      <CoursesCardIndex />
+      <CoursesCardIndex2 />
       <Chat userLevel={userLevel} />
     </>
   )

@@ -204,11 +204,10 @@ export default function TeacherInfo({ teacherId }) {
                     </p>
                   </li>
                   <li className={styles['data-item']}>
-                    <img src="/images/icon/article-icon-w.svg" alt="" />
-                    <p>
-                      {selectedTeacher.articleCount?.toLocaleString() || '0'}{' '}
-                      篇文章
-                    </p>
+                    <Link href={`/article?user_id=${teacher.user_id}&author_name=${encodeURIComponent(teacher.author_name)}`} className={styles['link-wrapper']}>
+                      <img src="/images/icon/article-icon-w.svg" alt="" />
+                      <p>{teacher.articleCount?.toLocaleString() || "0"} 篇文章</p>
+                    </Link>
                   </li>
                   <li className={styles['data-item']}>
                     <img src="/images/icon/student-icon-w.svg" alt="" />
