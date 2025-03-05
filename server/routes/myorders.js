@@ -259,6 +259,57 @@ function checkToken(req, res, next) {
     next();
   });
 }
+//coupon
+router.get("/coupon", checkToken, async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const userId = req.decoded.id;
+
+    console.log("🔍 獲取用戶 ID:", userId);
+    if (!userId) {
+      return res.status(400).json({ error: "無效的用戶 ID" });
+    }
+
+    // 取得用戶的優惠券
+    const [coupons] = await connection.query(
+      `SELECT 
+          uc.id AS user_coupon_id,
+          uc.user_id,
+          uc.coupon_id,
+          uc.quantity,
+          uc.created_at,  -- 用戶領取優惠券的時間
+          c.name AS coupon_name,
+          c.coupon_code,
+          c.discount_type,
+          c.start_date,
+          c.end_date,
+          c.discount,
+          c.lower_purchase,
+          c.img AS coupon_image,
+          c.type AS coupon_type
+       FROM user_coupon uc
+       JOIN coupon c ON uc.coupon_id = c.id
+       WHERE uc.user_id = ?
+       ORDER BY uc.created_at DESC;`,  
+      [userId]
+    );
+
+    console.log("🔍 SQL 查詢結果:", coupons);
+    connection.release();
+
+    if (coupons.length === 0) {
+      return res.json({ coupons: [] });
+    }
+
+    res.json({ coupons });
+  } catch (error) {
+    console.error("🚨 取得優惠券錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
+
+
+//coupon end
 
 /* PK專用 */
 
