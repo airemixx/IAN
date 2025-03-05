@@ -90,7 +90,7 @@ export default function UserPage(props) {
         {/* 主要內容 */}
         <main className={`col-md-9 ${styles.mainContent}`}>
           <div className="mb-4">
-            <h1 className="margin">更改我的密碼</h1>
+            <h1 className={`margin ${styles.h1}`}>更改我的密碼</h1>
           </div>
           
           <div className={styles.formContainer}>

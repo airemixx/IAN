@@ -7,6 +7,8 @@ import Sidenav from './_components/Sidenav/page'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { MdEdit, MdDelete } from "react-icons/md";
+import { renderToString } from "react-dom/server";
+import Address from './_components/address/page'
 
 
 export default function UserPage(props) {
@@ -19,7 +21,7 @@ export default function UserPage(props) {
   const MySwal = withReactContent(Swal);
   const [addresses, setAddresses] = useState([]); // 存所有住址
   const [latestAddress, setLatestAddress] = useState(''); // 記錄資料庫中的最新地址
-  
+
 
 
   useEffect(() => {
@@ -58,12 +60,12 @@ export default function UserPage(props) {
   }, [user]); // ✅ 當 `user` 變更時，`name` 和 `birthday` 才會更新
 
 
-   // **初始載入時獲取資料**
-   useEffect(() => {
+  // **初始載入時獲取資料**
+  useEffect(() => {
     if (token) {
       fetchAddresses();
     }
-  }, [token]); 
+  }, [token]);
 
 
   if (loading) {
@@ -164,12 +166,12 @@ export default function UserPage(props) {
       if (result.status !== 'success') throw new Error(result.message);
 
       // ✅ **更新成功，使用 Swal 彈出成功訊息**
-    Swal.fire({
-      icon: "success",
-      title: "更新成功！",
-      text: result.message, // 從 API 回應顯示成功訊息
-      confirmButtonText: "確定",
-    });
+      Swal.fire({
+        icon: "success",
+        title: "更新成功！",
+        text: result.message, // 從 API 回應顯示成功訊息
+        confirmButtonText: "確定",
+      });
 
       // 🔥 **步驟 1：檢查後端是否提供新的 Token**
       if (result.token) {
@@ -187,12 +189,12 @@ export default function UserPage(props) {
       // window.location.href = "/user";
     } catch (error) {
       // ❌ **更新失敗，使用 Swal 彈出錯誤訊息**
-    Swal.fire({
-      icon: "error",
-      title: "更新失敗",
-      text: error.message || "請稍後再試",
-      confirmButtonText: "確定",
-    });
+      Swal.fire({
+        icon: "error",
+        title: "更新失敗",
+        text: error.message || "請稍後再試",
+        confirmButtonText: "確定",
+      });
     } finally {
       setUpdating(false);
     }
@@ -231,265 +233,9 @@ export default function UserPage(props) {
 
 
 
-  // **函式: 添加住址**
-  const handleAddAddress = async () => {
-    // **先獲取最新的住址**
-    await fetchAddresses();
-
-    // **顯示 Swal 彈窗，並預填最新住址**
-
-     // ✅ 創建一個函式來渲染住址列表
-  const renderAddressList = () => {
-    if (addresses.length === 0) {
-      return '<p class="text-muted">尚未填寫住址</p>'
-    }
-
-    return `
-      <ul id="swal-address-list" style="text-align: left; max-height: 200px; overflow-y: auto; padding: 0; list-style: none;">
-        ${addresses.map(address => 
-          `<li style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-            📍 ${address.address}
-            <div>
-              <button class="edit-btn" data-id="${address.id}" style="margin-right: 5px; background:rgb(255, 255, 255); border: none; padding: 3px 8px; cursor: pointer;">
-              <img
-              src="/images/icon/pen.png" 
-              width="20px"
-              alt="icon"
-              />
-              </button>
-              <button class="delete-btn" data-id="${address.id}" style="background:rgb(255, 255, 255); border: none; padding: 3px 8px; cursor: pointer;">
-              <img
-              src="/images/icon/delete.png" 
-              width="20px"
-              alt="icon"
-              />
-              </button>
-            </div>
-          </li>`
-        ).join('')}
-      </ul>`
-  }
-  
-  // ✅ 顯示 Swal 彈窗，包含住址列表和輸入框
-  const { value: address } = await MySwal.fire({
-    title: '管理住址',
-    html: `
-      <div>
-        <strong>您的住址清單:</strong>
-        ${renderAddressList()}
-      </div>
-      <input id="swal-input" class="swal2-input" style="border-radius: 10px;" width="100%;" placeholder="請輸入新住址...">
-    `,
-    showCancelButton: true,
-    confirmButtonText: '新增',
-    cancelButtonText: '關閉',
-    confirmButtonColor: "#143146", 
-    cancelButtonColor: "#807871",
-    didOpen: () => {
-      // ✅ 綁定「編輯」按鈕
-      document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', async (e) => {
-          const addressId = e.target.dataset.id
-          const currentAddress = addresses.find(a => a.id == addressId)?.address || ''
-
-          const { value: newAddress } = await MySwal.fire({
-            title: '編輯住址',
-            input: 'text',
-            inputValue: currentAddress,
-            showCancelButton: true,
-            confirmButtonText: '更新',
-            cancelButtonText: '取消',
-            inputValidator: (value) => {
-              if (!value) return '住址不能為空'
-            },
-          })
-
-          if (newAddress && newAddress !== currentAddress) {
-            try {
-              const response = await fetch(`http://localhost:8000/api/users/addresses/${addressId}`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ address: newAddress }),
-              })
-
-              const result = await response.json()
-
-              if (result.status === 'success') {
-                Swal.fire('成功', '住址已更新', 'success')
-                fetchAddresses() // ✅ 刷新住址列表
-              } else {
-                Swal.fire('錯誤', result.message || '無法更新住址', 'error')
-              }
-            } catch (error) {
-              Swal.fire('錯誤', '伺服器錯誤，請稍後再試', 'error')
-            }
-          }
-        })
-      })
-
-      // ✅ 綁定「刪除」按鈕
-      document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', async (e) => {
-          const addressId = e.target.dataset.id
-
-          const { isConfirmed } = await MySwal.fire({
-            title: '確認刪除',
-            text: '您確定要刪除此住址嗎？',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: '刪除',
-            cancelButtonText: '取消',
-          })
-
-          if (isConfirmed) {
-            try {
-              const response = await fetch(`http://localhost:8000/api/users/addresses/${addressId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` },
-              })
-
-              const result = await response.json()
-
-              if (result.status === 'success') {
-                Swal.fire('成功', '住址已刪除', 'success')
-                fetchAddresses() // ✅ 刷新住址列表
-              } else {
-                Swal.fire('錯誤', result.message || '無法刪除住址', 'error')
-              }
-            } catch (error) {
-              Swal.fire('錯誤', '伺服器錯誤，請稍後再試', 'error')
-            }
-          }
-        })
-      })
-    },
-    preConfirm: () => {
-      const inputValue = document.getElementById('swal-input').value
-      if (!inputValue) {
-        Swal.showValidationMessage('住址不能為空')
-      }
-      return inputValue
-    }
-  })
-
-
-    // 舊的swal 先暫劉
-    // const { value: address } = await MySwal.fire({
-    //   title: '添加新住址',
-    //   input: 'text',
-    //   inputValue: latestAddress, // ✅ 從資料庫填充最新住址
-    //   inputPlaceholder: '請輸入住址...',
-    //   showCancelButton: true,
-    //   confirmButtonText: '添加',
-    //   cancelButtonText: '取消',
-    //   inputValidator: (value) => {
-    //     if (!value) {
-    //       return '住址不能為空';
-    //     }
-    //   },
-    // });
-
-    // **處理地址提交**
-    if (address) {
-      try {
-        const token = localStorage.getItem("loginWithToken");
-        if (!token) {
-          return Swal.fire('錯誤', '請先登入再添加住址', 'error');
-        }
-
-        const response = await fetch('http://localhost:8000/api/users/addresses', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ address }),
-        });
-
-        const result = await response.json();
-
-        if (result.status === 'success') {
-          setAddresses((prevAddresses) => [...prevAddresses, result.data]); // ✅ **直接更新狀態**
-        Swal.fire('成功', '住址已添加', 'success');
-      } else {
-        Swal.fire('錯誤', result.message || '無法添加住址', 'error');
-        }
-      } catch (error) {
-        Swal.fire('錯誤', '伺服器錯誤，請稍後再試', 'error');
-      }
-    }
-  };
-
-  const handleEditAddress = async (addressId, currentAddress) => {
-    const { value: newAddress } = await MySwal.fire({
-      title: '編輯住址',
-      input: 'text',
-      inputValue: currentAddress,
-      showCancelButton: true,
-      confirmButtonText: '更新',
-      cancelButtonText: '取消',
-      inputValidator: (value) => {
-        if (!value) {
-          return '住址不能為空';
-        }
-      },
-    });
-
-    if (newAddress && newAddress !== currentAddress) {
-      try {
-        const response = await fetch(`http://localhost:8000/api/users/addresses/${addressId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ address: newAddress }),
-        });
-
-        const result = await response.json();
-
-        if (result.status === 'success') {
-          Swal.fire('成功', '住址已更新', 'success');
-        } else {
-          Swal.fire('錯誤', result.message || '無法更新住址', 'error');
-        }
-      } catch (error) {
-        Swal.fire('錯誤', '伺服器錯誤，請稍後再試', 'error');
-      }
-    }
-  };
-
-  const handleDeleteAddress = async (addressId) => {
-    const { isConfirmed } = await MySwal.fire({
-      title: '確認刪除',
-      text: '您確定要刪除此住址嗎？',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: '刪除',
-      cancelButtonText: '取消',
-    });
-
-    if (isConfirmed) {
-      try {
-        const response = await fetch(`http://localhost:8000/api/users/addresses/${addressId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-
-        if (result.status === 'success') {
-          Swal.fire('成功', '住址已刪除', 'success');
-        } else {
-          Swal.fire('錯誤', result.message || '無法刪除住址', 'error');
-        }
-      } catch (error) {
-        Swal.fire('錯誤', '伺服器錯誤，請稍後再試', 'error');
-      }
-    }
-  };
-
+ 
+    
+    
   const AddressList = () => {
     const [addresses, setAddresses] = React.useState([]);
 
@@ -516,7 +262,7 @@ export default function UserPage(props) {
           {/* 主要內容區 */}
           <div className="col-md-9">
             <div className="mb-4">
-              <h1>會員資料修改</h1>
+              <h1 className={styles.h1}>會員資料修改</h1>
               <p className="text-muted">
                 在此部分中，您可以尋找和編輯您的個人檔案和地址。您還可以管理您的相機電子報訂閱和更改密碼。
               </p>
@@ -624,37 +370,15 @@ export default function UserPage(props) {
 
             {/* 地址區域 */}
             <div className={`${styles.customCard} mt-4`}>
-              <h4 className="mb-4">我的地址</h4>
-              <div className="mb-3">
-                <strong>送貨地址:</strong>
-                <div className="card p-3">
-        {addresses.length > 0 ? (
-          <ul className="">
-            {addresses.map((address) => (
-              <li key={address.id} className="list-group-item">
-                 {address.address}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-muted">尚未填寫住址</p>
-        )}
-      </div>
-              </div>
-              <div>
-                <Link href="#" className="text-decoration-none">
-                  選擇預設送貨地址
-                </Link>
-                <br />
+              
                 <div>
-                  <a onClick={handleAddAddress}>添加新住址</a>
+                  <Address/>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   )
 }
 

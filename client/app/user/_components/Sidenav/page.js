@@ -18,29 +18,37 @@ export default function Sidenav() {
       }
     }, []);
 
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    const API = "http://localhost:8000/api/users/logout";
-    if (!token) return;
-
-    try {
-      const res = await fetch(API, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const result = await res.json();
-      if (result.status !== "success") throw new Error(result.message);
-
-      // 清除 localStorage 與狀態
-      localStorage.removeItem(appKey);
-      setToken(null);
-      setUser(null);
-      router.push("/login");
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
-    }
-  };
+    const handleLogout = async (e) => {
+      e.preventDefault();
+      const API = "http://localhost:8000/api/users/logout";
+      if (!token) return;
+    
+      try {
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include", // 確保後端能接收到 cookies
+        });
+    
+        const result = await res.json();
+        if (result.status !== "success") throw new Error(result.message);
+    
+        // 🧹 清除所有存儲
+        localStorage.clear();
+    
+    
+        // 🧹 清除狀態
+        setToken(null);
+        setUser(null);
+    
+        // 🔄 跳轉回登入頁
+        router.push("/login");
+      } catch (err) {
+        console.error("登出失敗:", err);
+        alert(err.message);
+      }
+    };
+    
   return (
     <div className="col-md-3 mb-4">
       <nav className="sidenav p-3">
