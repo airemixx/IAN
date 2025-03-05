@@ -337,6 +337,7 @@ export default function UserPage(props) {
                       <input
                         type="date"
                         className={`form-control ${styles.customInput}`}
+                        max={new Date().toISOString().split("T")[0]}
                         value={birthday || ""} // ✅ `YYYY-MM-DD` 格式
                         onChange={(e) => setBirthday(e.target.value)} // ✅ 確保不會帶時間
                       />

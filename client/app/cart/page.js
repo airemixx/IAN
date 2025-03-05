@@ -9,7 +9,8 @@ import LessonItem from './_components/lession-item/page'
 import RentItem from './_components/rental-item/page'
 import { useEffect, useState, useRef } from 'react'
 import { redirect, useRouter } from 'next/navigation'
-
+import { FaTrashCan } from "react-icons/fa6";
+import Swal from 'sweetalert2'
 export default function cartPageOne() {
   const router = useRouter()
   const token = localStorage.getItem('loginWithToken')
@@ -126,7 +127,34 @@ export default function cartPageOne() {
     setCheckAll(newSelects.length === allItems.length)
   }
 
-  
+  const handleClearCart = () => {
+    Swal.fire({
+      title: "確定要清空購物車嗎？",
+      text: "此操作將刪除所有購物車商品，無法復原！",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "確定刪除",
+      cancelButtonText: "取消"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("cart");
+        localStorage.removeItem("rent_cart");
+        localStorage.removeItem("shoppingCart");
+
+        Swal.fire({
+          title: "已清空購物車",
+          text: "購物車已成功清空。",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+        router.refresh(); // 重新整理頁面以更新購物車狀態
+      }
+    });
+  };
 
   let isCartEmpty = false;
   if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0) {
@@ -141,16 +169,23 @@ export default function cartPageOne() {
           <div className="row d-flex justify-content-center">
             <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-7 col-xl-6 p-0`}>
               <div className="j-cartItemsBox d-none d-sm-block p-0">
-                <div>
-                  <input
-                    type="checkbox"
-                    id="checkAll"
-                    className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
-                    checked={checkAll}
-                    onChange={handleCheckAll}
-                  />
-                  <span className="ms-2 align-middle">全選</span>
+                <div className='d-flex justify-content-between'>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="checkAll"
+                      className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
+                      checked={checkAll}
+                      onChange={handleCheckAll}
+                    />
+                    <span className="ms-2 align-middle">全選</span>
+                  </div>
+                  <button className={`btn ${styles['j-delAll']}`} onClick={handleClearCart}>
+                    <FaTrashCan />
+                    <span className="ms-1">清空</span>
+                  </button>
                 </div>
+
                 <div className="mt-2 mb-5">
                   {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
                   {cartProduct.map((item, index) => (
@@ -320,7 +355,7 @@ export default function cartPageOne() {
             <CheckoutFormStep1 slItem={selectedItems} />
           </div>
         </div>}
-        <div className={`${styles['j-space']}`}></div>
+      <div className={`${styles['j-space']}`}></div>
     </div>
   )
 }

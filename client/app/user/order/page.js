@@ -7,7 +7,7 @@ import Sidenav from '../_components/Sidenav/page'
 
 export default function UserPage(props) {
      const { token, user, loading } = useAuth();
-   
+    
      if (loading) {
        return <div className="text-center mt-5">載入中...</div>;
      }
