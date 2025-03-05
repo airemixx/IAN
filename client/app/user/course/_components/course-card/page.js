@@ -61,7 +61,7 @@ export default function RentCard() {
 
   return (
     <div className="col-md-8 col-lg-9 py-4">
-          <h1 className="mb-4">我的課程</h1>
+          <h1 className={`mb-4 ${styles.h1}`}>我的課程</h1>
           <div className="row g-4">
             {/* 課程卡片 1 */}
             {courses.length > 0 ? (

@@ -76,10 +76,12 @@ router.get("/rent", checkToken, async (req, res) => {
   }
 });
 
-//我的租賃 end //
+//我的租賃 end 
+
+//我的課程
 router.get("/course", checkToken, async (req, res) => {
   try {
-    const connection = await db.getConnection();
+    const connection = await pool.getConnection();
     const userId = req.decoded.id;
 
     console.log("🔍 獲取用戶 ID:", userId);
@@ -121,7 +123,7 @@ router.get("/course", checkToken, async (req, res) => {
     res.status(500).json({ error: "伺服器錯誤", details: error.message });
   }
 });
-//我的課程
+
 
 //我的課程 end
 function checkToken(req, res, next) {
