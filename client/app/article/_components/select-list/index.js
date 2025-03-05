@@ -1,15 +1,17 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import styles from './index.module.scss'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import AnimateHeight from 'react-animate-height'
 
 export default function SelectList({ onFilterChange }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const expandAnimRef = useRef(null);
+  const collapseAnimRef = useRef(null);
   const [categories, setCategories] = useState([
     { value: '', label: '全部類別' },
   ])
@@ -133,29 +135,98 @@ export default function SelectList({ onFilterChange }) {
     }
   }, [])
 
+  // 添加到 SelectList 組件內的其他 useEffect 之前
+  useEffect(() => {
+    // 確保組件掛載後 SVG 動畫元素已經存在
+    setTimeout(() => {
+      // 確保初始化時箭頭指向正確方向
+      if (isCollapsed) {
+        // 如果是收起狀態，確保箭頭朝下
+        const svgPolyline = document.getElementById('accordion-icon');
+        if (svgPolyline) {
+          svgPolyline.setAttribute('points', '15 1.13 8.5 7.72 2 1.13');
+        }
+      } else {
+        // 如果是展開狀態，確保箭頭朝上
+        const svgPolyline = document.getElementById('accordion-icon');
+        if (svgPolyline) {
+          svgPolyline.setAttribute('points', '15 7.72 8.5 1.13 2 7.72');
+        }
+      }
+    }, 100);
+  }, []);
+
+  // 監聽折疊狀態變化，觸發動畫
   useEffect(() => {
     const collapseEl = document.getElementById('filter-collapse')
+
+    // 保存事件處理函數的引用
+    const handleShow = () => {
+      setIsAnimating(true);
+      setIsCollapsed(false);
+      if (expandAnimRef.current) {
+        expandAnimRef.current.beginElement();
+      }
+    };
+
+    const handleHide = () => {
+      setIsAnimating(true);
+      setIsCollapsed(true);
+      if (collapseAnimRef.current) {
+        collapseAnimRef.current.beginElement();
+      }
+    };
+
+    const handleShown = () => {
+      setTimeout(() => setIsAnimating(false), 100); // 與動畫持續時間一致
+    };
+
+    const handleHidden = () => {
+      setTimeout(() => setIsAnimating(false), 100); // 與動畫持續時間一致
+    };
+
     if (collapseEl) {
-      // 當展開動畫結束時，設定 isCollapsed 為 false
-      collapseEl.addEventListener('shown.bs.collapse', () => {
-        setIsCollapsed(false)
-      })
-      // 當摺疊動畫結束時，設定 isCollapsed 為 true
-      collapseEl.addEventListener('hidden.bs.collapse', () => {
-        setIsCollapsed(true)
-      })
+      // 使用保存的函數引用添加事件監聽器
+      collapseEl.addEventListener('show.bs.collapse', handleShow);
+      collapseEl.addEventListener('hide.bs.collapse', handleHide);
+      collapseEl.addEventListener('shown.bs.collapse', handleShown);
+      collapseEl.addEventListener('hidden.bs.collapse', handleHidden);
     }
+
     return () => {
       if (collapseEl) {
-        collapseEl.removeEventListener('shown.bs.collapse', () =>
-          setIsCollapsed(false)
-        )
-        collapseEl.removeEventListener('hidden.bs.collapse', () =>
-          setIsCollapsed(true)
-        )
+        // 使用相同的函數引用移除事件監聽器
+        collapseEl.removeEventListener('show.bs.collapse', handleShow);
+        collapseEl.removeEventListener('hide.bs.collapse', handleHide);
+        collapseEl.removeEventListener('shown.bs.collapse', handleShown);
+        collapseEl.removeEventListener('hidden.bs.collapse', handleHidden);
       }
     }
-  }, [])
+  }, []) // 確保依賴陣列為空，只在組件掛載和卸載時運行
+
+  // 修改後的切換函數
+  const toggleCollapse = () => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+
+      if (isCollapsed) {
+        if (expandAnimRef.current) {
+          expandAnimRef.current.beginElement();
+        }
+      } else {
+        if (collapseAnimRef.current) {
+          collapseAnimRef.current.beginElement();
+        }
+      }
+
+      setIsCollapsed(!isCollapsed);
+
+      // 在動畫結束後恢復按鈕可用狀態
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 400);
+    }
+  };
 
   return (
     <>
@@ -166,28 +237,61 @@ export default function SelectList({ onFilterChange }) {
         <h2 className="mb-0">所有文章</h2>
 
         <button
-          className="mb-0 btn rounded-pill btn-select-use"
+          className={`mb-0 btn rounded-pill btn-select-use d-flex align-items-center ${isAnimating ? styles['btn-disabled'] : ''}`}
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#filter-collapse"
-          aria-expanded={!isCollapsed}
-          aria-controls="filter-collapse"
+          onClick={toggleCollapse}
+          disabled={isAnimating}
         >
           篩選條件
-          <div style={{ fontSize: '20px', display: 'inline-block' }}>
-            <FontAwesomeIcon
-              icon={isCollapsed ? faAngleDown : faAngleUp}
-              style={{ fontSize: 'inherit', color: 'black' }}
-              className="ms-1"
-            />
-          </div>
+          <svg className={`${styles['accordion-icon-svg']} ms-1`} viewBox="0 0 17 8.85" height="24px" width="24px">
+            <polyline
+              id="accordion-icon"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+              fillRule="evenodd"
+              points={isCollapsed ? "15 1.13 8.5 7.72 2 1.13" : "15 7.72 8.5 1.13 2 7.72"}
+            >
+              <animate
+                id="expand-anim"
+                ref={expandAnimRef}
+                attributeName="points"
+                values="15 1.13 8.5 7.72 2 1.13; 15.85 4.42 8.5 4.42 1.15 4.42; 15 7.72 8.5 1.13 2 7.72"
+                dur="400ms" // 增加持續時間
+                begin="indefinite"
+                fill="freeze"
+                keyTimes="0; 0.5; 1"
+                calcMode="spline"
+                keySplines="0.25, 0.1, 0.25, 1; 0.25, 0.1, 0.25, 1" // 平滑緩動曲線
+              />
+              <animate
+                id="collapse-anim"
+                ref={collapseAnimRef}
+                attributeName="points"
+                values="15 7.72 8.5 1.13 2 7.72; 15.85 4.42 8.5 4.42 1.15 4.42; 15 1.13 8.5 7.72 2 1.13"
+                dur="400ms" // 增加持續時間
+                begin="indefinite"
+                fill="freeze"
+                keyTimes="0; 0.5; 1"
+                calcMode="spline"
+                keySplines="0.25, 0.1, 0.25, 1; 0.25, 0.1, 0.25, 1" // 平滑緩動曲線
+              />
+            </polyline>
+          </svg>
         </button>
+
         {typeof resultCount !== 'undefined' && (
           <p className="text-black mt-2">搜尋到 {resultCount} 筆資料</p>
         )}
       </div>
 
-      <div className="mb-3 collapse" id="filter-collapse">
+      <AnimateHeight
+        duration={400}
+        height={isCollapsed ? 0 : 'auto'}
+        easing={'cubic-bezier(0.33, 1, 0.68, 1)'}
+        className="mb-3"
+      >
         <div className="d-flex justify-content-between y-selection">
           <div
             className={`d-flex justify-content-start ${styles['y-collapse-area']}`}
@@ -223,7 +327,7 @@ export default function SelectList({ onFilterChange }) {
             </button>
           </div>
         </div>
-      </div>
+      </AnimateHeight>
       <div className={`${styles['y-title-line']} mt-3`}></div>
     </>
   )
