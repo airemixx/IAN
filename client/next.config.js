@@ -34,15 +34,13 @@ const nextConfig = {
       {
         // 所有 API 請求轉發到後端
         source: '/api/:path*',
-        // 排除 froala-upload 路徑
         destination: 'http://localhost:8000/api/:path*',
-        has: [
-          {
-            type: 'query',
-            key: 'path',
-            value: '(?!froala-upload)',
-          }
-        ]
+        // 移除 has 條件限制
+      },
+      {
+        // 如果需要專門處理 froala-upload
+        source: '/api/froala-upload/:path*',
+        destination: '/api/froala-upload/:path*',  // 保持在前端處理
       }
     ]
   },
