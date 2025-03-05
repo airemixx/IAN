@@ -39,7 +39,8 @@ router.get('/reserve', async (req, res) => {
 
   // 只需要金額，其它都是範例資料
   const amount = req.query.amount
- 
+  const items = req.query.items.replace(/ 1,?/g, "");
+
   // 使用目前最新的v3版本的API，以下是資料的說明:
   // https://pay.line.me/jp/developers/apis/onlineApis?locale=zh_TW
 
@@ -71,7 +72,7 @@ router.get('/reserve', async (req, res) => {
         products: [
           {
             id: crypto.randomBytes(5).toString('hex'),
-            name: '商品一批',
+            name: items,
             quantity: 1,
             price: amount,
           },
