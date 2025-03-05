@@ -53,7 +53,48 @@ const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false) // 添加此行控制 hamburger 狀態
+  const [isMenuOpen, setIsMenuOpen] = useState(false) // hamburger 狀態
+
+  // 添加用戶列表數據
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: "張小明",
+      avatar: "/images/chatRoom/user1.jpg",
+      lastMessage: "好的，我明白了",
+      lastMessageType: "text",
+      timestamp: new Date(Date.now() - 5 * 60000) // 5分鐘前
+    },
+    {
+      id: 2,
+      name: "李美華",
+      avatar: "/images/chatRoom/user1.jpg",
+      lastMessage: "",
+      lastMessageType: "image",
+      mediaCount: 1,
+      timestamp: new Date(Date.now() - 30 * 60000) // 30分鐘前
+    },
+    {
+      id: 3,
+      name: "王大同",
+      avatar: "/images/chatRoom/user1.jpg",
+      lastMessage: "這是一個非常長的訊息，應該會被截斷並顯示省略號在最後面",
+      lastMessageType: "text",
+      timestamp: new Date(Date.now() - 2 * 3600000) // 2小時前
+    },
+    {
+      id: 4,
+      name: "陳雅婷",
+      avatar: "/images/chatRoom/user1.jpg",
+      lastMessage: "",
+      lastMessageType: "video",
+      mediaCount: 1,
+      timestamp: new Date(Date.now() - 1 * 86400000) // 1天前
+    }
+  ]);
+
+  const [activeUserId, setActiveUserId] = useState(1); // 當前聊天的用戶ID
+
   const [messages, setMessages] = useState([
     {
       id: "1",
@@ -375,283 +416,324 @@ export default function ChatWidget() {
       >
         <div ref={nodeRef} className={styles.chatWindow}>
           <div className={styles.mainChat}>
-            <div className={styles.chatHeader}>
-              {/* 添加 Hamburger 按鈕 */}
-              <div className={styles.hamburgerContainer}>
-                <Squeeze
-                  size={16}
-                  color="white"
-                  duration={0.3}
-                  toggled={isMenuOpen}
-                  toggle={() => setIsMenuOpen(!isMenuOpen)}
-                  easing="ease-in"
-                  label="顯示選單"
-                />
+            {/* 用戶列表側欄 */}
+            <div className={`${styles.userListPanel} ${isMenuOpen ? styles.show : ''}`}>
+              <div className={styles.userListHeader}>
+                <h5>聊天列表</h5>
               </div>
-
-              <div className={styles.headerUserInfo}>
-                <div className={styles.userName}>張小明</div> {/* 將"客服中心"改為用戶名稱 */}
+              <div className={styles.userList}>
+                {users.map(user => (
+                  <div
+                    key={user.id}
+                    className={`${styles.userItem} ${activeUserId === user.id ? styles.active : ''}`}
+                    onClick={() => {
+                      setActiveUserId(user.id);
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <div className={styles.userAvatar}>
+                      <img src={user.avatar} alt={user.name} />
+                    </div>
+                    <div className={styles.userInfo}>
+                      <div className={styles.userInfoHeader}>
+                        <span className={styles.userName}>{user.name}</span>
+                        <small className={styles.messageTime}>
+                          {formatMessageTime(user.timestamp)}
+                        </small>
+                      </div>
+                      <p className={styles.userLastMessage}>
+                        {user.lastMessageType === 'text'
+                          ? user.lastMessage
+                          : user.lastMessageType === 'image'
+                            ? `已傳送${user.mediaCount}張圖片`
+                            : `已傳送${user.mediaCount}個影片`}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              <button className={styles.iconButton} onClick={toggleChat}>
-                <X size={24} />
-              </button>
             </div>
 
-            <div className={styles.chatBody} ref={chatBodyRef}>
-              <div className={styles.messagesContainer}>
-                {messages.map((message, index) => {
-                  const isPrevSameSender = index > 0 && messages[index - 1].sender === message.sender;
-                  const isNextSameSender = index < messages.length - 1 && messages[index + 1].sender === message.sender;
+            {/* 現有的聊天區域 */}
+            <div className={`${styles.chatArea} ${isMenuOpen ? styles.shifted : ''}`}>
+              <div className={styles.chatHeader}>
+                {/* 添加 Hamburger 按鈕 */}
+                <div className={styles.hamburgerContainer}>
+                  <Squeeze
+                    size={16}
+                    color="white"
+                    duration={0.3}
+                    toggled={isMenuOpen}
+                    toggle={() => setIsMenuOpen(!isMenuOpen)}
+                    easing="ease-in"
+                    label="顯示選單"
+                  />
+                </div>
 
-                  // 檢查是否需要顯示時間標記 - 當發送者改變時
-                  const isPrevDifferentSender = index > 0 && messages[index - 1].sender !== message.sender;
+                <div className={styles.headerUserInfo}>
+                  <div className={styles.headerUserName}>張小明</div> {/* 注意這裡改為 headerUserName */}
+                </div>
 
-                  // 檢查是否與前一則訊息日期不同 - 跨天顯示
-                  const isPrevDifferentDay = index > 0 &&
-                    !isSameDay(new Date(messages[index - 1].timestamp), new Date(message.timestamp));
+                <button className={styles.iconButton} onClick={toggleChat}>
+                  <X size={24} />
+                </button>
+              </div>
 
-                  // 顯示時間的條件：發送者變更或跨天
-                  const shouldShowTime = isPrevDifferentSender || isPrevDifferentDay;
+              <div className={styles.chatBody} ref={chatBodyRef}>
+                <div className={styles.messagesContainer}>
+                  {messages.map((message, index) => {
+                    const isPrevSameSender = index > 0 && messages[index - 1].sender === message.sender;
+                    const isNextSameSender = index < messages.length - 1 && messages[index + 1].sender === message.sender;
 
-                  // 決定氣泡類型
-                  let bubblePosition = '';
-                  if (!isPrevSameSender && !isNextSameSender) {
-                    bubblePosition = 'single';
-                  } else if (!isPrevSameSender && isNextSameSender) {
-                    bubblePosition = 'first';
-                  } else if (isPrevSameSender && isNextSameSender) {
-                    bubblePosition = 'middle';
-                  } else {
-                    bubblePosition = 'last';
-                  }
+                    // 檢查是否需要顯示時間標記 - 當發送者改變時
+                    const isPrevDifferentSender = index > 0 && messages[index - 1].sender !== message.sender;
 
-                  const showAvatar = !isNextSameSender;
+                    // 檢查是否與前一則訊息日期不同 - 跨天顯示
+                    const isPrevDifferentDay = index > 0 &&
+                      !isSameDay(new Date(messages[index - 1].timestamp), new Date(message.timestamp));
 
-                  const regex = emojiRegex();
+                    // 顯示時間的條件：發送者變更或跨天
+                    const shouldShowTime = isPrevDifferentSender || isPrevDifferentDay;
 
-                  return (
-                    <React.Fragment key={message.id}>
-                      {/* 時間標記 */}
-                      {shouldShowTime && (
-                        <div className={styles.timeLabel}>
-                          {formatMessageTime(message.timestamp)}
-                        </div>
-                      )}
+                    // 決定氣泡類型
+                    let bubblePosition = '';
+                    if (!isPrevSameSender && !isNextSameSender) {
+                      bubblePosition = 'single';
+                    } else if (!isPrevSameSender && isNextSameSender) {
+                      bubblePosition = 'first';
+                    } else if (isPrevSameSender && isNextSameSender) {
+                      bubblePosition = 'middle';
+                    } else {
+                      bubblePosition = 'last';
+                    }
 
-                      {/* 原本的訊息行 */}
-                      <div
-                        className={`${styles.messageRow} ${message.sender === "user" ? styles.userMessageRow : styles.agentMessageRow}`}
-                      >
-                        {/* 修改為顯示用戶頭像而非客服頭像 */}
-                        {message.sender === "user" && showAvatar && (
-                          <div className={styles.avatarContainer}>
-                            <img
-                              src={message.avatar || "/images/chatRoom/user1.jpg"}
-                              alt="User"
-                              className={styles.avatar}
-                            />
+                    const showAvatar = !isNextSameSender;
+
+                    const regex = emojiRegex();
+
+                    return (
+                      <React.Fragment key={message.id}>
+                        {/* 時間標記 */}
+                        {shouldShowTime && (
+                          <div className={styles.timeLabel}>
+                            {formatMessageTime(message.timestamp)}
                           </div>
                         )}
 
+                        {/* 原本的訊息行 */}
                         <div
-                          className={`${styles.message} ${message.sender === "user" ? styles.userMessage : styles.agentMessage} ${styles[`bubble-${bubblePosition}`]}`}
+                          className={`${styles.messageRow} ${message.sender === "user" ? styles.userMessageRow : styles.agentMessageRow}`}
                         >
-                          {/* 將已讀通知移至左側 */}
-                          {message.sender === "agent" && (
-                            <div className={styles.messageStatus}>
-                              {message.read ? (
-                                <CheckAll size={16} className={styles.readIcon} />
-                              ) : (
-                                <Check size={16} className={styles.unreadIcon} />
-                              )}
+                          {/* 修改為顯示用戶頭像而非客服頭像 */}
+                          {message.sender === "user" && showAvatar && (
+                            <div className={styles.avatarContainer}>
+                              <img
+                                src={message.avatar || "/images/chatRoom/user1.jpg"}
+                                alt="User"
+                                className={styles.avatar}
+                              />
                             </div>
                           )}
-                          <div className={styles.messageContent}>
-                            {message.fileType ? (
-                              message.fileType === 'image' ? (
-                                <img
-                                  src={message.fileUrl}
-                                  alt="圖片訊息"
-                                  className={styles.messageImage}
-                                  onClick={() => handleImageClick(message.fileUrl)}
-                                />
+
+                          <div
+                            className={`${styles.message} ${message.sender === "user" ? styles.userMessage : styles.agentMessage} ${styles[`bubble-${bubblePosition}`]}`}
+                          >
+                            {/* 將已讀通知移至左側 */}
+                            {message.sender === "agent" && (
+                              <div className={styles.messageStatus}>
+                                {message.read ? (
+                                  <CheckAll size={16} className={styles.readIcon} />
+                                ) : (
+                                  <Check size={16} className={styles.unreadIcon} />
+                                )}
+                              </div>
+                            )}
+                            <div className={styles.messageContent}>
+                              {message.fileType ? (
+                                message.fileType === 'image' ? (
+                                  <img
+                                    src={message.fileUrl}
+                                    alt="圖片訊息"
+                                    className={styles.messageImage}
+                                    onClick={() => handleImageClick(message.fileUrl)}
+                                  />
+                                ) : (
+                                  <video controls className={styles.messageVideo}>
+                                    <source src={message.fileUrl} type="video/mp4" />
+                                    您的瀏覽器不支持影片播放
+                                  </video>
+                                )
                               ) : (
-                                <video controls className={styles.messageVideo}>
-                                  <source src={message.fileUrl} type="video/mp4" />
-                                  您的瀏覽器不支持影片播放
-                                </video>
-                              )
-                            ) : (
-                              <div className={styles.messageText}>
-                                {
-                                  // 使用更精確的替換方案
-                                  (() => {
-                                    // 先找出所有的 emoji 位置
-                                    const emojis = [];
-                                    const regex = emojiRegex();
-                                    let match;
-                                    while ((match = regex.exec(message.text)) !== null) {
-                                      emojis.push({
-                                        emoji: match[0],
-                                        index: match.index,
-                                        length: match[0].length
-                                      });
-                                    }
+                                <div className={styles.messageText}>
+                                  {
+                                    // 使用更精確的替換方案
+                                    (() => {
+                                      // 先找出所有的 emoji 位置
+                                      const emojis = [];
+                                      const regex = emojiRegex();
+                                      let match;
+                                      while ((match = regex.exec(message.text)) !== null) {
+                                        emojis.push({
+                                          emoji: match[0],
+                                          index: match.index,
+                                          length: match[0].length
+                                        });
+                                      }
 
-                                    // 如果沒有 emoji，直接返回文字
-                                    if (emojis.length === 0) {
-                                      return <span className={styles.plainText}>{message.text}</span>;
-                                    }
+                                      // 如果沒有 emoji，直接返回文字
+                                      if (emojis.length === 0) {
+                                        return <span className={styles.plainText}>{message.text}</span>;
+                                      }
 
-                                    // 有 emoji 的情況，組合文字和表情符號
-                                    const result = [];
-                                    let lastIndex = 0;
+                                      // 有 emoji 的情況，組合文字和表情符號
+                                      const result = [];
+                                      let lastIndex = 0;
 
-                                    emojis.forEach((item, i) => {
-                                      // 添加 emoji 前面的純文字
-                                      if (lastIndex < item.index) {
+                                      emojis.forEach((item, i) => {
+                                        // 添加 emoji 前面的純文字
+                                        if (lastIndex < item.index) {
+                                          result.push(
+                                            <span key={`text-${i}`} className={styles.plainText}>
+                                              {message.text.substring(lastIndex, item.index)}
+                                            </span>
+                                          );
+                                        }
+
+                                        // 添加 emoji
                                         result.push(
-                                          <span key={`text-${i}`} className={styles.plainText}>
-                                            {message.text.substring(lastIndex, item.index)}
+                                          <span key={`emoji-${i}`} className={styles.emoji}>
+                                            {item.emoji}
+                                          </span>
+                                        );
+
+                                        lastIndex = item.index + item.length;
+                                      });
+
+                                      // 添加最後一段純文字 (如果有的話)
+                                      if (lastIndex < message.text.length) {
+                                        result.push(
+                                          <span key={`text-last`} className={styles.plainText}>
+                                            {message.text.substring(lastIndex)}
                                           </span>
                                         );
                                       }
 
-                                      // 添加 emoji
-                                      result.push(
-                                        <span key={`emoji-${i}`} className={styles.emoji}>
-                                          {item.emoji}
-                                        </span>
-                                      );
-
-                                      lastIndex = item.index + item.length;
-                                    });
-
-                                    // 添加最後一段純文字 (如果有的話)
-                                    if (lastIndex < message.text.length) {
-                                      result.push(
-                                        <span key={`text-last`} className={styles.plainText}>
-                                          {message.text.substring(lastIndex)}
-                                        </span>
-                                      );
-                                    }
-
-                                    return result;
-                                  })()
-                                }
-                              </div>
-                            )}
+                                      return result;
+                                    })()
+                                  }
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </React.Fragment>
-                  );
-                })}
-                <div ref={messagesEndRef} />
+                      </React.Fragment>
+                    );
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
               </div>
-            </div>
 
-            <div className={styles.chatFooter}>
-              {isPreviewOpen && (
-                <div className={styles.filePreviewArea}>
-                  {selectedFiles.map((fileObj) => (
-                    <div key={fileObj.id} className={styles.filePreviewItem}>
-                      <button
-                        className={styles.removeFileButton}
-                        onClick={() => removeFile(fileObj.id)}
-                      >
-                        <X size={14} />
-                      </button>
-                      {fileObj.type === 'image' ? (
-                        <img src={fileObj.url} alt="預覽" />
-                      ) : (
-                        <video>
-                          <source src={fileObj.url} type={fileObj.file.type} />
-                          您的瀏覽器不支持影片預覽
-                        </video>
-                      )}
-                      {/* 移除單獨的發送按鈕 */}
-                    </div>
-                  ))}
-                </div>
-              )}
-              <form onSubmit={handleSendMessage} className={styles.messageForm}>
-                <div className={styles.inputContainer}>
-                  <input
-                    id="messageInput"
-                    type="text"
-                    placeholder="輸入訊息..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    className={styles.messageInput}
-                  />
-                </div>
-                <div className="image-send-emoji-btn d-flex align-items-center">
-                  <div className={styles.emojiButtonContainer}>
-                    <button
-                      type="button"
-                      className={styles.emojiButton}
-                      onMouseEnter={() => setIsEmojiHovered(true)}
-                      onMouseLeave={() => setIsEmojiHovered(false)}
-                      onClick={toggleEmojiPicker}
-                    >
-                      <img
-                        src={isEmojiHovered
-                          ? "/images/chatRoom/emoji-active.svg"
-                          : "/images/chatRoom/emoji-origin.svg"}
-                        alt=""
-                      />
-                    </button>
-                    {showEmojiPicker && (
-                      <div className={styles.emojiPickerContainer} ref={emojiPickerRef}>
-                        <EmojiPicker
-                          onEmojiClick={onEmojiClick}
-                          width={300}
-                          height={400}
-                          defaultSkinTone={SkinTones.MEDIUM}
-                          searchDisabled
-                          previewConfig={{ showPreview: false }}
-                          theme="light" // 或 'dark' 或 'auto'
-                          emojiStyle="native"
-                          categories={['smileys_people', 'animals_nature', 'food_drink', 'travel_places', 'activities', 'objects', 'symbols', 'flags']}
-                        />
+              <div className={styles.chatFooter}>
+                {isPreviewOpen && (
+                  <div className={styles.filePreviewArea}>
+                    {selectedFiles.map((fileObj) => (
+                      <div key={fileObj.id} className={styles.filePreviewItem}>
+                        <button
+                          className={styles.removeFileButton}
+                          onClick={() => removeFile(fileObj.id)}
+                        >
+                          <X size={14} />
+                        </button>
+                        {fileObj.type === 'image' ? (
+                          <img src={fileObj.url} alt="預覽" />
+                        ) : (
+                          <video>
+                            <source src={fileObj.url} type={fileObj.file.type} />
+                            您的瀏覽器不支持影片預覽
+                          </video>
+                        )}
+                        {/* 移除單獨的發送按鈕 */}
                       </div>
-                    )}
+                    ))}
                   </div>
-                  <>
+                )}
+                <form onSubmit={handleSendMessage} className={styles.messageForm}>
+                  <div className={styles.inputContainer}>
                     <input
-                      type="file"
-                      ref={fileInputRef}
-                      multiple
-                      accept="image/*,video/*"
-                      onChange={handleFileSelect}
-                      style={{ display: 'none' }}
+                      id="messageInput"
+                      type="text"
+                      placeholder="輸入訊息..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      className={styles.messageInput}
                     />
-                    <button
-                      type="button"
-                      className={styles.imageButton}
-                      onMouseEnter={() => setIsImageHovered(true)}
-                      onMouseLeave={() => setIsImageHovered(false)}
-                      onClick={() => fileInputRef.current.click()}
-                    >
-                      <img
-                        src={isImageHovered
-                          ? "/images/chatRoom/image-update-active.svg"
-                          : "/images/chatRoom/image-update-origin.svg"}
-                        alt="上傳圖片或影片"
+                  </div>
+                  <div className="image-send-emoji-btn d-flex align-items-center">
+                    <div className={styles.emojiButtonContainer}>
+                      <button
+                        type="button"
+                        className={styles.emojiButton}
+                        onMouseEnter={() => setIsEmojiHovered(true)}
+                        onMouseLeave={() => setIsEmojiHovered(false)}
+                        onClick={toggleEmojiPicker}
+                      >
+                        <img
+                          src={isEmojiHovered
+                            ? "/images/chatRoom/emoji-active.svg"
+                            : "/images/chatRoom/emoji-origin.svg"}
+                          alt=""
+                        />
+                      </button>
+                      {showEmojiPicker && (
+                        <div className={styles.emojiPickerContainer} ref={emojiPickerRef}>
+                          <EmojiPicker
+                            onEmojiClick={onEmojiClick}
+                            width={300}
+                            height={400}
+                            defaultSkinTone={SkinTones.MEDIUM}
+                            searchDisabled
+                            previewConfig={{ showPreview: false }}
+                            theme="light" // 或 'dark' 或 'auto'
+                            emojiStyle="native"
+                            categories={['smileys_people', 'animals_nature', 'food_drink', 'travel_places', 'activities', 'objects', 'symbols', 'flags']}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        multiple
+                        accept="image/*,video/*"
+                        onChange={handleFileSelect}
+                        style={{ display: 'none' }}
                       />
+                      <button
+                        type="button"
+                        className={styles.imageButton}
+                        onMouseEnter={() => setIsImageHovered(true)}
+                        onMouseLeave={() => setIsImageHovered(false)}
+                        onClick={() => fileInputRef.current.click()}
+                      >
+                        <img
+                          src={isImageHovered
+                            ? "/images/chatRoom/image-update-active.svg"
+                            : "/images/chatRoom/image-update-origin.svg"}
+                          alt="上傳圖片或影片"
+                        />
+                      </button>
+                    </>
+                    <button
+                      type="submit"
+                      className={styles.sendButton}
+                      disabled={newMessage.trim() === "" && selectedFiles.length === 0}
+                    >
+                      <img src="/images/chatRoom/send-origin.svg" alt="" />
                     </button>
-                  </>
-                  <button
-                    type="submit"
-                    className={styles.sendButton}
-                    disabled={newMessage.trim() === "" && selectedFiles.length === 0}
-                  >
-                    <img src="/images/chatRoom/send-origin.svg" alt="" />
-                  </button>
-                </div>
-              </form>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
