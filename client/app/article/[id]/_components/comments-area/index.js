@@ -12,6 +12,17 @@ import GifImage from '../gif-image'
 import ContentLoader from 'react-content-loader'
 import { jwtDecode } from 'jwt-decode' // 添加 jwtDecode 導入
 import { toast } from 'react-toastify' // 添加 toast 導入，用於錯誤訊息
+import Swal from 'sweetalert2'
+
+// 將 CustomSwal 定義移到頂層，讓所有組件都能使用
+const CustomSwal = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn-custom-confirm-delete',
+    cancelButton: 'btn-custom-cancel-delete',
+    popup: 'swal2-popup'
+  },
+  buttonsStyling: false // 禁用默認樣式
+});
 
 // 新增：回覆區段的渲染動畫元件
 const NestedReplyLoader = () => {
@@ -432,25 +443,52 @@ function ReplyItem({
   };
 
   const handleDelete = async (id) => {
-    if (confirm('確定要刪除此留言嗎？')) {
-      try {
-        const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
-          method: 'DELETE',
-          credentials: 'include',
-        });
-        const data = await res.json();
+    CustomSwal.fire({
+      title: "確定要刪除留言嗎？",
+      text: "刪除後將無法恢復！",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "確認刪除",
+      cancelButtonText: "取消"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+          });
+          const data = await res.json();
 
-        if (data.success) {
-          // 通知父組件進行刪除
-          onCommentDeleted(id);
-        } else {
-          alert(data.message || '刪除失敗');
+          if (data.success) {
+            // 通知父組件從 UI 移除此回覆
+            onCommentDeleted && onCommentDeleted(id);
+
+            // 顯示成功訊息
+            CustomSwal.fire({
+              title: "已刪除！",
+              text: "留言已成功刪除。",
+              icon: "success",
+              confirmButtonText: "確定"
+            });
+          } else {
+            CustomSwal.fire({
+              title: "刪除失敗",
+              text: data.message || "刪除留言時發生錯誤",
+              icon: "error",
+              confirmButtonText: "確定"
+            });
+          }
+        } catch (err) {
+          console.error('刪除留言失敗:', err);
+          CustomSwal.fire({
+            title: "刪除失敗",
+            text: "刪除留言時發生錯誤，請稍後再試",
+            icon: "error",
+            confirmButtonText: "確定"
+          });
         }
-      } catch (err) {
-        console.error('刪除留言失敗:', err);
-        alert('刪除留言失敗，請稍後再試');
       }
-    }
+    });
   };
 
   const toggleMoreOptions = (e) => {
@@ -995,24 +1033,52 @@ function NestedReplyItem({
   }, [isEditing]);
 
   const handleDelete = async (id) => {
-    if (confirm('確定要刪除此留言嗎？')) {
-      try {
-        const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
-          method: 'DELETE',
-          credentials: 'include',
-        });
-        const data = await res.json();
-        if (data.success) {
-          // 通知父組件從 UI 移除此回覆
-          onCommentDeleted && onCommentDeleted(id, parentId);
-        } else {
-          alert(data.message || '刪除失敗');
+    CustomSwal.fire({
+      title: "確定要刪除留言嗎？",
+      text: "刪除後將無法恢復！",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "確認刪除",
+      cancelButtonText: "取消"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            // 通知父組件從 UI 移除此回覆，不需要傳遞 parentId
+            onCommentDeleted && onCommentDeleted(id);
+
+            // 顯示成功訊息
+            CustomSwal.fire({
+              title: "已刪除！",
+              text: "留言已成功刪除。",
+              icon: "success",
+              confirmButtonText: "確定"
+            });
+          } else {
+            CustomSwal.fire({
+              title: "刪除失敗",
+              text: data.message || "刪除留言時發生錯誤",
+              icon: "error",
+              confirmButtonText: "確定"
+            });
+          }
+        } catch (err) {
+          console.error('刪除留言失敗:', err);
+          CustomSwal.fire({
+            title: "刪除失敗",
+            text: "刪除留言時發生錯誤，請稍後再試",
+            icon: "error",
+            confirmButtonText: "確定"
+          });
         }
-      } catch (err) {
-        console.error('刪除留言失敗:', err);
-        alert('刪除留言失敗，請稍後再試');
       }
-    }
+    });
   };
 
   return (
