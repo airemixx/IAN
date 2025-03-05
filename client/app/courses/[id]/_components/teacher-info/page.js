@@ -13,48 +13,58 @@ import TeacherCoursesList from '../teacher-courses-list/page'
 import Link from "next/link";
 
 export default function TeacherInfo({ teacherId }) {
-  const [teacher, setTeacher] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedTeacher, setSelectedTeacher] = useState(null)
+  const [teacher, setTeacher] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState(null); // ✅ 保留你的狀態
+  const [teacherData, setTeacherData] = useState({
+    user_id: null,
+    author_name: "",
+    articleCount: 0
+  });
 
   useEffect(() => {
-    if (!teacherId) return
+    if (!teacherId) return;
 
-    console.log('開始請求 API:', `/api/teachers/${teacherId}`)
+    console.log("開始請求 API:", `http://localhost:8000/api/teachers/${teacherId}`);
 
-    fetch(`/api/teachers/${teacherId}`)
+    fetch(`http://localhost:8000/api/teachers/${teacherId}`)
       .then((res) => {
-        console.log('API 回應狀態:', res.status)
-        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`)
-        return res.json()
+        console.log("API 回應狀態:", res.status);
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        return res.json();
       })
       .then((data) => {
-        console.log('API 回傳資料:', data)
-        setTeacher(data)
-        setLoading(false)
+        console.log("API 回傳資料:", data);
+        setTeacher(data);
+        setTeacherData({
+          user_id: data.user_id,
+          author_name: data.author_name,
+          articleCount: data.articleCount
+        }); // ✅ 設定新的 teacherData
+        setLoading(false);
       })
       .catch((error) => {
-        console.error('獲取講師資料失敗:', error)
-        setTeacher(null) // 避免 undefined
-        setLoading(false)
-      })
-  }, [teacherId])
+        console.error("獲取講師資料失敗:", error);
+        setTeacher(null);
+        setLoading(false);
+      });
+  }, [teacherId]);
 
   useEffect(() => {
     if (isModalOpen) {
-      document.body.style.overflow = 'hidden' // 禁止背景滾動
+      document.body.style.overflow = "hidden"; // 禁止背景滾動
     } else {
-      document.body.style.overflow = 'auto' // 允許滾動
+      document.body.style.overflow = "auto"; // 允許滾動
     }
     return () => {
-      document.body.style.overflow = 'auto' // 彈出視窗關閉時恢復滾動
-    }
-  }, [isModalOpen])
+      document.body.style.overflow = "auto"; // 彈出視窗關閉時恢復滾動
+    };
+  }, [isModalOpen]);
 
-  console.log('📌 TeacherInfo 接收到的 teacherId:', teacherId)
-  if (loading) return <p>載入中...</p>
-  if (!teacher) return <p>無法找到講師資料</p>
+  console.log("📌 TeacherInfo 接收到的 teacherId:", teacherId);
+  if (loading) return <p>載入中...</p>;
+  if (!teacher) return <p>無法找到講師資料</p>;
 
   return (
     <section className={styles['teacher-info-container']} id="teacher-info">
@@ -80,9 +90,9 @@ export default function TeacherInfo({ teacherId }) {
               </p>
             </li>
             <li className={styles['data-item']}>
-              <Link href="/article" className={styles['link-wrapper']}>
+              <Link href={`/article?user_id=${teacher.user_id}&author_name=${encodeURIComponent(teacher.author_name)}`} className={styles['link-wrapper']}>
                 <img src="/images/icon/article-icon.svg" alt="" />
-                <p>{teacher.articleCount?.toLocaleString() || '0'} 篇文章</p>
+                <p>{teacher.articleCount?.toLocaleString() || "0"} 篇文章</p>
               </Link>
             </li>
             <li className={styles['data-item']}>
@@ -194,11 +204,10 @@ export default function TeacherInfo({ teacherId }) {
                     </p>
                   </li>
                   <li className={styles['data-item']}>
-                    <img src="/images/icon/article-icon-w.svg" alt="" />
-                    <p>
-                      {selectedTeacher.articleCount?.toLocaleString() || '0'}{' '}
-                      篇文章
-                    </p>
+                    <Link href={`/article?user_id=${teacher.user_id}&author_name=${encodeURIComponent(teacher.author_name)}`} className={styles['link-wrapper']}>
+                      <img src="/images/icon/article-icon-w.svg" alt="" />
+                      <p>{teacher.articleCount?.toLocaleString() || "0"} 篇文章</p>
+                    </Link>
                   </li>
                   <li className={styles['data-item']}>
                     <img src="/images/icon/student-icon-w.svg" alt="" />
