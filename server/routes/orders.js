@@ -16,7 +16,7 @@ router.use(cors(corsOptions)); // 使用 cors 中間件
 
 router.post("/", async (req, res) => {
 
-  const { cartItems, buyerData, userId, merchantTradeNo } = req.body;
+  const { cartItems, buyerData, userId, merchantTradeNo, disMoney} = req.body;
   // 確保 cartItems 存在
   if (!cartItems || typeof cartItems !== "object") {
     return res.status(400).json({ success: false, message: "無效的 cartItems" });
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ success: false, message: "無效的 buyerData" });
   }
   try {
-    let start_date = null,end_date = null;
+    let start_date = null, end_date = null, totalPrice = 0;
     Object.values(cartItems).map(async (cartItem) => {
       // 確保所有必要的欄位都有值
       let categoryId = null, coursesId = null, rentalId = null;
@@ -44,24 +44,24 @@ router.post("/", async (req, res) => {
           end_date = cartItem.end;
           break;
       }
-
-
+      
       const price = cartItem.price;
       const quantity = cartItem.quantity;
-  
+      totalPrice += price;
+      
       if(categoryId !== null){
         await pool.execute(
           `INSERT INTO user_product (
-          user_id, name, product_id, price, amount) VALUES 
-          (?, ?, ?, ?, ?)`,
-          [ userId, model, categoryId, price, quantity]
+          user_id, name, product_id, amount) VALUES 
+          (?, ?, ?, ?)`,
+          [ userId, model, categoryId, quantity]
         );
       }else if(coursesId != null){
         await pool.execute(
           `INSERT INTO user_courses (
-          user_id, name, courses_id, price) VALUES 
-          (?, ?, ?, ?)`,
-          [ userId, model, coursesId, price]
+          user_id, name, courses_id) VALUES 
+          (?, ?, ?)`,
+          [ userId, model, coursesId]
         );
       }else if(rentalId != null){
         await pool.execute(
@@ -74,10 +74,10 @@ router.post("/", async (req, res) => {
     })
     await pool.execute(
       `INSERT INTO orders (
-      order_code, user_id, name, address, phone) VALUES 
-      (?, ?, ?, ?, ?)`,
+      order_code, user_id, name, address, total, discount_money, phone) VALUES 
+      (?, ?, ?, ?, ?, ?, ?)`,
       [
-        merchantTradeNo, userId, buyerData.name, buyerData.address, buyerData.phone,
+        merchantTradeNo, userId, buyerData.name, buyerData.address,totalPrice, disMoney, buyerData.phone
       ]
     );
     res.status(200).json({ success: true, message: "訂單儲存成功" });

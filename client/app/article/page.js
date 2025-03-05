@@ -17,13 +17,29 @@ import StickyCard from './_components/sticky-card'
 export default function NewsPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [filters, setFilters] = useState({})
+
+  // 1. 先從 URL 參數中直接初始化 filters
+  const initialFilters = {
+    search: searchParams.get('search') || '',
+    category: searchParams.get('category') || '',
+    tag: searchParams.get('tag') || '',
+    user_id: searchParams.get('user_id') || '',
+  }
+
+  // 2. 使用這些初始值設置 filters 狀態
+  const [filters, setFilters] = useState(initialFilters)
+
+  // 3. 使用已初始化的 filters 獲取文章
   const { articles, error, loading } = useArticles(filters)
+
+  // 新增：從 URL 獲取當前頁碼，如果沒有則默認為 1
+  const pageParam = searchParams.get('page')
+  const initialPage = pageParam ? parseInt(pageParam, 10) : 1
+
+  // 使用 URL 中的頁碼初始化 currentPage
+  const [currentPage, setCurrentPage] = useState(initialPage)
   const [searchTerm, setSearchTerm] = useState('')
   const [hasSearch, setHasSearch] = useState(false)
-
-  // 分頁相關狀態
-  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     // 每次 filters 改變時，重置 currentPage 為 1
@@ -38,7 +54,15 @@ export default function NewsPage() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
-    // 找到「所有文章」標題元素並滾動到該位置
+
+    // 更新 URL，加入頁碼但保留其他搜尋參數
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', page.toString())
+
+    // 使用 { scroll: false } 避免頁面自動捲動到頂部
+    router.push(`/article?${params.toString()}`, { scroll: false })
+
+    // 找到「所有文章」標題元素並捲動到該位置
     const titleElement = document.querySelector('.y-list-title h2')
     if (titleElement) {
       titleElement.scrollIntoView({ behavior: 'smooth' })
@@ -75,11 +99,27 @@ export default function NewsPage() {
     setCurrentPage(1);
   }, [searchParams]); // 確保 searchParams 是依賴項
 
+  // 監聽 URL 參數變化，同步更新頁碼
+  useEffect(() => {
+    const pageParam = searchParams.get('page')
+    if (pageParam) {
+      const parsedPage = parseInt(pageParam, 10)
+      if (!isNaN(parsedPage) && parsedPage !== currentPage) {
+        setCurrentPage(parsedPage)
+      }
+    }
+  }, [searchParams, currentPage])
+
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters)
-    setCurrentPage(1) // 重置分頁到第一頁
+
+    // 當篩選條件變更時，重置為第一頁
+    setCurrentPage(1)
+
     // 更新 URL 參數
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams.toString())
+
+    // 更新篩選條件
     for (const key in newFilters) {
       if (newFilters[key]) {
         params.set(key, newFilters[key])
@@ -87,6 +127,9 @@ export default function NewsPage() {
         params.delete(key)
       }
     }
+
+    // 重置頁碼參數為 1
+    params.set('page', '1')
     router.push(`/article?${params.toString()}`)
   }
 

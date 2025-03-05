@@ -71,9 +71,9 @@ export default function CheckoutFormStep3() {
 
     };
 
-    const goLinePay = async (amount) => {
+    const goLinePay = async (amount, items) => {
         const res = await fetch(
-            `${apiURL}/linePay/reserve?amount=${amount}`,
+            `${apiURL}/linePay/reserve?amount=${amount}&items=${items}`,
             {
                 method: 'GET',
                 credentials: 'include',
@@ -119,12 +119,17 @@ export default function CheckoutFormStep3() {
                 setResult(resData.data);
                 toast.success("付款成功");
                 LineInsertDB();
-
+                localStorage.removeItem('cart')
+                localStorage.removeItem('rent_cart')
+                localStorage.removeItem('shoppingCart')
+                localStorage.removeItem('cartItems')
+                localStorage.removeItem('buyerData')
+                localStorage.removeItem('discountMoney')
 
             } else {
                 toast.error("付款失敗");
             }
-
+            
             setTimeout(() => {
                 setLoading(false);
                 router.replace("/");
@@ -142,7 +147,8 @@ export default function CheckoutFormStep3() {
                 merchantTradeNo: `od${moment().format('YYYYMMDDhhmmss')}`,
                 buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
                 cartItems: JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
-                userId: decoded.id
+                userId: decoded.id,
+                disMoney: JSON.parse(localStorage.getItem("discountMoney")) || 0
             };
 
             console.log("送出訂單資料:", orderData);
@@ -155,11 +161,6 @@ export default function CheckoutFormStep3() {
             console.log(response);
             if (response.status == 200) {
                 console.log('訂單已成功存入資料庫');
-                localStorage.removeItem('cart')
-                localStorage.removeItem('rent_cart')
-                localStorage.removeItem('shoppingCart')
-                localStorage.removeItem('cartItems')
-                localStorage.removeItem('buyerData')
             } else {
                 console.error('存入失敗:', await response.text());
             }
@@ -225,7 +226,7 @@ export default function CheckoutFormStep3() {
                 <div className="d-flex mb-3">
                     <span className={styles['j-adDetailtitle']}>送貨方式：</span>
                     <span className={styles['j-adDetailContent']}>
-                        2-3個工作天<br /> (若有選擇調整錶帶服務，將在3-5個工作天送達)<br />
+                        2-3個工作天<br /> (將在3-5個工作天送達)<br />
                     </span>
                 </div>
                 <div className="d-flex mb-3">
@@ -240,9 +241,9 @@ export default function CheckoutFormStep3() {
 
             <div className={`${styles['j-payStep']} d-flex flex-column`}>
                 <div className={styles['j-payTitle']}>付款</div>
-                <div className={`${styles['totalAmount']} d-flex justify-content-between w-100 pe-1 py-2`}>
+                <div className="d-flex justify-content-between w-100 pe-1 py-2">
                     <span >總價：</span>
-                    <span >${totalAmount.toLocaleString()}</span>
+                    <span className={`${styles['totalAmount']}`}>{totalAmount.toLocaleString()}元</span>
                 </div>
                 <div className={styles['j-payContent']}>
                     <p className="mb-0">請選擇你的付款方式。之後，您將轉向相關服務頁面已完成你的訂單</p>
@@ -258,10 +259,7 @@ export default function CheckoutFormStep3() {
                             checked={paymentMethod === "ecpay"}
                             onChange={() => handlePaymentChange("ecpay")}
                         />
-                        {/* <label className="ms-2 mb-0" htmlFor="ecpay">
-                            <img src="/images/shopping-cart-image/radiobutton1.svg" alt="" />
-                        </label> */}
-                        <p className="ms-2 mb-0">ECpay</p>
+                        <p className="ms-2 mb-0">信用卡支付</p>
                     </div>
 
                     <div className="d-flex align-items-center mt-2">
@@ -273,9 +271,6 @@ export default function CheckoutFormStep3() {
                             checked={paymentMethod === "linePay"}
                             onChange={() => handlePaymentChange("linePay")}
                         />
-                        {/* <label className="ms-2 mb-0" htmlFor="linepay">
-                            <img src="/images/shopping-cart-image/radiobutton1.svg" alt="" />
-                        </label> */}
                         <p className="ms-2 mb-0">LinePay</p>
                     </div>
                 </div>

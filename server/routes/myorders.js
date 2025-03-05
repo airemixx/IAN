@@ -95,7 +95,7 @@ router.get("/course", checkToken, async (req, res) => {
     uc.user_id, 
     uc.courses_id,
     uc.name AS course_name,
-    uc.price,
+    c.sale_price AS price,
     c.title,
     c.image_url AS course_image,
     c.teacher_id AS instructor,
@@ -126,6 +126,109 @@ router.get("/course", checkToken, async (req, res) => {
 
 
 //我的課程 end
+
+//order
+router.get("/order", checkToken, async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const userId = req.decoded.id;
+
+    console.log("🔍 獲取用戶 ID:", userId);
+    if (!userId) {
+      return res.status(400).json({ error: "無效的用戶 ID" });
+    }
+
+    const [orders] = await connection.query(
+      `SELECT 
+            'course' AS item_type,
+            uc.id AS order_id, 
+            uc.user_id, 
+            uc.courses_id AS item_id,
+            uc.name COLLATE utf8mb4_unicode_ci AS item_name,
+            c.sale_price AS price,
+            c.title COLLATE utf8mb4_unicode_ci AS title,
+            c.image_url COLLATE utf8mb4_unicode_ci AS item_image,
+            c.teacher_id AS instructor,
+            t.name COLLATE utf8mb4_unicode_ci AS instructor_name,
+            CAST(NULL AS DECIMAL(10,2)) AS rent_fee,
+            CAST(NULL AS DATE) AS start_date,
+            CAST(NULL AS DATE) AS end_date,
+            CAST(NULL AS INT) AS amount
+         FROM user_courses uc
+         JOIN users u ON uc.user_id = u.id
+         JOIN courses c ON uc.courses_id = c.id
+         JOIN teachers t ON c.teacher_id = t.id
+         WHERE uc.user_id = ?
+         
+         UNION ALL
+      
+         SELECT 
+            'product' AS item_type,
+            up.id AS order_id, 
+            up.user_id, 
+            up.product_id AS item_id,
+            p.name COLLATE utf8mb4_unicode_ci AS item_name,
+            p.price,
+            CAST(NULL AS CHAR) AS title,
+            i.image_url COLLATE utf8mb4_unicode_ci AS item_image,
+            CAST(NULL AS INT) AS instructor,
+            CAST(NULL AS CHAR) AS instructor_name,
+            CAST(NULL AS DECIMAL(10,2)) AS rent_fee,
+            CAST(NULL AS DATE) AS start_date,
+            CAST(NULL AS DATE) AS end_date,
+            up.amount
+         FROM user_product up
+         JOIN users u ON up.user_id = u.id
+         JOIN product p ON up.product_id = p.id
+         JOIN image i ON up.product_id = i.product_id
+         WHERE up.user_id = ?
+         
+         UNION ALL
+      
+         SELECT 
+            'rental' AS item_type,
+            ur.id AS order_id, 
+            ur.user_id, 
+            ur.rent_id AS item_id,
+            r.name COLLATE utf8mb4_unicode_ci AS item_name,
+            CAST(NULL AS DECIMAL(10,2)) AS price,
+            CAST(NULL AS CHAR) AS title,
+            i.url COLLATE utf8mb4_unicode_ci AS item_image,
+            CAST(NULL AS INT) AS instructor,
+            CAST(NULL AS CHAR) AS instructor_name,
+            ur.rent_fee,
+            ur.start_date,
+            ur.end_date,
+            CAST(NULL AS INT) AS amount
+         FROM user_rentals ur
+         JOIN users u ON ur.user_id = u.id
+         JOIN rental r ON ur.rent_id = r.id
+         JOIN rent_image i ON ur.rent_id = i.rent_id
+         WHERE ur.user_id = ?
+      
+         ORDER BY order_id DESC;
+        `,
+      [userId, userId, userId]
+    );
+
+
+    console.log("🔍 SQL 查詢結果:", orders);
+    connection.release();
+
+    if (orders.length === 0) {
+      return res.json({ orders: [] });
+    }
+
+    res.json({ orders });
+  } catch (error) {
+    console.error("🚨 取得租賃訂單錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
+
+//order end
+
+
 function checkToken(req, res, next) {
   let token = req.get("Authorization");
 
@@ -156,6 +259,57 @@ function checkToken(req, res, next) {
     next();
   });
 }
+//coupon
+router.get("/coupon", checkToken, async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const userId = req.decoded.id;
+
+    console.log("🔍 獲取用戶 ID:", userId);
+    if (!userId) {
+      return res.status(400).json({ error: "無效的用戶 ID" });
+    }
+
+    // 取得用戶的優惠券
+    const [coupons] = await connection.query(
+      `SELECT 
+          uc.id AS user_coupon_id,
+          uc.user_id,
+          uc.coupon_id,
+          uc.quantity,
+          uc.created_at,  -- 用戶領取優惠券的時間
+          c.name AS coupon_name,
+          c.coupon_code,
+          c.discount_type,
+          c.start_date,
+          c.end_date,
+          c.discount,
+          c.lower_purchase,
+          c.img AS coupon_image,
+          c.type AS coupon_type
+       FROM user_coupon uc
+       JOIN coupon c ON uc.coupon_id = c.id
+       WHERE uc.user_id = ?
+       ORDER BY uc.created_at DESC;`,  
+      [userId]
+    );
+
+    console.log("🔍 SQL 查詢結果:", coupons);
+    connection.release();
+
+    if (coupons.length === 0) {
+      return res.json({ coupons: [] });
+    }
+
+    res.json({ coupons });
+  } catch (error) {
+    console.error("🚨 取得優惠券錯誤:", error);
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
+  }
+});
+
+
+//coupon end
 
 /* PK專用 */
 
