@@ -318,15 +318,42 @@ function ReplyItem({
     if (newNestedReply && typeof newNestedReply === 'object') {
       console.log('New nested reply received:', newNestedReply);
 
-      // 新增：處理嵌套回覆的數據結構
+      // 改進數據處理，確保所有必要字段都存在
+      const processedReply = {
+        ...newNestedReply,
+        // 確保有 nickname 或 name
+        nickname: newNestedReply.nickname || newNestedReply.name,
+        // 處理媒體字段，統一命名，並確保是陣列格式
+        media_urls: newNestedReply.media_urls || newNestedReply.media_url || [],
+        media_types: newNestedReply.media_types || newNestedReply.media_type || [],
+        // 確保其他必要字段
+        parent_id: parentId,
+        like_count: newNestedReply.like_count || 0,
+        is_edited: false,
+      };
 
-      // 強制重新渲染嵌套回覆容器
+      // 確保媒體字段是陣列
+      if (!Array.isArray(processedReply.media_urls)) {
+        processedReply.media_urls = processedReply.media_urls ? [processedReply.media_urls] : [];
+      }
+      if (!Array.isArray(processedReply.media_types)) {
+        processedReply.media_types = processedReply.media_types ? [processedReply.media_types] : [];
+      }
+
+      // 修改這裡：將新回覆添加到頂部，而不是底部
+      setNestedReplies(prevReplies => [processedReply, ...prevReplies]);
+      setShowNestedReplies(true);
+
+      // 強制重新渲染
       setNestedRepliesKey(Date.now());
-      handleReplyClick(null, ''); // 傳 null 表示關閉所有回覆框
+
+      // 關閉回覆輸入框
+      handleReplyClick(null, '');
     } else {
       console.error('Invalid nested reply data:', newNestedReply);
     }
   };
+
 
   // 父回覆不使用 nested reply 的渲染動畫，直接切換顯示/隱藏
   const toggleNestedReplies = () => {
@@ -621,23 +648,25 @@ function ReplyItem({
                             userProfile={reply.head}
                             text={reply.content}
                             time={reply.created_at}
-                            media_urls={reply.media_url}
-                            media_types={reply.media_type}
+                            // 修改這裡，統一命名為 media_urls 和 media_types
+                            media_urls={reply.media_urls || reply.media_url}
+                            media_types={reply.media_types || reply.media_type}
                             parentId={reply.parent_id}
                             commentId={reply.id}
                             initialLikeCount={reply.like_count}
+                            // 其餘保持不變
                             onReplyClick={handleReplyClick}
                             activeMenuId={activeMenuId}
                             setActiveMenuId={setActiveMenuId}
-                            currentEditingId={currentEditingId} // 新增
-                            setCurrentEditingId={setCurrentEditingId} // 新增
-                            is_edited={reply.is_edited} // 新增
-                            updated_at={reply.updated_at} // 新增
-                            onCommentDeleted={handleNestedReplyDeleted} // 新增
-                            isAuthenticated={isAuthenticated} // 添加這行
-                            showAuthModal={showAuthModal} // 添加這行
-                            token={token} // 新增
-                            userId={userId} // 新增
+                            currentEditingId={currentEditingId}
+                            setCurrentEditingId={setCurrentEditingId}
+                            is_edited={reply.is_edited}
+                            updated_at={reply.updated_at}
+                            onCommentDeleted={handleNestedReplyDeleted}
+                            isAuthenticated={isAuthenticated}
+                            showAuthModal={showAuthModal}
+                            token={token}
+                            userId={userId}
                           />
                         )
                       })}
@@ -739,10 +768,22 @@ function NestedReplyItem({
   const isMenuOpen = activeMenuId === menuKey
 
   const isEditing = currentEditingId === props.commentId;
-  const [editedText, setEditedText] = useState(props.text)
+  const initialText = props.text || props.content || '';
+  const [displayText, setDisplayText] = useState(initialText);
+  const [editedText, setEditedText] = useState(initialText);
+
+  // 當 props.text 或 props.content 變化時更新顯示內容
+  useEffect(() => {
+    const newText = props.text || props.content || '';
+    if (newText && newText !== displayText) {
+      setDisplayText(newText);
+      setEditedText(newText);
+      console.log('更新嵌套回覆內容:', newText);
+    }
+  }, [props.text, props.content]);
+
   const [isEdited, setIsEdited] = useState(is_edited ? true : false)
   const [updatedTime, setUpdatedTime] = useState(updated_at || null)
-  const [displayText, setDisplayText] = useState(props.text)
   const [isHovered, setIsHovered] = useState(false)
   const [isSent, setIsSent] = useState(false)
 
@@ -1017,15 +1058,31 @@ function NestedReplyItem({
               </div>
             </div>
           )}
-          {props.media_urls &&
-            props.media_urls.length > 0 &&
-            props.media_urls.map((media_url, index) => (
-              <MediaRenderer
-                key={`${props.commentId}-media-${index}`}
-                media_type={props.media_types[index]}
-                media_url={media_url}
-              />
-            ))}
+          {/* 簡化媒體渲染邏輯 */}
+          {(() => {
+            // 統一獲取媒體資源
+            const mediaUrls = props.media_urls || [];
+            const mediaTypes = props.media_types || [];
+
+            // 確保都是陣列格式
+            const urlsArray = Array.isArray(mediaUrls) ? mediaUrls : [mediaUrls];
+            const typesArray = Array.isArray(mediaTypes) ? mediaTypes : [mediaTypes];
+
+            if (urlsArray.length === 0 || !urlsArray[0]) return null;
+
+            return urlsArray.map((url, index) => {
+              if (!url) return null;
+              const type = typesArray[index] || 'image';
+
+              return (
+                <MediaRenderer
+                  key={`${props.commentId}-media-${index}`}
+                  media_type={type}
+                  media_url={url}
+                />
+              );
+            });
+          })()}
           <div className={`mt-3 d-flex align-items-center ${styles['y-reply-time-like']}`}>
             <h6
               data-tooltip-id={`tooltip-nested-${props.time}`}
@@ -1067,6 +1124,7 @@ function NestedReplyItem({
                 onClick={handleNestedReplyClick}
               >
                 <img src="/images/article/reply-origin.svg" alt="Reply" />
+                <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
               </button>
             </div>
           </div>
