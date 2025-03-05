@@ -58,7 +58,7 @@ export default function CourseInfo({ course }) {
     }
 
     // ✅ 直接導向購物車頁面
-    router.push('/cart/cart-step1')
+    router.push('/cart')
   }
 
   // 加入購物車
