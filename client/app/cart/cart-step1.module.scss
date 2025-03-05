@@ -51,6 +51,13 @@
   font-weight: bold;
 }
 
+.j-delAll:active,
+.j-delAll:focus,
+.j-delAll:not(.j-cartItem)
+{
+  border: none;
+}
+
 //mobile 還在用
 .j-itemBox{
   background-color: #003150;
