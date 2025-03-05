@@ -17,7 +17,19 @@ import StickyCard from './_components/sticky-card'
 export default function NewsPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [filters, setFilters] = useState({})
+
+  // 1. 先從 URL 參數中直接初始化 filters
+  const initialFilters = {
+    search: searchParams.get('search') || '',
+    category: searchParams.get('category') || '',
+    tag: searchParams.get('tag') || '',
+    user_id: searchParams.get('user_id') || '',
+  }
+
+  // 2. 使用這些初始值設置 filters 狀態
+  const [filters, setFilters] = useState(initialFilters)
+
+  // 3. 使用已初始化的 filters 獲取文章
   const { articles, error, loading } = useArticles(filters)
   const [searchTerm, setSearchTerm] = useState('')
   const [hasSearch, setHasSearch] = useState(false)

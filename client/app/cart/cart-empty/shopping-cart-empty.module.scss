@@ -1,11 +1,5 @@
-.j-bodyHeight{
-  height: 100vh;
-}
-
-
-  body>footer {
-    position: sticky;
-    top: 100vh;
+  .j-page-wrapper{
+    min-height: 93vh;
   }
 
   .j-publicFont {
@@ -16,7 +10,7 @@
 
 
   .j-shoppingCartTitleBox .j-shoppingCartTitle {
-    font-size: 60px;
+    font-size: 2.1rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -30,7 +24,7 @@
   }
 
   .j-emptyShoppingImg {
-    width: 452px;
+    width: 446px;
     height: 315px;
     flex-shrink: 0;
   }
@@ -70,39 +64,51 @@
     bottom: 40%;
     left: 15%;
   }
-
-  .j-popularTitle {
-    font-size: 20px;
-    font-weight: 700;
+  @media (max-width: 1400px) {
+    .j-emptyShoppingTitle {
+      color: #fff;
+      bottom: 16%;
+      left: 15%;
+    }
+  }
+  @media (max-width: 1200px) {
+    .j-emptyShoppingTitle {
+      color: #fff;
+      bottom: 16%;
+      left: 8%;
+    }
+  }
+  @media (max-width: 996px) {
+    .j-emptyShoppingTitle {
+      color: #fff;
+      bottom: 60%;
+      left: 28%;
+    }
+  }
+  @media (max-width: 768px) {
+    .j-emptyShoppingTitle {
+      color: #fff;
+      bottom: 60%;
+      left: 20%;
+    }
+  }
+  @media (max-width: 576px) {
+    .j-emptyShoppingTitle {
+      color: #fff;
+      bottom: 60%;
+      left: 20%;
+    }
+    .j-illustrate{
+      bottom: 15%;
+      left: 15%;
+      margin-bottom: 50px;
+    }
   }
 
-  .j-popularProduct .p2 {
-    color: #D0B088;
-  }
-
-  .j-popularProduct img {
-    width: 150px;
-    height: 150px;
-  }
-
-  .j-popularProduct p {
-    font-family: "Noto Sans HK";
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-  }
-  
   @media (max-width: 390px) {
     
     .j-shoppingCartTitleBox .j-shoppingCartTitle {
-      font-size: 54px;
-    }
-
-    .j-emptyShoppingImg {
-      width: 350px;
-      height: 315px;
-      flex-shrink: 0;
+      font-size: 2.1rem;
     }
 
     .j-emptyShoppingImg img {
@@ -112,31 +118,20 @@
     .j-emptyShoppingImgBox {
       width: 360px;
     }
+
     .j-emptyShoppingTitle{
-      bottom: 35%;
+      color: #fff;
+      bottom: 68%;
+      left: 15%;
     }
+    
+    .j-illustrate {
+      bottom: 15%;
+      left: 15%;
+    }
+
     .j-linkCamera{
       padding: 10px 15px;
     }
-    .footer{
-      display: block;
-      
-    }
-    .left-links{
-      text-align: center;
-    }
-    .right-links a{
-      display:none
-    }
-    .right-links span{
-      display:none
-    }
-    .right-links .copyRight{
-      display:block
-    }
-  }
-
-  @media (min-width: 576px) {
-
     
   }
