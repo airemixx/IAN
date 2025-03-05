@@ -71,9 +71,9 @@ export default function CheckoutFormStep3() {
 
     };
 
-    const goLinePay = async (amount) => {
+    const goLinePay = async (amount, items) => {
         const res = await fetch(
-            `${apiURL}/linePay/reserve?amount=${amount}`,
+            `${apiURL}/linePay/reserve?amount=${amount}&items=${items}`,
             {
                 method: 'GET',
                 credentials: 'include',
