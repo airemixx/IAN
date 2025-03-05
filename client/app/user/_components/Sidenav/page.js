@@ -35,14 +35,7 @@ export default function Sidenav() {
     
         // 🧹 清除所有存儲
         localStorage.clear();
-        sessionStorage.clear();
     
-        // 🧹 清除所有 cookies
-        document.cookie.split(";").forEach((c) => {
-          document.cookie = c
-            .replace(/^ +/, "")
-            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
-        });
     
         // 🧹 清除狀態
         setToken(null);
