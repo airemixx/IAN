@@ -146,7 +146,8 @@ export default function CheckoutFormStep3() {
                 merchantTradeNo: `od${moment().format('YYYYMMDDhhmmss')}`,
                 buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
                 cartItems: JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
-                userId: decoded.id
+                userId: decoded.id,
+                disMoney: JSON.parse(localStorage.getItem("discountMoney")) || 0
             };
 
             console.log("送出訂單資料:", orderData);

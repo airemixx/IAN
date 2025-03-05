@@ -43,7 +43,7 @@ export default function CheckoutFormStep1({ slItem }) {
   function handleClick() {
     if (slItem && slItem.length > 0) {
       localStorage.setItem("cartItems", JSON.stringify(slItem));
-
+      localStorage.setItem("discountMoney", JSON.stringify(discount));
       setTimeout(() => {
         router.push("/cart/cart-step2");
       }, 100);
@@ -73,7 +73,7 @@ export default function CheckoutFormStep1({ slItem }) {
 
   async function fetchCoupon() {
     try {
-      const response = await fetch(`/api/coupon?id=${decoded.id}`, {
+      const response = await fetch(`http://localhost:8000/api/coupon?id=${decoded.id}`, {
         method: "GET",
       });
 
