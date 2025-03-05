@@ -15,7 +15,7 @@ if (typeof window !== 'undefined') {
   window.jQuery = $
 }
 
-export default function FroalaEditorWrapper() {
+export default function FroalaEditorWrapper({ initialContent }) {
   const editorRef = useRef(null)
 
   useEffect(() => {
@@ -110,6 +110,15 @@ export default function FroalaEditorWrapper() {
               window.editorInstance = this
               // 修改內文區塊的樣式
               this.el.style.backgroundColor = 'transparent'
+              console.log('Froala Editor 初始化完成');
+              window.editorInstance = this;
+
+              // 如果提供了初始內容，設置它
+              if (initialContent) {
+                setTimeout(() => {
+                  this.html.set(initialContent);
+                }, 100); // 短暫延遲確保編輯器完全就緒
+              }
             },
             'image.beforeUpload': function (files) {
               console.log('圖片上傳前', files)
@@ -160,7 +169,7 @@ export default function FroalaEditorWrapper() {
       }
       window.editorInstance = null
     }
-  }, [])
+  }, [initialContent])
 
   return (
     <>
