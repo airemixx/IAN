@@ -21,7 +21,7 @@ export default function UserPage() {
 
       {/* 主要內容區 */}
       <div className="col-lg-9">
-        <h1 className="mb-4">我的優惠券</h1>
+        <h1 className={`mb-4 ${styles.h1}`}>我的優惠券</h1>
 
         {/* 相機優惠券 */}
         <h5 className="mt-4">相機</h5>

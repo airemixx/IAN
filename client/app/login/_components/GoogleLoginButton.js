@@ -25,11 +25,11 @@ export default function GoogleLoginButton() {
   };
 
   return (
-    <div className={styles.width}>
+    <div className={`ms-5 ${styles.width}`}>
         <a onClick={handleLogin}><img
         id="avatar"
         src="/images/icon/google.png" // ✅ 使用相對路徑
-        alt="大頭貼"
+        alt="google icon"
         className={styles.avatar}
         style={{ cursor: "pointer" }}
       /></a>

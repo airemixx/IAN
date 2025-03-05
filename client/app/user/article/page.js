@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import UserArticleFilter from './_components/UserArticleFilter'
 import ContentLoader from 'react-content-loader'
+import AnimatedCounter from './_components/AnimatedCounter'
 
 // 創建骨架屏元件
 const ArticleCardSkeleton = () => (
@@ -64,7 +65,8 @@ function formatDate(dateString) {
 
 export default function UserPage() {
   const { token, user, loading } = useAuth()
-  const [articles, setArticles] = useState([])
+  const [articles, setArticles] = useState([]) // 用於顯示篩選後的文章
+  const [allArticles, setAllArticles] = useState([]) // 新增：用於統計的所有文章
   const [contentReady, setContentReady] = useState(false)
   const router = useRouter()
 
@@ -76,7 +78,9 @@ export default function UserPage() {
           headers: { Authorization: `Bearer ${token}` }
         })
         .then((res) => {
-          setArticles(res.data.data || []);
+          const articlesData = res.data.data || [];
+          setArticles(articlesData);
+          setAllArticles(articlesData); // 同時設置所有文章數據
           // 添加延遲，以便骨架屏顯示足夠長的時間
           timer = setTimeout(() => {
             setContentReady(true);
@@ -160,8 +164,13 @@ export default function UserPage() {
                   "該文章已被刪除。",
                   "success"
                 );
-                // 從目前文章狀態中移除該文章
+                // 同時更新兩個文章狀態
                 setArticles(prevArticles => prevArticles.filter(a => a.id !== articleId));
+                setAllArticles(prevAllArticles => prevAllArticles.map(a =>
+                  a.id === articleId
+                    ? { ...a, is_deleted: 1 } // 將刪除的文章標記為已刪除
+                    : a
+                ));
               })
               .catch((error) => {
                 swalWithCustomStyle.fire(
@@ -214,12 +223,20 @@ export default function UserPage() {
               <div className={`d-flex justify-content-between mt-3 ${styles.userStats}`}>
                 <div className={styles.statItem}>
                   <div className={styles.statValue}>
-                    {articles.reduce((sum, article) => sum + (article.like_count || 0), 0)}
+                    <AnimatedCounter
+                      value={allArticles
+                        .filter(article => article.is_deleted === 0 || article.is_deleted === null)
+                        .reduce((sum, article) => sum + (article.like_count || 0), 0)}
+                    />
                   </div>
                   <div className={styles.statLabel}>獲讚數</div>
                 </div>
                 <div className={styles.statItem}>
-                  <div className={styles.statValue}>{articles.length}</div>
+                  <div className={styles.statValue}>
+                    <AnimatedCounter
+                      value={allArticles.filter(article => article.is_deleted === 0 || article.is_deleted === null).length}
+                    />
+                  </div>
                   <div className={styles.statLabel}>篇文章</div>
                 </div>
               </div>

@@ -80,7 +80,7 @@ export default function loginPage() {
             {/* 左側 - 建立帳戶 */}
             <div className={`col-lg-6 ${styles.box} ${styles.column} me-4`}>
               <div className={styles.box1}>
-                <h6>我沒有帳戶</h6>
+                <h5>我沒有帳戶</h5>
                 <h6>建立帳戶，享受個人化的購物體驗。</h6>
               </div>
               <div className={`${styles.start} mb-3`}>
@@ -107,7 +107,7 @@ export default function loginPage() {
             <div className={`col-lg-6 ${styles.box} ${styles.column} me-4`}>
               <form onSubmit={handleLogin}>
                 <div className={styles.box1}>
-                  <h6>我已擁有帳戶</h6>
+                  <h5>我已擁有帳戶</h5>
                 </div>
                 <div className={`${styles.box1} mb-2`}>
                   <label className={styles.label}>帳號</label>
@@ -141,12 +141,13 @@ export default function loginPage() {
                 </div>
               </form>
 
-              <div className="flex justify-start">
+              <div className="d-flex justify-start align-items-end">
                 <GoogleLoginButton />
-              </div>
-              <div className="flex justify-start">
+                <div className="flex justify-start">
                 忘記密碼 ?
               </div>
+              </div>
+              
             </div>
           </div>
         </div>

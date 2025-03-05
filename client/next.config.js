@@ -24,6 +24,7 @@ const nextConfig = {
       },
     ],
     unoptimized: true,
+    domains: ['localhost'],
   },
   // output: 'export', // don't use with `next start` or api route
   // distDir: 'dist',
@@ -31,10 +32,35 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        // 所有 API 請求轉發到後端
         source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*', // Proxy to Backend
-      },
+        // 排除 froala-upload 路徑
+        destination: 'http://localhost:8000/api/:path*',
+        has: [
+          {
+            type: 'query',
+            key: 'path',
+            value: '(?!froala-upload)',
+          }
+        ]
+      }
     ]
+  },
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+      use: [
+        {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            name: 'static/media/[name].[hash:8].[ext]',
+          },
+        },
+      ],
+    });
+
+    return config;
   },
 }
 
