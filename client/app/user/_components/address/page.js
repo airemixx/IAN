@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { renderToString } from "react-dom/server";
+import styles from "./address.module.scss";
 
 const MySwal = withReactContent(Swal);
 
@@ -158,18 +159,18 @@ const AddressManager = () => {
   return (
     <div>
       <h4>我的地址</h4>
-      <strong>送貨地址:</strong>
-      <div className="card p-3">
+      <strong className="text-muted">送貨地址:</strong>
+      <div className={`card p-3 mt-3 ${styles.address}`}>
         {addresses.length > 0 ? (
-          <ul className="">
+          <ul className="mt-2">
             {addresses.map((address) => (
               <li key={address.id} className="list-group-item d-flex justify-content-between align-items-center mb-2">
                 {address.address}
                 <div>
-                  <a onClick={() => handleEditAddress(address.id)} className=" me-2">
+                  <a onClick={() => handleEditAddress(address.id)} className={`me-2 ${styles.put}`}>
                     <MdEdit />
                   </a>
-                  <a onClick={() => handleDeleteAddress(address.id)} className=" btn-outline-danger">
+                  <a onClick={() => handleDeleteAddress(address.id)} className={`btn-outline-danger ${styles.put}`}>
                     <MdDelete />
                   </a>
                 </div>
@@ -180,7 +181,7 @@ const AddressManager = () => {
           <p className="text-muted">尚未填寫住址</p>
         )}
       </div>
-      <a onClick={handleAddAddress} className="btn  mt-3">
+      <a onClick={handleAddAddress} className={`btn mt-3 ${styles.AddAddress}`}>
         新增住址
       </a>
     </div>
