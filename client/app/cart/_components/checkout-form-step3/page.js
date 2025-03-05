@@ -124,6 +124,7 @@ export default function CheckoutFormStep3() {
                 localStorage.removeItem('shoppingCart')
                 localStorage.removeItem('cartItems')
                 localStorage.removeItem('buyerData')
+                localStorage.removeItem('discountMoney')
 
             } else {
                 toast.error("付款失敗");

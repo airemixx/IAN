@@ -44,6 +44,7 @@ export default function ECPayCallback() {
           localStorage.removeItem('shoppingCart')
           localStorage.removeItem('cartItems')
           localStorage.removeItem('buyerData')
+          localStorage.removeItem('discountMoney')
         } else {
           console.error('存入失敗:', await response.text());
         }
