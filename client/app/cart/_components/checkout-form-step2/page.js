@@ -15,10 +15,22 @@ export default function CheckoutFormStep2() {
     const [selectedOption, setSelectedOption] = useState(null); // 選擇的 buyer 物件
     const [buyerOptions, setBuyerOptions] = useState([]); // API 回傳的訂購人資料
     const [totalAmount, setTotalAmount] = useState(0); // 新增總價狀態
+    const [id, setId] = useState(null); // 用來存儲解碼後的用戶 ID
 
-    // 取得使用者 ID，避免 jwtDecode 出錯
-    const token = localStorage.getItem("loginWithToken");
-    const id = token ? jwtDecode(token).id : null;
+    // 只在瀏覽器端執行 localStorage 相關邏輯
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const token = localStorage.getItem("loginWithToken");
+            if (token) {
+                try {
+                    const decoded = jwtDecode(token);
+                    setId(decoded.id);
+                } catch (error) {
+                    console.error("JWT 解析錯誤:", error);
+                }
+            }
+        }
+    }, []);
 
     useEffect(() => {
         if (!id) return;
@@ -37,10 +49,12 @@ export default function CheckoutFormStep2() {
 
     // 計算購物車總價
     useEffect(() => {
-        const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
-        const cartItems = Object.values(cartData);
-        const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        setTotalAmount(total);
+        if (typeof window !== "undefined") {
+            const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
+            const cartItems = Object.values(cartData);
+            const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            setTotalAmount(total);
+        }
     }, []);
 
     // 當選擇的訂購人變更時，自動填入 input 欄位
@@ -84,7 +98,9 @@ export default function CheckoutFormStep2() {
 
     const handleSubmit = () => {
         if (validateForm()) {
-            localStorage.setItem("buyerData", JSON.stringify(formData));
+            if (typeof window !== "undefined") {
+                localStorage.setItem("buyerData", JSON.stringify(formData));
+            }
             router.push("/cart/cart-step3");
         }
     };
@@ -99,8 +115,8 @@ export default function CheckoutFormStep2() {
                     defaultValue=""
                 >
                     <option value="" disabled>請選擇住址</option>
-                    {buyerOptions.map((buyer) => (
-                        <option key={buyer.id} value={buyer.id}>
+                    {buyerOptions.map((buyer,index) => (
+                        <option key={index} value={buyer.id}>
                             {buyer.address}
                         </option>
                     ))}
@@ -108,11 +124,9 @@ export default function CheckoutFormStep2() {
             </div>
             <div className={`${styles['buyerData']} mb-4`}>訂購人資料</div>
             <div className={`${styles['j-buyerInput']} d-flex flex-column mb-5`}>
-                {[
-                    { label: "姓名*", name: "name" },
-                    { label: "地址*", name: "address" },
-                    { label: "電話號碼*", name: "phone" },
-                ].map((field, index) => (
+                {[{ label: "姓名*", name: "name" },
+                  { label: "地址*", name: "address" },
+                  { label: "電話號碼*", name: "phone" }].map((field, index) => (
                     <div key={index} className="d-flex flex-column flex-grow-1 mb-2">
                         <p className="mb-2">{field.label}</p>
                         <input
