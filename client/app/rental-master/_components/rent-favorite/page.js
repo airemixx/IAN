@@ -8,27 +8,13 @@ import Swal from 'sweetalert2'
 import { Howl } from 'howler'
 
 export default function FavoriteButton({ rentId, rental }) {
-  const [isFavorite, setIsFavorite] = useState(false)
 
-  useEffect(() => {
-    const token = localStorage.getItem('loginWithToken')
-    if (!token) return
+  // 📌 直接從 `rental.is_favorite` 取得初始狀態
+  const [isFavorite, setIsFavorite] = useState(rental.is_favorite)
 
-    // 檢查是否已收藏
-    fetch(`/api/rental-master/collection/${rentId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setIsFavorite(data.isFavorite)
-      })
-      .catch((error) => console.error('檢查收藏狀態失敗:', error))
-  }, [rentId])
-
+  // ✅ 阻止事件冒泡，避免觸發卡片點擊事件
   const toggleFavorite = async (e) => {
-    e.stopPropagation() // ✅ 阻止事件冒泡，避免觸發卡片點擊事件
+    e.stopPropagation()
 
     const token = localStorage.getItem('loginWithToken')
 
@@ -77,7 +63,9 @@ export default function FavoriteButton({ rentId, rental }) {
     }
 
     try {
-      const response = await fetch(`/api/rental-master/collection`, {
+      console.log("發送收藏請求:", { rent_id: rentId }) // ✅ 檢查請求是否正確發送
+
+      const response = await fetch(`http://localhost:8000/api/rental/collection`, {
         method: isFavorite ? 'DELETE' : 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +89,8 @@ export default function FavoriteButton({ rentId, rental }) {
       });
 
       if (data.success) {
-        setIsFavorite(!isFavorite)
+        setIsFavorite(!isFavorite)  // ✅ 只影響自己
+
         Swal.fire({
           didOpen: () => {
             isFavorite ? unFavoriteSound.play() : favoriteSound.play(); // 播放音效
@@ -165,7 +154,6 @@ export default function FavoriteButton({ rentId, rental }) {
       })
     }
   }
-
 
   return (
     <button onClick={toggleFavorite} className='k-favorite-icon'>
