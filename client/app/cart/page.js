@@ -11,6 +11,7 @@ import { useEffect, useState, useRef } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 import { FaTrashCan } from "react-icons/fa6";
 import Swal from 'sweetalert2'
+
 export default function cartPageOne() {
   const router = useRouter()
   const [cartStorage, setCartStorage] = useState([])
@@ -147,8 +148,8 @@ export default function cartPageOne() {
       text: "此操作將刪除所有購物車商品，無法復原！",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "#003150",
+      cancelButtonColor: "#CA6D1B",
       confirmButtonText: "確定刪除",
       cancelButtonText: "取消"
     }).then((result) => {
@@ -169,11 +170,6 @@ export default function cartPageOne() {
       }
     });
   };
-
-  if (isCartEmpty) {
-    router.push('/cart/cart-empty')
-    return null
-  }
 
   return (
     <div className={`${styles['j-page-wrapper']}`}>

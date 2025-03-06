@@ -33,6 +33,35 @@ export default function CartItem({ id, itemData, page }) {
 
     }
   }
+  // Swal.fire({
+  //   title: "確定要刪除此商品嗎？",
+  //   text: "刪除後無法復原！",
+  //   icon: "warning",
+  //   showCancelButton: true,
+  //   confirmButtonColor: "#003150",
+  //   cancelButtonColor: "#CA6D1B",
+  //   confirmButtonText: "確定刪除",
+  //   cancelButtonText: "取消"
+  // }).then((result) => {
+  //   if (result.isConfirmed) {
+  //     // 刪除指定 id 的商品
+  //     const updatedCart = cartStorage.filter((item,index) => index !== id);
+      
+  //     // 更新 localStorage
+  //     localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+  //     // 更新 state，不會引起重新整理頁面
+  //     setCartStorage(updatedCart);
+
+  //     Swal.fire({
+  //       title: "已刪除",
+  //       text: "商品已成功刪除。",
+  //       icon: "success",
+  //       timer: 2000,
+  //       showConfirmButton: false
+  //     });
+  //   }
+  // });
   return (
     <>
       <div className="d-none d-sm-block d-flex flex-grow-1">
