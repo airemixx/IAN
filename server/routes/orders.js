@@ -25,8 +25,28 @@ router.post("/", async (req, res) => {
   if (!buyerData || typeof buyerData !== "object") {
     return res.status(400).json({ success: false, message: "無效的 buyerData" });
   }
+
+  
   try {
-    let start_date = null, end_date = null, totalPrice = 0;
+    let totalPrice = 0;
+    Object.values(cartItems).map(async (cartItem) => {
+      const price = cartItem.price;
+      totalPrice += price;
+    })
+
+    await pool.execute(
+      `INSERT INTO orders (
+      order_code, user_id, name, address, total, discount_money, phone) VALUES 
+      (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        merchantTradeNo, userId, buyerData.name, buyerData.address,totalPrice, disMoney, buyerData.phone
+      ]
+    );
+
+    const orderId = await pool.execute(
+      `Select id from orders where order_code = ? limit 1 `,[merchantTradeNo]
+     );
+   
     Object.values(cartItems).map(async (cartItem) => {
       // 確保所有必要的欄位都有值
       let categoryId = null, coursesId = null, rentalId = null;
@@ -45,41 +65,34 @@ router.post("/", async (req, res) => {
           break;
       }
       
-      const price = cartItem.price;
-      const quantity = cartItem.quantity;
-      totalPrice += price;
+      
       
       if(categoryId !== null){
         await pool.execute(
           `INSERT INTO user_product (
-          user_id, name, product_id, amount) VALUES 
+          order_id, user_id, name, product_id) VALUES 
           (?, ?, ?, ?)`,
-          [ userId, model, categoryId, quantity]
+          [orderId[0][0].id, userId, model, categoryId]
         );
       }else if(coursesId != null){
         await pool.execute(
           `INSERT INTO user_courses (
-          user_id, name, courses_id) VALUES 
-          (?, ?, ?)`,
-          [ userId, model, coursesId]
+          order_id, user_id, name, courses_id) VALUES 
+          (?, ?, ?, ?)`,
+          [orderId[0][0].id, userId, model, coursesId]
         );
       }else if(rentalId != null){
         await pool.execute(
           `INSERT INTO user_rentals (
-          user_id, rent_id, rent_fee, start_date, end_date) VALUES 
-          (?, ?, ?, ?, ?)`,
-          [ userId, rentalId,price, start_date, end_date]
+          order_id, user_id, rent_id, rent_fee, start_date, end_date) VALUES 
+          (?, ?, ?, ?, ?, ?)`,
+          [orderId[0][0].id, userId, rentalId,price, start_date, end_date]
         );
       }
     })
-    await pool.execute(
-      `INSERT INTO orders (
-      order_code, user_id, name, address, total, discount_money, phone) VALUES 
-      (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        merchantTradeNo, userId, buyerData.name, buyerData.address,totalPrice, disMoney, buyerData.phone
-      ]
-    );
+
+   
+
     res.status(200).json({ success: true, message: "訂單儲存成功" });
 
   } catch (error) {

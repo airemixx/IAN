@@ -64,9 +64,9 @@ export default function ECPayCallback() {
         }
       };
       saveOrderToDB();
-      // const timer = setTimeout(() => {
-      //   window.location.href = "/"; // 替換成你的目標頁面 URL
-      // }, 3000);
+      const timer = setTimeout(() => {
+        window.location.href = "/"; // 替換成你的目標頁面 URL
+      }, 3000);
 
       return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
     }
