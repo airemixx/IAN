@@ -11,6 +11,7 @@ import { useEffect, useState, useRef } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 import { FaTrashCan } from "react-icons/fa6";
 import Swal from 'sweetalert2'
+
 export default function cartPageOne() {
   const router = useRouter()
   const [cartStorage, setCartStorage] = useState([])
@@ -169,11 +170,6 @@ export default function cartPageOne() {
       }
     });
   };
-
-  if (isCartEmpty) {
-    router.push('/cart/cart-empty')
-    return null
-  }
 
   return (
     <div className={`${styles['j-page-wrapper']}`}>
