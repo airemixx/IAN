@@ -138,7 +138,7 @@ export default function RentList() {
     return () => window.removeEventListener('resize', updateItemsPerPage)
   }, [currentPage, itemsPerPage])
 
-  // 📌 **從 API 獲取租借商品和標籤**
+  // 📌 從 API 獲取租借商品和標籤 + 收藏狀態(如果有登入)
   const fetchData = async () => {
     try {
       const params = new URLSearchParams()
@@ -150,10 +150,13 @@ export default function RentList() {
       filters.advanced.forEach((adv) => params.append('advanced', adv))
       filters.brands.forEach((brand) => params.append('brands', brand))
 
-      const res = await fetch(
-        `http://localhost:8000/api/rental-master?${params.toString()}`
-      )
-      const data = await res.json()
+      // 先判斷是否登入 再決定要不要撈收藏
+      const token = localStorage.getItem('loginWithToken');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      // 🚀 只發送一次 API
+      const res = await fetch(`http://localhost:8000/api/rental?${params.toString()}`, { headers });
+      const data = await res.json();
 
       if (data.success) {
         setRentals(data.rentals) // 設定所有商品
