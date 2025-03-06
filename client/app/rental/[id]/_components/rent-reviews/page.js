@@ -8,10 +8,11 @@ import { FaRegPenToSquare } from 'react-icons/fa6'
 import Swal from 'sweetalert2';
 import StarRating from '../rent-rating/page'
 import withReactContent from 'sweetalert2-react-content';
+import ReactDOM from 'react-dom/client'
 
 const MySwal = withReactContent(Swal);
 
-export default function RentReviews({ reviews = [], currentUserId }) {
+export default function RentReviews({ reviews = [], setReviews, currentUserId }) {
   console.log("🔍 [前端] 當前登入者 ID (currentUserId):", currentUserId);
 
   const [itemsPerPage, setItemsPerPage] = useState(3)
@@ -64,48 +65,63 @@ export default function RentReviews({ reviews = [], currentUserId }) {
     }
   };
 
-
-  // 📌 只允許「當前登入者」修改自己的評論
-  const canEdit = (reviewUserId) => {
-    console.log("🔍 [前端] 檢查當前登入者:", { currentUserId, reviewUserId });
-
-    // 確保 `currentUserId` 和 `reviewUserId` 轉換為數字
-    return Number(currentUserId) === Number(reviewUserId);
-  };
-
-
   const handleEdit = async (review) => {
-
 
     if (!review.id) {
       Swal.fire('錯誤', '評論 ID 不存在！', 'error');
       return;
     }
-    console.log("🔍 [前端] 檢查當前登入者:", { currentUserId, });
+
+    if (review.user_id !== currentUserId) {
+      Swal.fire('錯誤', '你只能編輯自己的評論', 'error');
+      return;
+    }
+
+    let currentRating = review.rating || 0;
 
     MySwal.fire({
+      color: '#fff',
+      background: '#23425a',
       title: '編輯留言',
       html: `
-        <label>評分 (1~5)</label>
-        <input type="number" id="rating" class="swal2-input" min="1" max="5" value="${review.rating}">
-  
-        <label>留言內容</label>
-        <textarea id="comment" class="swal2-textarea">${review.comment}</textarea>
+          <label class="my-2 d-block k-swal-label">評論內容</label>
+          <textarea id="comment" class="form-control" rows="3" >${review.comment}</textarea>
+          <label class="my-2 d-block k-swal-label">評分</label>
+          <div id="star-rating"></div>
       `,
+      didOpen: () => {
+        const container = document.getElementById('star-rating')
+        if (container) {
+          const root = ReactDOM.createRoot(container)
+          root.render(
+            <StarRating
+              rating={currentRating}
+              setRating={(value) => {
+                currentRating = value
+              }}
+            />
+          );
+        }
+      },
       showCancelButton: true,
       confirmButtonText: '儲存',
       cancelButtonText: '取消',
+      focusConfirm: false,
+      customClass: {
+        actions: 'd-flex justify-content-ends k-review-swal-actions',
+        popup: 'k-review-swal-popup',
+        confirmButton: 'k-review-swal-btn-1',
+        cancelButton: 'k-review-swal-btn-2'
+      },
       preConfirm: () => {
-        const rating = parseInt(document.getElementById('rating').value);
         const comment = document.getElementById('comment').value.trim();
-
-        if (!comment || rating < 1 || rating > 5) {
-          Swal.showValidationMessage('評論內容不能為空，評分必須介於 1-5 之間！');
+        if (!comment || currentRating < 1) {
+          Swal.showValidationMessage('請填寫評論內容並選擇評分');
           return false;
         }
-
-        return { rating, comment };
+        return { comment, rating: currentRating };
       }
+
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -119,23 +135,28 @@ export default function RentReviews({ reviews = [], currentUserId }) {
             },
             body: JSON.stringify(result.value),
           });
+          const responseData = await res.json(); // 🟢 確保 API 回應被解析
 
-          if (!res.ok) throw new Error('更新失敗');
+          if (!res.ok) {
+            Swal.fire('錯誤', responseData.error || '更新失敗', 'error'); // 🟢 確保錯誤訊息被顯示
+            return;
+          }
 
           Swal.fire('成功', '評論已更新', 'success');
-
-          setReviewList(reviewList.map(r =>
-            r.id === review.id ? { ...r, ...result.value, comment_at: new Date().toISOString() } : r
-          ));
+          // 🟢 確保 state 更新
+          setReviews((prev) =>
+            prev.map((r) =>
+              r.id === review.id
+                ? { ...r, ...result.value, comment_at: new Date().toISOString() }
+                : r
+            )
+          );
         } catch (error) {
-          Swal.fire('錯誤', '無法更新評論，請稍後再試', 'error');
+          Swal.fire('錯誤', error.message, 'error'); // 🟢 顯示錯誤訊息
         }
       }
     });
   };
-
-
-
 
   return (
     <div className="mt-4">
@@ -162,10 +183,12 @@ export default function RentReviews({ reviews = [], currentUserId }) {
                 {review.comment_at ? formatDate(review.comment_at).display : <span className="k-no-time">🚫</span>}
               </small>
               <span>
-                <FaRegPenToSquare
-                  className="k-main-text cursor-pointer k-pen ms-1"
-                  onClick={() => handleEdit(review)}
-                />
+                {review.user_id === currentUserId && (
+                  <FaRegPenToSquare
+                    className="k-main-text cursor-pointer k-pen ms-1"
+                    onClick={() => handleEdit(review)}
+                  />
+                )}
               </span>
               <p>
                 {review.comment.split('\n').map((line, i) => (

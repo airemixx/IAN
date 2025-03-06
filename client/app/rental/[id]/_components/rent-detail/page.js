@@ -45,7 +45,8 @@ export default function RentDetail() {
           setOriginFee(data.data.fee); // 預設顯示單日金額
           setReviews(data.reviews || []) // ✅ 設定評論數據
           setRecommendations(data.recommendations) // ✅ 取得推薦商品
-          if (data.user) {  // 🟢 從後端取得當前用戶 ID
+          if (data.user && data.user.id) {  // 🟢 確保 `user.id` 存在
+            console.log("✅ [API 回應] 當前登入者 ID:", data.user.id);
             setCurrentUserId(data.user.id);
           }
         } else {
@@ -102,7 +103,7 @@ export default function RentDetail() {
                 onDateChange={handleDateChange}
                 onFeeChange={handleFeeChange} />
               <RentHashtag hashtags={rental.hashtags} />
-              <RentReviews reviews={reviews} currentUserId={currentUserId} />
+              <RentReviews reviews={reviews} setReviews={setReviews} currentUserId={currentUserId} />
             </div>
           </div>
         </main>
