@@ -10,11 +10,10 @@ import Modal from 'react-bootstrap/Modal';
 import { toast, ToastContainer } from "react-toastify";
 
 export default function CheckoutFormStep1({ slItem }) {
-  const token = localStorage.getItem("loginWithToken");
-  const decoded = jwtDecode(token);
-
+  const [token, setToken] = useState(null);
+  const [decoded, setDecoded] = useState(null);
   const [price, setPrice] = useState(0);
-  const [discount, setDiscount] = useState(0); // 折扣金額
+  const [discount, setDiscount] = useState(0); 
   const router = useRouter();
   const [show, setShow] = useState(false);
   const [checkState, setCheckState] = useState(false);
@@ -22,8 +21,24 @@ export default function CheckoutFormStep1({ slItem }) {
   const [couponData, setCouponData] = useState([]);
   const [selectedCoupons, setSelectedCoupons] = useState([]);
 
+  // **確保在瀏覽器端取得 localStorage**
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("loginWithToken");
+      setToken(storedToken);
+      
+      if (storedToken) {
+        try {
+          const decodedToken = jwtDecode(storedToken);
+          setDecoded(decodedToken);
+        } catch (error) {
+          console.error("Token 解析錯誤:", error);
+        }
+      }
+    }
+  }, []);
 
-  // 計算原始價格
+  // **計算原始價格**
   useEffect(() => {
     if (slItem && Array.isArray(slItem)) {
       const itemPrice = slItem.reduce((acc, item) => acc + ((item.price * item.quantity) || 0), 0);
@@ -43,7 +58,7 @@ export default function CheckoutFormStep1({ slItem }) {
   function handleClick() {
     if (slItem && slItem.length > 0) {
       localStorage.setItem("cartItems", JSON.stringify(slItem));
-
+      localStorage.setItem("discountMoney", JSON.stringify(discount));
       setTimeout(() => {
         router.push("/cart/cart-step2");
       }, 100);
@@ -62,7 +77,6 @@ export default function CheckoutFormStep1({ slItem }) {
       setShow(true);
       await fetchCoupon();
     } else {
-      // 取消選取優惠券時，清空狀態
       setCheckState(false);
       setCpName("");
       setDiscount(0);
@@ -70,10 +84,11 @@ export default function CheckoutFormStep1({ slItem }) {
     }
   }
 
-
   async function fetchCoupon() {
+    if (!decoded) return;
+    
     try {
-      const response = await fetch(`/api/coupon?id=${decoded.id}`, {
+      const response = await fetch(`http://localhost:8000/api/coupon?id=${decoded.id}`, {
         method: "GET",
       });
 
@@ -92,7 +107,6 @@ export default function CheckoutFormStep1({ slItem }) {
     let productTotal = 0;
     let lessionTotal = 0;
 
-    // 計算不同 type 商品的總價
     if (slItem && Array.isArray(slItem)) {
       slItem.forEach((item) => {
         if (item.type === "product") {
@@ -103,7 +117,6 @@ export default function CheckoutFormStep1({ slItem }) {
       });
     }
 
-    // 檢查優惠券條件
     if (coupon.disType === "fixed" && productTotal < coupon.discount) {
       toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 產品）`);
       return;
@@ -114,18 +127,16 @@ export default function CheckoutFormStep1({ slItem }) {
       return;
     }
 
-    // 更新選擇的優惠券陣列
     setSelectedCoupons((prevCoupons) => {
       let updatedCoupons = [...prevCoupons];
 
       const index = updatedCoupons.findIndex((c) => c.code === coupon.code);
       if (index !== -1) {
-        updatedCoupons.splice(index, 1); // 取消選擇
+        updatedCoupons.splice(index, 1);
       } else {
-        updatedCoupons.push(coupon); // 新增優惠券
+        updatedCoupons.push(coupon);
       }
 
-      // 計算總折扣
       let totalDiscount = updatedCoupons.reduce((acc, c) => {
         if (c.disType === "fixed") {
           return acc + 1500;
@@ -135,16 +146,12 @@ export default function CheckoutFormStep1({ slItem }) {
         return acc;
       }, 0);
 
-      setDiscount(Math.min(totalDiscount, price)); // 折扣不能超過總價
+      setDiscount(Math.min(totalDiscount, price));
       return updatedCoupons;
     });
   }
 
-
-
-  // 計算折扣後的總額（確保不低於 0）
   const totalPrice = Math.max(price - discount, 0);
-
   return (
 
     <div className={`${styles["j-payStep"]} col-sm-11 col-md-9 col-lg-4 col-xl-4 mb-5 ms-lg-0 d-flex flex-column align-items-center`}>
@@ -172,7 +179,7 @@ export default function CheckoutFormStep1({ slItem }) {
                   >
                     <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
                     <span className={`position-absolute ${styles["j-cpEndDate"]}`}>
-                      {moment(coupon.end_date).format("YYYY-MM-DD HH:mm:ss")}
+                      {moment(coupon.created_at).add(5,"days").format("YYYY-MM-DD HH:mm:ss")}
                     </span>
                     <span>{coupon.cpName}</span>
                   </div>

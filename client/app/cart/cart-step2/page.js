@@ -6,13 +6,18 @@ import CartItem from '../_components/cart-item/page'
 import CheckoutFormStep2 from '../_components/checkout-form-step2/page'
 import LessonItem from '../_components/lession-item/page'
 import RentItem from '../_components/rental-item/page'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function cartPageTwo() {
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartEmpty, setIsCartEmpty] = useState(false)
   useEffect(() => {
     require('bootstrap/dist/js/bootstrap.bundle.min.js')
+    if (typeof window !== "undefined") {
+      const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+      setCartItems(storedCartItems);
+    }
   }, [])
-  const cartItems = JSON.parse(localStorage.getItem("cartItems"))
 
   const cartProduct = []
   const cartLession = []
@@ -33,7 +38,10 @@ export default function cartPageTwo() {
         break;
     }
   })
-
+  if (isCartEmpty) {
+    router.push('/cart/cart-empty')
+    return null
+  }
   return (
     <div className={`${styles['j-page-wrapper']}`}>
       <div className="container" >

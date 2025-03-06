@@ -24,14 +24,14 @@ export default function RentList() {
   const [shouldAnimate, setShouldAnimate] = useState(false);  // 判斷動畫觸發
   const router = useRouter(); // ✅ 正確初始化 router
 
-  // 📌 **篩選條件**
+  // 📌 篩選條件
   const [filters, setFilters] = useState({
     category: '全部',
     advanced: [],
     brands: [],
   })
 
-  // 上移動畫
+  // 📌 上移動畫 (頁面進入時 & 路由切換)
   useEffect(() => {
     const triggerAnimation = () => {
       setShouldAnimate(true);
@@ -49,18 +49,18 @@ export default function RentList() {
     }
   }, [router]); // ✅ 監聽 router 變化，每次切換路由時觸發動畫
 
-  // 📌 **初始化時載入資料**
+  // 📌 初始化時載入資料
   useEffect(() => {
     fetchData()
     setCurrentPage(1) // 每次搜尋或篩選後自動跳回第一頁
   }, [filters, searchQuery])
 
-  // 📌 **當 `filteredRentals` 或 `itemsPerPage` 變更時，重新計算 `totalPages`**
+  // 📌 當 `filteredRentals` 或 `itemsPerPage` 變更時，重新計算 `totalPages`
   useEffect(() => {
     setTotalPages(Math.max(1, Math.ceil(filteredRentals.length / itemsPerPage)))
   }, [filteredRentals, itemsPerPage])
 
-  // 📌 **RWD 視窗大小變更時，調整 `itemsPerPage`**
+  // 📌 RWD 視窗大小變更時，調整 `itemsPerPage`
   useEffect(() => {
     const updateItemsPerPage = () => {
       // 📌 **計算當前頁面的第一個商品索引**，確保視窗變更後能保持當前商品可見。
@@ -77,7 +77,7 @@ export default function RentList() {
       }
       setItemsPerPage(newItemsPerPage)
 
-      // 📌 **計算新的頁碼**，根據第一個商品的索引重新定位頁面，避免頁數錯位。
+      // 📌 計算新的頁碼，根據第一個商品的索引重新定位頁面，避免頁數錯位。
       const newPage = Math.floor(indexOfFirstItem / newItemsPerPage) + 1
       setCurrentPage(newPage)
     }
@@ -89,7 +89,8 @@ export default function RentList() {
     return () => window.removeEventListener('resize', updateItemsPerPage)
   }, [currentPage, itemsPerPage])
 
-  // 📌 **從 API 獲取租借商品和標籤**
+
+  // 📌 從 API 獲取租借商品和標籤 + 收藏狀態(如果有登入)
   const fetchData = async () => {
     try {
       const params = new URLSearchParams()
@@ -101,10 +102,13 @@ export default function RentList() {
       filters.advanced.forEach((adv) => params.append('advanced', adv))
       filters.brands.forEach((brand) => params.append('brands', brand))
 
-      const res = await fetch(
-        `http://localhost:8000/api/rental?${params.toString()}`
-      )
-      const data = await res.json()
+      // 先判斷是否登入 再決定要不要撈收藏
+      const token = localStorage.getItem('loginWithToken');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      // 🚀 只發送一次 API
+      const res = await fetch(`http://localhost:8000/api/rental?${params.toString()}`, { headers });
+      const data = await res.json();
 
       if (data.success) {
         setRentals(data.rentals) // 設定所有商品
@@ -118,6 +122,10 @@ export default function RentList() {
       console.error('❌ 無法載入資料:', error)
     }
   }
+  useEffect(() => {
+    fetchData();
+    setCurrentPage(1);
+  }, [filters, searchQuery]);
 
   // 📌 **點擊 Hashtag 時，將 Hashtag 設定為搜尋關鍵字**
   const handleHashtagClick = (tag) => {

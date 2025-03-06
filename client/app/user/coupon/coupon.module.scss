@@ -26,18 +26,12 @@
 }
 
 // 垂直線 (大螢幕顯示)
-@media (min-width: 992px) {
-  .verticalLine {
-    display: block;
-  }
-}
 
 // 優惠券卡片
 .couponCard {
   position: relative;
   width: 400px;
   height: 150px;
-  background-image: url("/images/shopping-cart-image/95off.png");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 10px;
@@ -62,10 +56,8 @@
 }
 
 // 響應式設計
-@media (max-width: 768px) {
-  .couponCard {
-    width: 100%;
-    max-width: 300px;
-    margin: 10px auto;
-  }
+.JcpEndDate {
+  bottom: 7%;
+  left: 38%;
+  color: #fff;
 }

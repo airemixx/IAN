@@ -150,22 +150,22 @@ router.put('/me', authenticate, async (req, res) => {
 
 // ✅ 獲取特定講師的資訊 + 該老師的所有課程(包含評分)
 router.get('/:id', async (req, res) => {
-  const teacherId = parseInt(req.params.id, 10)
+  const teacherId = parseInt(req.params.id, 10);
   if (isNaN(teacherId)) {
-    return res.json({ error: 'Invalid teacher ID' })
+    return res.json({ error: 'Invalid teacher ID' });
   }
 
   try {
-    // 取得講師基本資料
+    // ✅ 取得講師基本資料
     const teacherSql = `
       SELECT t.*, 
         (SELECT COUNT(*) FROM courses WHERE teacher_id = t.id) AS courseCount,
         (SELECT COALESCE(SUM(student_count), 0) FROM courses WHERE teacher_id = t.id) AS studentCount
       FROM teachers t
       WHERE t.id = ?
-    `
+    `;
 
-    // 取得該老師的所有課程，並計算平均評分
+    // ✅ 取得該老師的所有課程，並計算平均評分
     const coursesSql = `
       SELECT 
         c.id, c.title, c.image_url, c.category, c.sale_price, 
@@ -175,30 +175,59 @@ router.get('/:id', async (req, res) => {
       LEFT JOIN comments cm ON c.id = cm.course_id  -- ✅ 連結 comments 表
       WHERE c.teacher_id = ? AND c.status = 'published'
       GROUP BY c.id, c.title, c.image_url, c.category, c.sale_price, c.student_count, c.status
-    `
+    `;
 
-    // 執行 SQL 查詢
-    const [teacherRows] = await pool.execute(teacherSql, [teacherId])
-    const [courseRows] = await pool.execute(coursesSql, [teacherId])
+    // ✅ 取得該老師的 `user_id`
+    const userIdSql = `SELECT user_id FROM teachers WHERE id = ?`;
+
+    // ✅ 取得該 `user_id` 的 `nickname`（作為 `author_name`） & 文章數
+    const userInfoSql = `
+      SELECT u.nickname AS author_name, 
+        (SELECT COUNT(*) FROM article WHERE user_id = ?) AS articleCount
+      FROM users u
+      WHERE u.id = ?
+    `;
+
+    // 🔹 執行 SQL 查詢
+    const [teacherRows] = await pool.execute(teacherSql, [teacherId]);
+    const [courseRows] = await pool.execute(coursesSql, [teacherId]);
+    const [userIdRows] = await pool.execute(userIdSql, [teacherId]);
 
     // 如果講師不存在
     if (teacherRows.length === 0) {
-      return res.json({ error: 'Teacher not found' })
+      return res.json({ error: 'Teacher not found' });
     }
 
-    // 合併結果
+    // 🔹 取得 user_id
+    const userId = userIdRows[0]?.user_id;
+    let authorInfo = { author_name: null, articleCount: 0 };
+
+    if (userId) {
+      const [authorRows] = await pool.execute(userInfoSql, [userId, userId]);
+      if (authorRows.length > 0) {
+        authorInfo = {
+          author_name: authorRows[0].author_name,
+          articleCount: authorRows[0].articleCount,
+        };
+      }
+    }
+
+    // 🔹 合併結果
     const teacherData = {
       ...teacherRows[0],
-      courses: courseRows, // ✅ 加入該老師的所有課程
-    }
+      courses: courseRows, // 加入該老師的所有課程
+      user_id: userId, // ✅ 加入 user_id
+      author_name: authorInfo.author_name, // ✅ 加入作者名稱
+      articleCount: authorInfo.articleCount, // ✅ 加入文章數
+    };
 
-    console.log('✅ 獲取講師資料成功:')
-    res.json(teacherData)
+    res.json(teacherData);
   } catch (error) {
-    console.error('❌ 獲取講師資料失敗:', error)
-    res.json({ error: '無法獲取講師資料' })
+    console.error('❌ 獲取講師資料失敗:', error);
+    res.json({ error: '無法獲取講師資料' });
   }
-})
+});
+
 
 // **老師登入**
 router.post('/login', async (req, res) => {
@@ -313,18 +342,36 @@ router.get("/:teacherId/articles", async (req, res) => {
 
     const userId = teacherRows[0].user_id;
 
-    // 2. 用 user_id 查詢該老師的文章數
+    // 2. 用 user_id 查詢該老師的 nickname
+    const [userRows] = await pool.execute(
+      "SELECT nickname FROM users WHERE id = ?",
+      [userId]
+    );
+
+    if (userRows.length === 0) {
+      return res.status(404).json({ error: "找不到該用戶" });
+    }
+
+    const authorName = userRows[0].nickname;
+
+    // 3. 用 user_id 查詢該老師的文章數
     const [articleRows] = await pool.execute(
       "SELECT COUNT(*) AS articleCount FROM article WHERE user_id = ?",
       [userId]
     );
 
-    res.json({ articleCount: articleRows[0].articleCount });
+    res.json({
+      user_id: userId,
+      author_name: authorName,
+      articleCount: articleRows[0].articleCount
+    });
+
   } catch (error) {
     console.error("無法獲取文章數:", error);
-    res.json({ error: "伺服器錯誤" });
+    res.status(500).json({ error: "伺服器錯誤" });
   }
 });
+
 
 
 export default router
