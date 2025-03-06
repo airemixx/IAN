@@ -68,7 +68,7 @@ export default function CourseDetailPage() {
 
   return (
     <>
-      {loading && <p>載入中...</p>}
+      {loading && <></>}
       {error && <p className="text-danger">{error}</p>}
       {!loading && !error && course && (
         <>
