@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import styles from "./shopping-cart-step3.module.scss";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { isDev, apiURL } from '@/config';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,10 +9,9 @@ import moment from "moment"
 import Swal from "sweetalert2";
 
 export default function CheckoutFormStep3() {
-
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [paymentMethod, setPaymentMethod] = useState("")
+    const [paymentMethod, setPaymentMethod] = useState("");
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({ returnCode: '', returnMessage: '' });
     const [addressData, setAddressData] = useState({
@@ -20,9 +19,20 @@ export default function CheckoutFormStep3() {
         address: "",
         phone: "",
     });
-    const token = localStorage.getItem("loginWithToken");
-    const decoded = jwtDecode(token);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [token, setToken] = useState(null); // 只在瀏覽器端獲取 token
+    const [decoded, setDecoded] = useState(null);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const storedToken = localStorage.getItem("loginWithToken");
+            if (storedToken) {
+                setToken(storedToken);
+                const decodedToken = jwtDecode(storedToken);
+                setDecoded(decodedToken);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const cartData = JSON.parse(localStorage.getItem("cartItems")) || [];
@@ -48,7 +58,7 @@ export default function CheckoutFormStep3() {
     }, [searchParams]);
 
     const handlePaymentChange = (method) => {
-        setPaymentMethod(method); // 只能選擇一個付款方式
+        setPaymentMethod(method);
     };
 
     const handleSubmit = async () => {
@@ -67,8 +77,6 @@ export default function CheckoutFormStep3() {
         } else if (paymentMethod === "ecpay") {
             goECPay(amount, items);
         }
-
-
     };
 
     const goLinePay = async (amount, items) => {
@@ -125,11 +133,10 @@ export default function CheckoutFormStep3() {
                 localStorage.removeItem('cartItems')
                 localStorage.removeItem('buyerData')
                 localStorage.removeItem('discountMoney')
-
             } else {
                 toast.error("付款失敗");
             }
-            
+
             setTimeout(() => {
                 setLoading(false);
                 router.replace("/");
@@ -140,13 +147,13 @@ export default function CheckoutFormStep3() {
             setLoading(false);
         }
     };
+
     async function LineInsertDB() {
         try {
-
             const orderData = {
                 merchantTradeNo: `od${moment().format('YYYYMMDDhhmmss')}`,
-                buyerData: JSON.parse(localStorage.getItem("buyerData")) || {}, // 取得買家資料
-                cartItems: JSON.parse(localStorage.getItem("cartItems")) || [], // 取得購物車資料
+                buyerData: JSON.parse(localStorage.getItem("buyerData")) || {},
+                cartItems: JSON.parse(localStorage.getItem("cartItems")) || [],
                 userId: decoded.id,
                 disMoney: JSON.parse(localStorage.getItem("discountMoney")) || 0
             };
@@ -167,7 +174,6 @@ export default function CheckoutFormStep3() {
         } catch (error) {
             console.error("資料獲取失敗");
         }
-
     }
 
     const goECPay = async (amount, items) => {

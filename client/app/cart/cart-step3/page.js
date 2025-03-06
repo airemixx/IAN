@@ -6,16 +6,20 @@ import CartItem from '../_components/cart-item/page';
 import LessonItem from '../_components/lession-item/page';
 import RentItem from '../_components/rental-item/page';
 import CheckoutFormStep3 from '../_components/checkout-form-step3/page';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 
 
 export default function cartPageThree() {
-
+  const [cartItems, setCartItems] = useState([]);
+  const [isCartEmpty, setIsCartEmpty] = useState(false)
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    if (typeof window !== "undefined") {
+      const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+      setCartItems(storedCartItems);
+    }
   }, []);
-  const cartItems = JSON.parse(localStorage.getItem("cartItems"))
 
   const cartProduct = []
   const cartLession = []
@@ -35,15 +39,15 @@ export default function cartPageThree() {
         break;
     }
   })
-  let isCartEmpty = false;
-  if (Object.values(localStorage.getItem('cartItems')).length == 0) {
-    isCartEmpty = true;
+  if (isCartEmpty) {
+    router.push('/cart/cart-empty')
+    return null
   }
   return (
     <div className={`${styles['j-page-wrapper']}`}>
       {isCartEmpty ? redirect('/cart/cart-empty') :
         <div className="container">
-        <div className={`${styles['j-heightspace']}`}></div>
+          <div className={`${styles['j-heightspace']}`}></div>
           <div className="row d-flex justify-content-center">
             <div className={`${styles['j-shoppingCartBox']} justify-content-center col-12 col-sm-10 col-md-10 col-lg-8 col-xl-6 col-xxl-6`}>
               <div className={`${styles['j-cartItemsBox']} d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3`}>
@@ -51,7 +55,7 @@ export default function cartPageThree() {
                   {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
                   {cartProduct.map((item, index) => (
                     <div
-                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}
+                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}
                       key={index}>
                       <CartItem key={index} id={index + 1} itemData={item} />
                     </div>
@@ -62,7 +66,7 @@ export default function cartPageThree() {
                   {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
                   {cartLession.map((lession, index) => (
                     <div key={index}
-                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}>
+                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}>
                       <LessonItem key={index} lessionitem={lession} />
                     </div>
                   ))}
@@ -72,7 +76,7 @@ export default function cartPageThree() {
                   {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
                   {cartRent.map((rental, index) => (
                     <div key={index}
-                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ?  styles['j-nextBox'] : ""}`}>
+                      className={`${styles['j-input-box']} d-flex align-items-center mb-3 ${index > 0 ? styles['j-nextBox'] : ""}`}>
                       <RentItem key={index} rentalitem={rental} />
                     </div>
                   ))}
@@ -106,7 +110,7 @@ export default function cartPageThree() {
                       )
                     })}
                   </div>}
-                  
+
                 {cartRent.length == 0 ? '' :
                   <div className="mt-2 mb-5">
                     {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}

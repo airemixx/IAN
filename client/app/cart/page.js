@@ -13,23 +13,37 @@ import { FaTrashCan } from "react-icons/fa6";
 import Swal from 'sweetalert2'
 export default function cartPageOne() {
   const router = useRouter()
-  const token = localStorage.getItem('loginWithToken')
-  if (!token) {
-
-    setTimeout(() => {
-      router.push('/login')
-    }, 2000)
-    return
-  }
-
+  const [cartStorage, setCartStorage] = useState([])
+  const [rentStorage, setRentStorage] = useState([])
+  const [lessonStorage, setLessonStorage] = useState([])
+  const [isCartEmpty, setIsCartEmpty] = useState(false)
+ 
   useEffect(() => {
     require('bootstrap/dist/js/bootstrap.bundle.min.js')
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('loginWithToken')
+
+      if (!token) {
+        setTimeout(() => {
+          router.push('/login')
+        }, 2000)
+        return
+      }
+
+      // 讀取 localStorage 並更新狀態
+      setCartStorage(JSON.parse(localStorage.getItem("cart")) || [])
+      setRentStorage(JSON.parse(localStorage.getItem("rent_cart")) || [])
+      setLessonStorage(JSON.parse(localStorage.getItem("shoppingCart")) || [])
+
+      if (
+        (!localStorage.getItem("cart") || Object.keys(JSON.parse(localStorage.getItem("cart"))).length === 0) &&
+        (!localStorage.getItem("rent_cart") || Object.keys(JSON.parse(localStorage.getItem("rent_cart"))).length === 0) &&
+        (!localStorage.getItem("shoppingCart") || Object.keys(JSON.parse(localStorage.getItem("shoppingCart"))).length === 0)
+      ) {
+        setIsCartEmpty(true)
+      }
+    }
   }, [])
-
-  let cartStorage = JSON.parse(localStorage.getItem("cart")) || [];
-  let rentStorage = JSON.parse(localStorage.getItem("rent_cart")) || [];
-
-  let lessionStorage = JSON.parse(localStorage.getItem("shoppingCart")) || [];
 
   const cartProduct = []
   const cartRent = []
@@ -74,7 +88,7 @@ export default function cartPageOne() {
     })
   })
 
-  Object.values(lessionStorage).map((v, i) => {
+  Object.values(lessonStorage).map((v, i) => {
     cartLession.push({
       type: 'lession',
       id: i,
@@ -156,9 +170,9 @@ export default function cartPageOne() {
     });
   };
 
-  let isCartEmpty = false;
-  if (Object.keys(cartStorage).length === 0 && Object.keys(rentStorage).length === 0) {
-    isCartEmpty = true;
+  if (isCartEmpty) {
+    router.push('/cart/cart-empty')
+    return null
   }
 
   return (
