@@ -20,10 +20,37 @@ export default function EditArticlePage() {
   const [hasError, setHasError] = useState(false)
   const [articleData, setArticleData] = useState(null)
   const [hashtags, setHashtags] = useState([])
+  const [editorReady, setEditorReady] = useState(false) // 新增: 監控編輯器狀態
   const imageUpdateRef = useRef(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const articleId = searchParams.get('id')
+
+  // 監聽編輯器初始化
+  useEffect(() => {
+    const checkEditorInstance = () => {
+      if (window.editorInstance) {
+        setEditorReady(true);
+        return true;
+      }
+      return false;
+    };
+
+    // 如果編輯器已經初始化，直接設置狀態
+    if (checkEditorInstance()) return;
+
+    // 否則每 200ms 檢查一次，最多檢查 15 次 (3 秒)
+    let attempts = 0;
+    const maxAttempts = 15;
+    const intervalId = setInterval(() => {
+      if (checkEditorInstance() || attempts >= maxAttempts) {
+        clearInterval(intervalId);
+      }
+      attempts++;
+    }, 200);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   // 載入文章資料
   useEffect(() => {
@@ -60,13 +87,7 @@ export default function EditArticlePage() {
             }
           }
 
-          // 設置編輯器內容
-          if (window.editorInstance) {
-            window.editorInstance.html.set(article.content)
-          }
-
-          // 設置 hashtags
-
+          // 不在這裡設置編輯器內容，改由下方的 useEffect 處理
         }, 0)
       } catch (error) {
         console.error('載入文章錯誤:', error)
@@ -82,6 +103,14 @@ export default function EditArticlePage() {
       fetchArticleData()
     }
   }, [articleId])
+
+  // 新增: 當編輯器就緒且文章數據可用時，設置編輯器內容
+  useEffect(() => {
+    if (editorReady && articleData && articleData.content) {
+      // console.log('編輯器已就緒，設置內容');
+      window.editorInstance.html.set(articleData.content);
+    }
+  }, [editorReady, articleData]);
 
   const confirmClose = useCallback(() => {
     router.push('/user/article')
@@ -121,7 +150,7 @@ export default function EditArticlePage() {
       await axios.put(`http://localhost:8000/api/articles/${articleId}`, {
         category: categorySelect.value,
         title: titleInput.value.trim(),
-        subtitle: subtitleInput.value.trim(),
+        subtitle: titleInput.value.trim(),
         content,
         image_path: imagePathInput.value.trim(),
         hashtags: updatedHashtags,
@@ -161,7 +190,7 @@ export default function EditArticlePage() {
               />
             </div>
             <div className="my-4">
-              <FroalaEditor />
+              <FroalaEditor initialContent={articleData?.content} />
             </div>
             <div className="my-4">
               <EditHashtagInput

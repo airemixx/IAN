@@ -57,15 +57,15 @@ export default function MediaRenderer({ media_type, media_url }) {
       <div
         className={styles['y-reply-img']}
         style={{
-          width: '200px',
-          height: '200px',
+          width: '300px',
+          height: '300px',
           overflow: 'hidden',
         }}
       >
         <GifImage
           src={media_url.startsWith('http') ? media_url : `/images/article_com_media/${media_url}`}
           alt="GIF attachment"
-          containerSize="200px"
+          containerSize="300px"
         />
       </div>
     );
