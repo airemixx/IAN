@@ -38,37 +38,35 @@ export default function CoursesCardIndex2() {
     })
   }, [])
 
-  
+
   return (
     <div className={styles.courseArea}>
-    <div className="px-3 py-3 px-md-5 py-md-5 ">
-      <h2 className={`${styles.courseTitle} text-left mb-4 ps-4`}>精選課程</h2>
-    </div>
+      <div className="px-3 py-3 px-md-5 py-md-5 ">
+        <h2 className={`${styles.courseTitle} text-left mb-4 ps-4`}>精選課程</h2>
+      </div>
 
-    {/* 使用 react-fast-marquee */}
-    <div className={styles.marquee}>
-      <Marquee
-        gradient={false} 
-        speed={70} 
-        pauseOnHover={true} // 滑鼠懸停時暫停
-        pauseOnClick={true} // 滑鼠點擊時暫停
-        autoFill={false} // 不自動填充
-      >
-        {duplicatedCategories.map((category, index) => (
-          <Link href={category.link} key={index}>
-            <div className={styles.courseCard}>
-              <Image
-                src={category.image}
-                alt={category.title}
-                width={500}
-                height={300}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </Link>
-        ))}
-      </Marquee>
-    </div>
+      {/* 使用 react-fast-marquee */}
+      <div className={styles.marquee}>
+        <Marquee
+          gradient={false}
+          speed={70}
+          pauseOnHover={true} // 滑鼠懸停時暫停
+          pauseOnClick={true} // 滑鼠點擊時暫停
+          autoFill={false} // 不自動填充
+        >
+          {duplicatedCategories.map((category, index) => (
+            <Link href={category.link} key={index}>
+              <div className={styles.courseCard}>
+                <img
+                  src={category.image}
+                  alt={category.title}
+                  className="w-full h-72 object-cover"
+                />
+              </div>
+            </Link>
+          ))}
+        </Marquee>
+      </div>
       <div className={styles.textBoxContainer}>
         <div className={styles.textBox} data-aos="fade-down" data-aos-delay="000"><div className={`${styles.textBoxNum} ${styles.shinyText}`}>200+</div><div className={styles.text}>精選課程</div></div>
         <div className={styles.textBox} data-aos="fade-down" data-aos-delay="300"><div className={`${styles.textBoxNum} ${styles.shinyText}`}>300K+</div><div className={styles.text}>學員人數</div></div>

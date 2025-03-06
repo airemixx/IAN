@@ -22,34 +22,34 @@ export default function FavoriteButton({ courseId }) {
 
   // ✅ 確保 `courseId` 與 `token` 存在後才執行 API
   useEffect(() => {
-    console.log("🎯 檢查收藏狀態 - courseId:", courseId, "token:", token);
-    if (!token || !courseId) {
-      console.warn("🚨 token 或 courseId 為空，取消 API 請求");
-      return;
-    }
-
-    const checkFavoriteStatus = async () => {
-      try {
-        const res = await fetch(`http://localhost:8000/api/courses/collection/${courseId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!res.ok) throw new Error("無法取得收藏狀態");
-
-        const data = await res.json();
-        console.log("✅ API 回傳收藏狀態:", data);
-        setIsFavorite(data.isFavorite);
-      } catch (error) {
-        console.error("❌ 無法確認收藏狀態:", error);
+    if (token && courseId) {
+      const checkFavoriteStatus = async () => {
+        try {
+          const res = await fetch(
+            `http://localhost:8000/api/courses/collection/${courseId}`,
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          )
+  
+          if (!res.ok) throw new Error('無法取得收藏狀態')
+  
+          const data = await res.json()
+          console.log('✅ API 回傳收藏狀態:', data)
+          toggleFavorite(courseId, data.isFavorite)
+        } catch (error) {
+          console.error('❌ 無法確認收藏狀態:', error)
+        }
       }
-    };
-
-    checkFavoriteStatus();
-  }, [courseId, token]);
+  
+      checkFavoriteStatus()
+    }
+  }, [courseId, token]) 
+  
 
   // ✅ 避免影響 `Link`
   const handleFavoriteClick = (e) => {

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 
 export default function useAuth() {
   const router = useRouter();
+  const pathname = usePathname(); // 獲取當前頁面路徑
   const appKey = "loginWithToken";
+
   const [token, setToken] = useState(null);
   const [user, setUser] = useState({ name: "", nickname: "", birthday: "" });
   const [loading, setLoading] = useState(true);
@@ -13,7 +15,9 @@ export default function useAuth() {
     const savedToken = localStorage.getItem(appKey);
 
     if (!savedToken) {
-      router.push("/login"); // 沒有 token，跳轉到登入頁
+      if (pathname !== "/") {
+        router.push("/login"); // 不是首頁才跳轉到登入頁
+      }
       setLoading(false);
       return;
     }
@@ -25,11 +29,13 @@ export default function useAuth() {
     } catch (error) {
       console.error("Token 解碼失敗", error);
       localStorage.removeItem(appKey);
-      router.push("/login");
+      if (pathname !== "/") {
+        router.push("/login"); // 不是首頁才跳轉
+      }
     }
 
     setLoading(false);
-  }, []);
+  }, [pathname]); // 當路徑變更時重新檢查
 
   const userLevel = user?.level || 0;
 

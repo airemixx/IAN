@@ -4,6 +4,8 @@ import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { MdError } from "react-icons/md";
+import { MdShoppingCart } from 'react-icons/md'; // ✅ 改成購物車 icon
+import { MdFavorite } from 'react-icons/md'; // ❤️ 愛心 icon
 import styles from "./favorite-button.module.scss";
 
 export default function FavoriteButton({ productId }) {
@@ -30,7 +32,7 @@ export default function FavoriteButton({ productId }) {
       toast.success('請先登入才能加入收藏！', {
         position: 'top-right',
         autoClose: 2000,
-        icon: <MdError size={30} />, // ✅ 改成購物車 icon
+        icon: <MdError size={30} />,
       })
       return
     }
@@ -52,12 +54,10 @@ export default function FavoriteButton({ productId }) {
 
       setIsFavorite((prev) => !prev);
 
-      Swal.fire({
-        icon: "success",
-        title: isFavorite ? "已取消收藏" : "成功加入收藏",
-        text: isFavorite ? "商品已從收藏列表移除" : "商品已加入您的收藏",
-        showConfirmButton: false,
-        timer: 1500,
+      toast.success(isFavorite ? "已取消收藏" : "成功加入收藏", {
+        position: "top-right",
+        autoClose: 2000,
+        icon: <MdFavorite size={30} color="red" />,
       });
 
     } catch (error) {

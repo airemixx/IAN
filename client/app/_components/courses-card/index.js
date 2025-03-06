@@ -7,36 +7,36 @@ import Link from 'next/link'
 
 export default function CoursesCardIndex() {
   const courses = [
-    {
-      img: "images/course-cover/course_46_1.avif",
-      title: "初心者！Lightroom數位暗房基礎後製",
-      instructor: "王喜米",
-      rating: "4.5",
-      reviews: "(1)",
-      duration: "7:40",
-      price: "NT$ 999",
-      link:"/courses/46"
-    },
-    {
-      img: "images/HomePage-images/course-2.jpg",
-      title: "相機外閃的神奇攝影術",
-      instructor: "張馬克",
-      rating: "5.0",
-      reviews: "(12)",
-      duration: "6:10",
-      price: "NT$1,790",
-      link:"/courses/38"
-    },
-    {
-      img: "images/course-cover/course_12_1.avif",
-      title: "堯中人像攝影創作：掌握光影發掘人像質感",
-      instructor: "張馬克",
-      rating: "4.5",
-      reviews: "(1)",
-      duration: "6:30",
-      price: "NT$2,180",
-      link:"/courses/12"
-    },
+    // {
+    //   img: "images/course-cover/course_46_1.avif",
+    //   title: "初心者！Lightroom數位暗房基礎後製",
+    //   instructor: "王喜米",
+    //   rating: "4.5",
+    //   reviews: "(1)",
+    //   duration: "7:40",
+    //   price: "NT$ 999",
+    //   link:"/courses/46"
+    // },
+    // {
+    //   img: "images/HomePage-images/course-2.jpg",
+    //   title: "相機外閃的神奇攝影術",
+    //   instructor: "張馬克",
+    //   rating: "5.0",
+    //   reviews: "(12)",
+    //   duration: "6:10",
+    //   price: "NT$1,790",
+    //   link:"/courses/38"
+    // },
+    // {
+    //   img: "images/course-cover/course_12_1.avif",
+    //   title: "堯中人像攝影創作：掌握光影發掘人像質感",
+    //   instructor: "張馬克",
+    //   rating: "4.5",
+    //   reviews: "(1)",
+    //   duration: "6:30",
+    //   price: "NT$2,180",
+    //   link:"/courses/12"
+    // },
   ]
 
   return (
