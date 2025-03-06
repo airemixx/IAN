@@ -14,7 +14,7 @@ export default function PopularTeacher() {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const res = await fetch('/api/teachers') // 🚀 請求老師 API
+        const res = await fetch('http://localhost:8000/api/teachers') // 🚀 請求老師 API
         if (!res.ok) throw new Error('無法獲取講師資料')
 
         const data = await res.json()
