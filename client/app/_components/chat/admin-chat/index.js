@@ -9,6 +9,10 @@ import styles from "./index.module.scss"
 import EmojiPicker, { SkinTones } from 'emoji-picker-react';
 import emojiRegex from 'emoji-regex';
 import { Squeeze } from 'hamburger-react';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+
+
 
 // 檢查兩個日期是否是同一天
 const isSameDay = (date1, date2) => {
@@ -49,6 +53,62 @@ const formatMessageTime = (timestamp) => {
   }
 };
 
+// 使用者列表：相對時間格式
+const formatRelativeMessageTime = (timestamp) => {
+  const now = new Date();
+  const messageDate = new Date(timestamp);
+  const diffInSeconds = Math.floor((now - messageDate) / 1000);
+
+  if (diffInSeconds < 10) return "剛剛";
+  if (diffInSeconds < 60) return `${diffInSeconds}秒前`;
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes}分前`;
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours}小時前`;
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) return `${diffInDays}日前`;
+
+  const diffInWeeks = Math.floor(diffInDays / 7);
+  return `${diffInWeeks}周前`;
+};
+
+// 訊息視窗：絕對時間格式
+const formatDateTime = (date, includeYear = true) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return includeYear
+    ? `${year}-${month}-${day} ${hours}:${minutes}`
+    : `${month}-${day} ${hours}:${minutes}`;
+};
+
+const formatAbsoluteMessageTime = (timestamp) => {
+  const now = new Date();
+  const messageDate = new Date(timestamp);
+  const oneMonthMs = 30 * 24 * 3600 * 1000;
+
+  // 同一天僅顯示 hh:mm
+  if (isSameDay(now, messageDate)) {
+    const hours = messageDate.getHours().toString().padStart(2, '0');
+    const minutes = messageDate.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  // 超過 1 個月以上，顯示完整年份：yyyy-mm-dd hh:mm
+  if (now - messageDate >= oneMonthMs) {
+    return formatDateTime(messageDate, true);
+  }
+
+  // 超過 1 天但小於 1 個月，省略年份：mm-dd hh:mm
+  return formatDateTime(messageDate, false);
+};
+
 const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
 
 export default function ChatWidget() {
@@ -63,7 +123,8 @@ export default function ChatWidget() {
       avatar: "/images/chatRoom/user1.jpg",
       lastMessage: "好的，我明白了",
       lastMessageType: "text",
-      timestamp: new Date(Date.now() - 5 * 60000) // 5分鐘前
+      timestamp: new Date(Date.now() - 5 * 60000), // 5分鐘前
+      unreadCount: 2
     },
     {
       id: 2,
@@ -72,7 +133,8 @@ export default function ChatWidget() {
       lastMessage: "",
       lastMessageType: "image",
       mediaCount: 1,
-      timestamp: new Date(Date.now() - 30 * 60000) // 30分鐘前
+      timestamp: new Date(Date.now() - 30 * 60000), // 30分鐘前
+      unreadCount: 0
     },
     {
       id: 3,
@@ -80,7 +142,8 @@ export default function ChatWidget() {
       avatar: "/images/chatRoom/user1.jpg",
       lastMessage: "這是一個非常長的訊息，應該會被截斷並顯示省略號在最後面",
       lastMessageType: "text",
-      timestamp: new Date(Date.now() - 2 * 3600000) // 2小時前
+      timestamp: new Date(Date.now() - 2 * 3600000), // 2小時前
+      unreadCount: 1
     },
     {
       id: 4,
@@ -89,7 +152,38 @@ export default function ChatWidget() {
       lastMessage: "",
       lastMessageType: "video",
       mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000) // 1天前
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
+    },
+    {
+      id: 5,
+      name: "陳雅婷",
+      avatar: "/images/chatRoom/user1.jpg",
+      lastMessage: "",
+      lastMessageType: "video",
+      mediaCount: 1,
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
+    },
+    {
+      id: 6,
+      name: "陳雅婷",
+      avatar: "/images/chatRoom/user1.jpg",
+      lastMessage: "",
+      lastMessageType: "video",
+      mediaCount: 1,
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
+    },
+    {
+      id: 7,
+      name: "陳雅婷",
+      avatar: "/images/chatRoom/user1.jpg",
+      lastMessage: "",
+      lastMessageType: "video",
+      mediaCount: 1,
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
     }
   ]);
 
@@ -419,7 +513,17 @@ export default function ChatWidget() {
             {/* 用戶列表側欄 */}
             <div className={`${styles.userListPanel} ${isMenuOpen ? styles.show : ''}`}>
               <div className={styles.userListHeader}>
+                <button
+                  className={styles.backButton}
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-label="返回"
+                >
+                  <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
                 <h5>聊天列表</h5>
+                <button className={styles.iconButton} onClick={toggleChat}>
+                  <X size={24} />
+                </button>
               </div>
               <div className={styles.userList}>
                 {users.map(user => (
@@ -438,16 +542,23 @@ export default function ChatWidget() {
                       <div className={styles.userInfoHeader}>
                         <span className={styles.userName}>{user.name}</span>
                         <small className={styles.messageTime}>
-                          {formatMessageTime(user.timestamp)}
+                          {formatRelativeMessageTime(user.timestamp)}
                         </small>
                       </div>
-                      <p className={styles.userLastMessage}>
-                        {user.lastMessageType === 'text'
-                          ? user.lastMessage
-                          : user.lastMessageType === 'image'
-                            ? `已傳送${user.mediaCount}張圖片`
-                            : `已傳送${user.mediaCount}個影片`}
-                      </p>
+                      <div className={styles.lastMessageRow}>
+                        <p className={styles.userLastMessage}>
+                          {user.lastMessageType === 'text'
+                            ? user.lastMessage
+                            : user.lastMessageType === 'image'
+                              ? `已傳送${user.mediaCount}張圖片`
+                              : `已傳送${user.mediaCount}個影片`}
+                        </p>
+                        {user.unreadCount > 0 && (
+                          <span className={styles.unreadBadge}>
+                            {user.unreadCount > 99 ? "99+" : user.unreadCount}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -516,7 +627,7 @@ export default function ChatWidget() {
                         {/* 時間標記 */}
                         {shouldShowTime && (
                           <div className={styles.timeLabel}>
-                            {formatMessageTime(message.timestamp)}
+                            {formatAbsoluteMessageTime(message.timestamp)}
                           </div>
                         )}
 

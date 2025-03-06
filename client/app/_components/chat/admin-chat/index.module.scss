@@ -155,19 +155,63 @@
   }
 }
 
-// 用戶列表頭部
+// 用戶列表頭部修改為三欄佈局
 .userListHeader {
   background-color: #7e7267;
   color: white;
   padding: 16px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 50px;
 
   h5 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
+    flex: 1;
+    text-align: center;
+  }
+
+  .backButton,
+  .closeButton {
+    background: none;
+    border: none;
+    color: white;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .backButton {
+    background: none;
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .closeButton {
+    margin-left: 4px;
   }
 }
 
@@ -182,8 +226,9 @@
 .userItem {
   display: flex;
   align-items: center;
+  margin-top: 5px;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 15px;
   cursor: pointer;
   transition: background-color 0.2s;
 
@@ -199,8 +244,8 @@
 // 用戶頭像
 .userAvatar {
   margin-right: 12px;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
 
   img {
     width: 100%;
@@ -246,7 +291,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  max-width: 70%;
 }
 
 .mainChat {
@@ -915,4 +960,40 @@
 
 .onlineIndicator {
   @include online-indicator;
+}
+
+.timeAndBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; // 靠右對齊
+  max-width: 100%;
+}
+
+
+.lastMessageRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+}
+
+.userLastMessage {
+  max-width: 70%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.unreadBadge {
+  margin-left: 8px;
+  background-color: lightcoral;
+  color: white;
+  border-radius: 50%;
+  padding: 1px 7px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: center;
 }

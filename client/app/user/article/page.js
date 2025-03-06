@@ -84,7 +84,7 @@ export default function UserPage() {
           // 添加延遲，以便骨架屏顯示足夠長的時間
           timer = setTimeout(() => {
             setContentReady(true);
-          }, 800);
+          }, 500);
         })
         .catch((err) => {
           console.error(err)
