@@ -7,6 +7,7 @@ import ArticleCardIndex from './_components/article-card'
 import ProductCardIndex from './_components/product-card'
 import CoursesCardIndex2 from './_components/courses-card2'
 import Chat from './_components/chat'
+import CouponButton from './_components/getCoupon/page'
 
 export default function Home() {
   // 從 AuthContext 獲取用戶資訊
@@ -20,8 +21,10 @@ export default function Home() {
       <SliderIndex />
       <ArticleCardIndex />
       <ProductCardIndex />
+      <CouponButton/>
       <CoursesCardIndex2 />
       <Chat userLevel={userLevel} />
+      
     </>
   )
 }

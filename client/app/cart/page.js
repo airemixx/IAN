@@ -200,7 +200,7 @@ export default function cartPageOne() {
                   </button>
                 </div>
 
-                <div className="mt-2 mb-5">
+                <div className={`mt-2 mb-5 ${cartProduct.length == 0 ? 'd-none' : ''}`}>
                   {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
                   {cartProduct.map((item, index) => (
                     <div
@@ -223,7 +223,7 @@ export default function cartPageOne() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-2 mb-5">
+                <div className={`mt-2 mb-5 ${cartLession.length == 0 ? 'd-none' : ''}`}>
                   {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
                   {cartLession.map((lession, index) => {
                     const lessonIndex = index + cartProduct.length
@@ -249,7 +249,7 @@ export default function cartPageOne() {
                     )
                   })}
                 </div>
-                <div className="mt-2 mb-5">
+                <div className={`mt-2 mb-5 ${cartRent.length == 0 ? 'd-none' : ''}`}>
                   {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
                   {cartRent.map((rental, index) => {
                     const rentalIndex =
@@ -288,7 +288,7 @@ export default function cartPageOne() {
                   />
                   <span className="ms-2 align-middle">全選</span>
                 </div>
-                <div className="mt-2 mb-5">
+                <div className={`mt-2 mb-5 ${cartProduct.length == 0 ? 'd-none' : ''}`}>
                   {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
                   {cartProduct.map((item, index) => (
                     <div
@@ -311,7 +311,7 @@ export default function cartPageOne() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-2 mb-5">
+                <div className={`mt-2 mb-5 ${cartLession.length == 0 ? 'd-none' : ''}`}>
                   {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
                   {cartLession.map((lession, index) => {
                     const lessonIndex = index + cartProduct.length
@@ -337,7 +337,7 @@ export default function cartPageOne() {
                     )
                   })}
                 </div>
-                <div className="mt-2 mb-5">
+                <div className={`mt-2 mb-5 ${cartRent.length == 0 ? 'd-none' : ''}`}>
                   {cartRent.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>租借</h3> : ''}
                   {cartRent.map((rental, index) => {
                     const rentalIndex =
