@@ -260,7 +260,7 @@ export default function UserPage(props) {
           <Sidenav />
 
           {/* 主要內容區 */}
-          <div className="col-md-9">
+          <div className="col-md-9 py-4">
             <div className="mb-4">
               <h1 className={styles.h1}>會員資料修改</h1>
               <p className="text-muted">

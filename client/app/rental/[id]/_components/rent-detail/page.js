@@ -20,28 +20,44 @@ export default function RentDetail() {
   const [endDate, setEndDate] = useState('');
   const [totalFee, setTotalFee] = useState(0);
   const [originFee, setOriginFee] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState(null); // 🟢 儲存當前登入者 ID
 
   useEffect(() => {
     if (!id) return
 
-    fetch(`http://localhost:8000/api/rental/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchRentalDetail = async () => {
+      try {
+        // 先判斷是否登入 再決定要不要撈收藏
+        const token = localStorage.getItem('loginWithToken');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        console.log(`Fetching rental detail: http://localhost:8000/api/rental/${id}`)
+
+
+        const response = await fetch(`http://localhost:8000/api/rental/${id}`, { headers })
+        const data = await response.json()
+
+        console.log("API Response:", data) // ✅ 確保 API 回應正確
+
         if (data.success) {
           setRental(data.data)
           setTotalFee(data.data.fee); // 預設顯示單日金額
           setOriginFee(data.data.fee); // 預設顯示單日金額
           setReviews(data.reviews || []) // ✅ 設定評論數據
           setRecommendations(data.recommendations) // ✅ 取得推薦商品
+          if (data.user) {  // 🟢 從後端取得當前用戶 ID
+            setCurrentUserId(data.user.id);
+          }
         } else {
           console.error('商品資料加載失敗:', data.error)
         }
-        setLoading(false)
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('無法載入商品資料:', error)
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+    fetchRentalDetail()
   }, [id])
 
   // 計算總金額
@@ -86,7 +102,7 @@ export default function RentDetail() {
                 onDateChange={handleDateChange}
                 onFeeChange={handleFeeChange} />
               <RentHashtag hashtags={rental.hashtags} />
-              <RentReviews reviews={reviews} />
+              <RentReviews reviews={reviews} currentUserId={currentUserId} />
             </div>
           </div>
         </main>

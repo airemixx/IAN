@@ -81,7 +81,7 @@ export default function RentCard() {
               </div>
             </div>
             ))
-            ) : (<div className="col-12 text-center text-muted">⚠️ 目前沒有課程</div>)}
+            ) : (<div className="col-12 text-center">目前沒有課程</div>)}
             
           </div>
         </div>
