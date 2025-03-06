@@ -35,6 +35,7 @@ import teacherUploadRouter from './routes/teacher-upload.js'
 import couponRouter from './routes/coupon.js'
 import collect from './routes/collect.js'
 import myorders from './routes/myorders.js'
+import getCpRouter from './routes/getCoupon.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -121,6 +122,7 @@ app.use('/api/rental-master', rentalMasterRouter)
 
 app.use('/api/address', addressRouter)
 app.use('/api/coupon', couponRouter)
+app.use('/api/getCp', getCpRouter)
 app.use('/api/ecpay', ecpayRouter)
 app.use('/api/linePay', linePayRouter)
 app.use('/api/orders', ordersRouter)
