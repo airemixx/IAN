@@ -49,9 +49,15 @@ export default function CourseList({ courses }) {
     const storedToken = localStorage.getItem("loginWithToken");
     if (storedToken) {
       setToken(storedToken);
-      fetchFavorites(storedToken);
+
+      // ✅ 確保 `favorites` 會更新
+      fetchFavorites(storedToken).then((favSet) => {
+        setFavorites(favSet);
+        console.log("📌 更新收藏列表:", favSet);
+      });
     }
   }, []);
+
 
   const fetchFavorites = async (token) => {
     try {
@@ -59,20 +65,21 @@ export default function CourseList({ courses }) {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
-  
+
       if (!res.ok) throw new Error("無法取得收藏清單");
-  
+
       const data = await res.json();
-      console.log("✅ API 回傳所有收藏課程:", data);
-  
-      return data.favorites || []; // ✅ 確保 favorites 為陣列
+      // console.log("✅ API 回傳所有收藏課程:", data);
+
+      return new Set(data.favorites.map((course) => Number(course.id)));
     } catch (error) {
       console.error("❌ 收藏清單載入錯誤:", error);
-      return []; // 發生錯誤時，回傳空陣列
+      return new Set();
     }
   };
-  
-  
+
+
+
   const toggleFavorite = async (courseId) => {
     if (!token) {
       toast.warn("請先登入才能收藏課程！", { position: "top-right", autoClose: 3000 });
@@ -95,8 +102,10 @@ export default function CourseList({ courses }) {
 
       setFavorites((prev) => {
         const updatedFavorites = new Set(prev);
-        if (isFavorited) updatedFavorites.delete(courseId);
-        else updatedFavorites.add(courseId);
+        if (isFavorited) updatedFavorites.delete(Number(courseId));
+        else updatedFavorites.add(Number(courseId));
+
+        console.log("📌 收藏狀態更新:", updatedFavorites); 
         return updatedFavorites;
       });
 
@@ -107,6 +116,7 @@ export default function CourseList({ courses }) {
       toast.error("操作失敗：" + (error.message || "發生錯誤，請稍後再試"), { position: "top-right", autoClose: 3000 });
     }
   };
+
 
   return (
     <section className={`container ${styles["course-list"]}`}>
@@ -144,11 +154,12 @@ export default function CourseList({ courses }) {
             ) : (
               currentCourses.map((course) => (
                 <CourseCard
-                  key={`${course.id}-${filterChangeId}`}
+                  key={course.id}
                   course={course}
-                  isFavorite={favorites.has(course.id)}
+                  isFavorite={favorites.has(Number(course.id))}
                   onToggleFavorite={toggleFavorite}
                 />
+
               ))
             )}
           </div>

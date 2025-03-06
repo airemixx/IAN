@@ -3,10 +3,11 @@ import Link from "next/link";
 import FavoriteButton from "@/app/courses/_components/favorite-button/page";
 import StarRating from "@/app/courses/_components/star-rating/page";
 import styles from "./courses-card.module.scss";
-import Aos from "aos";
 
 export default function CourseCard({ course, isFavorite, onToggleFavorite }) {
-  console.log("渲染 CourseCard，接收到的 course:", course);
+
+  // console.log("🔍 `CourseCard` 接收的 `isFavorite`:", isFavorite);
+  // console.log("渲染 CourseCard，接收到的 course:", course);
 
   if (!course) {
     return <div className="error">無法載入課程</div>;
@@ -16,7 +17,7 @@ export default function CourseCard({ course, isFavorite, onToggleFavorite }) {
   const [aosTrigger, setAosTrigger] = useState(false);
 
   useEffect(() => {
-    setAosTrigger((prev) => !prev); // ✅ 這樣 AOS 會重新觸發動畫，但不影響 key
+    setAosTrigger((prev) => !prev); 
   }, [course]);
 
   return (

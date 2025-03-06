@@ -159,7 +159,7 @@ export default function PriceFixed({ course }) {
         </button>
         <div className={styles['shopping-btn-flex']}>
           <button
-            className={`${styles['cart-btn']} hvr-icon-pulse`}
+            className={`${styles['cart-btn']}`}
             onClick={handleAddToCart}
           >
             <img src="/images/icon/cart-btn.svg" alt="加入購物車" />

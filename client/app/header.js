@@ -88,10 +88,10 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
         </div>
         <nav className={`d-flex justify-content-end`}>
           <ul className="nav-left">
-            <li>
+          <li className={pathname === "/" ? "nav-active" : ""}>
               <Link href="/">首頁</Link>
             </li>
-            <li className="product-item">
+            <li className={pathname === "/product" ? "nav-active" : ""}>
               <Link href="/product">產品系列</Link>
               <div className="hover-gap" />
               {/* 透明的緩衝區域 */}
@@ -201,20 +201,20 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
                 <div className="separator" />
               </ul>
             </li>
-            <li>
+            <li className={pathname === "/rental" ? "nav-active" : ""}>
               <Link href="/rental">租借服務</Link>
             </li>
-            <li className={pathname === "/courses" ? ".nav-active" : ""}>
+            <li className={pathname === "/courses" ? "nav-active" : ""}>
               <Link href="/courses">影像學院</Link>
             </li>
-            <li>
+            <li className={pathname === "/article" ? "nav-active" : ""}>
               <Link href="/article">影像誌閱</Link>
             </li>
             <li>
               <a href="#">聯絡我們</a>
             </li>
           </ul>
-          
+
           <ul className="nav-right">
             <li>
               <a
@@ -249,7 +249,7 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
             background: '#eaeaea',
             padding: '1rem',
             position: 'fixed', // 改為 fixed 定位
-            top: '80px', // 設定與 header 底部的距離（根據 header 高度調整）
+            top: '80px', // 設定與 header 底部的距離
             left: 0,
             display: 'flex',
             justifyContent: 'center',
