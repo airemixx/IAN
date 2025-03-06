@@ -83,12 +83,13 @@ header {
   width: 160px;
 }
 
-/* 導覽列樣式 */
+
 nav {
   display: flex;
   align-items: center;
   width: 100%;
 }
+
 
 .nav-left {
   display: flex;
@@ -104,11 +105,13 @@ nav {
   position: relative;
 }
 
+
 .nav-left li a {
   color: var(--white);
   text-decoration: none;
   transition: color 0.3s ease;
 }
+
 
 .nav-left li a .icon {
   display: block;
@@ -116,11 +119,13 @@ nav {
   opacity: 0;
 }
 
+
 .nav-left > li.nav-active a,
 .nav-left > li a:hover,
 .nav-left > li:hover > a {
   color: var(--secondary-color-med);
 }
+
 
 .nav-left > li::after {
   content: '';
@@ -137,6 +142,11 @@ nav {
 .nav-left > li:hover::after {
   width: 100%;
 }
+
+.nav-left > li.nav-active {
+  position: relative;
+}
+
 
 .nav-right {
   list-style-type: none;

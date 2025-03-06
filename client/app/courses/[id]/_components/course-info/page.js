@@ -58,7 +58,7 @@ export default function CourseInfo({ course }) {
     }
 
     // ✅ 直接導向購物車頁面
-    router.push('/cart/cart-step1')
+    router.push('/cart')
   }
 
   // 加入購物車
@@ -204,7 +204,7 @@ export default function CourseInfo({ course }) {
                   + 立即購買
                 </button>
                 <button
-                  className={`${styles['cart-btn']} hvr-icon-pulse`}
+                  className={`${styles['cart-btn']}`}
                   onClick={handleAddToCart} // ✅ 綁定加入購物車事件
                 >
                   <img src="/images/icon/cart-btn.svg" alt="" />
