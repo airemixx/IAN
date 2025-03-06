@@ -1,26 +1,69 @@
-.y-collapse-area {  
-  width: 90%;  
-  select {  
-    width: 15%;  
-    border-radius: 25px;  
+.y-collapse-area {
+  width: 90%;
+  select {
+    width: 15%;
+    border-radius: 25px;
     border: 2px solid #7e726700;
-    &:focus {  
-      box-shadow: 0 0 15px #7E7267;  
-      border: 2px solid #7E7267;
-    }  
-  }  
-}  
+    &:focus {
+      box-shadow: 0 0 15px #7e7267;
+      border: 2px solid #7e7267;
+    }
+  }
+}
 
-.y-clear-option {  
-  button {  
-    background-color: #ffffff00;  
-    text-decoration: underline;  
-    border: none;  
-    color: #000;  
-  }  
-}  
+:global(.btn-select-use) {
+  // background-color: #f5f5f5;
+  border: none;
+  // color: #333;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  
 
-.y-title-line{
+  
+  /* 移除 focus、active 時的邊框和陰影 */
+  &:focus,
+  &:active,
+  &.active {
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: transparent !important;
+  }
+  
+  /* 輕微點擊效果替代邊框 */
+}
+
+/* 禁用狀態樣式 */
+.btn-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+
+.y-clear-option {
+  button {
+    background-color: #ffffff00;
+    text-decoration: underline;
+    border: none;
+    color: #000;
+  }
+}
+
+.y-title-line {
   border-bottom: solid 2px #000;
   margin-bottom: 20px;
+}
+
+.accordion-icon-svg {
+  display: inline-block;
+  overflow: hidden;
+  stroke-width: 2.25px;
+  color: #333;
+  margin-left: 6px;
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+}
+
+// 如果需要額外的懸停效果
+.btn-select-use:hover .accordion-icon-svg {
+  color: #000;
 }

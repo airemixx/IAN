@@ -28,10 +28,10 @@ export default function Coupon() {
       console.error("🔴 獲取優惠券失敗:", error);
     }
   };
-  
-    if (loading) {
-      return <div className="text-center mt-5">載入中...</div>;
-    }
+
+  if (loading) {
+    return <div className="text-center mt-5">載入中...</div>;
+  }
 
   return (
     <div className="container py-4">
@@ -41,15 +41,15 @@ export default function Coupon() {
 
 
         {/* 主要內容區 */}
-        <div className="col-lg-9">
-          <h1 className={`mb-4 ${styles.h1}`}>我的優惠券</h1>
+        <div className="col-md-8 col-lg-9 py-4">
+      <h1 className={`mb-4 ${styles.h1}`}>我的優惠券</h1>
 
           {/* 相機 & 課程分類 */}
           {[
             { id: 1, label: "相機優惠券" },
             { id: 2, label: "課程優惠券" },
           ].map(({ id, label }) => {
-            const filteredCoupons = coupons.filter((coupon) => coupon.user_coupon_id === id);
+            const filteredCoupons = coupons.filter((coupon) => coupon.coupon_id === id);
 
             if (filteredCoupons.length === 0) return null;
 
@@ -60,10 +60,11 @@ export default function Coupon() {
                   {filteredCoupons.map((coupon) =>
                     Array.from({ length: coupon.quantity }).map((_, index) => {
                       // 計算優惠券過期時間 (created_at + 5 天)
-                      const createdAt = new Date(coupon.created_at);
+                      const createdAt = new Date(coupon.created_at.replace(" ", "T")); // 修正格式
                       const expiryDate = new Date(createdAt);
-                      expiryDate.setDate(createdAt.getDate() + 5);
+                      expiryDate.setDate(expiryDate.getDate() + 5);
                       const formattedExpiryDate = expiryDate.toISOString().split("T")[0];
+
 
                       return (
                         <div key={`${coupon.coupon_id}-${index}`} className="col-md-6 col-lg-5 d-flex justify-content-center">

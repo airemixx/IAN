@@ -1,6 +1,8 @@
 'use client'
-import Swal from 'sweetalert2'
 import styles from './cart-button.module.scss'
+import { toast } from 'react-toastify'
+import { MdError } from 'react-icons/md'
+import { MdShoppingCart } from 'react-icons/md'
 
 export default function CartButton({ product }) {
   const addToCart = () => {
@@ -10,17 +12,10 @@ export default function CartButton({ product }) {
         : null
 
     if (!token) {
-      Swal.fire({
-        icon: 'warning',
-        title: '請先登入',
-        text: '您需要登入後才能加入購物車',
-        confirmButtonText: '前往登入',
-        showCancelButton: true,
-        cancelButtonText: '取消',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = '/login'
-        }
+      toast.success('請先登入才能加入購物車！', {
+        position: 'top-right',
+        autoClose: 2000,
+        icon: <MdError size={30} />,
       })
       return
     }
@@ -36,19 +31,12 @@ export default function CartButton({ product }) {
 
     localStorage.setItem('cart', JSON.stringify(cart))
 
-    Swal.fire({
-      icon: 'success',
-      title: '已加入購物車！',
-      text: `${product.name} 已成功加入購物車 🎉`,
-      showConfirmButton: false,
-      timer: 1500,
-      toast: true,
-      position: 'top-end',
-      customClass: {
-        popup: styles.swalPopupAdjust
-      }
-    });
-
+    toast.success(`${product.name} 已成功加入購物車`, {
+      position: 'top-right',
+      autoClose: 1500,
+      icon: <MdShoppingCart size={30} color="green" />,
+      className: styles.toastCustom,
+    })
   }
 
   return (
