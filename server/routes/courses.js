@@ -4,6 +4,46 @@ import authenticate from '../middlewares.js'
 
 const router = express.Router()
 
+router.get("/collection", authenticate, async (req, res) => {
+  console.log("✅ 收到 /api/courses/collection 請求"); 
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: "未授權，請先登入" });
+    }
+
+    const userId = req.userId;
+
+    const [favorites] = await pool.query(
+      `SELECT 
+        c.id, 
+        c.title, 
+        c.image_url, 
+        t.name AS teacher_name, 
+        c.sale_price, 
+        COALESCE(AVG(com.rating), 0) AS rating
+      FROM collection AS col
+      JOIN courses AS c ON col.course_id = c.id
+      JOIN teachers AS t ON c.teacher_id = t.id
+      LEFT JOIN comments AS com ON c.id = com.course_id
+      WHERE col.user_id = ?
+      GROUP BY c.id, c.title, c.image_url, t.name, c.sale_price;`,
+      [userId]
+    );
+
+    console.log("🔍 查詢結果:", favorites);
+
+    if (!favorites || favorites.length === 0) {
+      return res.json({ favorites: [] }); // ✅ 修改：回傳空陣列，而不是 `404`
+    }
+
+    res.json({ favorites });
+  } catch (error) {
+    console.error("❌ 取得所有收藏課程失敗:", error);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+});
+
+
 // ✅ 取得所有分類（從 courses 表中取得不同的 `category`）
 router.get('/categories', async (req, res) => {
   try {
@@ -150,7 +190,7 @@ router.get('/related/:category', async (req, res) => {
       ORDER BY RAND()
       LIMIT 5;
     `
-// LIMIT 5 確保過濾掉當前課程後，仍然有 4 筆可用
+    // LIMIT 5 確保過濾掉當前課程後，仍然有 4 筆可用
 
     const [rows] = await pool.execute(sql, [category])
 
@@ -268,6 +308,9 @@ router.post('/', authenticate, async (req, res) => {
     res.json({ error: '無法新增課程' })
   }
 })
+
+
+
 
 router.get('/collection/:courseId', authenticate, async (req, res) => {
   try {
