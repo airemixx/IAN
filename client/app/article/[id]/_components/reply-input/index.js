@@ -108,7 +108,12 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
   }
 
   // 留言送出
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    // 確保 e 存在並且有 preventDefault 方法
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
     // 如果用戶未登入，顯示登入 Modal
     if (!isAuthenticated && !token) {
       showAuthModal();
@@ -141,30 +146,39 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
         }
       }
 
-      const response = await axios.post(
-        'http://localhost:8000/api/comments',
-        formData,
-        {
-          withCredentials: true,
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
-      );
+      const response = await fetch('http://localhost:8000/api/comments', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
 
-      console.log('留言新增成功：', response.data);
+      const data = await response.json();
 
-      // 清空輸入框及附件預覽
-      setComment('');
-      setPreviews([]);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (data.status === 'success') {
+        // 清空表單...
+        setComment('');
+        setPreviews([]);
+        if (fileInputRef.current) fileInputRef.current.value = '';
 
-      // 執行送出成功後按鈕放大效果
-      setIsSent(true);
-      setTimeout(() => setIsSent(false), 300);
+        // 執行送出成功後按鈕放大效果
+        setIsSent(true);
+        setTimeout(() => setIsSent(false), 300);
 
-      // 傳回新留言資料給父層
-      onCommentSubmitted && onCommentSubmitted(response.data);
+        // 確保返回完整數據結構，特別是 content 欄位
+        const completeData = {
+          ...data.data,
+          content: data.data.content, // 確保內容欄位存在
+          id: data.data.id,
+          // 其他必要欄位...
+        };
+
+        onCommentSubmitted && onCommentSubmitted(completeData);
+      } else {
+        alert(data.message || '發送失敗');
+      }
     } catch (error) {
-      console.error('留言送出失敗：', error);
+      console.error('留言提交錯誤:', error);
+      alert('發送失敗，請稍後再試');
     }
   };
 
@@ -245,8 +259,10 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSubmit()
+            // 修改這裡，只要按 Enter 鍵就發送 (不需要 Ctrl 或 Cmd)
+            if (e.key === 'Enter' && !e.shiftKey) { // 如果按住 Shift 則不發送
+              e.preventDefault(); // 防止換行
+              handleSubmit(e);
             }
           }}
           style={{
@@ -412,7 +428,12 @@ export function NestedReplyInput({ articleId, parentId, onCommentSubmitted, isAu
   const userId = 1 // 這裡可改為動態取得
 
   // 確保在送出資料中正確設定 articleId 與 parentId
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    // 確保 e 存在並且有 preventDefault 方法
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
     if (!comment.trim()) return
 
     const formData = new FormData()
@@ -449,7 +470,9 @@ export function NestedReplyInput({ articleId, parentId, onCommentSubmitted, isAu
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') handleSubmit()
+          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            handleSubmit(e); // 確保傳遞事件對象
+          }
         }}
       />
       {/* 如果需要檔案上傳，也可以加入 <input type="file" ... /> */}

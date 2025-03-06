@@ -25,11 +25,10 @@ const AdCardLoader = () => {
   );
 };
 
-export default function AdCard({ articleId }) {
+export default function AdCard({ productId }) {
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
   const [isDelayDone, setIsDelayDone] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -41,63 +40,21 @@ export default function AdCard({ articleId }) {
   }, []);
 
   useEffect(() => {
-    const fetchProductData = async () => {
-      if (!articleId) {
-        setIsLoading(false);
-        return;
-      }
-
+    const fetchProduct = async () => {
       try {
-        // 使用相對路徑而不是完整 URL
-        const productIdResponse = await fetch('/api/product/update-product-id', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ articleId }),
-        });
-
-        if (!productIdResponse.ok) {
-          throw new Error(`HTTP Error: ${productIdResponse.status}`);
-        }
-
-        const data = await productIdResponse.json();
-        const productId = data.productId;
-
-        // 如果沒有關聯產品，就不顯示任何內容
-        if (!productId) {
-          setIsLoading(false);
-          return;
-        }
-
-        // 同樣使用相對路徑
-        const productResponse = await fetch(`/api/product/${productId}`);
-
-        if (!productResponse.ok) {
-          throw new Error(`HTTP Error: ${productResponse.status}`);
-        }
-
-        const productData = await productResponse.json();
-        setProduct(productData);
+        const res = await fetch(`/api/product/${productId}`);
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        const data = await res.json();
+        setProduct(data);
       } catch (err) {
-        console.error('獲取產品資料錯誤:', err);
         setError(err.message);
-      } finally {
-        setIsLoading(false);
       }
     };
+    if (productId) fetchProduct();
+  }, [productId]);
 
-    fetchProductData();
-  }, [articleId]);
-
-  // 如果正在加載或延遲未完成，顯示載入器
-  if ((isLoading || !isDelayDone) && !error) return <AdCardLoader />;
-
-  // 如果發生錯誤，顯示錯誤訊息
   if (error) return <div className={style.error}>Error: {error}</div>;
-
-  // 如果沒有產品資料，不顯示任何內容
-  if (!product) return null;
+  if (!product || !isDelayDone) return <AdCardLoader />;
 
   return (
     <div className={`mb-3 ${style['y-ad-card']}`}>
