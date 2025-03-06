@@ -377,12 +377,20 @@ router.get('/:id', async (req, res) => {
     })
 
     // 🚦 回傳完整數據
-    res.json({
+    const response = {
       success: true,
       data: rental[0],
       reviews,
       recommendations,
-    });
+    };
+
+    // 🚀 如果使用者已登入，才加入 `user`
+    if (user_id) {
+      response.user = { id: user_id };
+    }
+
+    res.json(response);
+
   } catch (error) {
     console.error('❌ 資料庫錯誤:', error)
     res.status(500).json({ success: false, error: '伺服器錯誤' })
