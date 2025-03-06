@@ -104,7 +104,7 @@ const formatAbsoluteMessageTime = (timestamp) => {
   if (now - messageDate >= oneMonthMs) {
     return formatDateTime(messageDate, true);
   }
-  
+
   // 超過 1 天但小於 1 個月，省略年份：mm-dd hh:mm
   return formatDateTime(messageDate, false);
 };
@@ -123,7 +123,8 @@ export default function ChatWidget() {
       avatar: "/images/chatRoom/user1.jpg",
       lastMessage: "好的，我明白了",
       lastMessageType: "text",
-      timestamp: new Date(Date.now() - 5 * 60000) // 5分鐘前
+      timestamp: new Date(Date.now() - 5 * 60000), // 5分鐘前
+      unreadCount: 2
     },
     {
       id: 2,
@@ -132,7 +133,8 @@ export default function ChatWidget() {
       lastMessage: "",
       lastMessageType: "image",
       mediaCount: 1,
-      timestamp: new Date(Date.now() - 30 * 60000) // 30分鐘前
+      timestamp: new Date(Date.now() - 30 * 60000), // 30分鐘前
+      unreadCount: 0
     },
     {
       id: 3,
@@ -140,7 +142,8 @@ export default function ChatWidget() {
       avatar: "/images/chatRoom/user1.jpg",
       lastMessage: "這是一個非常長的訊息，應該會被截斷並顯示省略號在最後面",
       lastMessageType: "text",
-      timestamp: new Date(Date.now() - 2 * 3600000) // 2小時前
+      timestamp: new Date(Date.now() - 2 * 3600000), // 2小時前
+      unreadCount: 1
     },
     {
       id: 4,
@@ -149,7 +152,8 @@ export default function ChatWidget() {
       lastMessage: "",
       lastMessageType: "video",
       mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000) // 1天前
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
     },
     {
       id: 5,
@@ -158,7 +162,8 @@ export default function ChatWidget() {
       lastMessage: "",
       lastMessageType: "video",
       mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000) // 1天前
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
     },
     {
       id: 6,
@@ -167,7 +172,8 @@ export default function ChatWidget() {
       lastMessage: "",
       lastMessageType: "video",
       mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000) // 1天前
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
     },
     {
       id: 7,
@@ -176,7 +182,8 @@ export default function ChatWidget() {
       lastMessage: "",
       lastMessageType: "video",
       mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000) // 1天前
+      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
+      unreadCount: 0
     }
   ]);
 
@@ -538,13 +545,20 @@ export default function ChatWidget() {
                           {formatRelativeMessageTime(user.timestamp)}
                         </small>
                       </div>
-                      <p className={styles.userLastMessage}>
-                        {user.lastMessageType === 'text'
-                          ? user.lastMessage
-                          : user.lastMessageType === 'image'
-                            ? `已傳送${user.mediaCount}張圖片`
-                            : `已傳送${user.mediaCount}個影片`}
-                      </p>
+                      <div className={styles.lastMessageRow}>
+                        <p className={styles.userLastMessage}>
+                          {user.lastMessageType === 'text'
+                            ? user.lastMessage
+                            : user.lastMessageType === 'image'
+                              ? `已傳送${user.mediaCount}張圖片`
+                              : `已傳送${user.mediaCount}個影片`}
+                        </p>
+                        {user.unreadCount > 0 && (
+                          <span className={styles.unreadBadge}>
+                            {user.unreadCount > 99 ? "99+" : user.unreadCount}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

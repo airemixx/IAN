@@ -114,6 +114,7 @@ const organizeComments = (comments) => {
 function ReplyItem({
   userName,
   userProfile,
+  commentUserId, // 留言發布者的 ID
   text,
   time,
   media_urls,
@@ -705,6 +706,7 @@ function ReplyItem({
                             showAuthModal={showAuthModal}
                             token={token}
                             userId={userId}
+                            commentUserId={reply.user_id} // 添加留言發布者 ID
                           />
                         )
                       })}
@@ -716,51 +718,54 @@ function ReplyItem({
                 </>
               )}
             </div>
-            <div className={`${styles.moreBtnReply}`}
-              onMouseEnter={() => setMoreHover(true)}
-              onMouseLeave={() => setMoreHover(false)}
-            >
-              <button className={styles['more-btn']} onClick={toggleMoreOptions}>
-                <img
-                  src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
-                  alt=""
-                />
-              </button>
-              <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
-                <div
-                  className={styles.moreOption}
-                  onClick={() => handleEdit(commentId)}
-                >
+            {/* 只有留言發布者才能看到編輯選單 */}
+            {effectiveUserId === commentUserId && (
+              <div className={`${styles.moreBtnReply}`}
+                onMouseEnter={() => setMoreHover(true)}
+                onMouseLeave={() => setMoreHover(false)}
+              >
+                <button className={styles['more-btn']} onClick={toggleMoreOptions}>
                   <img
-                    src="/images/article/edit-origin.svg"
-                    alt="編輯原圖"
-                    className={styles.iconOriginal}
+                    src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
+                    alt=""
                   />
-                  <img
-                    src="/images/article/edit-hover.svg"
-                    alt="編輯 hover 圖"
-                    className={styles.iconHover}
-                  />
-                  編輯
-                </div>
-                <div
-                  className={styles.moreOptionDelete}
-                  onClick={() => handleDelete(commentId)}
-                >
-                  <img
-                    src="/images/article/delete-origin.svg"
-                    alt="刪除原圖"
-                    className={styles.iconOriginalDelete}
-                  />
-                  <img
-                    src="/images/article/delete-hover.svg"
-                    alt="刪除 hover 圖"
-                    className={styles.iconHoverDelete}
-                  />
-                  刪除
+                </button>
+                <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
+                  <div
+                    className={styles.moreOption}
+                    onClick={() => handleEdit(commentId)}
+                  >
+                    <img
+                      src="/images/article/edit-origin.svg"
+                      alt="編輯原圖"
+                      className={styles.iconOriginal}
+                    />
+                    <img
+                      src="/images/article/edit-hover.svg"
+                      alt="編輯 hover 圖"
+                      className={styles.iconHover}
+                    />
+                    編輯
+                  </div>
+                  <div
+                    className={styles.moreOptionDelete}
+                    onClick={() => handleDelete(commentId)}
+                  >
+                    <img
+                      src="/images/article/delete-origin.svg"
+                      alt="刪除原圖"
+                      className={styles.iconOriginalDelete}
+                    />
+                    <img
+                      src="/images/article/delete-hover.svg"
+                      alt="刪除 hover 圖"
+                      className={styles.iconHoverDelete}
+                    />
+                    刪除
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
@@ -784,6 +789,7 @@ function NestedReplyItem({
   showAuthModal, // 添加這行
   token, // 新增
   userId, // 新增
+  commentUserId, // 增加這個參數
   ...props
 }) {
   const [isLiked, setIsLiked] = useState(false)
@@ -1195,48 +1201,51 @@ function NestedReplyItem({
             </div>
           </div>
         </div>
-        <div className={`${styles.moreBtnReply}`}>
-          <button className={styles['more-btn']} onClick={toggleMoreOptions}>
-            <img
-              src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
-              alt="More"
-            />
-          </button>
-          <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
-            <div
-              className={styles.moreOption}
-              onClick={() => handleEdit(props.commentId)}
-            >
+        {/* 只有留言發布者才能看到編輯選單 */}
+        {effectiveUserId === commentUserId && (
+          <div className={`${styles.moreBtnReply}`}>
+            <button className={styles['more-btn']} onClick={toggleMoreOptions}>
               <img
-                src="/images/article/edit-origin.svg"
-                alt="編輯原圖"
-                className={styles.iconOriginal}
+                src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
+                alt="More"
               />
-              <img
-                src="/images/article/edit-hover.svg"
-                alt="編輯 hover 圖"
-                className={styles.iconHover}
-              />
-              編輯
-            </div>
-            <div
-              className={styles.moreOptionDelete}
-              onClick={() => handleDelete(props.commentId)}
-            >
-              <img
-                src="/images/article/delete-origin.svg"
-                alt="刪除原圖"
-                className={styles.iconOriginalDelete}
-              />
-              <img
-                src="/images/article/delete-hover.svg"
-                alt="刪除 hover 圖"
-                className={styles.iconHoverDelete}
-              />
-              刪除
+            </button>
+            <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
+              <div
+                className={styles.moreOption}
+                onClick={() => handleEdit(props.commentId)}
+              >
+                <img
+                  src="/images/article/edit-origin.svg"
+                  alt="編輯原圖"
+                  className={styles.iconOriginal}
+                />
+                <img
+                  src="/images/article/edit-hover.svg"
+                  alt="編輯 hover 圖"
+                  className={styles.iconHover}
+                />
+                編輯
+              </div>
+              <div
+                className={styles.moreOptionDelete}
+                onClick={() => handleDelete(props.commentId)}
+              >
+                <img
+                  src="/images/article/delete-origin.svg"
+                  alt="刪除原圖"
+                  className={styles.iconOriginalDelete}
+                />
+                <img
+                  src="/images/article/delete-hover.svg"
+                  alt="刪除 hover 圖"
+                  className={styles.iconHoverDelete}
+                />
+                刪除
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
@@ -1418,6 +1427,7 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
                   currentReplyTo={activeReplyId === comment.id ? currentReplyTo : ''} // 新增
                   token={token} // 新增
                   userId={userId} // 新增
+                  commentUserId={comment.user_id} // 添加留言發布者 ID
                 />
               ))}
             </div>
