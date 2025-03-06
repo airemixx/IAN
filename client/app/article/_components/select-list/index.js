@@ -209,6 +209,7 @@ export default function SelectList({ onFilterChange }) {
     if (!isAnimating) {
       setIsAnimating(true);
 
+      // 先啟動動畫
       if (isCollapsed) {
         if (expandAnimRef.current) {
           expandAnimRef.current.beginElement();
@@ -219,14 +220,32 @@ export default function SelectList({ onFilterChange }) {
         }
       }
 
-      setIsCollapsed(!isCollapsed);
+      // 使用 requestAnimationFrame 確保在下一幀再更改狀態
+      requestAnimationFrame(() => {
+        setIsCollapsed(!isCollapsed);
+      });
 
       // 在動畫結束後恢復按鈕可用狀態
       setTimeout(() => {
         setIsAnimating(false);
-      }, 400);
+      }, 300);
     }
   };
+
+  // 在其他 useEffect 之後添加
+  useEffect(() => {
+    // 直接取得動畫元素引用
+    expandAnimRef.current = document.getElementById('expand-anim');
+    collapseAnimRef.current = document.getElementById('collapse-anim');
+
+    // 強制重繪以確保 SVG 動畫準備就緒
+    const svgElement = document.querySelector(`.${styles['accordion-icon-svg']}`);
+    if (svgElement) {
+      svgElement.style.display = 'none';
+      svgElement.getBoundingClientRect(); // 強制重排
+      svgElement.style.display = '';
+    }
+  }, []);
 
   return (
     <>
@@ -257,25 +276,23 @@ export default function SelectList({ onFilterChange }) {
                 id="expand-anim"
                 ref={expandAnimRef}
                 attributeName="points"
-                values="15 1.13 8.5 7.72 2 1.13; 15.85 4.42 8.5 4.42 1.15 4.42; 15 7.72 8.5 1.13 2 7.72"
-                dur="400ms" // 增加持續時間
+                values="15 1.13 8.5 7.72 2 1.13; 15 7.72 8.5 1.13 2 7.72"
+                dur="300ms"
                 begin="indefinite"
                 fill="freeze"
-                keyTimes="0; 0.5; 1"
                 calcMode="spline"
-                keySplines="0.25, 0.1, 0.25, 1; 0.25, 0.1, 0.25, 1" // 平滑緩動曲線
+                keySplines="0.33, 1, 0.68, 1"
               />
               <animate
                 id="collapse-anim"
                 ref={collapseAnimRef}
                 attributeName="points"
-                values="15 7.72 8.5 1.13 2 7.72; 15.85 4.42 8.5 4.42 1.15 4.42; 15 1.13 8.5 7.72 2 1.13"
-                dur="400ms" // 增加持續時間
+                values="15 7.72 8.5 1.13 2 7.72; 15 1.13 8.5 7.72 2 1.13"
+                dur="300ms"
                 begin="indefinite"
                 fill="freeze"
-                keyTimes="0; 0.5; 1"
                 calcMode="spline"
-                keySplines="0.25, 0.1, 0.25, 1; 0.25, 0.1, 0.25, 1" // 平滑緩動曲線
+                keySplines="0.33, 1, 0.68, 1"
               />
             </polyline>
           </svg>
