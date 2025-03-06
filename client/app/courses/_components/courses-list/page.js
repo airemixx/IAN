@@ -35,7 +35,7 @@ export default function CourseList({ courses }) {
   useEffect(() => {
     const fetchPopularCourses = async () => {
       try {
-        const res = await fetch('/api/courses?sort=popular')
+        const res = await fetch('http://localhost:8000/api/courses?sort=popular')
         if (!res.ok) throw new Error(`HTTP 錯誤！狀態碼：${res.status}`)
 
         const data = await res.json()

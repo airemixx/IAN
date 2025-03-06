@@ -21,7 +21,7 @@ export default function UserPage() {
         <Sidenav />
 
         {/* Main Content */}
-        <div className="col-lg-9">
+        <div className="col-lg-9 py-4">
           <h1 className={`mb-4 ${styles.h1}`}>我的租賃</h1>
 
           {/* 租賃 Section */}

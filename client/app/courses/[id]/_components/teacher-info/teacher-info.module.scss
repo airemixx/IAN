@@ -79,7 +79,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  p{
+    color: var(--black);
+  }
 }
+
 .link-wrapper {
   display: flex;
   align-items: center;
@@ -235,6 +239,7 @@
     }
   }
 }
+
 
 .hr-line {
   margin: 2rem 0;

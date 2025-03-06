@@ -26,7 +26,7 @@ const authenticate = (req, res, next) => {
     req.decoded = decoded; // ✅ 設定 req.decoded
     req.userId = decoded.id; // ✅ 設定 userId
     req.user = decoded;
-    console.log("✅ 設定 req.userId:", req.userId);
+    // console.log("✅ 設定 req.userId:", req.userId);
 
     next(); // 繼續執行下一個 middleware
   } catch (error) {
