@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import AppProvider from '@/hooks/app-provider'
 import { CompareProvider } from '@/app/product/_context/CompareContext'
 import { IoIosArrowUp } from 'react-icons/io'
+import dynamic from "next/dynamic";
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -25,19 +26,25 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
+const Loading = dynamic(() => import("@/app/_components/loading/page.js"), { ssr: false });
+
 export default function RootLayout({ children }) {
   const [searchOpen, setSearchOpen] = useState(false)
-  const pathname = usePathname()
+  const pathname = usePathname() || "";
+  const [isLoading, setIsLoading] = useState(true);
+
+
 
   const isTeacherPage = useMemo(
     () => pathname && pathname.startsWith('/teacher'),
     [pathname]
   );
 
-
   const isCartPage = useMemo(() => pathname?.startsWith('/cart'), [pathname])
   // top按鈕
   const [showButton, setShowButton] = useState(false)
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,6 +76,7 @@ export default function RootLayout({ children }) {
     // 頁面載入時也檢查一次
     handleScroll();
 
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -78,7 +86,15 @@ export default function RootLayout({ children }) {
 
 
   // 老師頁面不用layout
-  const isExcluded = pathname.includes('/teacher')
+  const isExcluded = useMemo(() => pathname.includes('/teacher'), [pathname]);
+
+  //loading
+  useEffect(() => {
+    setIsLoading(true); //pathname 變化時 顯示 Loading
+    const timer = setTimeout(() => setIsLoading(false), 500); 
+    return () => clearTimeout(timer);
+  }, [pathname]); // 每次網址變化時，重新執行
+
 
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
@@ -93,23 +109,21 @@ export default function RootLayout({ children }) {
             draggable
             theme="dark"
             className="custom-toast-container"
-            style={{ marginTop: '80px' }}
+            style={{ marginTop: "80px" }}
           />
+
           {!isTeacherPage && (
-            <Header
-              searchOpen={searchOpen}
-              setSearchOpen={setSearchOpen}
-              isCartPage={isCartPage}
-            />
+            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
           )}
+
+          {/* 🔹 確保 AppProvider 包住 main，但 Loading 只影響內容 */}
           <AppProvider>
-            <main className={isExcluded ? '' : 'root-content'}>{children}</main>
+            <main className={isExcluded ? "" : "root-content"}>
+              {isLoading ? <Loading /> : children}
+            </main>
           </AppProvider>
-          {isTeacherPage ? (
-            <TeacherFooter />
-          ) : (
-            <Footer isCartPage={isCartPage} />
-          )}
+
+          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}
         </div>
 
         {/* top按鈕 */}
