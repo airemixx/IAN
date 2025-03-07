@@ -13,7 +13,7 @@ export default function RentReviews({ reviews = [] }) {
 
   const handleReview = async (review) => {
     if (!review.id || review.status !== '已完成') {
-      Swal.fire('錯誤', '此訂單無法評論', 'error');
+      Swal.fire('錯誤', '訂單完成後可以留言唷～', 'error');
       return;
     }
 
