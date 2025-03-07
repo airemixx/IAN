@@ -148,8 +148,8 @@ export default function cartPageOne() {
       text: "此操作將刪除所有購物車商品，無法復原！",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#003150",
-      cancelButtonColor: "#CA6D1B",
+      confirmButtonColor: "#CA6D1B",
+      cancelButtonColor: "#003150",
       confirmButtonText: "確定刪除",
       cancelButtonText: "取消"
     }).then((result) => {

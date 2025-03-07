@@ -1,27 +1,44 @@
+import Swal from "sweetalert2";
 import styles from "./lession-item.module.scss";
 
 export default function LessonItem({ lessionitem, page, length, id }) {
     const { image, name, price } = lessionitem;
     id = id - length
     function handleDeleteItem() {
-        const confirmDelete = window.confirm("是否要從購物車刪除該商品？");
-        if (confirmDelete) {
-            // 取得 localStorage 中的購物車數據
-            let cart = JSON.parse(localStorage.getItem("shoppingCart")) || {};
+        Swal.fire({
+            title: "確定要刪除嗎？",
+            text: "刪除後將無法恢復此商品！",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#CA6D1B",
+            cancelButtonColor: "#003150",
+            confirmButtonText: "刪除",
+            cancelButtonText: "取消",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 取得 localStorage 中的購物車數據
+                let cart = JSON.parse(localStorage.getItem("shoppingCart")) || {};
 
-            delete cart[id]
-            let updatedCart = Object.entries(cart).filter(v => v != null);// 過濾掉該商品
-            updatedCart = updatedCart.map(v => v[1])
+                delete cart[id];
+                let updatedCart = Object.entries(cart).filter(v => v != null); // 過濾掉該商品
+                updatedCart = updatedCart.map(v => v[1]);
 
-            console.log(updatedCart);
-            localStorage.removeItem('shoppingCart')
-            // // 轉回物件形式並更新 localStorage
-            localStorage.setItem("shoppingCart", JSON.stringify(updatedCart));
+                console.log(updatedCart);
+                localStorage.removeItem("shoppingCart");
+                localStorage.setItem("shoppingCart", JSON.stringify(updatedCart));
 
-            // 刷新頁面或通知父層更新購物車
-            window.location.reload();
-
-        }
+                // 顯示刪除成功提示
+                Swal.fire({
+                    title: "已刪除！",
+                    text: "商品已從購物車移除。",
+                    icon: "success",
+                    confirmButtonText: "確定",
+                }).then(() => {
+                    // 刷新頁面或通知父層更新購物車
+                    window.location.reload();
+                });
+            }
+        });
     }
     return (
         <>
