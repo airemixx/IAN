@@ -11,9 +11,6 @@ import dotenv from 'dotenv'
 import sessionFileStore from 'session-file-store'
 import session from 'express-session'
 import db from './db.js'
-import { createServer } from 'http';
-import { Server as SocketServer } from 'socket.io';
-import initSocketServer from './socket-server/index.js';
 
 import path from 'path'
 import coursesRouter from './routes/courses.js'
@@ -140,17 +137,7 @@ app.use('/api/users', users)
 app.use('/api/collect', collect)
 app.use('/api/myorders', myorders)
 
-const httpServer = createServer(app);
-const io = new SocketServer(httpServer, {
-  cors: {
-    origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST'],
-    credentials: true
-  }
-});
 
-// 初始化 Socket.IO 服務器
-initSocketServer(io);
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000
@@ -161,7 +148,7 @@ const DB_NAME = process.env.DB_NAME
 const DB_PORT = process.env.DB_PORT
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
-httpServer.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`伺服器運行在 http://localhost:${PORT}`)
   console.log(`Database host: ${DB_HOST}`)
   console.log(`JWT secret key: ${JWT_SECRET_KEY}`)
