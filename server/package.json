@@ -4,7 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "socket": "node socket-server.js",
+    "dev:socket": "nodemon socket-server.js"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +31,7 @@
     "mysql2": "^3.12.0",
     "path": "^0.12.7",
     "session-file-store": "^1.5.0",
+    "socket.io": "^4.8.1",
     "uuid": "^11.0.5",
     "zod": "^3.24.2"
   },
@@ -36,6 +39,9 @@
     "nodemon": "^3.1.9"
   },
   "nodemonConfig": {
-      "ignore": ["sessions/*", "uploads/*"]
+    "ignore": [
+      "sessions/*",
+      "uploads/*"
+    ]
   }
 }

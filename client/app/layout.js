@@ -15,6 +15,7 @@ import AppProvider from '@/hooks/app-provider'
 import { CompareProvider } from '@/app/product/_context/CompareContext'
 import { IoIosArrowUp } from 'react-icons/io'
 import dynamic from "next/dynamic";
+import { SocketProvider } from './_components/chat/context/socketContext';
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -33,7 +34,12 @@ export default function RootLayout({ children }) {
   const pathname = usePathname() || "";
   const [isLoading, setIsLoading] = useState(true);
 
-
+  // 創建一個默認用戶，實際應用中應從認證系統獲取
+  const defaultUser = {
+    id: 'default-user',
+    name: '訪客用戶',
+    token: 'default-token'
+  };
 
   const isTeacherPage = useMemo(
     () => pathname && pathname.startsWith('/teacher'),
@@ -118,9 +124,11 @@ export default function RootLayout({ children }) {
 
           {/* 🔹 確保 AppProvider 包住 main，但 Loading 只影響內容 */}
           <AppProvider>
-            <main className={isExcluded ? "" : "root-content"}>
-              {isLoading ? <Loading /> : children}
-            </main>
+            <SocketProvider user={defaultUser} isAdmin={false}>
+              <main className={isExcluded ? "" : "root-content"}>
+                {isLoading ? <Loading /> : children}
+              </main>
+            </SocketProvider>
           </AppProvider>
 
           {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}

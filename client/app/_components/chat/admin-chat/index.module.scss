@@ -56,19 +56,18 @@
 }
 //按鈕部分
 
-// 去除聊天視窗圓角
 .chatWindow {
   position: fixed;
   bottom: 90px;
   right: 20px;
   width: 390px;
   height: 500px;
-  border-radius: 0;
+  border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  background: #7e7267;
+  background: transparent; // 改為透明背景
   color: #333;
   transform-origin: bottom right;
 }
@@ -123,6 +122,8 @@
   height: 100%;
   position: relative;
   overflow: hidden;
+  border-radius: 15px; // 明確設置圓角
+  background-color: #f8f9fa00; // 設置主體背景色
 }
 
 // 用戶列表面板
@@ -132,10 +133,12 @@
   width: 100%;
   height: 100%;
   background-color: #f8f9fa;
+  border-radius: 18px 18px 0 0; // 設置圓角
   z-index: 10;
   transition: left 0.3s ease;
   display: flex;
   flex-direction: column;
+  // overflow: hidden;
 
   &.show {
     left: 0; // 顯示列表
@@ -308,10 +311,11 @@
   align-items: center;
   padding: 16px;
   background-color: #7e7267;
-  color: white;
+  color: rgb(255, 255, 255);
   height: 50px;
-  border-top-left-radius: 0; // 從 15px 改為 0
-  border-top-right-radius: 0; // 從 15px 改為 0
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  margin: 0; // 確保無邊距
 }
 
 // 添加 hamburger 按鈕容器樣式
@@ -466,7 +470,7 @@
 
 // 交換用戶和客服訊息樣式
 .userMessage {
-  background: #969696; // 原來的客服灰色
+  background: #686868; // 原來的客服灰色
   color: #ffffff;
   align-self: flex-start;
   @include agent-bubble; // 使用原客服氣泡樣式
@@ -575,6 +579,11 @@
   padding: 6px;
   background-color: white;
   border-top: 1px solid #eee;
+  border-bottom-left-radius: 15px; // 添加底部左圓角
+  border-bottom-right-radius: 15px; // 添加底部右圓角
+  margin: 0; // 確保無邊距
+  position: relative; // 確保在堆疊順序中正確
+  z-index: 1; // 提高層級
 }
 
 .messageForm {
@@ -748,11 +757,10 @@
 
 // Emoji 樣式
 .emoji {
-  font-size: 20px !important;
-  display: inline-block;
-  vertical-align: center; //
+  font-size: 1.8em;
   line-height: 1;
-  padding: 0;
+  vertical-align: middle;
+  display: inline-block;
 }
 
 // 時間標記樣式
@@ -950,14 +958,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .chatWindow {
-    width: calc(100vw - 40px);
-    max-width: 320px;
-    right: 10px;
-  }
-}
-
 .onlineIndicator {
   @include online-indicator;
 }
@@ -968,7 +968,6 @@
   align-items: flex-end; // 靠右對齊
   max-width: 100%;
 }
-
 
 .lastMessageRow {
   display: flex;
@@ -985,15 +984,82 @@
   margin: 0;
 }
 
+// 基本未讀標記樣式
 .unreadBadge {
   margin-left: 8px;
   background-color: lightcoral;
   color: white;
-  border-radius: 50%;
-  padding: 1px 7px;
+  height: 18px; // 固定高度
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 12px;
-  white-space: nowrap;
+  font-weight: 500;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
-  align-self: center;
+  box-sizing: border-box;
+}
+
+// 1-2位數使用正圓形
+.unreadBadgeCircle {
+  width: 18px; // 固定寬度
+  min-width: 18px; // 固定最小寬度
+  border-radius: 50%; // 圓形
+  aspect-ratio: 1 / 1; // 強制保持正方形
+  padding: 0; // 移除水平內邊距以保持正圓形
+}
+
+// 3位數以上使用藥丸型
+.unreadBadgePill {
+  min-width: 26px; // 最小寬度
+  border-radius: 9px; // 圓角半徑（高度的一半）
+  padding: 0 6px; // 水平內邊距
+}
+
+/* 圖片容器 */
+.imageContainer {
+  max-width: 100%;
+  position: relative;
+}
+
+.messageImage {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+}
+
+.imageCaption {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 影片容器 */
+.videoContainer {
+  max-width: 100%;
+  position: relative;
+}
+
+.messageVideo {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  display: block;
+}
+
+.videoCaption {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .chatWindow {
+    width: calc(100vw - 40px);
+    max-width: 320px;
+    right: 10px;
+  }
 }
