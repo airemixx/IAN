@@ -290,11 +290,11 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
                 background: '#fff',
               }}
             >
-              <option value="全站搜尋">全站搜尋</option>
-              <option value="產品">產品</option>
+              {/* <option value="全站搜尋">全站搜尋</option>
+              <option value="產品">產品</option> */}
               <option value="最新消息">最新消息</option>
-              <option value="課程">課程</option>
-              <option value="租賃">租賃</option>
+              {/* <option value="課程">課程</option>
+              <option value="租賃">租賃</option> */}
             </select>
             <button className="search-button" onClick={handleSearch}>
               搜尋

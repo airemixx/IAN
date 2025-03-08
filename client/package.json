@@ -65,6 +65,7 @@
     "react-toastify": "^11.0.3",
     "react-tooltip": "^5.28.0",
     "react-typed": "^2.0.12",
+    "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.17.2",
     "sweetalert2-react-content": "^5.1.0",
     "swiper": "^11.2.2"

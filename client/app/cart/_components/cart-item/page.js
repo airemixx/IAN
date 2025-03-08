@@ -1,6 +1,7 @@
 import styles from "./cart-item.module.scss";
 import ProductDetails from "../product-details/page";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function CartItem({ id, itemData, page }) {
   const { image, brand, name, price, specs } = itemData;
@@ -14,25 +15,43 @@ export default function CartItem({ id, itemData, page }) {
   }, []);
 
   function handleDeleteItem() {
-    const confirmDelete = window.confirm("是否要從購物車刪除該商品？");
-    if (confirmDelete) {
-      // 取得 localStorage 中的購物車數據
-      let cart = JSON.parse(localStorage.getItem("cart")) || {};
-
-      delete cart[id]
-      let updatedCart = Object.entries(cart).filter(v => v != null);// 過濾掉該商品
-      updatedCart = updatedCart.map(v => v[1])
-
-      console.log(updatedCart);
-      localStorage.removeItem('cart')
-      // // 轉回物件形式並更新 localStorage
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-      // 刷新頁面或通知父層更新購物車
-      window.location.reload();
-
-    }
+    Swal.fire({
+      title: "確定要刪除嗎？",
+      text: "刪除後將無法恢復此商品！",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#CA6D1B",
+      cancelButtonColor: "#003150",
+      confirmButtonText: "刪除",
+      cancelButtonText: "取消",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 取得 localStorage 中的購物車數據
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+  
+        delete cart[id];
+        let updatedCart = Object.entries(cart).filter(v => v != null); // 過濾掉該商品
+        updatedCart = updatedCart.map(v => v[1]);
+  
+        console.log(updatedCart);
+        localStorage.removeItem("cart");
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+  
+        // 顯示刪除成功提示
+        Swal.fire({
+          title: "已刪除！",
+          text: "商品已從購物車移除。",
+          icon: "success",
+          confirmButtonText: "確定",
+        }).then(() => {
+          // 刷新頁面或通知父層更新購物車
+          window.location.reload();
+        });
+      }
+    });
   }
+  
+  
   return (
     <>
       <div className="d-none d-sm-block d-flex flex-grow-1">
