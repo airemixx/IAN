@@ -127,21 +127,21 @@ export default function ChatWidget() {
     }
   }, [messages]);
 
-  // 單獨處理已讀狀態更新
-  useEffect(() => {
-    if (messages.length > 0) {
-      const hasUnreadUserMessages = messages.some(msg => msg.sender === "user" && !msg.read);
+  // // 單獨處理已讀狀態更新
+  // useEffect(() => {
+  //   if (messages.length > 0) {
+  //     const hasUnreadUserMessages = messages.some(msg => msg.sender === "user" && !msg.read);
 
-      if (hasUnreadUserMessages) {
-        const timer = setTimeout(() => {
-          setMessages((prevMessages) => prevMessages.map((msg) =>
-            (msg.sender === "user" && !msg.read) ? { ...msg, read: true } : msg
-          ));
-        }, 2000);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [messages]);
+  //     if (hasUnreadUserMessages) {
+  //       const timer = setTimeout(() => {
+  //         setMessages((prevMessages) => prevMessages.map((msg) =>
+  //           (msg.sender === "user" && !msg.read) ? { ...msg, read: true } : msg
+  //         ));
+  //       }, 2000);
+  //       return () => clearTimeout(timer);
+  //     }
+  //   }
+  // }, [messages]);
 
   useEffect(() => {
     if (isOpen) {

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import Cookies from 'js-cookie';
+import ReactDOM, { createRoot, flushSync } from 'react-dom';
 
 const SocketContext = createContext(null);
 
@@ -22,7 +23,7 @@ const getStoredToken = () => {
   } catch (e) {
     console.log('無法從 localStorage 獲取 token:', e);
   }
-  
+
   try {
     // 嘗試從 cookies 獲取
     const token = Cookies.get('authToken');
@@ -30,7 +31,7 @@ const getStoredToken = () => {
   } catch (e) {
     console.log('無法從 cookies 獲取 token:', e);
   }
-  
+
   // 無痕模式下使用記憶體存儲
   return sessionTokenInMemory || null;
 };
@@ -65,24 +66,24 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
     if (socket) {
       socket.disconnect();
     }
-    
+
     try {
       console.log('嘗試建立Socket.io連接...');
-      
-      // 建立新連接
+
+      // 優化 Socket.io 連接配置
       const newSocket = io('http://localhost:8001', {
-        transports: ['websocket', 'polling'],
+        transports: ['websocket'], // 只使用 WebSocket，不要降級到輪詢
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         timeout: 10000
       });
-      
+
       newSocket.on('connect', () => {
         console.log('Socket連接成功, ID:', newSocket.id);
         setIsConnected(true);
         setError(null);
         setConnectionAttempts(0);
-        
+
         // 發送認證數據
         const authData = {
           auth: {
@@ -92,38 +93,38 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
             userName: tempUser.name
           }
         };
-        
+
         console.log('發送認證數據:', authData);
         newSocket.emit('authenticate', authData);
       });
-      
+
       // 監聽認證成功
       newSocket.on('auth_success', (userData) => {
         console.log('認證成功:', userData);
       });
-      
+
       // 監聽連接錯誤
       newSocket.on('connect_error', (err) => {
         console.error('Socket連接錯誤:', err.message);
         setError(`連接錯誤: ${err.message}`);
         setConnectionAttempts(prev => prev + 1);
       });
-      
+
       // 監聽斷開連接
       newSocket.on('disconnect', (reason) => {
         console.log('Socket連接斷開:', reason);
         setIsConnected(false);
       });
-      
+
       // 設置 socket 實例
       setSocket(newSocket);
-      
+
       // 接收消息處理
       newSocket.on('receive_message', (message) => {
         console.log('收到新消息:', message);
         setMessages(prev => [...prev, message]);
       });
-      
+
       // 監聽用戶清單更新 (僅管理員)
       if (isAdmin) {
         newSocket.on('active_users', (users) => {
@@ -131,18 +132,18 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
           setUserList(users);
         });
       }
-      
+
       // 監聽聊天歷史
       newSocket.on('chat_history', (history) => {
         console.log('收到聊天歷史:', history);
         setMessages(history || []);
       });
-      
+
       // 監聽輸入狀態
       newSocket.on('typing_start', ({ userId, userName }) => {
         setTypingUsers(prev => ({ ...prev, [userId]: userName }));
       });
-      
+
       newSocket.on('typing_end', ({ userId }) => {
         setTypingUsers(prev => {
           const newState = { ...prev };
@@ -150,7 +151,97 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
           return newState;
         });
       });
-      
+
+      // 修改 update_user_unread_count 事件處理
+      newSocket.on('update_user_unread_count', (data) => {
+        console.log('【Socket接收】未讀計數更新:', JSON.stringify(data));
+
+        try {
+          flushSync(() => {
+            setUserList(prevList => {
+              return prevList.map(user => {
+                if (user.id === data.userId) {
+                  return {
+                    ...user,
+                    unreadCount: data.unreadCount,
+                    _updateId: Date.now() + Math.random() // 確保視圖更新
+                  };
+                }
+                return user;
+              });
+            });
+          });
+
+          // 同時分發自定義事件
+          window.dispatchEvent(new CustomEvent('force-chat-update', {
+            detail: { type: 'unread', data, timestamp: Date.now() }
+          }));
+
+          // 添加這行：轉發為 chat-unread-update 事件，讓 admin-chat/index.js 能夠接收到
+          window.dispatchEvent(new CustomEvent('chat-unread-update', {
+            detail: data
+          }));
+        } catch (error) {
+          console.error('處理未讀計數更新失敗:', error);
+        }
+      });
+
+      // 修改 update_user_last_message 事件處理
+      newSocket.on('update_user_last_message', (data) => {
+        console.log('【Socket接收】最新訊息更新:', JSON.stringify(data));
+
+        try {
+          flushSync(() => {
+            setUserList(prevList => {
+              // 查找用戶在列表中的位置
+              const userIndex = prevList.findIndex(u => u.id === data.userId);
+
+              // 創建全新的數組
+              const newList = [...prevList.filter(u => u.id !== data.userId)];
+
+              // 構建更新後的用戶數據
+              const updatedUser = userIndex >= 0
+                ? {
+                  ...prevList[userIndex],
+                  lastMessage: data.lastMessage || '',
+                  lastMessageType: data.lastMessageType || 'text',
+                  mediaCount: data.mediaCount || 0,
+                  timestamp: new Date(data.timestamp || Date.now()),
+                  _updateId: Date.now() + Math.random() // 確保視圖更新
+                }
+                : {
+                  id: data.userId,
+                  name: data.userName || '用戶',
+                  avatar: data.avatar || '/images/chatRoom/user1.jpg',
+                  lastMessage: data.lastMessage || '',
+                  lastMessageType: data.lastMessageType || 'text',
+                  mediaCount: data.mediaCount || 0,
+                  timestamp: new Date(data.timestamp || Date.now()),
+                  unreadCount: 1,
+                  _updateId: Date.now() + Math.random()
+                };
+
+              // 放到列表最前面
+              newList.unshift(updatedUser);
+
+              return newList; // 返回全新數組確保更新
+            });
+          });
+
+          // 同時分發兩個自定義事件
+          window.dispatchEvent(new CustomEvent('force-chat-update', {
+            detail: { type: 'message', data, timestamp: Date.now() }
+          }));
+
+          // 添加這行：轉發為 chat-message-update 事件
+          window.dispatchEvent(new CustomEvent('chat-message-update', {
+            detail: data
+          }));
+        } catch (error) {
+          console.error('處理最新消息更新失敗:', error);
+        }
+      });
+
       // 清理函數
       return () => {
         console.log('清理Socket連接');
@@ -163,6 +254,18 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
     }
   }, [user, isAdmin, connectionAttempts >= 5 ? null : connectionAttempts]);
 
+  // 在 useEffect 底部添加
+
+  // 監控 userList 變化
+  useEffect(() => {
+    console.log('userList 狀態已變更:', userList);
+  }, [userList]);
+
+  // 監控 messages 變化
+  useEffect(() => {
+    console.log('messages 狀態已變更, 當前消息數量:', messages.length);
+  }, [messages]);
+
   // 發送消息函數
   const sendMessage = useCallback((messageData) => {
     if (!socket) {
@@ -170,14 +273,14 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
       setError('Socket不存在，請重新載入頁面');
       return;
     }
-    
+
     if (!isConnected) {
       console.error('Socket未連接，無法發送消息');
-      
+
       // 嘗試重新連接
       try {
         socket.connect();
-        
+
         // 將消息加入待發送隊列，顯示為待發送狀態
         const pendingMessage = {
           id: Date.now().toString(),
@@ -187,21 +290,21 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
           read: false,
           pending: true
         };
-        
+
         setMessages(prev => [...prev, pendingMessage]);
       } catch (e) {
         console.error('重新連接失敗:', e);
         setError('連接失敗，請重新載入頁面');
       }
-      
+
       return;
     }
-    
+
     try {
       // 發送消息
       console.log('發送消息:', messageData);
       socket.emit('send_message', messageData);
-      
+
       // 將消息添加到本地狀態以立即顯示
       const localMessage = {
         id: Date.now().toString() + '-' + Math.random().toString(36).substring(2, 10),
@@ -212,10 +315,10 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
         fileUrl: messageData.message?.fileUrl,
         fileType: messageData.message?.fileType
       };
-      
+
       // 添加到本地消息
       setMessages(prev => [...prev, localMessage]);
-      
+
       return localMessage;
     } catch (e) {
       console.error('發送消息失敗:', e);
@@ -229,7 +332,7 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
       console.error('Socket未連接，無法選擇用戶');
       return;
     }
-    
+
     try {
       socket.emit('select_user', userId);
       setSelectedUser(userId);
@@ -238,26 +341,48 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
     }
   }, [socket, isConnected]);
 
-  // 標記消息已讀
-  const markAsRead = useCallback((messageIds, userId) => {
-    if (!socket || !isConnected || !messageIds.length) return;
-    
+  // 在 selectUser 函數下方新增 leaveUserChat 函數
+  const leaveUserChat = useCallback((userId) => {
+    if (!socket || !isConnected) {
+      console.error('Socket未連接，無法離開聊天室');
+      return;
+    }
+
     try {
-      socket.emit('mark_as_read', { messageIds, userId });
-      
-      // 更新本地消息狀態
-      setMessages(prev => 
-        prev.map(msg => messageIds.includes(msg.id) ? { ...msg, read: true } : msg)
-      );
+      socket.emit('leave_user_chat', userId);
+      // 不需要清除 selectedUser，只是通知服務器管理員離開了此用戶的聊天
     } catch (e) {
-      console.error('標記消息已讀失敗:', e);
+      console.error('離開用戶聊天室失敗:', e);
     }
   }, [socket, isConnected]);
+
+  // 標記消息已讀
+  const markAsRead = useCallback((userId) => {
+    if (!socket || !isConnected) {
+      console.error('Socket未連接，無法標記已讀');
+      return;
+    }
+
+    // 找出所有來自這個用戶的未讀消息
+    const unreadMessages = messages
+      .filter(msg => msg.sender === 'user' && !msg.read)
+      .map(msg => msg.id);
+
+    if (unreadMessages.length === 0) return;
+
+    // 向服務器發送標記已讀的請求
+    socket.emit('mark_as_read', { messageIds: unreadMessages, userId });
+
+    // 更新本地消息狀態
+    setMessages(prevMessages => prevMessages.map(msg =>
+      unreadMessages.includes(msg.id) ? { ...msg, read: true } : msg
+    ));
+  }, [socket, isConnected, messages, setMessages]);
 
   // 通知輸入狀態
   const notifyTyping = useCallback((isTyping) => {
     if (!socket || !isConnected) return;
-    
+
     try {
       socket.emit(isTyping ? 'typing_start' : 'typing_end');
     } catch (e) {
@@ -283,6 +408,7 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
     markAsRead,
     notifyTyping,
     selectUser,
+    leaveUserChat, // 添加到上下文
     setMessages,
     reconnect,
     setSelectedUser

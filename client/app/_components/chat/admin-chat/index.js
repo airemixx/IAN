@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "react-bootstrap"
 import { X, Check, CheckAll } from "react-bootstrap-icons"
@@ -29,7 +29,7 @@ const formatMessageTime = (timestamp) => {
   const isSameYear = now.getFullYear() === messageDate.getFullYear();
 
   // 檢查是否同一天
-  const isSameDay = isSameYear &&
+  const isSameYearAndDay = isSameYear &&
     now.getMonth() === messageDate.getMonth() &&
     now.getDate() === messageDate.getDate();
 
@@ -38,7 +38,7 @@ const formatMessageTime = (timestamp) => {
   const minutes = messageDate.getMinutes().toString().padStart(2, '0');
   const timeStr = `${hours}:${minutes}`;
 
-  if (isSameDay) {
+  if (isSameYearAndDay) {
     return timeStr;
   } else if (isSameYear) {
     const month = messageDate.getMonth() + 1;
@@ -130,25 +130,94 @@ const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
 
 export default function ChatWidget() {
   // 使用 Socket 上下文
+  const socketContext = useSocket();
+
+  // 創建一個強制更新機制
+  const [updateCounter, setUpdateCounter] = useState(0);
+  const forceUpdate = useCallback(() => setUpdateCounter(c => c + 1), []);
+
+  // 從 socketContext 解構所需的數據和函數
   const {
     socket,
     isConnected,
     messages: socketMessages,
-    userList,
+    userList: contextUserList,
     selectedUser,
     error,
     sendMessage: socketSendMessage,
     markAsRead,
     selectUser,
-    setMessages: setSocketMessages,  // 新增這行，解構 setMessages
+    leaveUserChat,
+    setMessages: setSocketMessages,
     setSelectedUser
-  } = useSocket();
+  } = socketContext;
+
+  // 使用本地狀態存儲用戶列表
+  const [users, setUsers] = useState([]);
+
+  // 監聽 userList 變化，不再使用 useSyncExternalStore
+  useEffect(() => {
+    if (!contextUserList || contextUserList.length === 0) return;
+
+    console.log('【用戶列表】更新:', contextUserList.length);
+
+    // 使用現有狀態智能合併
+    setUsers(prevUsers => {
+      // 建立用戶 ID 到用戶物件的映射，優先使用本地狀態
+      const userMap = {};
+      prevUsers.forEach(user => {
+        userMap[user.id] = user;
+      });
+
+      // 合併 contextUserList 中的資料，但保留未讀計數和最後訊息等本地狀態
+      return contextUserList.map(contextUser => {
+        const existingUser = userMap[contextUser.id];
+        if (existingUser) {
+          return {
+            ...contextUser,
+            // 保留本地已更新的狀態
+            unreadCount: existingUser.unreadCount ?? contextUser.unreadCount,
+            lastMessage: existingUser.lastMessage || contextUser.lastMessage,
+            lastMessageType: existingUser.lastMessageType || contextUser.lastMessageType,
+            mediaCount: existingUser.mediaCount || contextUser.mediaCount,
+            timestamp: existingUser.timestamp || contextUser.timestamp,
+            _updateId: existingUser._updateId || contextUser._updateId || Date.now()
+          };
+        }
+        return contextUser;
+      });
+    });
+  }, [contextUserList]);
+
+  // // 優化用戶列表更新機制
+  // useEffect(() => {
+  //   if (contextUserList && contextUserList.length > 0) {
+  //     console.log('接收到用戶列表更新，用戶數量:', contextUserList.length);
+
+  //     // 使用 setState 函數直接設置新陣列，不要使用 map
+  //     setUsers(contextUserList);
+
+  //     // 添加更多調試信息
+  //     contextUserList.forEach(user => {
+  //       console.log(`用戶 ${user.id} - ${user.name}: 未讀消息 ${user.unreadCount}, 最新消息 ${user.lastMessage}, 時間: ${user.timestamp}`);
+  //     });
+  //   }
+  // }, [contextUserList]);
+
+  // 移除多餘的定期更新計時器，只保留一個
+  useEffect(() => {
+    // 單一定時更新，間隔更長以減少性能消耗
+    const intervalId = setInterval(() => {
+      forceUpdate();
+    }, 3000); // 3秒更新一次，頻率降低
+
+    return () => clearInterval(intervalId);
+  }, [forceUpdate]);
 
   const [isOpen, setIsOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   // 使用 Socket 提供的用戶列表而非靜態數據
-  const [users, setUsers] = useState([])
   const [activeUserId, setActiveUserId] = useState(null);
 
   // 使用 Socket 上下文中的消息列表
@@ -207,58 +276,12 @@ export default function ChatWidget() {
     }
   }, [messages]);
 
-  // 單獨處理已讀狀態更新
-  useEffect(() => {
-    if (messages.length > 0) {
-      // 尋找未讀的用戶訊息
-      const hasUnreadUserMessages = messages.some(msg => msg.sender === "user" && !msg.read);
-
-      if (hasUnreadUserMessages) {
-        const timer = setTimeout(() => {
-          setSocketMessages((prevMessages) => prevMessages.map((msg) =>
-            (msg.sender === "user" && !msg.read) ? { ...msg, read: true } : msg
-          ));
-        }, 500);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [messages, setSocketMessages]);
-
-  // 單獨處理已讀狀態更新
-  useEffect(() => {
-    if (messages.length > 0) {
-      // 尋找未讀的客服訊息
-      const hasUnreadAgentMessages = messages.some(msg => msg.sender === "agent" && !msg.read);
-
-      if (hasUnreadAgentMessages) {
-        const timer = setTimeout(() => {
-          setSocketMessages((prevMessages) => prevMessages.map((msg) =>
-            (msg.sender === "agent" && !msg.read) ? { ...msg, read: true } : msg
-          ));
-        }, 500);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [messages, setSocketMessages]);
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(scrollToBottom, 300);
     }
   }, [isOpen]);
-
-  // 在組件掛載時監職用戶列表更新
-  useEffect(() => {
-    if (userList && userList.length > 0) {
-      setUsers(userList);
-      
-      // 如果尚未選擇用戶，則自動選擇第一個
-      if (!activeUserId && userList.length > 0) {
-        setActiveUserId(userList[0].id);
-        selectUser(userList[0].id);
-      }
-    }
-  }, [userList, activeUserId, selectUser]);
 
   // 監聽消息更新
   useEffect(() => {
@@ -267,26 +290,56 @@ export default function ChatWidget() {
     }
   }, [socketMessages, setSocketMessages]);
 
+  // 添加 useEffect 監聽組件卸載時通知服務器
+  useEffect(() => {
+    return () => {
+      // 當組件卸載或用戶刷新頁面時，通知服務器管理員離開聊天
+      if (activeUserId) {
+        leaveUserChat(activeUserId);
+      }
+    };
+  }, [activeUserId, leaveUserChat]);
+
+  // 修改 toggleChat 函數，使聊天窗口打開時同時顯示用戶列表
   const toggleChat = () => {
-    setIsOpen(!isOpen)
+    // 如果目前有選擇用戶且要關閉聊天，通知服務器管理員離開聊天
+    if (isOpen && activeUserId) {
+      leaveUserChat(activeUserId);
+    }
+
+    // 新增：如果是從關閉狀態打開聊天窗，同時打開用戶列表
+    if (!isOpen) {
+      setIsMenuOpen(true); // 設置用戶列表為開啟狀態
+    }
+
+    setIsOpen(!isOpen);
   }
 
   // 更新活躍用戶和選擇用戶
   const handleUserSelect = (userId) => {
+    // 如果已經有選擇用戶且要切換到不同用戶，先通知離開當前用戶聊天
+    if (activeUserId && activeUserId !== userId) {
+      leaveUserChat(activeUserId);
+    }
+
     setActiveUserId(userId);
     selectUser(userId);
+
+    // 進入聊天室時才標記該用戶的消息為已讀
+    markAsRead(userId);
+
     setIsMenuOpen(false);
   };
 
   // 修改發送消息函數以使用 Socket
   const handleSendMessage = (e) => {
     e.preventDefault();
-  
+
     const hasText = newMessage.trim() !== "";
     const hasFiles = selectedFiles.length > 0;
-  
+
     if (!hasText && !hasFiles) return;
-  
+
     // 發送文字消息
     if (hasText) {
       const messageData = {
@@ -295,14 +348,14 @@ export default function ChatWidget() {
         },
         to: activeUserId
       };
-      
+
       // 只發送消息，不在本地添加
       socketSendMessage(messageData);
-      
+
       // 清空輸入框
       setNewMessage("");
     }
-  
+
     // 處理文件發送
     if (hasFiles) {
       selectedFiles.forEach(fileObj => {
@@ -310,7 +363,7 @@ export default function ChatWidget() {
         sendFileMessage(fileObj);
       });
     }
-  
+
     setTimeout(scrollToBottom, 100);
   }
 
@@ -358,53 +411,53 @@ export default function ChatWidget() {
   };
 
   // 修改 sendFileMessage 函數中的消息創建
-const sendFileMessage = async (fileObj) => {
-  const isImage = fileObj.type === 'image';
-  
-  try {
-    setUploading(true);
-    
-    // 創建 FormData 對象
-    const formData = new FormData();
-    formData.append('file', fileObj.file);
-    
-    // 發送到服務器
-    const response = await fetch('http://localhost:8000/api/uploads', {
-      method: 'POST',
-      body: formData,
-    });
-    
-    const result = await response.json();
-    
-    if (result.status === 'success') {
-      // 構造消息數據
-      const messageData = {
-        message: {
-          // text: isImage ? '圖片訊息' : '影片訊息',
-          fileUrl: result.file.url, // 使用服務器返回的 URL
-          fileType: result.file.type
-        },
-        to: activeUserId
-      };
-      
+  const sendFileMessage = async (fileObj) => {
+    const isImage = fileObj.type === 'image';
+
+    try {
+      setUploading(true);
+
+      // 創建 FormData 對象
+      const formData = new FormData();
+      formData.append('file', fileObj.file);
+
       // 發送到服務器
-      socketSendMessage(messageData);
-      
-    } else {
-      console.error('文件上傳失敗:', result.message);
+      const response = await fetch('http://localhost:8000/api/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        // 構造消息數據
+        const messageData = {
+          message: {
+            // text: isImage ? '圖片訊息' : '影片訊息',
+            fileUrl: result.file.url, // 使用服務器返回的 URL
+            fileType: result.file.type
+          },
+          to: activeUserId
+        };
+
+        // 發送到服務器
+        socketSendMessage(messageData);
+
+      } else {
+        console.error('文件上傳失敗:', result.message);
+      }
+    } catch (error) {
+      console.error('檔案上傳錯誤:', error);
+    } finally {
+      setUploading(false);
     }
-  } catch (error) {
-    console.error('檔案上傳錯誤:', error);
-  } finally {
-    setUploading(false);
-  }
-  
-  // 移除已發送的文件
-  setSelectedFiles(prev => prev.filter(file => file.id !== fileObj.id));
-  if (selectedFiles.length <= 1) {
-    setIsPreviewOpen(false);
-  }
-};
+
+    // 移除已發送的文件
+    setSelectedFiles(prev => prev.filter(file => file.id !== fileObj.id));
+    if (selectedFiles.length <= 1) {
+      setIsPreviewOpen(false);
+    }
+  };
 
   const handleImageClick = (imageUrl) => {
     setEnlargeImage(imageUrl);
@@ -447,49 +500,134 @@ const sendFileMessage = async (fileObj) => {
   }, [showEmojiPicker]);
 
   // 添加這個函數到現有代碼中
-const renderMessageContent = (message) => {
-  // 如果消息包含文件URL
-  if (message.fileUrl) {
-    if (message.fileType === 'image') {
-      return (
-        <div className={styles.imageContainer}>
-          <img 
-            src={message.fileUrl} 
-            alt="圖片消息"
-            className={styles.messageImage}
-            onClick={() => window.open(message.fileUrl, '_blank')}
-          />
-          {message.text && <div className={styles.imageCaption}>{message.text}</div>}
-        </div>
-      );
-    } else if (message.fileType === 'video') {
-      return (
-        <div className={styles.videoContainer}>
-          <video 
-            src={message.fileUrl} 
-            controls
-            className={styles.messageVideo}
-            onError={(e) => console.error("影片加載錯誤", e)}
-          />
-          {message.text && <div className={styles.videoCaption}>{message.text}</div>}
-        </div>
-      );
-    }
-  }
-  
-  // 處理文本消息，支持表情符號
-  return (
-    <div>
-      {message.text.split(captureEmojiRegex).map((part, index) => {
-        return captureEmojiRegex.test(part) ? (
-          <span key={index} className={styles.emoji}>{part}</span>
-        ) : (
-          <span key={index}>{part}</span>
+  const renderMessageContent = (message) => {
+    // 如果消息包含文件URL
+    if (message.fileUrl) {
+      if (message.fileType === 'image') {
+        return (
+          <div className={styles.imageContainer}>
+            <img
+              src={message.fileUrl}
+              alt="圖片消息"
+              className={styles.messageImage}
+              onClick={() => window.open(message.fileUrl, '_blank')}
+            />
+            {message.text && <div className={styles.imageCaption}>{message.text}</div>}
+          </div>
         );
-      })}
-    </div>
-  );
-};
+      } else if (message.fileType === 'video') {
+        return (
+          <div className={styles.videoContainer}>
+            <video
+              src={message.fileUrl}
+              controls
+              className={styles.messageVideo}
+              onError={(e) => console.error("影片加載錯誤", e)}
+            />
+            {message.text && <div className={styles.videoCaption}>{message.text}</div>}
+          </div>
+        );
+      }
+    }
+
+    // 處理文本消息，支持表情符號
+    return (
+      <div>
+        {message.text.split(captureEmojiRegex).map((part, index) => {
+          return captureEmojiRegex.test(part) ? (
+            <span key={index} className={styles.emoji}>{part}</span>
+          ) : (
+            <span key={index}>{part}</span>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // 在渲染函數中使用 forceUpdate 確保重新渲染
+  // 在 return 附近添加此行，不需要在JSX中使用
+  const renderTrigger = forceUpdate;
+
+  // 修改現有的事件監聽處理函數
+  useEffect(() => {
+    // 未讀計數更新事件
+    const handleUnreadUpdate = (e) => {
+      const { userId, unreadCount } = e.detail;
+      console.log(`【未讀更新】用戶=${userId}, 計數=${unreadCount}`);
+
+      // 只使用 React 狀態更新，不直接操作 DOM
+      setUsers(prev => prev.map(user => {
+        if (user.id === userId) {
+          return {
+            ...user,
+            unreadCount,
+            _updateId: Date.now() + Math.random()
+          };
+        }
+        return user;
+      }));
+    };
+
+    // 最新消息更新事件
+    const handleMessageUpdate = (e) => {
+      const data = e.detail;
+      console.log(`【消息更新】用戶=${data.userId}, 消息=${data.lastMessage}`);
+
+      setUsers(prev => {
+        // 先找到指定用戶
+        const userIndex = prev.findIndex(u => u.id === data.userId);
+        if (userIndex === -1) return prev; // 找不到用戶，不更新
+
+        // 建立新陣列而非直接修改
+        const newUsers = [...prev];
+        const userToUpdate = { ...newUsers[userIndex] };
+
+        // 更新用戶資料
+        userToUpdate.lastMessage = data.lastMessage || '';
+        userToUpdate.lastMessageType = data.lastMessageType || 'text';
+        userToUpdate.mediaCount = data.mediaCount || 0;
+        userToUpdate.timestamp = new Date();
+        userToUpdate._updateId = Date.now();
+
+        // 移除舊位置
+        newUsers.splice(userIndex, 1);
+        // 加到最前面
+        newUsers.unshift(userToUpdate);
+
+        return newUsers;
+      });
+    };
+
+    window.addEventListener('chat-unread-update', handleUnreadUpdate);
+    window.addEventListener('chat-message-update', handleMessageUpdate);
+
+    return () => {
+      window.removeEventListener('chat-unread-update', handleUnreadUpdate);
+      window.removeEventListener('chat-message-update', handleMessageUpdate);
+    };
+  }, [forceUpdate, styles]);
+
+  // 添加一個強力的強制更新機制
+  useEffect(() => {
+    const handleForceUpdate = (e) => {
+      console.log(`【強制更新】類型=${e.detail.type}, 時間=${new Date(e.detail.timestamp).toLocaleTimeString()}`);
+
+      // 直接觸發一次強制刷新
+      forceUpdate();
+
+      // 不再無條件覆蓋整個列表，而是智能合併
+      if (e.detail.type === 'full-refresh') {
+        // 只在需要完整刷新時才替換整個列表
+        setUsers([...contextUserList]);
+      }
+    };
+
+    window.addEventListener('force-chat-update', handleForceUpdate);
+
+    return () => {
+      window.removeEventListener('force-chat-update', handleForceUpdate);
+    };
+  }, [contextUserList, forceUpdate]);
 
   return (
     <div className={styles.chatWidgetContainer}>
@@ -522,41 +660,67 @@ const renderMessageContent = (message) => {
                   <X size={24} />
                 </button>
               </div>
+              {/* 修改用戶列表渲染部分 */}
               <div className={styles.userList}>
-                {users.map(user => (
-                  <div
-                    key={user.id}
-                    className={`${styles.userItem} ${activeUserId === user.id ? styles.active : ''}`}
-                    onClick={() => handleUserSelect(user.id)}
-                  >
-                    <div className={styles.userAvatar}>
-                      <img src={user.avatar} alt={user.name} />
-                    </div>
-                    <div className={styles.userInfo}>
-                      <div className={styles.userInfoHeader}>
-                        <span className={styles.userName}>{user.name}</span>
-                        <small className={styles.messageTime}>
-                          {formatRelativeMessageTime(user.timestamp)}
-                        </small>
+                {users.map(user => {
+                  // 確保每次重新渲染時都有唯一且穩定的key
+                  const renderKey = `user-${user.id}-${user._updateId || ''}`;
+
+                  // 創建一個封裝函數來處理時間格式化邏輯
+                  const timeDisplay = (() => {
+                    try {
+                      if (!user.timestamp) return '剛剛';
+
+                      // 統一將時間戳轉換為 Date 對象
+                      const timestamp = user.timestamp instanceof Date
+                        ? user.timestamp
+                        : typeof user.timestamp === 'string'
+                          ? new Date(user.timestamp)
+                          : new Date();
+
+                      return formatRelativeMessageTime(timestamp);
+                    } catch (err) {
+                      console.error(`時間格式化錯誤 (用戶=${user.id}):`, err);
+                      return '剛剛';
+                    }
+                  })();
+
+                  return (
+                    <div
+                      key={`user-${user.id}-${user._updateId || ''}`}  // 每次渲染都有全新的 key
+                      data-user-id={user.id}
+                      className={`${styles.userItem} ${activeUserId === user.id ? styles.active : ''}`}
+                      onClick={() => handleUserSelect(user.id)}
+                    >
+                      <div className={styles.userAvatar}>
+                        <img src={user.avatar || "/images/chatRoom/user1.jpg"} alt={user.name} />
                       </div>
-                      <div className={styles.lastMessageRow}>
-                        <p className={styles.userLastMessage}>
-                          {user.lastMessageType === 'text'
-                            ? user.lastMessage
-                            : user.lastMessageType === 'image'
-                              ? `已傳送${user.mediaCount}張圖片`
-                              : `已傳送${user.mediaCount}個影片`}
-                        </p>
-                        {/* 在用戶列表項目中添加條件類 */}
-                        {user.unreadCount > 0 && (
-                          <span className={`${styles.unreadBadge} ${getUnreadBadgeClass(user.unreadCount)}`}>
-                            {formatUnreadCount(user.unreadCount)}
-                          </span>
-                        )}
+                      <div className={styles.userInfo}>
+                        <div className={styles.userInfoHeader}>
+                          <span className={styles.userName}>{user.name || '用戶'}</span>
+                          <small className={styles.messageTime}>{timeDisplay}</small>
+                        </div>
+                        <div className={styles.lastMessageRow}>
+                          <p className={styles.userLastMessage}>
+                            {user.lastMessageType === 'text'
+                              ? (user.lastMessage || '暫無訊息')
+                              : user.lastMessageType === 'image'
+                                ? `已傳送${user.mediaCount || 1}張圖片`
+                                : `已傳送${user.mediaCount || 1}個影片`}
+                          </p>
+                          {user.unreadCount > 0 && (
+                            <span
+                              className={`${styles.unreadBadge} unreadBadge ${user.unreadCount >= 100 ? styles.unreadBadgePill : styles.unreadBadgeCircle}`}
+                              style={{ display: 'flex' }}
+                            >
+                              {user.unreadCount > 99 ? '99+' : user.unreadCount}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -717,7 +881,7 @@ const renderMessageContent = (message) => {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       className={styles.messageInput}
-                      autocomplete="off"
+                      autoComplete="off"
                     />
                   </div>
                   <div className="image-send-emoji-btn d-flex align-items-center">
