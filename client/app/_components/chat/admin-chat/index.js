@@ -734,14 +734,23 @@ export default function ChatWidget() {
                     color="white"
                     duration={0.3}
                     toggled={isMenuOpen}
-                    toggle={() => setIsMenuOpen(!isMenuOpen)}
+                    toggle={() => {
+                      // 當要打開選單並且目前有選定用戶時，通知伺服器離開聊天室
+                      if (!isMenuOpen && activeUserId) {
+                        console.log(`管理員打開選單，離開用戶 ${activeUserId} 的聊天室`);
+                        leaveUserChat(activeUserId);
+                      }
+                      setIsMenuOpen(!isMenuOpen);
+                    }}
                     easing="ease-in"
                     label="顯示選單"
                   />
                 </div>
 
                 <div className={styles.headerUserInfo}>
-                  <div className={styles.headerUserName}>張小明</div> {/* 注意這裡改為 headerUserName */}
+                  <div className={styles.headerUserName}>
+                    {users.find(user => user.id === activeUserId)?.name || '請選擇用戶'}
+                  </div>
                 </div>
 
                 <button className={styles.iconButton} onClick={toggleChat}>
