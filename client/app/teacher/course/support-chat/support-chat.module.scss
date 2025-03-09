@@ -1,0 +1,105 @@
+/* 整體樣式 */
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+.supportTitle {
+margin: 2rem 0;
+  font-size: 1.5rem;
+  color: var(--primary-color-med);
+}
+
+/* 左側：聊天室列表 */
+.chatList {
+  border-right: 2px solid #ddd;
+  height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.chatItem {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.chatItem:hover,
+.chatItem.active {
+  background: #f0f0f0;
+}
+
+/* 右側：聊天視窗 */
+.chatWindow {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  padding: 20px;
+}
+
+.chatHeader {
+  padding: 15px;
+  text-align: center;
+  background-color: var(--white);
+  border-radius: 1rem 1rem 0 0;
+}
+
+/* 訊息內容 */
+.chatBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white);
+}
+
+/* 訊息泡泡 */
+.message {
+  max-width: 60%;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+.teacher {
+  align-self: flex-end;
+  background: #007bff;
+  color: white;
+}
+
+.admin {
+  align-self: flex-start;
+  background: #e4e6eb;
+  color: black;
+}
+
+/* 訊息輸入框 */
+.chatFooter {
+  display: flex;
+  padding: 10px;
+  background: #f8f9fa;
+  border-top: 2px solid #ddd;
+}
+
+.inputField {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.sendButton {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background: var(--primary-color-med);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.sendButton:hover {
+  background: var(--primary-color);
+}

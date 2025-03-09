@@ -19,6 +19,10 @@ export default function CourseDetailPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    window.scrollTo(0, 0); //  每次進入時滾動到最上方
+  }, []);
+
+  useEffect(() => {
     if (!id) return // ✅ 避免 ID 未載入時發送錯誤請求
 
     const fetchCourse = async () => {

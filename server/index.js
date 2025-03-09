@@ -36,6 +36,7 @@ import couponRouter from './routes/coupon.js'
 import collect from './routes/collect.js'
 import myorders from './routes/myorders.js'
 import getCpRouter from './routes/getCoupon.js'
+import supportChatRouter from '/routes/support-chat.js'
 
 // 讀取 .env 設定
 dotenv.config()
@@ -116,6 +117,7 @@ app.use("/api/course-ct-upload", courseCtUploadRouter);
 app.use("/api/course-cv-upload", courseCvUploadRouter);
 app.use("/api/teacher-upload", teacherUploadRouter);
 app.use("/uploads", express.static(path.join(process.cwd(), "/public/uploads")));
+app.use("/api/support", supportChatRouter)
 
 app.use('/api/rental', rentalRouter)
 app.use('/api/rental-master', rentalMasterRouter)
