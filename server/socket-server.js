@@ -150,7 +150,7 @@ io.on('connection', (socket) => {
 
       // 添加：發送用戶的消息歷史
       const chatHistory = userChats.get(socket.userId) || [];
-      // 確保消息標記正確
+      // 碩保消息標記正確
       const verifiedHistory = chatHistory.map(msg => ({
         ...msg,
         // 確保 sender 標記正確
@@ -324,10 +324,15 @@ io.on('connection', (socket) => {
 
     if (!chatHistory) return;
 
-    // 更新已讀狀態
+    // 更新已讀狀態 - 確保更新正確的訊息
     let wasUpdated = false;
     for (const message of chatHistory) {
-      if (messageIds.includes(message.id) && !message.read) {
+      // 修改條件：管理員標記用戶訊息，用戶標記客服訊息
+      const shouldMark = socket.isAdmin
+        ? (messageIds.includes(message.id) && !message.read && message.sender === 'user')
+        : (messageIds.includes(message.id) && !message.read && message.sender === 'agent');
+
+      if (shouldMark) {
         message.read = true;
         wasUpdated = true;
       }
@@ -451,6 +456,16 @@ io.on('connection', (socket) => {
       if (userSocketId) {
         const messageIds = unreadMessages.map(m => m.id);
         io.to(userSocketId).emit('messages_read', messageIds);
+
+        // 添加這行：通知當前管理員自己
+        socket.emit('messages_read', { messageIds, userId });
+
+        // 添加這行：通知其他管理員
+        for (const [adminId, adminSocketId] of adminSockets.entries()) {
+          if (adminSocketId !== socket.id) { // 排除自己
+            io.to(adminSocketId).emit('messages_read', { messageIds, userId });
+          }
+        }
       }
     }
   });

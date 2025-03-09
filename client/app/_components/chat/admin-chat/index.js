@@ -146,7 +146,7 @@ export default function ChatWidget() {
     error,
     sendMessage: socketSendMessage,
     markAsRead,
-    selectUser,
+    selectUser: socketSelectUser,
     leaveUserChat,
     setMessages: setSocketMessages,
     setSelectedUser
@@ -316,19 +316,15 @@ export default function ChatWidget() {
   }
 
   // 更新活躍用戶和選擇用戶
-  const handleUserSelect = (userId) => {
-    // 如果已經有選擇用戶且要切換到不同用戶，先通知離開當前用戶聊天
-    if (activeUserId && activeUserId !== userId) {
-      leaveUserChat(activeUserId);
-    }
-
+  const handleSelectUser = (userId) => {
+    socketSelectUser(userId);
     setActiveUserId(userId);
-    selectUser(userId);
-
-    // 進入聊天室時才標記該用戶的消息為已讀
-    markAsRead(userId);
-
     setIsMenuOpen(false);
+
+    // 延遲執行標記已讀，確保訊息已加載
+    setTimeout(() => {
+      markAsRead(userId);
+    }, 500);
   };
 
   // 修改發送消息函數以使用 Socket
@@ -629,6 +625,11 @@ export default function ChatWidget() {
     };
   }, [contextUserList, forceUpdate]);
 
+  useEffect(() => {
+    console.log("訊息狀態已更新:", messages);
+    // 不需要額外設置，只需確保使用 context 中的訊息狀態
+  }, [messages]);
+
   return (
     <div className={styles.chatWidgetContainer}>
       <CSSTransition
@@ -690,7 +691,7 @@ export default function ChatWidget() {
                       key={`user-${user.id}-${user._updateId || ''}`}  // 每次渲染都有全新的 key
                       data-user-id={user.id}
                       className={`${styles.userItem} ${activeUserId === user.id ? styles.active : ''}`}
-                      onClick={() => handleUserSelect(user.id)}
+                      onClick={() => handleSelectUser(user.id)}
                     >
                       <div className={styles.userAvatar}>
                         <img src={user.avatar || "/images/chatRoom/user1.jpg"} alt={user.name} />

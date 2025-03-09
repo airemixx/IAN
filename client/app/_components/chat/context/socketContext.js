@@ -242,6 +242,25 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
         }
       });
 
+      // 在現有的 socket 事件監聽區域中添加此程式碼
+      // 找到其他 newSocket.on(...) 的地方附近添加
+
+      newSocket.on('messages_read', (payload) => {
+        console.log('收到訊息已讀更新:', payload);
+
+        // payload 可能是 messageIds 數組或 {messageIds, userId} 物件
+        const messageIds = Array.isArray(payload) ? payload : payload.messageIds;
+
+        if (!messageIds || !messageIds.length) return;
+
+        // 更新本地訊息狀態
+        setMessages(prevMessages => prevMessages.map(msg =>
+          messageIds.includes(msg.id)
+            ? { ...msg, read: true }
+            : msg
+        ));
+      });
+
       // 清理函數
       return () => {
         console.log('清理Socket連接');
@@ -363,9 +382,19 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
       return;
     }
 
-    // 找出所有來自這個用戶的未讀消息
+    // 找出所有需要標記為已讀的消息
+    // 如果是管理員，標記用戶發送的訊息
+    // 如果是普通用戶，標記管理員發送的訊息
     const unreadMessages = messages
-      .filter(msg => msg.sender === 'user' && !msg.read)
+      .filter(msg => {
+        if (isAdmin) {
+          // 管理員標記用戶訊息為已讀
+          return msg.sender === 'user' && !msg.read;
+        } else {
+          // 用戶標記管理員訊息為已讀
+          return msg.sender === 'agent' && !msg.read;
+        }
+      })
       .map(msg => msg.id);
 
     if (unreadMessages.length === 0) return;
@@ -377,7 +406,7 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
     setMessages(prevMessages => prevMessages.map(msg =>
       unreadMessages.includes(msg.id) ? { ...msg, read: true } : msg
     ));
-  }, [socket, isConnected, messages, setMessages]);
+  }, [socket, isConnected, messages, setMessages, isAdmin]);
 
   // 通知輸入狀態
   const notifyTyping = useCallback((isTyping) => {

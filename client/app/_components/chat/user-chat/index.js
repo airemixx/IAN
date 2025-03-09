@@ -26,7 +26,7 @@ const formatMessageTime = (timestamp) => {
   const isSameYear = now.getFullYear() === messageDate.getFullYear();
 
   // 檢查是否同一天
-  const isSameDay = isSameYear &&
+  const isSameYearAndDay = isSameYear &&
     now.getMonth() === messageDate.getMonth() &&
     now.getDate() === messageDate.getDate();
 
@@ -35,7 +35,7 @@ const formatMessageTime = (timestamp) => {
   const minutes = messageDate.getMinutes().toString().padStart(2, '0');
   const timeStr = `${hours}:${minutes}`;
 
-  if (isSameDay) {
+  if (isSameYearAndDay) {
     return timeStr;
   } else if (isSameYear) {
     const month = messageDate.getMonth() + 1;
@@ -54,25 +54,25 @@ const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
 export default function ChatWidget() {
   // 先獲取 socket context，只調用一次 useSocket
   const socketContext = useSocket();
-  
+
   // 解構賦值，提供預設值（修改這部分）
-  const { 
-    messages = [], 
-    sendMessage: socketSendMessage = () => {}, // 重命名為 socketSendMessage
-    markAsRead = () => {}, 
+  const {
+    messages,  // 直接從 context 獲取最新的訊息狀態
+    sendMessage: socketSendMessage = () => { }, // 重命名為 socketSendMessagee
+    markAsRead = () => { },
     isConnected = false,
     typingUsers = {},
-    notifyTyping = () => {},
-    setMessages = () => {} // 添加這行來解構 setMessages
+    notifyTyping = () => { },
+    setMessages = () => { } // 添加這行來解構 setMessages
   } = socketContext || {};
-  
+
   // 檢查上下文是否可用
   useEffect(() => {
     if (!socketContext) {
       console.error('Socket上下文不可用。請確保ChatWidget組件已被SocketProvider包裹。');
     }
   }, [socketContext]);
-  
+
   const [isOpen, setIsOpen] = useState(false)
   const [newMessage, setNewMessage] = useState("")
   const messagesEndRef = useRef(null)
@@ -127,21 +127,6 @@ export default function ChatWidget() {
     }
   }, [messages]);
 
-  // // 單獨處理已讀狀態更新
-  // useEffect(() => {
-  //   if (messages.length > 0) {
-  //     const hasUnreadUserMessages = messages.some(msg => msg.sender === "user" && !msg.read);
-
-  //     if (hasUnreadUserMessages) {
-  //       const timer = setTimeout(() => {
-  //         setMessages((prevMessages) => prevMessages.map((msg) =>
-  //           (msg.sender === "user" && !msg.read) ? { ...msg, read: true } : msg
-  //         ));
-  //       }, 2000);
-  //       return () => clearTimeout(timer);
-  //     }
-  //   }
-  // }, [messages]);
 
   useEffect(() => {
     if (isOpen) {
@@ -156,12 +141,12 @@ export default function ChatWidget() {
   // 修改發送消息的處理函數
   const handleSendMessage = (e) => {
     e.preventDefault();
-  
+
     const hasText = newMessage.trim() !== "";
     const hasFiles = selectedFiles.length > 0;
-  
+
     if (!hasText && !hasFiles) return;
-  
+
     // 發送文字消息
     if (hasText) {
       // 按照伺服器期望的格式構造消息對象
@@ -172,22 +157,22 @@ export default function ChatWidget() {
         }
         // 普通用戶不需要指定 to
       };
-      
+
       socketSendMessage(messageData);
       setNewMessage("");
     }
-  
+
     // 處理文件發送
     if (hasFiles) {
       selectedFiles.forEach(fileObj => {
         // 不需要再次使用 FileReader，直接使用預覽 URL
         sendFileMessage(fileObj);
       });
-    
+
       setSelectedFiles([]);
       setIsPreviewOpen(false);
     }
-  
+
     setTimeout(scrollToBottom, 100);
   };
 
@@ -237,22 +222,22 @@ export default function ChatWidget() {
   // 發送文件消息函數
   const sendFileMessage = async (fileObj) => {
     const isImage = fileObj.type === 'image';
-    
+
     try {
       setUploading(true); // 添加上傳狀態
-      
+
       // 創建 FormData 對象
       const formData = new FormData();
       formData.append('file', fileObj.file); // 添加文件
-      
+
       // 發送到服務器
       const response = await fetch('http://localhost:8000/api/uploads', {
         method: 'POST',
         body: formData,
       });
-      
+
       const result = await response.json();
-      
+
       if (result.status === 'success') {
         // 成功上傳後，發送消息
         const messageData = {
@@ -262,9 +247,9 @@ export default function ChatWidget() {
             fileType: result.file.type
           }
         };
-        
+
         socketSendMessage(messageData);
-        
+
       } else {
         console.error('文件上傳失敗:', result.message);
         alert('文件上傳失敗，請重試');
@@ -275,7 +260,7 @@ export default function ChatWidget() {
     } finally {
       setUploading(false);
     }
-    
+
     // 重置選擇的文件
     setSelectedFiles(prev => prev.filter(file => file.id !== fileObj.id));
     if (selectedFiles.length <= 1) {
@@ -296,7 +281,7 @@ export default function ChatWidget() {
     setNewMessage(prev =>
       prev.substring(0, document.getElementById('messageInput').selectionStart) +
       emojiData.emoji +
-      prev.substring(document.getElementById('messageInput').selectionEnd)
+      prev.substring(0, document.getElementById('messageInput').selectionEnd)
     );
   };
 
@@ -327,7 +312,7 @@ export default function ChatWidget() {
   const handleInputFocus = () => {
     notifyTyping(true);
   };
-  
+
   const handleInputBlur = () => {
     notifyTyping(false);
   };
@@ -339,8 +324,8 @@ export default function ChatWidget() {
       if (message.fileType === 'image') {
         return (
           <div className={styles.imageContainer}>
-            <img 
-              src={message.fileUrl} 
+            <img
+              src={message.fileUrl}
               alt="圖片消息"
               className={styles.messageImage}
               onClick={() => handleImageClick(message.fileUrl)} // 改為使用預覽功能
@@ -351,8 +336,8 @@ export default function ChatWidget() {
       } else if (message.fileType === 'video') {
         return (
           <div className={styles.videoContainer}>
-            <video 
-              src={message.fileUrl} 
+            <video
+              src={message.fileUrl}
               controls
               className={styles.messageVideo}
               onError={(e) => console.error("影片加載錯誤", e)}
@@ -362,7 +347,7 @@ export default function ChatWidget() {
         );
       }
     }
-    
+
     // 處理文本消息，支持表情符號
     return (
       <div>
@@ -376,6 +361,59 @@ export default function ChatWidget() {
       </div>
     );
   };
+
+  useEffect(() => {
+    if (!socketContext || !socketContext.socket) return;
+
+    // 直接監聽 messages_read 事件
+    socketContext.socket.on('messages_read', (messageIds) => {
+      console.log('收到訊息已讀更新(user端):', messageIds);
+
+      // 強制更新UI
+      setMessages(prevMessages => prevMessages.map(msg =>
+        Array.isArray(messageIds) && messageIds.includes(msg.id)
+          ? { ...msg, read: true }
+          : (messageIds.messageIds && messageIds.messageIds.includes(msg.id))
+            ? { ...msg, read: true }
+            : msg
+      ));
+    });
+
+    return () => {
+      if (socketContext.socket) {
+        socketContext.socket.off('messages_read');
+      }
+    };
+  }, [socketContext, setMessages]);
+
+  // 添加在 useEffect 裡，當用戶打開聊天室或訊息更新時自動標記已讀
+
+  // 在聊天窗口打開時自動標記已讀
+  useEffect(() => {
+    if (isOpen && messages.length > 0 && markAsRead) {
+      // 用戶打開聊天視窗時，標記所有客服訊息為已讀
+      markAsRead(); // 用戶端不需要指定 userId
+    }
+  }, [isOpen, messages, markAsRead]);
+
+  // 添加滾動監聽，當用戶查看訊息時標記為已讀
+  useEffect(() => {
+    const handleScroll = () => {
+      if (chatBodyRef.current) {
+        // 使用 IntersectionObserver 或類似技術可以更精確判斷
+        // 這裡簡單實作：當滾動發生時標記訊息
+        if (isOpen && markAsRead) {
+          markAsRead();
+        }
+      }
+    };
+
+    const chatBody = chatBodyRef.current;
+    if (chatBody) {
+      chatBody.addEventListener('scroll', handleScroll);
+      return () => chatBody.removeEventListener('scroll', handleScroll);
+    }
+  }, [isOpen, markAsRead]);
 
   return (
     <div className={styles.chatWidgetContainer}>
