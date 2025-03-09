@@ -163,18 +163,22 @@ router.get("/order", checkToken, async (req, res) => {
 
       const [courses] = await connection.query(
         `SELECT uc.*, c.*,
+        t.name AS teacher_name,
          c.image_url 
          FROM user_courses uc 
-         JOIN courses c ON uc.courses_id = c.id 
+         JOIN courses c ON uc.courses_id = c.id
+         JOIN teachers t ON c.teacher_id = t.id
          WHERE uc.order_id = ?`,
         [order.id]
       );
 
       const [products] = await connection.query(
         `SELECT up.*, p.*,
+         b.brand_name,
          i.image_url 
          FROM user_product up 
-         JOIN product p ON up.product_id = p.id 
+         JOIN product p ON up.product_id = p.id
+         JOIN brand b ON p.brand_id = b.brand_id
          LEFT JOIN image i ON up.product_id = i.product_id AND i.is_main = 1
          WHERE up.order_id = ?`,
         [order.id]
