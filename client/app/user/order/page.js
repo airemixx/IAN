@@ -50,7 +50,7 @@ export default function UserPage() {
                                                     <img src={`/images/product/${product.image_url || '/images/product/default.png'}`} alt={product.name} className={styles.productImage} />
                                                     <div className="flex-grow-1">
                                                         
-                                                        <h6 className={`mt-3 ${styles.productBrand}`}>{product.brand_id || '無'}</h6>
+                                                        <h6 className={`mt-3 ${styles.productBrand}`}>{product.brand_name || '無'}</h6>
                                                         <h5>{product.name}</h5>
                                                         <span>價格 : {new Intl.NumberFormat('zh-TW').format(product.price)}</span>
                                                     </div>
@@ -86,7 +86,7 @@ export default function UserPage() {
                                                 <div className={`d-flex ${styles.productDetails} gap-4`}>
                                                     <img src={course.image_url || '/images/product/default.png'} alt={course.title} className={styles.productImage} />
                                                     <div className="flex-grow-1">
-                                                        <h6 className={`mt-3 ${styles.productBrand}`}>{course.teacher_id || '無'}</h6>
+                                                        <h6 className={`mt-3 ${styles.productBrand}`}>講師：{course.teacher_name || '無'}</h6>
                                                         <h5>{course.title}</h5>
                                                         <span>價格 : {new Intl.NumberFormat('zh-TW').format(course.sale_price)}</span>
                                                     </div>
