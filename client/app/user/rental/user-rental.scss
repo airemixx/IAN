@@ -43,11 +43,13 @@
 
 // 彈窗評論修改
 .k-review-swal-popup {
-  width: 450px;
+  border-radius: 15px;
+  width: 495px;
 }
 .k-review-swal-actions {
   justify-content: flex-end;
   width: 100%;
+  padding-left: 20px;
   padding-right: 20px;
   margin-top: 10px;
 }
@@ -59,8 +61,67 @@
   background-color: #807871;
   border-radius: 50px;
 }
+.k-review-swal-btn-3 {
+  background-color: #c43b45;
+  border-radius: 50px;
+}
+.k-swal-margin-auto {
+  margin-left: auto;
+}
 .k-swal-label {
   text-align: left;
   margin-bottom: 5px;
   font-weight: 500;
+}
+.k-swal-small-popup {
+  width: 450px;
+}
+
+// 彈窗吐司
+@keyframes k-toast-bounce {
+  0% {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(0deg);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.k-swal-toast-icon {
+  border: none;
+  color: #fff;
+  right: -3px;
+  width: 40px;
+  height: 40px;
+  animation: k-toast-bounce 0.8s ease forwards;
+  strong {
+    color: #f1cf99;
+  }
+}
+.k-swal-toast-popup {
+  padding-top: 8px !important;
+  top: 82px !important;
+}
+.k-swal-toast-close {
+  color: #fff;
+  font-size: 24px;
+  transition: transform 0.3s;
+  &:hover,
+  &:active,
+  &:active:focus,
+  &:active:hover {
+    color: #e58e41;
+  }
+}
+.k-swal-toast-progress {
+  background: linear-gradient(90deg, #e58e41, #f1cf99);
+  height: 10px;
+  border-radius: 5px;
 }
