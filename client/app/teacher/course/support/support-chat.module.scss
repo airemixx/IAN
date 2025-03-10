@@ -54,25 +54,54 @@ margin: 2rem 0;
   background-color: var(--white);
 }
 
+.messageWrapper {
+  display: flex;
+  align-items: flex-end;
+  max-width: 75%;
+  margin-bottom: 1rem;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin: 0 8px;
+  object-fit: cover;
+}
+
+.messageBox {
+  padding: 10px 15px;
+  border-radius: 16px;
+  word-break: break-word;
+  max-width: 100%;
+  min-width: 50px;
+}
+
 /* 訊息泡泡 */
 .message {
-  max-width: 60%;
+  display: flex;
+  flex-direction: column;
+  max-width: 60%; /* 讓訊息框不會過寬 */
   padding: 10px 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  word-wrap: break-word;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  word-break: break-word;
+  position: relative;
+  min-width: 50px;
 }
 
+/* 老師 / 使用者的訊息 */
 .teacher {
+  background-color: #DCF8C6;
   align-self: flex-end;
-  background: #007bff;
-  color: white;
+  text-align: left;
 }
 
+/* 管理員的訊息 */
 .admin {
+  background-color: #EAEAEA;
   align-self: flex-start;
-  background: #e4e6eb;
-  color: black;
+  text-align: left;
 }
 
 /* 訊息輸入框 */
@@ -102,4 +131,43 @@ margin: 2rem 0;
 
 .sendButton:hover {
   background: var(--primary-color);
+}
+
+.sender-name {
+  font-weight: bold;
+  margin-bottom: 3px;
+  color: #333;
+}
+
+/* 送出的訊息樣式 */
+.sent .messageBox {
+  background-color: #007AFF;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* 接收的訊息樣式 */
+.received .messageBox {
+  background-color: #E5E5EA;
+  color: black;
+  border-bottom-left-radius: 4px;
+}
+
+/* 時間戳記 */
+.timestamp {
+  font-size: 12px;
+  color: #777;
+  margin-left: 8px;
+  align-self: flex-end;
+}
+
+.sent {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+/* 接收的訊息（靠左） */
+.received {
+  align-self: flex-start;
+  flex-direction: row;
 }

@@ -9,21 +9,39 @@ const router = express.Router();
 // ✅ 取得所有對話列表
 router.get("/conversations", authenticate, async (req, res) => {
   try {
-    const userId = req.user.id;
-    let query = `SELECT id, name, last_message AS lastMessage FROM conversations WHERE user_id = ?`;
-    let queryParams = [userId];
+    console.log("🔍 `req.user`: ", req.user); // 確保 `level` 存在
 
-    if (req.user.role === "admin") {
-      query = `SELECT id, name, last_message AS lastMessage FROM conversations`;
-      queryParams = [];
+    if (!req.user || req.user.level !== 88) {
+      return res.status(403).json({ error: "權限不足，請重新登入" });
     }
 
-    const [rows] = await pool.query(query, queryParams);
+    console.log("✅ 管理員登入，查詢所有對話");
+
+    // **查詢所有對話，包含使用者名稱 + 最後訊息時間**
+    const query = `
+      SELECT 
+        c.id, 
+        u.name AS user_name, 
+        u.head AS user_avatar, 
+        c.last_message AS lastMessage, 
+        (SELECT created_at FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) AS lastMessageTime
+      FROM conversations c
+      LEFT JOIN users u ON c.user_id = u.id;
+    `;
+
+    console.log("🔍 執行 SQL:", query);
+    const [rows] = await pool.query(query);
+    console.log("✅ 取得對話列表:", rows);
+
     res.json(rows);
   } catch (error) {
-    res.status(500).json({ message: "伺服器錯誤" });
+    console.error("❌ 伺服器錯誤:", error);
+    res.status(500).json({ message: "伺服器錯誤", details: error.message });
   }
 });
+
+
+
 
 // ✅ 取得某個對話的歷史訊息
 router.get("/messages/:chatId", authenticate, async (req, res) => {
@@ -33,16 +51,30 @@ router.get("/messages/:chatId", authenticate, async (req, res) => {
       return res.status(400).json({ error: "缺少 chatId 參數" });
     }
 
-    const [messages] = await pool.query(
-      `SELECT sender, text, created_at FROM messages WHERE chat_id = ? ORDER BY created_at ASC`,
-      [chatId]
-    );
+    const query = `
+      SELECT 
+        m.sender_id, 
+        m.text, 
+        m.created_at,
+        u.name AS sender_name, 
+        u.head AS user_avatar  -- ✅ 取得發送者的名稱與頭貼
+      FROM messages m
+      LEFT JOIN users u ON m.sender_id = u.id  -- 🔗 連接 users 資料表
+      WHERE m.chat_id = ?
+      ORDER BY m.created_at ASC
+    `;
+
+    const [messages] = await pool.query(query, [chatId]);
+
+    console.log(`✅ 取得 chat_id ${chatId} 的歷史訊息:`, messages);
 
     res.json(messages);
   } catch (error) {
+    console.error("❌ 取得歷史訊息失敗:", error);
     res.status(500).json({ message: "伺服器錯誤" });
   }
 });
+
 
 // ✅ 發送訊息
 router.post("/messages", authenticate, async (req, res) => {
