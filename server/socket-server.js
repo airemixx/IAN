@@ -3,6 +3,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import mysql from 'mysql2/promise';
 
 dotenv.config();
 
@@ -15,6 +16,30 @@ const io = new Server(server, {
     credentials: true
   }
 });
+
+// 創建資料庫連接池
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'admin',
+  password: process.env.DB_PASSWORD || '12345',
+  database: process.env.DB_NAME || 'lenstudio',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+// 測試資料庫連接
+async function testConnection() {
+  try {
+    const connection = await pool.getConnection();
+    console.log('Database connection successful');
+    connection.release();
+  } catch (error) {
+    console.error('Error connecting to database:', error);
+  }
+}
+
+testConnection();
 
 // 儲存用戶連接信息
 const connectedUsers = new Map(); // 用戶 ID -> socket ID
@@ -77,29 +102,46 @@ io.on('connection', (socket) => {
       // 向管理員發送當前所有活躍的用戶清單
       const activeUsers = [];
       for (const [userId, messages] of userChats.entries()) {
-        const userSocket = [...connectedUsers.entries()]
-          .find(([id, socketId]) => id === userId);
+        // 只處理有消息記錄的用戶
+        if (messages && messages.length > 0) {
+          try {
+            // 從資料庫獲取用戶資訊
+            const [userRows] = await pool.query(
+              `SELECT 
+                u.id,
+                IF(TRIM(COALESCE(u.nickname, '')) = '', u.name, u.nickname) AS display_name,
+                COALESCE(u.head, '/images/chatRoom/user1.jpg') AS avatar
+              FROM users u 
+              WHERE u.id = ?`,
+              [userId]
+            );
 
-        const lastMessage = messages.length > 0 ?
-          messages[messages.length - 1] : null;
+            if (userRows && userRows.length > 0) {
+              const userInfo = userRows[0];
+              const lastMessage = messages[messages.length - 1];
 
-        // 只發送有聊天記錄的用戶
-        if (messages.length > 0) {
-          activeUsers.push({
-            id: userId,
-            name: userSocket ? io.sockets.sockets.get(userSocket[1])?.userName : '離線用戶',
-            avatar: userSocket ? io.sockets.sockets.get(userSocket[1])?.userAvatar : '/images/chatRoom/user1.jpg',
-            lastMessage: lastMessage?.text || '',
-            lastMessageType: lastMessage?.fileUrl ? (lastMessage?.fileType || 'text') : 'text',
-            mediaCount: lastMessage?.fileType ? 1 : 0,
-            timestamp: lastMessage?.timestamp || new Date(),
-            unreadCount: messages.filter(m => !m.read && m.sender === 'user').length || 0,
-            online: !!userSocket
-          });
+              activeUsers.push({
+                id: userId,
+                name: userInfo.display_name,
+                avatar: userInfo.avatar,
+                lastMessage: lastMessage?.text || '',
+                lastMessageType: lastMessage?.fileType || 'text',
+                mediaCount: lastMessage?.fileType ? 1 : 0,
+                timestamp: lastMessage?.timestamp || new Date(),
+                unreadCount: messages.filter(m => !m.read && m.sender === 'user').length,
+                online: connectedUsers.has(userId)
+              });
+            }
+          } catch (error) {
+            console.error(`Error fetching user info for ${userId}:`, error);
+          }
         }
       }
 
-      socket.emit('active_users', activeUsers);
+      // 只有當有活躍用戶時才發送
+      if (activeUsers.length > 0) {
+        socket.emit('active_users', activeUsers);
+      }
 
       // 添加：發送現有消息歷史記錄
       if (userChats.size > 0) {
@@ -161,7 +203,7 @@ io.on('connection', (socket) => {
   });
 
   // 用戶發送消息
-  socket.on('send_message', (data) => {
+  socket.on('send_message', async (data) => {
     console.log('收到消息:', data); // 調試日誌
 
     // 從請求中提取數據
@@ -180,14 +222,26 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // 創建消息對象 - 確保文件 URL 被保留
+    // 從資料庫獲取發送者資訊
+    const [userRows] = await pool.query(
+      `SELECT 
+        IF(TRIM(nickname) = '', name, nickname) AS display_name,
+        COALESCE(head, '/images/chatRoom/user1.jpg') AS avatar
+      FROM users 
+      WHERE id = ?`,
+      [socket.userId]
+    );
+
+    const userInfo = userRows[0] || {};
+
     const messageObject = {
-      id: Date.now().toString() + '-' + Math.random().toString(36).substring(2, 9),
+      id: Date.now().toString(),
       text: message.text || '',
-      fileUrl: message.fileUrl || null,  // 確保保留服務器文件 URL
+      fileUrl: message.fileUrl || null,
       fileType: message.fileType || null,
       sender: socket.isAdmin ? 'agent' : 'user',
-      senderName: socket.userName,
+      senderName: userInfo.display_name,
+      avatar: userInfo.avatar,
       timestamp: new Date(),
       read: false
     };
@@ -500,6 +554,46 @@ io.on('connection', (socket) => {
       for (const [adminId, adminSocketId] of adminSockets.entries()) {
         io.to(adminSocketId).emit('user_disconnected', userId);
       }
+    }
+  });
+
+
+  // 在 authenticate 事件中:
+
+  // 當用戶連接時發送給管理員
+  socket.on('authenticate', async (data) => {
+    // ...existing code...
+
+    if (socket.isAdmin) {
+      // 管理員登入時發送用戶列表
+      const activeUsers = [];
+      for (const [userId, messages] of userChats.entries()) {
+        // 從資料庫獲取用戶資訊
+        const [userRows] = await pool.query(
+          `SELECT 
+            u.id,
+            IF(TRIM(u.nickname) = '', u.name, u.nickname) AS display_name,
+            COALESCE(u.head, '/images/chatRoom/user1.jpg') AS avatar
+          FROM users u 
+          WHERE u.id = ?`,
+          [userId]
+        );
+
+        const userInfo = userRows[0] || {};
+        const lastMessage = messages[messages.length - 1];
+
+        activeUsers.push({
+          id: userId,
+          name: userInfo.display_name, // 使用 nickname 或 name 
+          avatar: userInfo.avatar, // 使用用戶的頭像
+          lastMessage: lastMessage?.text || '',
+          lastMessageType: lastMessage?.fileType || 'text',
+          timestamp: lastMessage?.timestamp || new Date(),
+          unreadCount: messages.filter(m => !m.read && m.sender === 'user').length
+        });
+      }
+
+      socket.emit('active_users', activeUsers);
     }
   });
 });

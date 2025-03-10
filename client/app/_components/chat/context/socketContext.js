@@ -128,8 +128,14 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
       // 監聽用戶清單更新 (僅管理員)
       if (isAdmin) {
         newSocket.on('active_users', (users) => {
-          console.log('收到活躍用戶清單:', users);
-          setUserList(users);
+          const validUsers = users.filter(user => user && user.id);
+          if (validUsers.length > 0) {
+            setUserList(validUsers.map(user => ({
+              ...user,
+              avatar: user.avatar || '/images/chatRoom/user1.jpg',
+              timestamp: user.timestamp ? new Date(user.timestamp) : new Date(),
+            })));
+          }
         });
       }
 

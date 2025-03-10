@@ -155,37 +155,48 @@ export default function ChatWidget() {
   // 使用本地狀態存儲用戶列表
   const [users, setUsers] = useState([]);
 
-  // 監聽 userList 變化，不再使用 useSyncExternalStore
+  // 修改 useEffect 中的用戶列表更新邏輯
   useEffect(() => {
     if (!contextUserList || contextUserList.length === 0) return;
 
     console.log('【用戶列表】更新:', contextUserList.length);
 
-    // 使用現有狀態智能合併
     setUsers(prevUsers => {
-      // 建立用戶 ID 到用戶物件的映射，優先使用本地狀態
+      // 建立用戶 ID 到用戶物件的映射
       const userMap = {};
       prevUsers.forEach(user => {
-        userMap[user.id] = user;
+        if (user && user.id && user.name) { // 只保留有效用戶
+          userMap[user.id] = user;
+        }
       });
 
-      // 合併 contextUserList 中的資料，但保留未讀計數和最後訊息等本地狀態
-      return contextUserList.map(contextUser => {
-        const existingUser = userMap[contextUser.id];
-        if (existingUser) {
+      // 過濾並合併有效的用戶數據
+      return contextUserList
+        .filter(user => (
+          user && 
+          user.id && 
+          user.name && 
+          // 確保至少有一條消息或時間戳
+          (user.lastMessage || user.timestamp || user.unreadCount > 0)
+        ))
+        .map(contextUser => {
+          const existingUser = userMap[contextUser.id];
+          if (existingUser) {
+            return {
+              ...contextUser,
+              unreadCount: existingUser.unreadCount ?? contextUser.unreadCount,
+              lastMessage: existingUser.lastMessage || contextUser.lastMessage,
+              lastMessageType: existingUser.lastMessageType || contextUser.lastMessageType,
+              mediaCount: existingUser.mediaCount || contextUser.mediaCount,
+              timestamp: existingUser.timestamp || contextUser.timestamp,
+              _updateId: existingUser._updateId || Date.now()
+            };
+          }
           return {
             ...contextUser,
-            // 保留本地已更新的狀態
-            unreadCount: existingUser.unreadCount ?? contextUser.unreadCount,
-            lastMessage: existingUser.lastMessage || contextUser.lastMessage,
-            lastMessageType: existingUser.lastMessageType || contextUser.lastMessageType,
-            mediaCount: existingUser.mediaCount || contextUser.mediaCount,
-            timestamp: existingUser.timestamp || contextUser.timestamp,
-            _updateId: existingUser._updateId || contextUser._updateId || Date.now()
+            _updateId: Date.now()
           };
-        }
-        return contextUser;
-      });
+        });
     });
   }, [contextUserList]);
 
@@ -649,13 +660,13 @@ export default function ChatWidget() {
             {/* 用戶列表側欄 */}
             <div className={`${styles.userListPanel} ${isMenuOpen ? styles.show : ''}`}>
               <div className={styles.userListHeader}>
-                <button
+                {/* <button
                   className={styles.backButton}
                   onClick={() => setIsMenuOpen(false)}
                   aria-label="返回"
                 >
                   <FontAwesomeIcon icon={faChevronLeft} />
-                </button>
+                </button> */}
                 <h5>聊天列表</h5>
                 <button className={styles.iconButton} onClick={toggleChat}>
                   <X size={24} />
@@ -688,17 +699,26 @@ export default function ChatWidget() {
 
                   return (
                     <div
-                      key={`user-${user.id}-${user._updateId || ''}`}  // 每次渲染都有全新的 key
+                      key={`user-${user.id}-${user._updateId || ''}`}
                       data-user-id={user.id}
                       className={`${styles.userItem} ${activeUserId === user.id ? styles.active : ''}`}
                       onClick={() => handleSelectUser(user.id)}
                     >
                       <div className={styles.userAvatar}>
-                        <img src={user.avatar || "/images/chatRoom/user1.jpg"} alt={user.name} />
+                        <img
+                          src={user.avatar || "/images/chatRoom/user1.jpg"}
+                          alt={user.name}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/images/chatRoom/user1.jpg";
+                          }}
+                        />
                       </div>
                       <div className={styles.userInfo}>
                         <div className={styles.userInfoHeader}>
-                          <span className={styles.userName}>{user.name || '用戶'}</span>
+                          <span className={styles.userName}>
+                            {user.name} {/* 這裡會自動顯示 nickname 或 name */}
+                          </span>
                           <small className={styles.messageTime}>{timeDisplay}</small>
                         </div>
                         <div className={styles.lastMessageRow}>
@@ -808,8 +828,8 @@ export default function ChatWidget() {
                           {message.sender === "user" && showAvatar && (
                             <div className={styles.avatarContainer}>
                               <img
-                                src={message.avatar || "/images/chatRoom/user1.jpg"}
-                                alt="User"
+                                src={message.avatar}
+                                alt={message.senderName}
                                 className={styles.avatar}
                               />
                             </div>
