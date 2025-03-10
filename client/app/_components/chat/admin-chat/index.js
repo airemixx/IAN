@@ -173,9 +173,9 @@ export default function ChatWidget() {
       // 過濾並合併有效的用戶數據
       return contextUserList
         .filter(user => (
-          user && 
-          user.id && 
-          user.name && 
+          user &&
+          user.id &&
+          user.name &&
           // 確保至少有一條消息或時間戳
           (user.lastMessage || user.timestamp || user.unreadCount > 0)
         ))
@@ -314,25 +314,30 @@ export default function ChatWidget() {
   // 修改 toggleChat 函數，使聊天窗口打開時同時顯示用戶列表
   const toggleChat = () => {
     // 如果目前有選擇用戶且要關閉聊天，通知服務器管理員離開聊天
-    if (isOpen && activeUserId) {
-      leaveUserChat(activeUserId);
+    if (isOpen) {
+      if (activeUserId) {
+        leaveUserChat(activeUserId);
+      }
+      setActiveUserId(null); // 清除選中狀態
+    } else {
+      setIsMenuOpen(true); // 打開用戶列表
     }
-
-    // 新增：如果是從關閉狀態打開聊天窗，同時打開用戶列表
-    if (!isOpen) {
-      setIsMenuOpen(true); // 設置用戶列表為開啟狀態
-    }
-
     setIsOpen(!isOpen);
   }
 
-  // 更新活躍用戶和選擇用戶
+  // 修改 handleSelectUser 函數
   const handleSelectUser = (userId) => {
+    // 移除相同用戶檢查，讓每次點擊都能觸發
+    if (activeUserId) {
+      leaveUserChat(activeUserId);
+    }
+
+    // 確保每次都能觸發切換
     socketSelectUser(userId);
     setActiveUserId(userId);
     setIsMenuOpen(false);
 
-    // 延遲執行標記已讀，確保訊息已加載
+    // 延遲執行標記已讀
     setTimeout(() => {
       markAsRead(userId);
     }, 500);
@@ -701,7 +706,7 @@ export default function ChatWidget() {
                     <div
                       key={`user-${user.id}-${user._updateId || ''}`}
                       data-user-id={user.id}
-                      className={`${styles.userItem} ${activeUserId === user.id ? styles.active : ''}`}
+                      className={`${styles.userItem}`}
                       onClick={() => handleSelectUser(user.id)}
                     >
                       <div className={styles.userAvatar}>
@@ -770,7 +775,7 @@ export default function ChatWidget() {
 
                 <div className={styles.headerUserInfo}>
                   <div className={styles.headerUserName}>
-                    {users.find(user => user.id === activeUserId)?.name || '請選擇用戶'}
+                    {activeUserId ? users.find(user => user.id === activeUserId)?.name : '請選擇用戶'}
                   </div>
                 </div>
 
