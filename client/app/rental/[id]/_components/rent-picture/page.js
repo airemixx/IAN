@@ -37,17 +37,20 @@ export default function RentPicture({ images = [] }) {
 
     if (finalImages.length >= 4 && !hasShownSwal && !hasShown) {
       Swal.fire({
-        color: '#404250',
+        color: '#fff',
         icon: 'info',
         iconColor: '#fff',
         iconHtml: `<img src="/images/icon/slide.png" class="k-slide-swal-icon alt="滑動提示"">`,
-        title: '左滑縮圖查看更多',
+        title: '左滑更多圖片',
         text: '點擊任意處關閉',
+        position: 'bottom',
         showConfirmButton: false,
         background: 'transparent',
         customClass: {
           icon: 'k-slide-swal-icon',
           popup: 'k-slide-swal-popup',
+          title: 'k-slide-swal-title',
+          htmlContainer: 'k-slide-swal-text',
         },
       });
       localStorage.setItem('swalShown', 'true'); // 關閉後記錄，不再顯示
