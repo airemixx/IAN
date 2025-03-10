@@ -16,48 +16,68 @@ export default function CourseManagement() {
   const [currentPage, setCurrentPage] = useState(1)
 
   const router = useRouter()
-
   const coursesPerPage = 5
 
-  // **權限驗證：檢查是否為老師**
+  // **權限驗證：檢查是否為老師或管理員**
   useEffect(() => {
     const fetchCoursesAndUser = async () => {
       try {
         const token = localStorage.getItem('loginWithToken')
         if (!token) {
-          console.log('沒有 Token，跳轉登入頁面')
+          console.log('⛔️ 沒有 Token，跳轉登入頁面')
           router.push('/login')
           return
         }
 
-        console.log('正在發送請求到 /api/teachers/me/courses...')
+        // ✅ 請求老師課程 & 使用者資訊
+        console.log('📡 正在發送請求到 /api/teachers/me/courses...')
         const res = await fetch('http://localhost:8000/api/teachers/me/courses', {
-          headers: { Authorization: `Bearer ${token}` }, 
+          headers: { Authorization: `Bearer ${token}` },
         })
 
-        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`) 
+        if (!res.ok) throw new Error(`API 錯誤: ${res.status}`)
 
         const data = await res.json()
         console.log('✅ 取得課程與使用者資訊:', data)
 
-        if (!data.length || data[0]?.level === undefined) { 
+        // ✅ 檢查回傳的數據格式
+        if (!data.length || data[0]?.level === undefined) {
           console.error('❌ API 回傳錯誤，沒有 level 值', data)
           router.push('/dashboard') // 避免進入錯誤頁面
           return
         }
 
+        // ✅ 設定使用者資訊
         setUser({
           name: data[0].teacher_name,
           level: data[0].level,
           email: data[0].mail,
         })
 
-        setCourses(data) // 設定課程資料
+        // ✅ 如果是管理員，改用 `/api/admin/courses`
+        let coursesUrl = 'http://localhost:8000/api/teachers/me/courses'
+        if (data[0].level === 88) {
+          coursesUrl = 'http://localhost:8000/api/courses' // 管理員取得所有課程
+        }
 
-        if (data[0].level !== 1) {
-          console.warn('⚠️ 只有老師能進入此頁面，跳轉到 /dashboard')
+        console.log('📡 正在發送請求到:', coursesUrl)
+        const coursesRes = await fetch(coursesUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        if (!coursesRes.ok) throw new Error(`API 錯誤: ${coursesRes.status}`)
+
+        const coursesData = await coursesRes.json()
+        console.log('✅ 取得課程資料:', coursesData)
+
+        setCourses(coursesData) // 設定課程資料
+
+        // ✅ 只有未知角色才會跳轉
+        if (data[0].level !== 1 && data[0].level !== 88) {
+          console.warn('⚠️ 無權限訪問，跳轉到 /dashboard')
           router.push('/dashboard')
         }
+
       } catch (error) {
         console.error('❌ 獲取使用者與課程失敗:', error)
         router.push('/login')
@@ -90,7 +110,7 @@ export default function CourseManagement() {
   console.log('📌 當前顯示的課程列表:', currentCourses)
   console.log('📌 當前頁碼:', currentPage, ' / 總頁數:', totalPages)
 
-  if (loading) return <p></p>
+  if (loading) return <p>載入中...</p>
 
   return (
     <>
