@@ -289,9 +289,6 @@ router.get("/coupon", checkToken, async (req, res) => {
 // 更新評論 API
 router.put('/rent/reviews/:id', authenticate, async (req, res) => {
   try {
-    console.log("🔍 收到的評論資料:", req.body); // ✅ 這行新增來 debug
-
-
     const { id } = req.params;
     const { comment, rating } = req.body;
     const userId = req.user.id;

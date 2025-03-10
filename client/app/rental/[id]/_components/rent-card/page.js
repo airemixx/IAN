@@ -12,9 +12,6 @@ export default function RentCard({ rental }) {
   const router = useRouter()
   const [isHovered, setIsHovered] = useState(false)
 
-  console.log('🚀 RentCard 收到的 rental:', rental);
-
-
   return (
     <div className="col mb-2">
       <div

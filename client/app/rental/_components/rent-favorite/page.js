@@ -63,8 +63,6 @@ export default function FavoriteButton({ rentId, rental }) {
     }
 
     try {
-      console.log("發送收藏請求:", { rent_id: rentId }) // ✅ 檢查請求是否正確發送
-
       const response = await fetch(`http://localhost:8000/api/rental/collection`, {
         method: isFavorite ? 'DELETE' : 'POST',
         headers: {
