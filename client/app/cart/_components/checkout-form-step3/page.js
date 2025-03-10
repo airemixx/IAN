@@ -101,8 +101,8 @@ export default function CheckoutFormStep3() {
                 text: "是否前往 LINE Pay 付款？",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#CA6D1B",
-                cancelButtonColor: "#003150",
+                confirmButtonColor: "#003150",
+                cancelButtonColor: "#CA6D1B",
                 confirmButtonText: "確定",
                 cancelButtonText: "取消",
             }).then((result) => {
@@ -210,8 +210,8 @@ export default function CheckoutFormStep3() {
                     text: `是否前往 ${paymentMethod.toUpperCase()} 付款？`,
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#CA6D1B",
-                    cancelButtonColor: "#003150",
+                    confirmButtonColor: "#003150",
+                    cancelButtonColor: "#CA6D1B",
                     confirmButtonText: "確定",
                     cancelButtonText: "取消",
                 }).then((result) => {

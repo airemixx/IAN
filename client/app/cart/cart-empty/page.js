@@ -20,6 +20,7 @@ export default function CartEmptyPage() {
             icon: 'warning',
             title: '未登入',
             text: '請先登入以繼續',
+            confirmButtonColor: "#003150",
             confirmButtonText: '確定',
             allowOutsideClick: false, // 禁止點擊外部關閉
             allowEscapeKey: false,    // 禁止按Esc鍵關閉
