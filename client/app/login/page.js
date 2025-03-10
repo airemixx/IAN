@@ -143,9 +143,11 @@ export default function loginPage() {
 
               <div className="d-flex justify-start align-items-end">
                 <GoogleLoginButton />
+                <Link href="/login/forgerpwd">
                 <div className="flex justify-start">
                 忘記密碼 ?
               </div>
+              </Link>
               </div>
               
             </div>

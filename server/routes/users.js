@@ -8,7 +8,7 @@ import bcrypt from "bcrypt";
 import db from "../db.js";
 import fs from "fs";
 import path from "path";
-
+import nodemailer from "nodemailer";
 const portNum = 3005;
 
 
@@ -28,6 +28,8 @@ const corsOptions = {
 
 
 const secretKey = process.env.JWT_SECRET_KEY;
+const OTP_DB = {}; // 暫存 OTP（正式應存入 DB）
+const USERS = {}; // 假設的使用者資料
 
 const router = express.Router();
 // router.use(cors(corsOptions));
@@ -755,6 +757,82 @@ router.get("/rent", checkToken, async (req, res) => {
 });
 
 //user end //
+
+//忘記密碼OTP
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // 環境變數存放密碼
+  }
+});
+
+// 📌 產生 OTP
+const generateOTP = () => crypto.randomInt(100000, 999999).toString();
+
+// 📌 模擬資料庫
+
+
+// 📌 1️⃣ 發送 OTP
+router.post('/send-otp/me', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ success: false, message: '請提供 Email' });
+
+  const otp = generateOTP();
+  OTP_DB[email] = otp; // 儲存 OTP
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: '您的 OTP 驗證碼',
+    text: `您的 OTP 是 ${otp}，5 分鐘內有效。`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true, message: 'OTP 已發送' });
+  } catch (error) {
+    console.error('OTP 發送失敗:', error);
+    res.status(500).json({ success: false, message: 'OTP 發送失敗' });
+  }
+});
+
+// 📌 2️⃣ 驗證 OTP 並產生 JWT Token
+router.post('/api/verify-otp', (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ success: false, message: '請提供 Email 和 OTP' });
+
+  if (OTP_DB[email] === otp) {
+    const token = jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: '15m' });
+    delete OTP_DB[email]; // ✅ OTP 驗證後立即刪除，避免重用
+    res.json({ success: true, token });
+  } else {
+    res.status(400).json({ success: false, message: 'OTP 錯誤或已過期' });
+  }
+});
+
+// 📌 3️⃣ 使用 JWT 來重設密碼
+router.post('/api/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) return res.status(400).json({ success: false, message: '請提供 Token 和新密碼' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const email = decoded.email;
+
+    // 加密密碼
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    USERS[email] = hashedPassword; // ✅ 更新用戶密碼
+
+    res.json({ success: true, message: '密碼已重設' });
+  } catch (error) {
+    console.error('Token 錯誤:', error);
+    res.status(401).json({ success: false, message: '無效或過期的 Token' });
+  }
+});
+
+
+//忘記密碼END
 function checkToken(req, res, next) {
   let token = req.get("Authorization");
   if (!token) return res.status(401).json({
