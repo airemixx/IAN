@@ -144,7 +144,7 @@ export default function CheckoutFormStep2() {
             {/* 顯示總價 */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <p className="fw-bold">總價：</p>
-                <p className={`${styles['j-price']} fw-bold`}>{totalAmount.toLocaleString()}元</p>
+                <p className={`${styles['j-price']} fw-bold`}>NT${totalAmount.toLocaleString()}</p>
             </div>
 
             <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center`}>

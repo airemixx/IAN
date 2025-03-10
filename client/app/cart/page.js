@@ -64,10 +64,10 @@ export default function cartPageOne() {
         {
           title: '可用規格 SPECIFICATIONS',
           details: [
-            { label: 'camera_format', value: v.camera_format },
-            { label: 'image_stabilization', value: v.image_stabilization },
-            { label: 'release_date', value: v.release_date },
-            { label: 'waterproof_level', value: v.waterproof_level }
+            { label: '相機格式', value: v.camera_format },
+            { label: '防手震等級', value: v.image_stabilization },
+            { label: '推出日期', value: v.release_date },
+            { label: '防水等級', value: v.waterproof_level }
           ]
         }
       ]

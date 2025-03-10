@@ -78,7 +78,7 @@ export default function CartItem({ id, itemData, page }) {
                   </button>
                 </div>
                 <div className="d-flex">
-                  <p className={`${styles['j-price']} me-4`}>價格: {Number(price).toLocaleString()}元</p>
+                  <p className={`${styles['j-price']} me-4`}>NT$ {Number(price).toLocaleString()}元</p>
                 </div>
               </div>
             </div>
