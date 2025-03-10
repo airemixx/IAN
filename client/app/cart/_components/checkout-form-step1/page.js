@@ -118,7 +118,7 @@ export default function CheckoutFormStep1({ slItem }) {
     }
 
     if (coupon.disType === "fixed" && productTotal < coupon.discount) {
-      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 產品）`);
+      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 相機）`);
       return;
     }
 

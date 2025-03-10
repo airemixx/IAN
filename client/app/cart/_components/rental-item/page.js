@@ -91,7 +91,7 @@ export default function RentItem({ rentalitem, id, length, page }) {
                                 </div>
                             </div>
 
-                            <span className={`d-flex flex-column ${styles['j-rtpText']} text-center`}>價格: {Number(price).toLocaleString()}元</span>
+                            <span className={`d-flex flex-column ${styles['j-rtpText']} text-center`}>NT$ {Number(price).toLocaleString()}元</span>
                         </div>
                         {page ? <div className={`${styles['j-delBtn']} position-absolute`}>
                             <button className="btn" onClick={handleDeleteItem}>
