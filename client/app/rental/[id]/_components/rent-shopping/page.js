@@ -30,10 +30,6 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
   const [disabledDates, setDisabledDates] = useState([])
 
   useEffect(() => {
-    console.log("rental data:", rental);
-  }, [rental]);
-
-  useEffect(() => {
     const today = new Date()
 
     // 🛠️設置開始日期的最小值 (今天 +3 天)
@@ -150,8 +146,6 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
         currentDate.setDate(currentDate.getDate() + 1);
       }
 
-      console.log('一般日天數:', normalDays, '星期日天數:', sundayDays);
-
       // 計算原始總金額（無折扣）
       const originDays = normalDays + sundayDays;
       const calculatedOriginFee = originDays * rental.fee;
@@ -160,8 +154,6 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
       // 計算總金額，星期日價格為原價的一半
       const calculatedFee = (normalDays * rental.fee) + (sundayDays * rental.fee * 0.5);
       setTotalFee(calculatedFee);
-
-      console.log('總金額計算:', calculatedFee);
 
       // 更新父元件資料，傳遞原始金額與折扣後金額
       onDateChange(startDate, endDate);

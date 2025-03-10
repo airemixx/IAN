@@ -16,7 +16,6 @@ const auth = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
     req.user = decoded
 
-    console.log("🔍 已解碼的 JWT：", req.user); // 🛠️ 確保 `user_id` 被成功解碼
     next()
   } catch (error) {
     console.error('JWT 驗證失敗:', error.name, error.message)
@@ -216,9 +215,6 @@ router.get('/', async (req, res) => {
     }
 
     rentalQuery += ` GROUP BY r.id ORDER BY r.id ASC `;
-
-    console.log("執行 SQL:", rentalQuery);
-    console.log("參數:", queryParams);
 
     const [rentals] = await pool.query(rentalQuery, queryParams)
     rentals.forEach((rental) => {
@@ -455,13 +451,9 @@ router.delete('/collection', auth, async (req, res) => {
 /// 更新評論
 router.put('/reviews/:id', auth, async (req, res) => {
   try {
-    console.log("🔍 [後端收到請求] req.params:", req.params); // 檢查 `id` 是否有正確傳入
-    console.log("🔍 [後端收到請求] req.body:", req.body); // 檢查 `comment` & `rating`
     const { id } = req.params; // 評論 ID
     const { comment, rating } = req.body;
     const userId = req.user.id; // 取得登入的 user_id
-
-    console.log('🛠️ 正在更新評論:', { id, comment, rating, userId });
 
     if (!id || rating === undefined || !comment) {
       return res.status(400).json({ success: false, error: '評論內容或評分不得為空' });
@@ -472,8 +464,6 @@ router.put('/reviews/:id', auth, async (req, res) => {
       'SELECT user_id FROM user_rentals WHERE id = ?',
       [id]
     );
-
-    console.log("🔍 [查詢結果] user_rentals:", existingReview);
 
     if (existingReview.length === 0) {
       return res.status(404).json({ success: false, error: '找不到該評論' });
