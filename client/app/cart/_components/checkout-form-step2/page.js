@@ -80,16 +80,16 @@ export default function CheckoutFormStep2() {
     };
 
     const handleSelectChange = (e) => {
-        const selectedId = e.target.value;
-        const buyer = buyerOptions.find((b) => String(b.address) === selectedId);
-        setSelectedOption(buyer || null);
+        const selectedText = e.target.value; // 取得選中的文字 "地址1"
+        const selectedIndex = selectedText.match(/\d+/)?.[0]; // 提取數字部分
+        setSelectedOption(buyerOptions[selectedIndex-1] || null);
     };
 
     const validateForm = () => {
         const newErrors = {};
     
         // 正規表達式
-        const nameRegex = /^[\u4e00-\u9fa5a-zA-Z\s]{2,20}$/; // 允許中文、英文、空格，長度 2~20
+        const nameRegex =/^(?:[\u4e00-\u9fffA-Za-z][\u4e00-\u9fffA-Za-z\s\-\.'’]*){2,20}$/; // 允許中文、英文、空格，長度 2~20
         const phoneRegex = /^(09\d{8}|0\d{1,2}-\d{6,8})$/; // 手機 09xxxxxxxx / 市話 0X-XXXXXXX(X)
         const taiwanAddressRegex = /^[\u4e00-\u9fa5]{2,4}[縣市][\u4e00-\u9fa5]{2,4}[區鄉鎮市][\u4e00-\u9fa50-9\-]+(路|街|大道|巷|弄|段)[\u4e00-\u9fa50-9\-]+號?([\u4e00-\u9fa50-9\-F|樓之]*)?$/;
     
@@ -141,7 +141,7 @@ export default function CheckoutFormStep2() {
                     <option value="" disabled>請選擇住址</option>
                     {buyerOptions.map((buyer,index) => (
                         <option key={index} value={buyer.id}>
-                            {buyer.address}
+                            地址{`${index+1}`}
                         </option>
                     ))}
                 </select>
