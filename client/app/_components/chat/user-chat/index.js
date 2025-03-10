@@ -1,9 +1,9 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "react-bootstrap"
-import { X, Check, CheckAll } from "react-bootstrap-icons"
+import { X, Check, CheckAll, ChevronDown } from "react-bootstrap-icons"
 import { CSSTransition } from "react-transition-group"
 import styles from "./index.module.scss"
 import EmojiPicker, { SkinTones } from 'emoji-picker-react';
@@ -91,20 +91,25 @@ export default function ChatWidget() {
 
   const [enlargeImage, setEnlargeImage] = useState(null);
   const [uploading, setUploading] = useState(false); // 添加上傳狀態
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (chatBodyRef.current) {
-      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+      chatBodyRef.current.scrollTo({
+        top: chatBodyRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
-  }
+  }, []);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (chatBodyRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatBodyRef.current;
       const bottom = scrollHeight - scrollTop - clientHeight < 20;
       setIsNearBottom(bottom);
+      setShowScrollButton(!bottom);
     }
-  }
+  }, []);
 
   useEffect(() => {
     const chatBody = chatBodyRef.current;
@@ -112,7 +117,7 @@ export default function ChatWidget() {
       chatBody.addEventListener('scroll', handleScroll);
       return () => chatBody.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [handleScroll]);
 
   // 分離滾動邏輯
   useEffect(() => {
@@ -125,14 +130,14 @@ export default function ChatWidget() {
         scrollToBottom();
       }
     }
-  }, [messages]);
+  }, [messages, isNearBottom, scrollToBottom]);
 
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(scrollToBottom, 300);
     }
-  }, [isOpen]);
+  }, [isOpen, scrollToBottom]);
 
   const toggleChat = () => {
     setIsOpen(!isOpen)
@@ -440,7 +445,7 @@ export default function ChatWidget() {
               </button>
             </div>
 
-            <div className={styles.chatBody} ref={chatBodyRef}>
+            <div className={styles.chatBody} ref={chatBodyRef} onScroll={handleScroll}>
               <div className={styles.messagesContainer}>
                 {messages.map((message, index) => {
                   const isPrevSameSender = index > 0 && messages[index - 1].sender === message.sender;
@@ -534,6 +539,15 @@ export default function ChatWidget() {
                     </React.Fragment>
                   );
                 })}
+                {showScrollButton && (
+                  <button 
+                    className={`${styles.scrollToBottomButton} ${styles.visible}`}
+                    onClick={scrollToBottom}
+                    aria-label="滾動到底部"
+                  >
+                    <ChevronDown />
+                  </button>
+                )}
                 <div ref={messagesEndRef} />
                 {Object.keys(typingUsers).length > 0 && (
                   <div className={styles.typingIndicator}>
