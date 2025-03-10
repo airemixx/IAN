@@ -60,7 +60,11 @@ router.post("/", async (req, res) => {
             `INSERT INTO user_coupon (user_id, coupon_id, quantity) VALUES (?, ?, ?);`,
             [userId, couponId, quantity]
         );
-
+        await pool.execute(
+            `UPDATE coupon SET quantity = quantity - ? WHERE id = ?;`,
+            [quantity, couponId]
+        );
+        
         return res.status(200).json({ success: true, message: "優惠券獲取成功", result: insertResult });
     } catch (error) {
         console.error("優惠券獲取失敗:", error);
