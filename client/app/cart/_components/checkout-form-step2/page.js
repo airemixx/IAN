@@ -87,14 +87,38 @@ export default function CheckoutFormStep2() {
 
     const validateForm = () => {
         const newErrors = {};
-        Object.keys(formData).forEach((key) => {
-            if (!formData[key].trim()) {
-                newErrors[key] = "此欄位為必填";
-            }
-        });
+    
+        // 正規表達式
+        const nameRegex = /^[\u4e00-\u9fa5a-zA-Z\s]{2,20}$/; // 允許中文、英文、空格，長度 2~20
+        const phoneRegex = /^(09\d{8}|0\d{1,2}-\d{6,8})$/; // 手機 09xxxxxxxx / 市話 0X-XXXXXXX(X)
+        const taiwanAddressRegex = /^[\u4e00-\u9fa5]{2,4}[縣市][\u4e00-\u9fa5]{2,4}[區鄉鎮市][\u4e00-\u9fa50-9\-]+(路|街|大道|巷|弄|段)[\u4e00-\u9fa50-9\-]+號?([\u4e00-\u9fa50-9\-F|樓之]*)?$/;
+    
+        // 驗證姓名
+        if (!formData.name.trim()) {
+            newErrors.name = "姓名為必填";
+        } else if (!nameRegex.test(formData.name.trim())) {
+            newErrors.name = "姓名須為 2~20 個中英文字符";
+        }
+    
+        // 驗證台灣地址
+        if (!formData.address.trim()) {
+            newErrors.address = "地址為必填";
+        } else if (!taiwanAddressRegex.test(formData.address.trim())) {
+            newErrors.address = "地址格式錯誤，請輸入完整台灣地址（包含縣市區/鄉鎮、路街巷弄門牌）";
+        }
+    
+        // 驗證電話號碼
+        if (!formData.phone.trim()) {
+            newErrors.phone = "電話號碼為必填";
+        } else if (!phoneRegex.test(formData.phone.trim())) {
+            newErrors.phone = "電話格式錯誤（手機：09xxxxxxxx / 市話：0X-XXXXXXX(X)）";
+        }
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+    
+    
 
     const handleSubmit = () => {
         if (validateForm()) {
