@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
   }
   
   try {
-    let totalPrice = 0;
+    let totalPrice = 0,start_date,end_date;
     Object.values(cartItems).map(async (cartItem) => {
       const price = cartItem.price;
       totalPrice += price;
@@ -67,6 +67,7 @@ router.post("/", async (req, res) => {
           rentalId = cartItem.product_id;
           start_date = cartItem.start;
           end_date = cartItem.end;
+
           break;
       }
       
@@ -87,11 +88,12 @@ router.post("/", async (req, res) => {
           [orderId[0][0].id, userId, model, coursesId]
         );
       }else if(rentalId != null){
+        let price = cartItem.price
         await pool.execute(
           `INSERT INTO user_rentals (
           order_id, user_id, rent_id, rent_fee, start_date, end_date) VALUES 
           (?, ?, ?, ?, ?, ?)`,
-          [orderId[0][0].id, userId, rentalId,price, start_date, end_date]
+          [orderId[0][0].id, userId, rentalId, price, start_date, end_date]
         );
       }
     })
