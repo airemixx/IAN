@@ -282,9 +282,6 @@ router.get('/', async (req, res) => {
 
     rentalQuery += ` GROUP BY r.id ORDER BY r.id ASC `;
 
-    console.log("執行 SQL:", rentalQuery);
-    console.log("參數:", queryParams);
-
     const [rentals] = await pool.query(rentalQuery, queryParams)
     rentals.forEach((rental) => {
       rental.images = rental.images ? rental.images.split(',') : []
@@ -533,11 +530,6 @@ router.post('/reviews', auth, async (req, res) => {
     const comment = req.body.comment?.trim() || '';
     const user_id = req.user.id;
 
-    console.log('rent_id:', rent_id);
-    console.log('user_id:', user_id);
-    console.log('rating:', rating);
-    console.log('comment:', comment);
-
     if (rent_id <= 0 || rating <= 0 || !comment) {
       return res.status(400).json({ success: false, error: '評論資料不完整' });
     }
@@ -547,8 +539,6 @@ router.post('/reviews', auth, async (req, res) => {
       'SELECT * FROM user_rentals WHERE rent_id = ? AND user_id = ? AND status = "已完成"',
       [rent_id, user_id]
     );
-
-    console.log('查詢到的租借記錄:', rentalCheck);
 
     if (rentalCheck.length === 0) {
       return res.status(400).json({ success: false, error: '您尚未完成該商品的租借，無法留言' });
@@ -579,8 +569,6 @@ router.put('/reviews/:id', auth, async (req, res) => {
       return res.status(400).json({ success: false, error: '評論內容與評分不得為空' });
     }
 
-    console.log('🛠️ 正在更新評論:', { id, comment, rating });
-
     // 🛠️ 直接更新評論內容與評分，不影響原始的 comment_at 時間
     const [result] = await pool.query(
       `
@@ -606,12 +594,6 @@ router.put('/reviews/:id', auth, async (req, res) => {
 router.put('/reviews', auth, async (req, res) => {
   try {
     const { comment, rating, reviewId, newUserId, commentAt } = req.body;
-
-    console.log('💡 訂單 ID (reviewId):', reviewId);
-    console.log('💡 新評論者 ID (newUserId):', newUserId);
-    console.log('💡 新的評論內容:', comment);
-    console.log('💡 新的評分:', rating);
-    console.log('💡 更新的時間:', commentAt);
 
     if (!reviewId || !newUserId || !comment || rating === undefined) {
       console.warn('⚠️ 評論 ID、評論者 ID、內容或評分不得為空');
@@ -642,8 +624,6 @@ router.put('/reviews', auth, async (req, res) => {
       [comment, rating, newUserId, formattedCommentAt, reviewId]
     );
 
-    console.log('✅ 更新評論結果:', result);
-
     if (result.affectedRows === 0) {
       console.warn('❌ 更新失敗，評論可能不存在');
       return res.status(404).json({ success: false, error: '評論不存在或無法更新' });
@@ -660,8 +640,6 @@ router.put('/reviews', auth, async (req, res) => {
 // 📌 獲取特定商品的所有評論 API (GET /reviews/:rent_id)
 router.get('/reviews/:rent_id', async (req, res) => {
   const { rent_id } = req.params;
-
-  console.log('🔍 後端接收到的商品 ID (rent_id):', rent_id);
 
   if (!rent_id) {
     return res.status(400).json({ success: false, error: '無效的商品 ID' });

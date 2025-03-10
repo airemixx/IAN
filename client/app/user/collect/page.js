@@ -4,9 +4,13 @@ import useAuth from "@/hooks/use-auth";
 import Sidenav from "../_components/Sidenav/page";
 import FavoriteButton from "../_components/favorite-button-p/page";
 import Link from "next/link";
-import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import styles from "./collect.module.scss";
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay, Navigation, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
 export default function CollectPage() {
   const { token, loading } = useAuth();
@@ -72,53 +76,183 @@ export default function CollectPage() {
         <Sidenav />
         <div className="col-md-8 col-lg-9 py-4">
           <h1 className={`mb-4 ${styles.h1}`}>我的收藏</h1>
-          {Object.entries(collections).map(([key, items]) => (
-            <section key={key} className="mb-5">
-              <h5 className="mb-3">{key === 'products' ? '相機' : key === 'rents' ? '租賃' : key === 'courses' ? '課程' : '文章'}</h5>
-              {items.length === 0 ? (
-                <p>目前沒有收藏的{key === 'products' ? '商品' : key === 'rents' ? '租賃' : key === 'courses' ? '課程' : '文章'}</p>
-              ) : (
-                <Carousel 
-                  autoPlay={true} 
-                  infiniteLoop={true} 
-                  showThumbs={false} 
-                  showStatus={false} 
-                  showArrows={false} 
-                  swipeable={true} 
-                  emulateTouch={true} 
-                  centerMode={true} 
-                  centerSlidePercentage={slidePercentage}>
-                  {items.map((item) => (
-                    <div key={item.collect_id || item.product_id || item.rent_id || item.course_id || item.article_id} className="col-12 col-md-6 col-lg-4">
+          {/* 產品收藏 */}
+          <section className="mb-5">
+            <h5 className="mb-3">相機</h5>
+            {collections.products.length === 0 ? (
+              <p>目前沒有收藏的商品</p>
+            ) : (
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={10}
+                slidesPerView={3}
+                breakpoints={{
+                  390: { slidesPerView: 1 },  // 螢幕寬度 ≦ 320px 時顯示 1 張
+                  768: { slidesPerView: 2 },  // 螢幕寬度 ≧ 768px 時顯示 2 張
+                  1024: { slidesPerView: 3 }, // 螢幕寬度 ≧ 1024px 時顯示 3 張
+                }}
+                loop={true}
+                pagination={{ clickable: true }}
+              >
+                {collections.products.map((item) => (
+                  <SwiperSlide key={item.collect_id || item.product_id}>
+                    <Link href={`/product/${item.product_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
                       <div className={`p-4 ${styles.collectionCard}`}>
                         <div className='text-end'>
-                          <FavoriteButton 
-                            productId={item.product_id} 
-                            rentId={item.rent_id} 
-                            courseId={item.course_id} 
-                            articleId={item.article_id} 
-                            onFavoriteToggle={handleRefresh} 
-                          />
+                          <FavoriteButton productId={item.product_id} onFavoriteToggle={handleRefresh} />
                         </div>
-                        <Link href={`/${key === 'products' ? 'product' : key === 'rents' ? 'rental' : key === 'courses' ? 'courses' : 'article'}/${item.product_id || item.rent_id || item.course_id || item.article_id}`}
-                          className={`${styles.noUnderline} ${styles.cardLink}`}
-                        >
-                          <img src={item.image_url} alt={item.name || item.rent_name || item.course_title || item.title} className="mb-3" />
-                          <div className={styles.cardDivider} />
-                          <h6 className={styles.textGray}>{item.brand_name || item.brand || `講師: ${item.instructor_name}`}</h6>
-                          <h5>{item.name || item.rent_name || item.course_title || item.title}</h5>
-                          <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price} {key === 'rents' ? '/天' : ''}</h5>
-                          <h6 className={styles.textGray}>{item.short_introduce || item.subtitle}</h6>
-                        </Link>
+                        <img src={item.image_url} alt={item.name} className="mb-3" />
+                        <div className={styles.cardDivider} />
+                        <h6 className={styles.textGray}>{item.brand_name}</h6>
+                        <h5 className="mb-3">{item.name}</h5>
+                        <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price}</h5>
+                        <h6 className={styles.textGray}>{item.short_introduce}</h6>
                       </div>
-                    </div>
-                  ))}
-                </Carousel>
-              )}
-            </section>
-          ))}
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
+          </section>
+
+          {/* 租賃收藏 */}
+          <section className="mb-5">
+            <h5 className="mb-3">租賃</h5>
+            {collections.rents.length === 0 ? (
+              <p>沒有收藏的租賃</p>
+            ) : (
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={10}
+                slidesPerView={3}
+                breakpoints={{
+                  390: { slidesPerView: 1 },  // 螢幕寬度 ≦ 320px 時顯示 1 張
+                  768: { slidesPerView: 2 },  // 螢幕寬度 ≧ 768px 時顯示 2 張
+                  1024: { slidesPerView: 3 }, // 螢幕寬度 ≧ 1024px 時顯示 3 張
+                }}
+                loop={true}
+                pagination={{ clickable: true }}
+              >
+                {collections.rents.map((item) => (
+                  <SwiperSlide key={item.collect_id || item.rent_id}>
+                    <Link href={`/rental/${item.rent_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
+                      <div className={`p-4 ${styles.collectionCard}`}>
+                        <div className='text-end'>
+                          <FavoriteButton rentId={item.rent_id} onFavoriteToggle={handleRefresh} />
+                        </div>
+                        <img src={item.image_url} alt={item.rent_name} className="mb-3" />
+                        <div className={styles.cardDivider} />
+                        <h6 className={styles.textGray}>{item.brand}</h6>
+                        <h5 className="mb-3">{item.rent_name}</h5>
+                        <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price} /天</h5>
+                      </div>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
+          </section>
+
+          {/* 課程收藏 */}
+          <section className="mb-5">
+            <h5 className="mb-3">課程</h5>
+            {collections.courses.length === 0 ? (
+              <p>沒有收藏的課程</p>
+            ) : (
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={10}
+                slidesPerView={3}
+                breakpoints={{
+                  390: { slidesPerView: 1 },  // 螢幕寬度 ≦ 320px 時顯示 1 張
+                  768: { slidesPerView: 2 },  // 螢幕寬度 ≧ 768px 時顯示 2 張
+                  1024: { slidesPerView: 3 }, // 螢幕寬度 ≧ 1024px 時顯示 3 張
+                }}
+                loop={true}
+                pagination={{ clickable: true }}
+              >
+                {collections.courses.map((item) => (
+                  <SwiperSlide key={item.collect_id || item.course_id}>
+                    <Link href={`/courses/${item.course_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
+                      <div className={`p-4 ${styles.collectionCard}`}>
+                        <div className='text-end'>
+                          <FavoriteButton courseId={item.course_id} onFavoriteToggle={handleRefresh} />
+                        </div>
+                        <img src={item.image_url} alt={item.course_title} className="mb-3" />
+                        <div className={styles.cardDivider} />
+                        <h6 className={styles.textGray}>講師: {item.instructor_name}</h6>
+                        <h5 className={`${styles.courseTitle}`}>{item.course_title}</h5>
+                        <h5 className={`mb-3 ${styles.price}`}>價格: ${item.price}</h5>
+                      </div>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
+          </section>
+
+          {/* 文章收藏 */}
+          <section className="mb-5">
+            <h5 className="mb-3">文章</h5>
+            {collections.articles.length === 0 ? (
+              <p>沒有收藏的文章</p>
+            ) : (
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={10}
+                slidesPerView={3}
+                breakpoints={{
+                  390: { slidesPerView: 1 },  // 螢幕寬度 ≦ 320px 時顯示 1 張
+                  768: { slidesPerView: 2 },  // 螢幕寬度 ≧ 768px 時顯示 2 張
+                  1024: { slidesPerView: 3 }, // 螢幕寬度 ≧ 1024px 時顯示 3 張
+                }}
+                loop={true}
+                pagination={{ clickable: true }}
+              >
+                {collections.articles.map((item) => (
+                  <SwiperSlide key={item.collect_id || item.article_id}>
+                    <Link href={`/article/${item.article_id}`} className={`${styles.noUnderline} ${styles.cardLink}`} >
+                      <div className={`p-4 ${styles.collectionCard}`}>
+                        <div className='text-end'>
+                          <FavoriteButton articleId={item.article_id} onFavoriteToggle={handleRefresh} />
+                        </div>
+                        <img src={item.image_url} alt={item.title} className="mb-3" />
+                        <div className={styles.cardDivider} />
+                        <h5>{item.title}</h5>
+                        <h6 className={styles.textGray}>{item.subtitle}</h6>
+                        <h6 >讚數: {item.like_count}</h6>
+                      </div>
+                    </Link>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
+          </section>
         </div>
       </div>
     </div>
   );
-}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

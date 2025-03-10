@@ -13,15 +13,9 @@ export default function RentPagination({
 }) {
   if (totalItems === 0) return null
 
-  useEffect(() => {
-    console.log('Updated currentIndex:', currentIndex)
-    console.log('RentPagination -> totalItems:', totalItems)
-  }, [currentIndex])
-
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => Math.max(0, prev - itemsPerPage))
-      console.log('Prev Clicked:', currentIndex - itemsPerPage)
     }
   }
 
@@ -33,7 +27,6 @@ export default function RentPagination({
           totalItems - (totalItems % itemsPerPage || itemsPerPage)
         )
       )
-      console.log('Next Clicked:', currentIndex + itemsPerPage)
     }
   }
 

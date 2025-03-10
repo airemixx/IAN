@@ -9,12 +9,11 @@ import Swal from 'sweetalert2';
 import StarRating from '../rent-rating/page'
 import withReactContent from 'sweetalert2-react-content';
 import ReactDOM from 'react-dom/client'
+import { Howl } from 'howler'
 
 const MySwal = withReactContent(Swal);
 
 export default function RentReviews({ reviews = [], setReviews, currentUserId }) {
-  console.log("🔍 [前端] 當前登入者 ID (currentUserId):", currentUserId);
-
   const [itemsPerPage, setItemsPerPage] = useState(3)
 
   // 📌計算平均評分
@@ -125,8 +124,6 @@ export default function RentReviews({ reviews = [], setReviews, currentUserId })
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          console.log("🚀 [前端] 發送 API 請求:", `http://localhost:8000/api/rental/reviews/${review.id}`, result.value);
-
           const res = await fetch(`http://localhost:8000/api/rental/reviews/${review.id}`, {
             method: 'PUT',
             headers: {
@@ -142,7 +139,40 @@ export default function RentReviews({ reviews = [], setReviews, currentUserId })
             return;
           }
 
-          Swal.fire('成功', '評論已更新', 'success');
+          // 成功音效
+          const successSound = new Howl({
+            src: ['/sounds/success.mp3'], // 音效來源 (支援多格式陣列)
+            volume: 0.4, // 調整音量 (0.0 ~ 1.0)
+            loop: false // 是否重複播放
+          });
+
+          Swal.fire({
+            didOpen: () => {
+              successSound.play()
+            },
+            color: '#fff',
+            icon: 'success',
+            iconColor: '#fff',
+            iconHtml: `<img src="/images/icon/fixed_icon_4.svg" alt="已取消收藏圖示" class="k-swal-toast-icon">`,
+            html: `您已在 <strong>${formatDate(review.comment_at).display}</strong><br>
+            更新評論
+            `,
+            background: '#23425a',
+            showConfirmButton: false,
+            timerProgressBar: true,
+            showCloseButton: true,
+            closeButtonHtml: '&times;', // "×" 符號
+            timer: 1450,
+            toast: true,
+            position: 'top-end',
+            customClass: {
+              icon: 'k-swal-toast-icon',
+              popup: 'k-swal-toast-popup',
+              closeButton: 'k-swal-toast-close',
+              timerProgressBar: 'k-swal-toast-progress'
+            },
+          });
+
           // 🟢 確保 state 更新
           setReviews((prev) =>
             prev.map((r) =>
@@ -183,12 +213,18 @@ export default function RentReviews({ reviews = [], setReviews, currentUserId })
                 {review.comment_at ? formatDate(review.comment_at).display : <span className="k-no-time">🚫</span>}
               </small>
               <span>
-                {review.user_id === currentUserId && (
-                  <FaRegPenToSquare
-                    className="k-main-text cursor-pointer k-pen ms-1"
-                    onClick={() => handleEdit(review)}
-                  />
-                )}
+                {review.user_id === currentUserId && (() => {
+                  const commentDate = new Date(review.comment_at);
+                  const now = new Date();
+                  const daysDifference = (now - commentDate) / (1000 * 60 * 60 * 24);
+
+                  return daysDifference <= 30 ? (
+                    <FaRegPenToSquare
+                      className="k-main-text cursor-pointer k-comment ms-2"
+                      onClick={() => handleEdit(review)}
+                    />
+                  ) : null;
+                })()}
               </span>
               <p>
                 {review.comment.split('\n').map((line, i) => (

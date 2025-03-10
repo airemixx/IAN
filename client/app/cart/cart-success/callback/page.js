@@ -35,7 +35,8 @@ export default function ECPayCallback() {
             cartItems: JSON.parse(localStorage.getItem('cartItems') || '[]'), // 取得購物車資料
             date: searchParams?.get('PaymentDate'),
             userId: decoded.id,
-            disMoney: JSON.parse(localStorage.getItem("discountMoney")) || 0
+            disMoney: JSON.parse(localStorage.getItem("discountMoney")) || 0,
+            selectedCoupons: JSON.parse(localStorage.getItem("selectedCoupons") || '[]')
           };
 
           console.log("送出訂單資料:", orderData);
@@ -49,13 +50,14 @@ export default function ECPayCallback() {
           if (response.status == 200) {
             setOrderSaved(true);
             console.log('訂單已成功存入資料庫');
-            // 清除 localStorage 中的資料
+            //清除 localStorage 中的資料
             localStorage.removeItem('cart');
             localStorage.removeItem('rent_cart');
             localStorage.removeItem('shoppingCart');
             localStorage.removeItem('cartItems');
             localStorage.removeItem('buyerData');
             localStorage.removeItem('discountMoney');
+            localStorage.removeItem('selectedCoupons');
           } else {
             console.error('存入失敗:', await response.text());
           }

@@ -136,7 +136,7 @@ export default function CheckoutFormStep1({ slItem }) {
       } else {
         updatedCoupons.push(coupon);
       }
-
+      localStorage.setItem("selectedCoupons", JSON.stringify(updatedCoupons));
       let totalDiscount = updatedCoupons.reduce((acc, c) => {
         if (c.disType === "fixed") {
           return acc + 1500;

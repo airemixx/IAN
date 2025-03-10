@@ -122,6 +122,9 @@
   background-color: #ca6d1b !important;
   border-color: #ca6d1b !important;
 }
+.subPrice,.totalPrice,.discountPrice{
+  color: #d0b088;
+}
 @media (max-width: 996px) {
   .j-payStep {
     margin-top: 0;

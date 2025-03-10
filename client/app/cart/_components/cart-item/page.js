@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 export default function CartItem({ id, itemData, page }) {
-  const { image, brand, name, price, specs } = itemData;
-
+  const { image, brand, name, price, specs, quantity } = itemData;
   useEffect(() => {
     let cart = JSON.parse(localStorage.getItem("cart")) || {};
     if (cart[id]) {
@@ -28,15 +27,15 @@ export default function CartItem({ id, itemData, page }) {
       if (result.isConfirmed) {
         // 取得 localStorage 中的購物車數據
         let cart = JSON.parse(localStorage.getItem("cart")) || {};
-  
+
         delete cart[id];
         let updatedCart = Object.entries(cart).filter(v => v != null); // 過濾掉該商品
         updatedCart = updatedCart.map(v => v[1]);
-  
+
         console.log(updatedCart);
         localStorage.removeItem("cart");
         localStorage.setItem("cart", JSON.stringify(updatedCart));
-  
+
         // 顯示刪除成功提示
         Swal.fire({
           title: "已刪除！",
@@ -50,8 +49,8 @@ export default function CartItem({ id, itemData, page }) {
       }
     });
   }
-  
-  
+
+
   return (
     <>
       <div className="d-none d-sm-block d-flex flex-grow-1">
@@ -63,7 +62,7 @@ export default function CartItem({ id, itemData, page }) {
             <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
               <div className={`${styles['j-content']} d-flex justify-content-between align-items-center flex-grow-1 me-xxl-4 me-xl-3 me-lg-2`}>
                 <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0`}>
-                  <div className="ms-lg-2 ms-xl-0">
+                  <div className={`${styles['j-product']} ms-lg-2 ms-xl-0`}>
                     <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
                     <br />
                     <span className={`${styles['j-model']} ${styles['j-publicFont']}`}>{name}</span>
@@ -77,8 +76,11 @@ export default function CartItem({ id, itemData, page }) {
                     +詳細資訊
                   </button>
                 </div>
+                <div>
+                  <span className={`${styles['j-quantity']} `}>數量:{quantity}</span>
+                </div>
                 <div className="d-flex">
-                  <p className={`${styles['j-price']} me-4`}>價格: {Number(price).toLocaleString()}元</p>
+                  <p className={`${styles['j-price']} me-4`}>NT$ {Number(price).toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -101,7 +103,7 @@ export default function CartItem({ id, itemData, page }) {
             </div>
             <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
               <div className={`${styles['j-content']} d-flex justify-content-around align-items-center flex-grow-1`}>
-                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0`}>
+                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0 `}>
                   <div className="ms-lg-2 ms-xl-0">
                     <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
                     <br />
@@ -115,11 +117,14 @@ export default function CartItem({ id, itemData, page }) {
                   >
                     +詳細資訊
                   </button>
+                  <div className="mb-2 mb-sm-0">
+                    <span className={`${styles['j-quantity']} `}>數量:{quantity}</span>
+                  </div>
                 </div>
 
               </div>
-              <div className="d-flex justify-content-center me-4">
-                  <p className={`${styles['j-price']}`}>價格: {Number(price).toLocaleString()}元</p>
+              <div className="d-flex justify-content-center me-4 mt-2 mt-sm-0">
+                <p className={`${styles['j-price']}`}>NT$ {Number(price).toLocaleString()}</p>
               </div>
             </div>
 

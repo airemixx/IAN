@@ -263,7 +263,7 @@ router.get("/coupon", checkToken, async (req, res) => {
        FROM user_coupon uc
        JOIN coupon c ON uc.coupon_id = c.id
        WHERE uc.user_id = ?
-       ORDER BY uc.created_at DESC;`,  
+       ORDER BY uc.created_at DESC;`,
       [userId]
     );
 
@@ -289,22 +289,14 @@ router.get("/coupon", checkToken, async (req, res) => {
 // 更新評論 API
 router.put('/rent/reviews/:id', authenticate, async (req, res) => {
   try {
-    console.log("🔍 收到的評論資料:", req.body); // ✅ 這行新增來 debug
-
-
     const { id } = req.params;
     const { comment, rating } = req.body;
     const userId = req.user.id;
 
-    if (!comment || rating === undefined) {
-      return res.status(400).json({ success: false, error: '評論內容與評分不得為空' });
-    }
-
-
 
     // 檢查訂單是否符合條件
     const [rental] = await pool.query(
-      `SELECT status, comment_at FROM user_rentals WHERE id = ? AND user_id = ?`,
+      `SELECT status FROM user_rentals WHERE id = ? AND user_id = ?`,
       [id, userId]
     );
 
@@ -312,14 +304,21 @@ router.put('/rent/reviews/:id', authenticate, async (req, res) => {
       return res.status(404).json({ success: false, error: '找不到符合條件的訂單' });
     }
 
-    const { status, comment_at } = rental[0];
+    const { status } = rental[0];
 
     if (status !== '已完成') {
       return res.status(400).json({ success: false, error: '僅已完成的訂單才能評論' });
     }
 
-    if (comment_at !== null) {
-      return res.status(400).json({ success: false, error: '評論已提交，無法修改' });
+    // 🟢 判斷是「刪除」還是「儲存
+    if (comment === null && rating === null) {
+      // ✅ 刪除評論（軟刪除）
+      await pool.query(
+        `UPDATE user_rentals SET comment = NULL, rating = NULL, comment_at = NULL WHERE id = ? AND user_id = ?`,
+        [id, userId]
+      );
+
+      return res.json({ success: true, message: '評論已成功刪除' });
     }
 
     // 更新評論與評分，並設定評論時間
@@ -329,6 +328,7 @@ router.put('/rent/reviews/:id', authenticate, async (req, res) => {
     );
 
     res.json({ success: true, message: '評論已成功提交' });
+
   } catch (error) {
     console.error('❌ 更新評論錯誤:', error);
     res.status(500).json({ success: false, error: '伺服器錯誤' });
