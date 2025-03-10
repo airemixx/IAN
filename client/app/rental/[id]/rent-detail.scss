@@ -456,3 +456,43 @@
   height: 10px;
   border-radius: 5px;
 }
+
+// 彈窗(small)
+.k-swal-small-icon {
+  top: 10px;
+}
+.k-swal-small-popup {
+  width: 360px;
+  padding-top: -10px !important; // 裝飾條
+  overflow: hidden; //  確保裝飾條不會超出邊界
+}
+.k-swal-small-btn {
+  background-color: #5292c5;
+  border-radius: 50px;
+}
+
+// 彈窗(review)
+.k-review-swal-popup {
+  border-radius: 15px;
+  width: 495px;
+}
+.k-review-swal-actions {
+  justify-content: flex-end;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 10px;
+}
+.k-review-swal-btn-1 {
+  background-color: #5292c5;
+  border-radius: 50px;
+}
+.k-review-swal-btn-2 {
+  background-color: #807871;
+  border-radius: 50px;
+}
+.k-swal-label {
+  text-align: left; /* 保證靠左對齊 */
+  margin-bottom: 5px; /* 調整間距 */
+  font-weight: 500; /* 讓字體看起來更專業 */
+}
