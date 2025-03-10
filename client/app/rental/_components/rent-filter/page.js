@@ -15,9 +15,6 @@ export default function RentFilter({ onFilterChange }) {
   const [equipmentOptions, setEquipmentOptions] = useState([])
   const [brandOptions, setBrandOptions] = useState([])
 
-  useEffect(() => {
-    console.log('設備選項:', equipmentOptions)
-  }, [equipmentOptions])
   // 📌 從後端 API 獲取篩選選項
   useEffect(() => {
     fetch('http://localhost:8000/api/rental')

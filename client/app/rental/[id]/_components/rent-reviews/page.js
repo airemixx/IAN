@@ -14,8 +14,6 @@ import { Howl } from 'howler'
 const MySwal = withReactContent(Swal);
 
 export default function RentReviews({ reviews = [], setReviews, currentUserId }) {
-  console.log("🔍 [前端] 當前登入者 ID (currentUserId):", currentUserId);
-
   const [itemsPerPage, setItemsPerPage] = useState(3)
 
   // 📌計算平均評分
@@ -126,8 +124,6 @@ export default function RentReviews({ reviews = [], setReviews, currentUserId })
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          console.log("🚀 [前端] 發送 API 請求:", `http://localhost:8000/api/rental/reviews/${review.id}`, result.value);
-
           const res = await fetch(`http://localhost:8000/api/rental/reviews/${review.id}`, {
             method: 'PUT',
             headers: {
@@ -158,7 +154,6 @@ export default function RentReviews({ reviews = [], setReviews, currentUserId })
             icon: 'success',
             iconColor: '#fff',
             iconHtml: `<img src="/images/icon/fixed_icon_4.svg" alt="已取消收藏圖示" class="k-swal-toast-icon">`,
-            // text: '評論已更新',
             html: `您已在 <strong>${formatDate(review.comment_at).display}</strong><br>
             更新評論
             `,
@@ -225,7 +220,7 @@ export default function RentReviews({ reviews = [], setReviews, currentUserId })
 
                   return daysDifference <= 30 ? (
                     <FaRegPenToSquare
-                      className="k-main-text cursor-pointer k-pen ms-1"
+                      className="k-main-text cursor-pointer k-comment ms-2"
                       onClick={() => handleEdit(review)}
                     />
                   ) : null;
