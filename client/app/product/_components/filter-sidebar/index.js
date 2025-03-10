@@ -20,7 +20,7 @@ export default function FilterSidebar({ onFilterChange }) {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth <= 390);
+      setIsMobile(window.innerWidth <= 1000);
     };
 
     checkScreenSize();

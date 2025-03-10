@@ -1,8 +1,7 @@
 'use client'
 import styles from './cart-button.module.scss'
 import { toast } from 'react-toastify'
-import { MdError } from 'react-icons/md'
-import { MdShoppingCart } from 'react-icons/md'
+import { MdError, MdShoppingCart } from 'react-icons/md'
 
 export default function CartButton({ product }) {
   const addToCart = () => {
@@ -12,7 +11,7 @@ export default function CartButton({ product }) {
         : null
 
     if (!token) {
-      toast.success('請先登入才能加入購物車！', {
+      toast.error('請先登入才能加入購物車！', {
         position: 'top-right',
         autoClose: 2000,
         icon: <MdError size={30} />,
@@ -21,14 +20,21 @@ export default function CartButton({ product }) {
     }
 
     const cart = JSON.parse(localStorage.getItem('cart')) || []
-    const existingProduct = cart.find((item) => item.id === product.id)
+    const exists = cart.find((item) => item.id === product.id)
 
-    if (existingProduct) {
-      existingProduct.quantity += 1
-    } else {
-      cart.push({ ...product, quantity: 1 })
+    if (exists) {
+      // 商品已經在購物車中，顯示提示
+      toast.warning(`${product.name} 已在購物車`, {
+        position: 'top-right',
+        autoClose: 2000,
+        icon: <MdError size={30} color="orange" />,
+        className: styles.toastCustom,
+      })
+      return
     }
 
+    // 如果商品不在購物車中，則新增
+    cart.push({ ...product, quantity: 1 })
     localStorage.setItem('cart', JSON.stringify(cart))
 
     toast.success(`${product.name} 已成功加入購物車`, {
