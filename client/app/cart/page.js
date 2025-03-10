@@ -157,7 +157,14 @@ export default function cartPageOne() {
         localStorage.removeItem("cart");
         localStorage.removeItem("rent_cart");
         localStorage.removeItem("shoppingCart");
-
+        localStorage.removeItem("cartItems");
+        localStorage.removeItem("buyerData")
+        // 手動更新 state 來強制重新渲染畫面
+        setCartStorage([]);
+        setRentStorage([]);
+        setLessonStorage([]);
+        setIsCartEmpty(true);
+        
         Swal.fire({
           title: "已清空購物車",
           text: "購物車已成功清空。",
@@ -165,8 +172,7 @@ export default function cartPageOne() {
           timer: 2000,
           showConfirmButton: false
         });
-
-        router.refresh(); // 重新整理頁面以更新購物車狀態
+        
       }
     });
   };
