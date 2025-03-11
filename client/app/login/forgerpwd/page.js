@@ -149,7 +149,7 @@ export default function ForgotPassword() {
         )}
 
         <div className="text-center mt-3">
-          <Link href="/login">回到登陸頁面</Link>
+          <Link href="/login">回到登入頁面</Link>
         </div>
       </div>
     </div>

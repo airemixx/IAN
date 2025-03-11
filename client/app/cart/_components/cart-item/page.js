@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 export default function CartItem({ id, itemData, page }) {
-  const { image, brand, name, price, specs, quantity } = itemData;
+  const { image, brand, name, price, specs} = itemData;
   useEffect(() => {
     let cart = JSON.parse(localStorage.getItem("cart")) || {};
     if (cart[id]) {
@@ -76,10 +76,7 @@ export default function CartItem({ id, itemData, page }) {
                     +詳細資訊
                   </button>
                 </div>
-                <div>
-                  <span className={`${styles['j-quantity']} `}>數量:{quantity}</span>
-                </div>
-                <div className="d-flex">
+                <div className={"d-flex"}>
                   <p className={`${styles['j-price']} me-4`}>NT$ {Number(price).toLocaleString()}</p>
                 </div>
               </div>
@@ -103,7 +100,7 @@ export default function CartItem({ id, itemData, page }) {
             </div>
             <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
               <div className={`${styles['j-content']} d-flex justify-content-around align-items-center flex-grow-1`}>
-                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0 `}>
+                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0 flex-grow-1 `}>
                   <div className="ms-lg-2 ms-xl-0">
                     <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
                     <br />
@@ -117,14 +114,11 @@ export default function CartItem({ id, itemData, page }) {
                   >
                     +詳細資訊
                   </button>
-                  <div className="mb-2 mb-sm-0">
-                    <span className={`${styles['j-quantity']} `}>數量:{quantity}</span>
-                  </div>
                 </div>
 
               </div>
-              <div className="d-flex justify-content-center me-4 mt-2 mt-sm-0">
-                <p className={`${styles['j-price']}`}>NT$ {Number(price).toLocaleString()}</p>
+              <div className="d-flex justify-content-center me-4 mt-2 mt-sm-0 ">
+                <p className={`${styles['j-price']} d-flex  flex-grow-1`}>NT$ {Number(price).toLocaleString()}</p>
               </div>
             </div>
 

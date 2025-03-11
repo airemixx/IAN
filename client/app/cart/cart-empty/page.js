@@ -54,7 +54,7 @@ export default function CartEmptyPage() {
                             <Link href={"/product"} className={`${styles['j-linkCamera']} text-center`}>尋找我的相機</Link>
                         </div>
                     </div>
-                    <div className={`${styles['j-emptyShoppingImg']} d-sm-none d-block col-6 me-4`}>
+                    <div className={`${styles['j-emptyShoppingImg']} d-sm-none d-block col-6 me-4 mb-5`}>
                         <img src="/images/cart/image2.jpg" alt="" className="object-fit-contain"/>
                         <div className={`d-flex flex-column ${styles['j-emptyShoppingTitle']} position-absolute`}>
                             <span className={`mb-2 ${styles['j-AllcameraTitle']} ${styles['j-publicFont']}`}>所有相機</span>
@@ -89,43 +89,6 @@ export default function CartEmptyPage() {
                         </div>
                     </div>
                 </div>
-                {/* <div className="pProductBox d-flex flex-column align-items-center">
-                    <p className="j-popularTitle j-publicFont">熱門產品</p>
-                    <div className="j-popularProduct d-sm-flex justify-content-center d-none">
-                        <div className="product1 d-flex flex-column me-5 pe-5">
-                            <img src="/images/cart/canon-1.png" alt="" />
-                            <p className="p1">Canon EOS R10</p>
-                            <p className="p2">NT$67,500</p>
-                        </div>
-                        <div className="product2 d-flex flex-column me-5 pe-5">
-                            <img src="/images/cart/canon-2.png" alt="" />
-                            <p className="p1">Canon EOS R10</p>
-                            <p className="p2">NT$67,500</p>
-                        </div>
-                        <div className="product3 d-flex flex-column me-5 pe-5">
-                            <img src="/images/cart/canon-3.png" alt="" />
-                            <p className="p1">Canon EOS R10</p>
-                            <p className="p2">NT$67,500</p>
-                        </div>
-                        <div className="product4 d-flex flex-column">
-                            <img src="/images/cart/canon-4.png" alt="" />
-                            <p className="p1">Canon EOS R10</p>
-                            <p className="p2">NT$67,500</p>
-                        </div>
-                    </div>
-                    <div className="j-popularProduct d-flex justify-content-center d-sm-none">
-                        <div className="product1 d-flex flex-column me-5">
-                            <img src="/images/cart/canon-1.png" alt="" />
-                            <p className="p1">Canon EOS R10</p>
-                            <p className="p2">NT$67,500</p>
-                        </div>
-                        <div className="product2 d-flex flex-column">
-                            <img src="/images/cart/canon-2.png" alt="" />
-                            <p className="p1">Canon EOS R10</p>
-                            <p className="p2">NT$67,500</p>
-                        </div>
-                    </div>
-                </div> */}
             </div> : redirect('/cart')}
 
         </div>

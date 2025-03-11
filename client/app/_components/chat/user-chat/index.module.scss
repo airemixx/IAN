@@ -1,4 +1,4 @@
-@use "sass:color";
+@use 'sass:color';
 @import '../shared/_variables';
 @import '../shared/_mixins';
 
@@ -276,7 +276,7 @@
 
 // 客服訊息樣式
 .agentMessage {
-  background: #969696;
+  background: #686868;
   color: #ffffff;
   align-self: flex-start;
   @include agent-bubble;
@@ -544,14 +544,14 @@
   padding: 0;
 }
 
-// Emoji 樣式
-.emoji {
-  font-size: 20px !important;
-  display: inline-block;
-  vertical-align: center; //
-  line-height: 1;
-  padding: 0;
-}
+// // Emoji 樣式
+// .emoji {
+//   font-size: 20px !important;
+//   display: inline-block;
+//   vertical-align: center; //
+//   line-height: 1;
+//   padding: 0;
+// }
 
 // 時間標記樣式
 .timeLabel {
@@ -748,14 +748,96 @@
   }
 }
 
+.onlineIndicator {
+  @include online-indicator;
+}
+
+/* 圖片容器 */
+.imageContainer {
+  max-width: 100%;
+  position: relative;
+}
+
+.messageImage {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+}
+
+.imageCaption {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 視頻容器 */
+.videoContainer {
+  max-width: 100%;
+  position: relative;
+}
+
+.messageVideo {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  display: block;
+}
+
+.videoCaption {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 表情符號 */
+.emoji {
+  font-size: 1.5em;
+  line-height: 1;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.scrollToBottomButton {
+  position: absolute;
+  bottom: 80px;
+  left: 50%; // 改為左側50%
+  transform: translateX(-50%); // 水平置中
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+
+  &.visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: #666;
+  }
+}
+
 @media (max-width: 768px) {
   .chatWindow {
     width: calc(100vw - 40px);
     max-width: 320px;
     right: 10px;
   }
-}
-
-.onlineIndicator {
-  @include online-indicator;
 }

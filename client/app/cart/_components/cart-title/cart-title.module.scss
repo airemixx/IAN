@@ -1,3 +1,4 @@
+
 .j-shoppingCartTitleBox .j-shoppingCartTitle {
     font-size: 2.1rem;
     font-style: normal;
@@ -10,7 +11,22 @@
     font-style: normal;
     line-height: normal;
   }
+  @media(max-width:1920px) {
+    .j-shoppingCartTitleBox{
+      margin-left: 9rem;
+    }
+  }
+  @media(max-width:1400px) {
+    .j-shoppingCartTitleBox{
+      margin-left: 5rem;
+    }
+  }
 
+  @media(max-width:1200px) {
+    .j-shoppingCartTitleBox{
+      margin-left: 1rem;
+    }
+  }
   @media(max-width:390px) {
     .j-shoppingCartTitleBox .j-shoppingCartTitle {
       font-size: 45px;
