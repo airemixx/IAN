@@ -167,6 +167,9 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
 
   // 📜 租借須知
   const handleShowPolicy = () => {
+
+    const isMobile = window.innerWidth <= 576;
+
     Swal.fire({
       didOpen: () => {
         const popup = Swal.getPopup();
@@ -180,16 +183,23 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
       icon: 'info',
       iconColor: '#fff',
       title: '租借須知',
-      html: `
-      <p class="mb-1">請確認並遵守租借條款，避免產生額外費用。</p>
-      <ul style="text-align: left; padding-left: 71px;">
-        <li>請留意配送時間，請勿造成人員不便。</li>
-        <li>週日由於物流無法配，故無法下單。</li>
-        <li>租借日若包含週日，給予當日半價優惠。</li>
-        <li>若有損壞，可能需支付維修費。</li>
-        <li>超過租期未歸還，將依超時費用計算。</li>
-      </ul>
-    `,
+      html: isMobile
+        ? `<p class="mb-1">請務必遵守租借條款</p>
+        <ul class="k-policy-swal-text-m">
+          <li>請留意人員配送時間</li>
+          <li>週日無法配送請見諒</li>
+          <li>租期含週日給予優惠</li>
+          <li>蓄意毀損將索取賠償</li>
+          <li>逾期歸還依超時計費</li>
+        </ul>`
+        : `<p class="mb-1">請務必遵守租借條款，避免產生額外費用</p>
+        <ul class="k-policy-swal-text">
+          <li>請留意配送時間，請勿造成人員不便。</li>
+          <li>週日恕無法配送，請選擇其他配送日。</li>
+          <li>租期如包含週日，給予當日半價優惠。</li>
+          <li>若蓄意毀損器材，可能需支付維修費。</li>
+          <li>超過租期未歸還，將依超時費用計算。</li>
+        </ul>`,
       background: '#23425a',
       confirmButtonText: '瞭解',
       customClass: {
