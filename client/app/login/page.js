@@ -14,6 +14,7 @@ export default function loginPage() {
   const [user, setUser] = useState(null)
   const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(true); // ✅ 新增 `loading` 狀態
 
   // 檢查是否已登入
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function loginPage() {
         localStorage.removeItem(appKey)
       }
     }
+    setLoading(false);
   }, [])
 
   // 登入處理，根據 level 導向不同頁面
@@ -64,6 +66,9 @@ export default function loginPage() {
       console.error(err)
       alert(err.message)
     }
+  }
+  if (loading) {
+ return null;
   }
 
   return (
