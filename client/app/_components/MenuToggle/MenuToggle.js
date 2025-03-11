@@ -32,13 +32,13 @@ export default function MenuToggle() {
     { text: '租借服務', path: '/rental' },
     { text: '影像學院', path: '/courses' },
     { text: '影像誌', path: '/article' },
-    { text: '聯絡我們', path: '#' },
+    // { text: '聯絡我們', path: '#' },
   ]
 
   // 選單動畫變量
   const sidebarVariants = {
     open: {
-      clipPath: `circle(1500px at 40px 40px)`,
+      clipPath: `circle(1500px at calc(100% - 40px) 40px)`,
       transition: {
         type: "spring",
         stiffness: 20,
@@ -46,7 +46,7 @@ export default function MenuToggle() {
       },
     },
     closed: {
-      clipPath: "circle(30px at 40px 40px)",
+      clipPath: "circle(30px at calc(100% - 40px) 40px)",
       transition: {
         delay: 0.2,
         type: "spring",
@@ -84,7 +84,8 @@ export default function MenuToggle() {
 
   return (
     <div ref={containerRef} className="menu-icon">
-      <button 
+      {/* 漢堡按鈕 - 增加 z-index 確保顯示在選單上方 */}
+      <button
         onClick={() => setIsOpen(!isOpen)}
         style={{
           outline: "none",
@@ -92,13 +93,17 @@ export default function MenuToggle() {
           cursor: "pointer",
           background: "transparent",
           padding: 0,
+          position: isOpen ? "fixed" : "relative", // 保持固定位置
+          top: isOpen ? "20px" : "auto", // 固定位置在選單開啟時
+          right: isOpen ? "20px" : "auto", // 固定位置在選單開啟時
+          zIndex: 1002, // 確保高於選單的 z-index
         }}
       >
         <svg width="23" height="23" viewBox="0 0 23 23">
           <motion.path
             fill="transparent"
             strokeWidth="3"
-            stroke="white"
+            stroke={isOpen ? "#143146" : "white"} // 條件判斷顏色
             strokeLinecap="round"
             variants={{
               closed: { d: "M 2 2.5 L 20 2.5" },
@@ -109,7 +114,7 @@ export default function MenuToggle() {
           <motion.path
             fill="transparent"
             strokeWidth="3"
-            stroke="white"
+            stroke={isOpen ? "#143146" : "white"} // 修改這裡，同樣使用條件判斷顏色
             strokeLinecap="round"
             d="M 2 9.423 L 20 9.423"
             variants={{
@@ -122,7 +127,7 @@ export default function MenuToggle() {
           <motion.path
             fill="transparent"
             strokeWidth="3"
-            stroke="white"
+            stroke={isOpen ? "#143146" : "white"} // 修改這裡，同樣使用條件判斷顏色
             strokeLinecap="round"
             variants={{
               closed: { d: "M 2 16.346 L 20 16.346" },
@@ -134,7 +139,7 @@ export default function MenuToggle() {
       </button>
 
       {/* 側邊滑出選單 */}
-      <motion.div 
+      <motion.div
         className="sidebar-menu"
         initial={false}
         animate={isOpen ? "open" : "closed"}
@@ -143,7 +148,7 @@ export default function MenuToggle() {
           top: 0,
           right: 0,
           bottom: 0,
-          width: '300px',
+          width: '390px',
           zIndex: 999,
           display: isOpen ? 'block' : 'none'
         }}
@@ -155,7 +160,7 @@ export default function MenuToggle() {
             left: 0,
             bottom: 0,
             width: '100%',
-            backgroundColor: '#f5f5f5',
+            backgroundColor: '#eaeaea',
           }}
           variants={sidebarVariants}
         />
@@ -179,14 +184,14 @@ export default function MenuToggle() {
                 cursor: 'pointer',
                 margin: '15px 0',
                 padding: '10px 0',
-                borderBottom: '1px solid rgba(0,0,0,0.1)',
+                borderBottom: '1px solid #143146',
               }}
               onClick={() => setIsOpen(false)}
             >
-              <Link 
+              <Link
                 href={item.path}
                 style={{
-                  color: pathname === item.path ? '#ff1493' : '#333',
+                  color: pathname === item.path ? '#ffa510' : '#143146',
                   fontWeight: pathname === item.path ? 'bold' : 'normal',
                   textDecoration: 'none',
                   fontSize: '18px',
