@@ -4,7 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "socket": "node socket-server.js",
+    "dev:socket": "nodemon socket-server.js"
   },
   "keywords": [],
   "author": "",

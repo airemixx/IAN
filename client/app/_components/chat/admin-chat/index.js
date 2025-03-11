@@ -1,9 +1,9 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "react-bootstrap"
-import { X, Check, CheckAll } from "react-bootstrap-icons"
+import { X, Check, CheckAll, ChevronDown } from "react-bootstrap-icons"
 import { CSSTransition } from "react-transition-group"
 import styles from "./index.module.scss"
 import EmojiPicker, { SkinTones } from 'emoji-picker-react';
@@ -11,8 +11,7 @@ import emojiRegex from 'emoji-regex';
 import { Squeeze } from 'hamburger-react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-
-
+import { useSocket } from '../context/socketContext';
 
 // 檢查兩個日期是否是同一天
 const isSameDay = (date1, date2) => {
@@ -30,7 +29,7 @@ const formatMessageTime = (timestamp) => {
   const isSameYear = now.getFullYear() === messageDate.getFullYear();
 
   // 檢查是否同一天
-  const isSameDay = isSameYear &&
+  const isSameYearAndDay = isSameYear &&
     now.getMonth() === messageDate.getMonth() &&
     now.getDate() === messageDate.getDate();
 
@@ -39,7 +38,7 @@ const formatMessageTime = (timestamp) => {
   const minutes = messageDate.getMinutes().toString().padStart(2, '0');
   const timeStr = `${hours}:${minutes}`;
 
-  if (isSameDay) {
+  if (isSameYearAndDay) {
     return timeStr;
   } else if (isSameYear) {
     const month = messageDate.getMonth() + 1;
@@ -109,95 +108,132 @@ const formatAbsoluteMessageTime = (timestamp) => {
   return formatDateTime(messageDate, false);
 };
 
+// 格式化未讀消息數量
+const formatUnreadCount = (count) => {
+  if (count >= 100) {
+    return '99+';
+  }
+  return count;
+};
+
+// 決定未讀標記的樣式類
+const getUnreadBadgeClass = (count) => {
+  // 當數字大於等於100或顯示為"99+"時使用藥丸型
+  if (count >= 100 || String(count).length >= 3) {
+    return styles.unreadBadgePill;
+  }
+  // 其他情況使用圓形
+  return styles.unreadBadgeCircle;
+};
+
 const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
 
 export default function ChatWidget() {
+  // 使用 Socket 上下文
+  const socketContext = useSocket();
+
+  // 創建一個強制更新機制
+  const [updateCounter, setUpdateCounter] = useState(0);
+  const forceUpdate = useCallback(() => setUpdateCounter(c => c + 1), []);
+
+  // 從 socketContext 解構所需的數據和函數
+  const {
+    socket,
+    isConnected,
+    messages: socketMessages,
+    userList: contextUserList,
+    selectedUser,
+    error,
+    sendMessage: socketSendMessage,
+    markAsRead,
+    selectUser: socketSelectUser,
+    leaveUserChat,
+    setMessages: setSocketMessages,
+    setSelectedUser
+  } = socketContext;
+
+  // 使用本地狀態存儲用戶列表
+  const [users, setUsers] = useState([]);
+
+  // 修改 useEffect 中的用戶列表更新邏輯
+  useEffect(() => {
+    if (!contextUserList || contextUserList.length === 0) return;
+
+    console.log('【用戶列表】更新:', contextUserList.length);
+
+    setUsers(prevUsers => {
+      // 建立用戶 ID 到用戶物件的映射
+      const userMap = {};
+      prevUsers.forEach(user => {
+        if (user && user.id && user.name) { // 只保留有效用戶
+          userMap[user.id] = user;
+        }
+      });
+
+      // 過濾並合併有效的用戶數據
+      return contextUserList
+        .filter(user => (
+          user &&
+          user.id &&
+          user.name &&
+          // 確保至少有一條消息或時間戳
+          (user.lastMessage || user.timestamp || user.unreadCount > 0)
+        ))
+        .map(contextUser => {
+          const existingUser = userMap[contextUser.id];
+          if (existingUser) {
+            return {
+              ...contextUser,
+              unreadCount: existingUser.unreadCount ?? contextUser.unreadCount,
+              lastMessage: existingUser.lastMessage || contextUser.lastMessage,
+              lastMessageType: existingUser.lastMessageType || contextUser.lastMessageType,
+              mediaCount: existingUser.mediaCount || contextUser.mediaCount,
+              timestamp: existingUser.timestamp || contextUser.timestamp,
+              _updateId: existingUser._updateId || Date.now()
+            };
+          }
+          return {
+            ...contextUser,
+            _updateId: Date.now()
+          };
+        });
+    });
+  }, [contextUserList]);
+
+  // // 優化用戶列表更新機制
+  // useEffect(() => {
+  //   if (contextUserList && contextUserList.length > 0) {
+  //     console.log('接收到用戶列表更新，用戶數量:', contextUserList.length);
+
+  //     // 使用 setState 函數直接設置新陣列，不要使用 map
+  //     setUsers(contextUserList);
+
+  //     // 添加更多調試信息
+  //     contextUserList.forEach(user => {
+  //       console.log(`用戶 ${user.id} - ${user.name}: 未讀消息 ${user.unreadCount}, 最新消息 ${user.lastMessage}, 時間: ${user.timestamp}`);
+  //     });
+  //   }
+  // }, [contextUserList]);
+
+  // 移除多餘的定期更新計時器，只保留一個
+  useEffect(() => {
+    // 單一定時更新，間隔更長以減少性能消耗
+    const intervalId = setInterval(() => {
+      forceUpdate();
+    }, 3000); // 3秒更新一次，頻率降低
+
+    return () => clearInterval(intervalId);
+  }, [forceUpdate]);
+
   const [isOpen, setIsOpen] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false) // hamburger 狀態
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  // 添加用戶列表數據
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "張小明",
-      avatar: "/images/chatRoom/user1.jpg",
-      lastMessage: "好的，我明白了",
-      lastMessageType: "text",
-      timestamp: new Date(Date.now() - 5 * 60000), // 5分鐘前
-      unreadCount: 2
-    },
-    {
-      id: 2,
-      name: "李美華",
-      avatar: "/images/chatRoom/user1.jpg",
-      lastMessage: "",
-      lastMessageType: "image",
-      mediaCount: 1,
-      timestamp: new Date(Date.now() - 30 * 60000), // 30分鐘前
-      unreadCount: 0
-    },
-    {
-      id: 3,
-      name: "王大同",
-      avatar: "/images/chatRoom/user1.jpg",
-      lastMessage: "這是一個非常長的訊息，應該會被截斷並顯示省略號在最後面",
-      lastMessageType: "text",
-      timestamp: new Date(Date.now() - 2 * 3600000), // 2小時前
-      unreadCount: 1
-    },
-    {
-      id: 4,
-      name: "陳雅婷",
-      avatar: "/images/chatRoom/user1.jpg",
-      lastMessage: "",
-      lastMessageType: "video",
-      mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
-      unreadCount: 0
-    },
-    {
-      id: 5,
-      name: "陳雅婷",
-      avatar: "/images/chatRoom/user1.jpg",
-      lastMessage: "",
-      lastMessageType: "video",
-      mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
-      unreadCount: 0
-    },
-    {
-      id: 6,
-      name: "陳雅婷",
-      avatar: "/images/chatRoom/user1.jpg",
-      lastMessage: "",
-      lastMessageType: "video",
-      mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
-      unreadCount: 0
-    },
-    {
-      id: 7,
-      name: "陳雅婷",
-      avatar: "/images/chatRoom/user1.jpg",
-      lastMessage: "",
-      lastMessageType: "video",
-      mediaCount: 1,
-      timestamp: new Date(Date.now() - 1 * 86400000), // 1天前
-      unreadCount: 0
-    }
-  ]);
+  // 使用 Socket 提供的用戶列表而非靜態數據
+  const [activeUserId, setActiveUserId] = useState(null);
 
-  const [activeUserId, setActiveUserId] = useState(1); // 當前聊天的用戶ID
+  // 使用 Socket 上下文中的消息列表
+  const messages = socketMessages; // 直接使用 socketMessages
 
-  const [messages, setMessages] = useState([
-    {
-      id: "1",
-      text: "您好！很高興為您服務。",
-      sender: "agent",
-      timestamp: new Date(),
-      read: true,
-    },
-  ])
   const [newMessage, setNewMessage] = useState("")
   const messagesEndRef = useRef(null)
   const chatBodyRef = useRef(null)
@@ -214,20 +250,26 @@ export default function ChatWidget() {
   const fileInputRef = useRef(null);
 
   const [enlargeImage, setEnlargeImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (chatBodyRef.current) {
-      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+      chatBodyRef.current.scrollTo({
+        top: chatBodyRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
-  }
+  }, []);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (chatBodyRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatBodyRef.current;
       const bottom = scrollHeight - scrollTop - clientHeight < 20;
       setIsNearBottom(bottom);
+      setShowScrollButton(!bottom);
     }
-  }
+  }, []);
 
   useEffect(() => {
     const chatBody = chatBodyRef.current;
@@ -235,7 +277,7 @@ export default function ChatWidget() {
       chatBody.addEventListener('scroll', handleScroll);
       return () => chatBody.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [handleScroll]);
 
   // 分離滾動邏輯
   useEffect(() => {
@@ -248,128 +290,98 @@ export default function ChatWidget() {
         scrollToBottom();
       }
     }
-  }, [messages]);
+  }, [messages, isNearBottom, scrollToBottom]);
 
-  // 單獨處理已讀狀態更新
-  useEffect(() => {
-    if (messages.length > 0) {
-      // 尋找未讀的用戶訊息
-      const hasUnreadUserMessages = messages.some(msg => msg.sender === "user" && !msg.read);
-
-      if (hasUnreadUserMessages) {
-        const timer = setTimeout(() => {
-          setMessages((prevMessages) => prevMessages.map((msg) =>
-            (msg.sender === "user" && !msg.read) ? { ...msg, read: true } : msg
-          ));
-        }, 500);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [messages]);
-
-  // 單獨處理已讀狀態更新
-  useEffect(() => {
-    if (messages.length > 0) {
-      // 尋找未讀的客服訊息
-      const hasUnreadAgentMessages = messages.some(msg => msg.sender === "agent" && !msg.read);
-
-      if (hasUnreadAgentMessages) {
-        const timer = setTimeout(() => {
-          setMessages((prevMessages) => prevMessages.map((msg) =>
-            (msg.sender === "agent" && !msg.read) ? { ...msg, read: true } : msg
-          ));
-        }, 500);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [messages]);
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(scrollToBottom, 300);
     }
-  }, [isOpen]);
+  }, [isOpen, scrollToBottom]);
 
+  // 監聽消息更新
+  useEffect(() => {
+    if (socketMessages && socketMessages.length > 0) {
+      setSocketMessages(socketMessages);
+    }
+  }, [socketMessages, setSocketMessages]);
+
+  // 添加 useEffect 監聽組件卸載時通知服務器
+  useEffect(() => {
+    return () => {
+      // 當組件卸載或用戶刷新頁面時，通知服務器管理員離開聊天
+      if (activeUserId) {
+        leaveUserChat(activeUserId);
+      }
+    };
+  }, [activeUserId, leaveUserChat]);
+
+  // 修改 toggleChat 函數，使聊天窗口打開時同時顯示用戶列表
   const toggleChat = () => {
-    setIsOpen(!isOpen)
+    // 如果目前有選擇用戶且要關閉聊天，通知服務器管理員離開聊天
+    if (isOpen) {
+      if (activeUserId) {
+        leaveUserChat(activeUserId);
+      }
+      setActiveUserId(null); // 清除選中狀態
+    } else {
+      setIsMenuOpen(true); // 打開用戶列表
+    }
+    setIsOpen(!isOpen);
   }
 
+  // 修改 handleSelectUser 函數
+  const handleSelectUser = (userId) => {
+    // 移除相同用戶檢查，讓每次點擊都能觸發
+    if (activeUserId) {
+      leaveUserChat(activeUserId);
+    }
+
+    // 確保每次都能觸發切換
+    socketSelectUser(userId);
+    setActiveUserId(userId);
+    setIsMenuOpen(false);
+
+    // 延遲執行標記已讀
+    setTimeout(() => {
+      markAsRead(userId);
+    }, 500);
+  };
+
+  // 修改發送消息函數以使用 Socket
   const handleSendMessage = (e) => {
     e.preventDefault();
 
-    // 檢查是否有文字消息或文件
     const hasText = newMessage.trim() !== "";
     const hasFiles = selectedFiles.length > 0;
 
     if (!hasText && !hasFiles) return;
 
-    // 如果有文字消息，發送為客服訊息
+    // 發送文字消息
     if (hasText) {
-      const textMessage = {
-        id: Date.now().toString(),
-        text: newMessage,
-        sender: "agent", // 改為 agent (客服) 而非 user
-        timestamp: new Date(),
-        read: false,
+      const messageData = {
+        message: {
+          text: newMessage,
+        },
+        to: activeUserId
       };
 
-      setMessages(prev => [...prev, textMessage]);
+      // 只發送消息，不在本地添加
+      socketSendMessage(messageData);
+
+      // 清空輸入框
       setNewMessage("");
     }
 
-    // 如果有文件，將其作為客服發送
+    // 處理文件發送
     if (hasFiles) {
-      const fileMessages = selectedFiles.map((fileObj, index) => ({
-        id: Date.now().toString() + index,
-        text: fileObj.type === 'image' ? '圖片訊息' : '影片訊息',
-        fileUrl: fileObj.url,
-        fileType: fileObj.type,
-        sender: "agent", // 改為 agent (客服) 而非 user
-        timestamp: new Date(Date.now() + index * 100),
-        read: false,
-      }));
-
-      setMessages(prev => [...prev, ...fileMessages]);
-
-      // 清空文件列表並關閉預覽
-      setSelectedFiles([]);
-      setIsPreviewOpen(false);
-
-      // 移除舊有的客服自動回覆邏輯，因為現在發送的就是客服訊息
+      selectedFiles.forEach(fileObj => {
+        // 調用 sendFileMessage 處理文件發送
+        sendFileMessage(fileObj);
+      });
     }
 
-    // 滾動到底部
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-
-    // 可選：新增模擬用戶自動回覆
-    setTimeout(() => {
-      const userReplyMessages = [
-        "謝謝您的回覆！",
-        "好的，我明白了",
-        "感謝您的協助",
-        "了解了，再次感謝",
-        "收到，謝謝"
-      ];
-
-      // 隨機選取一則自動回覆
-      const randomReply = userReplyMessages[Math.floor(Math.random() * userReplyMessages.length)];
-
-      const userReply = {
-        id: (Date.now() + 2000).toString(),
-        text: randomReply,
-        sender: "user",
-        timestamp: new Date(Date.now() + 2000),
-        read: false,
-        avatar: "/images/chatRoom/user1.jpg"
-      };
-
-      // 大約一半機率會回覆
-      if (Math.random() > 0.5) {
-        setMessages(prev => [...prev, userReply]);
-      }
-    }, 2500);
+    setTimeout(scrollToBottom, 100);
   }
 
   const handleFileSelect = (e) => {
@@ -415,43 +427,53 @@ export default function ChatWidget() {
     });
   };
 
-  const sendFileMessage = (fileObj) => {
+  // 修改 sendFileMessage 函數中的消息創建
+  const sendFileMessage = async (fileObj) => {
     const isImage = fileObj.type === 'image';
 
-    const fileMessage = {
-      id: Date.now().toString(),
-      text: isImage ? '圖片訊息' : '影片訊息',
-      fileUrl: fileObj.url,
-      fileType: fileObj.type,
-      sender: "agent", // 改為客服訊息
-      timestamp: new Date(),
-      read: false,
-    };
+    try {
+      setUploading(true);
 
-    setMessages(prev => [...prev, fileMessage]);
+      // 創建 FormData 對象
+      const formData = new FormData();
+      formData.append('file', fileObj.file);
+
+      // 發送到服務器
+      const response = await fetch('http://localhost:8000/api/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        // 構造消息數據
+        const messageData = {
+          message: {
+            // text: isImage ? '圖片訊息' : '影片訊息',
+            fileUrl: result.file.url, // 使用服務器返回的 URL
+            fileType: result.file.type
+          },
+          to: activeUserId
+        };
+
+        // 發送到服務器
+        socketSendMessage(messageData);
+
+      } else {
+        console.error('文件上傳失敗:', result.message);
+      }
+    } catch (error) {
+      console.error('檔案上傳錯誤:', error);
+    } finally {
+      setUploading(false);
+    }
 
     // 移除已發送的文件
     setSelectedFiles(prev => prev.filter(file => file.id !== fileObj.id));
-
-    // 如果沒有剩餘文件，關閉預覽
     if (selectedFiles.length <= 1) {
       setIsPreviewOpen(false);
     }
-
-    // 移除自動回覆邏輯，改為隨機用戶回應
-    setTimeout(() => {
-      if (Math.random() > 0.5) {
-        const userMessage = {
-          id: (Date.now() + 1).toString(),
-          text: isImage ? "謝謝您分享的圖片" : "感謝您提供的影片資訊",
-          sender: "user",
-          timestamp: new Date(Date.now() + 2000),
-          read: false,
-          avatar: "/images/chatRoom/user1.jpg"
-        };
-        setMessages(prev => [...prev, userMessage]);
-      }
-    }, 1500);
   };
 
   const handleImageClick = (imageUrl) => {
@@ -467,7 +489,7 @@ export default function ChatWidget() {
     setNewMessage(prev =>
       prev.substring(0, document.getElementById('messageInput').selectionStart) +
       emojiData.emoji +
-      prev.substring(document.getElementById('messageInput').selectionEnd)
+      prev.substring(0, document.getElementById('messageInput').selectionEnd)
     );
   };
 
@@ -494,6 +516,141 @@ export default function ChatWidget() {
     };
   }, [showEmojiPicker]);
 
+  // 添加這個函數到現有代碼中
+  const renderMessageContent = (message) => {
+    // 如果消息包含文件URL
+    if (message.fileUrl) {
+      if (message.fileType === 'image') {
+        return (
+          <div className={styles.imageContainer}>
+            <img
+              src={message.fileUrl}
+              alt="圖片消息"
+              className={styles.messageImage}
+              onClick={() => window.open(message.fileUrl, '_blank')}
+            />
+            {message.text && <div className={styles.imageCaption}>{message.text}</div>}
+          </div>
+        );
+      } else if (message.fileType === 'video') {
+        return (
+          <div className={styles.videoContainer}>
+            <video
+              src={message.fileUrl}
+              controls
+              className={styles.messageVideo}
+              onError={(e) => console.error("影片加載錯誤", e)}
+            />
+            {message.text && <div className={styles.videoCaption}>{message.text}</div>}
+          </div>
+        );
+      }
+    }
+
+    // 處理文本消息，支持表情符號
+    return (
+      <div>
+        {message.text.split(captureEmojiRegex).map((part, index) => {
+          return captureEmojiRegex.test(part) ? (
+            <span key={index} className={styles.emoji}>{part}</span>
+          ) : (
+            <span key={index}>{part}</span>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // 在渲染函數中使用 forceUpdate 確保重新渲染
+  // 在 return 附近添加此行，不需要在JSX中使用
+  const renderTrigger = forceUpdate;
+
+  // 修改現有的事件監聽處理函數
+  useEffect(() => {
+    // 未讀計數更新事件
+    const handleUnreadUpdate = (e) => {
+      const { userId, unreadCount } = e.detail;
+      console.log(`【未讀更新】用戶=${userId}, 計數=${unreadCount}`);
+
+      // 只使用 React 狀態更新，不直接操作 DOM
+      setUsers(prev => prev.map(user => {
+        if (user.id === userId) {
+          return {
+            ...user,
+            unreadCount,
+            _updateId: Date.now() + Math.random()
+          };
+        }
+        return user;
+      }));
+    };
+
+    // 最新消息更新事件
+    const handleMessageUpdate = (e) => {
+      const data = e.detail;
+      console.log(`【消息更新】用戶=${data.userId}, 消息=${data.lastMessage}`);
+
+      setUsers(prev => {
+        // 先找到指定用戶
+        const userIndex = prev.findIndex(u => u.id === data.userId);
+        if (userIndex === -1) return prev; // 找不到用戶，不更新
+
+        // 建立新陣列而非直接修改
+        const newUsers = [...prev];
+        const userToUpdate = { ...newUsers[userIndex] };
+
+        // 更新用戶資料
+        userToUpdate.lastMessage = data.lastMessage || '';
+        userToUpdate.lastMessageType = data.lastMessageType || 'text';
+        userToUpdate.mediaCount = data.mediaCount || 0;
+        userToUpdate.timestamp = new Date();
+        userToUpdate._updateId = Date.now();
+
+        // 移除舊位置
+        newUsers.splice(userIndex, 1);
+        // 加到最前面
+        newUsers.unshift(userToUpdate);
+
+        return newUsers;
+      });
+    };
+
+    window.addEventListener('chat-unread-update', handleUnreadUpdate);
+    window.addEventListener('chat-message-update', handleMessageUpdate);
+
+    return () => {
+      window.removeEventListener('chat-unread-update', handleUnreadUpdate);
+      window.removeEventListener('chat-message-update', handleMessageUpdate);
+    };
+  }, [forceUpdate, styles]);
+
+  // 添加一個強力的強制更新機制
+  useEffect(() => {
+    const handleForceUpdate = (e) => {
+      console.log(`【強制更新】類型=${e.detail.type}, 時間=${new Date(e.detail.timestamp).toLocaleTimeString()}`);
+
+      // 直接觸發一次強制刷新
+      forceUpdate();
+
+      // 不再無條件覆蓋整個列表，而是智能合併
+      if (e.detail.type === 'full-refresh') {
+        // 只在需要完整刷新時才替換整個列表
+        setUsers([...contextUserList]);
+      }
+    };
+
+    window.addEventListener('force-chat-update', handleForceUpdate);
+
+    return () => {
+      window.removeEventListener('force-chat-update', handleForceUpdate);
+    };
+  }, [contextUserList, forceUpdate]);
+
+  useEffect(() => {
+    console.log("訊息狀態已更新:", messages);
+    // 不需要額外設置，只需確保使用 context 中的訊息狀態
+  }, [messages]);
+
   return (
     <div className={styles.chatWidgetContainer}>
       <CSSTransition
@@ -513,55 +670,88 @@ export default function ChatWidget() {
             {/* 用戶列表側欄 */}
             <div className={`${styles.userListPanel} ${isMenuOpen ? styles.show : ''}`}>
               <div className={styles.userListHeader}>
-                <button
+                {/* <button
                   className={styles.backButton}
                   onClick={() => setIsMenuOpen(false)}
                   aria-label="返回"
                 >
                   <FontAwesomeIcon icon={faChevronLeft} />
-                </button>
+                </button> */}
                 <h5>聊天列表</h5>
                 <button className={styles.iconButton} onClick={toggleChat}>
                   <X size={24} />
                 </button>
               </div>
+              {/* 修改用戶列表渲染部分 */}
               <div className={styles.userList}>
-                {users.map(user => (
-                  <div
-                    key={user.id}
-                    className={`${styles.userItem} ${activeUserId === user.id ? styles.active : ''}`}
-                    onClick={() => {
-                      setActiveUserId(user.id);
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    <div className={styles.userAvatar}>
-                      <img src={user.avatar} alt={user.name} />
-                    </div>
-                    <div className={styles.userInfo}>
-                      <div className={styles.userInfoHeader}>
-                        <span className={styles.userName}>{user.name}</span>
-                        <small className={styles.messageTime}>
-                          {formatRelativeMessageTime(user.timestamp)}
-                        </small>
+                {users.map(user => {
+                  // 確保每次重新渲染時都有唯一且穩定的key
+                  const renderKey = `user-${user.id}-${user._updateId || ''}`;
+
+                  // 創建一個封裝函數來處理時間格式化邏輯
+                  const timeDisplay = (() => {
+                    try {
+                      if (!user.timestamp) return '剛剛';
+
+                      // 統一將時間戳轉換為 Date 對象
+                      const timestamp = user.timestamp instanceof Date
+                        ? user.timestamp
+                        : typeof user.timestamp === 'string'
+                          ? new Date(user.timestamp)
+                          : new Date();
+
+                      return formatRelativeMessageTime(timestamp);
+                    } catch (err) {
+                      console.error(`時間格式化錯誤 (用戶=${user.id}):`, err);
+                      return '剛剛';
+                    }
+                  })();
+
+                  return (
+                    <div
+                      key={`user-${user.id}-${user._updateId || ''}`}
+                      data-user-id={user.id}
+                      className={`${styles.userItem}`}
+                      onClick={() => handleSelectUser(user.id)}
+                    >
+                      <div className={styles.userAvatar}>
+                        <img
+                          src={user.avatar || "/images/chatRoom/user1.jpg"}
+                          alt={user.name}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/images/chatRoom/user1.jpg";
+                          }}
+                        />
                       </div>
-                      <div className={styles.lastMessageRow}>
-                        <p className={styles.userLastMessage}>
-                          {user.lastMessageType === 'text'
-                            ? user.lastMessage
-                            : user.lastMessageType === 'image'
-                              ? `已傳送${user.mediaCount}張圖片`
-                              : `已傳送${user.mediaCount}個影片`}
-                        </p>
-                        {user.unreadCount > 0 && (
-                          <span className={styles.unreadBadge}>
-                            {user.unreadCount > 99 ? "99+" : user.unreadCount}
+                      <div className={styles.userInfo}>
+                        <div className={styles.userInfoHeader}>
+                          <span className={styles.userName}>
+                            {user.name} {/* 這裡會自動顯示 nickname 或 name */}
                           </span>
-                        )}
+                          <small className={styles.messageTime}>{timeDisplay}</small>
+                        </div>
+                        <div className={styles.lastMessageRow}>
+                          <p className={styles.userLastMessage}>
+                            {user.lastMessageType === 'text'
+                              ? (user.lastMessage || '暫無訊息')
+                              : user.lastMessageType === 'image'
+                                ? `已傳送${user.mediaCount || 1}張圖片`
+                                : `已傳送${user.mediaCount || 1}個影片`}
+                          </p>
+                          {user.unreadCount > 0 && (
+                            <span
+                              className={`${styles.unreadBadge} unreadBadge ${user.unreadCount >= 100 ? styles.unreadBadgePill : styles.unreadBadgeCircle}`}
+                              style={{ display: 'flex' }}
+                            >
+                              {user.unreadCount > 99 ? '99+' : user.unreadCount}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -575,14 +765,23 @@ export default function ChatWidget() {
                     color="white"
                     duration={0.3}
                     toggled={isMenuOpen}
-                    toggle={() => setIsMenuOpen(!isMenuOpen)}
+                    toggle={() => {
+                      // 當要打開選單並且目前有選定用戶時，通知伺服器離開聊天室
+                      if (!isMenuOpen && activeUserId) {
+                        console.log(`管理員打開選單，離開用戶 ${activeUserId} 的聊天室`);
+                        leaveUserChat(activeUserId);
+                      }
+                      setIsMenuOpen(!isMenuOpen);
+                    }}
                     easing="ease-in"
                     label="顯示選單"
                   />
                 </div>
 
                 <div className={styles.headerUserInfo}>
-                  <div className={styles.headerUserName}>張小明</div> {/* 注意這裡改為 headerUserName */}
+                  <div className={styles.headerUserName}>
+                    {activeUserId ? users.find(user => user.id === activeUserId)?.name : '請選擇用戶'}
+                  </div>
                 </div>
 
                 <button className={styles.iconButton} onClick={toggleChat}>
@@ -590,7 +789,7 @@ export default function ChatWidget() {
                 </button>
               </div>
 
-              <div className={styles.chatBody} ref={chatBodyRef}>
+              <div className={styles.chatBody} ref={chatBodyRef} onScroll={handleScroll}>
                 <div className={styles.messagesContainer}>
                   {messages.map((message, index) => {
                     const isPrevSameSender = index > 0 && messages[index - 1].sender === message.sender;
@@ -633,23 +832,23 @@ export default function ChatWidget() {
 
                         {/* 原本的訊息行 */}
                         <div
-                          className={`${styles.messageRow} ${message.sender === "user" ? styles.userMessageRow : styles.agentMessageRow}`}
+                          className={`${styles.messageRow} ${message.sender === "agent" ? styles.agentMessageRow : styles.userMessageRow}`}
                         >
-                          {/* 修改為顯示用戶頭像而非客服頭像 */}
+                          {/* 修改為只在user消息時顯示頭像 */}
                           {message.sender === "user" && showAvatar && (
                             <div className={styles.avatarContainer}>
                               <img
-                                src={message.avatar || "/images/chatRoom/user1.jpg"}
-                                alt="User"
+                                src={message.avatar}
+                                alt={message.senderName}
                                 className={styles.avatar}
                               />
                             </div>
                           )}
 
                           <div
-                            className={`${styles.message} ${message.sender === "user" ? styles.userMessage : styles.agentMessage} ${styles[`bubble-${bubblePosition}`]}`}
+                            className={`${styles.message} ${message.sender === "agent" ? styles.agentMessage : styles.userMessage} ${styles[`bubble-${bubblePosition}`]}`}
                           >
-                            {/* 將已讀通知移至左側 */}
+                            {/* 已讀標記僅對管理員發出的消息顯示 */}
                             {message.sender === "agent" && (
                               <div className={styles.messageStatus}>
                                 {message.read ? (
@@ -676,62 +875,7 @@ export default function ChatWidget() {
                                 )
                               ) : (
                                 <div className={styles.messageText}>
-                                  {
-                                    // 使用更精確的替換方案
-                                    (() => {
-                                      // 先找出所有的 emoji 位置
-                                      const emojis = [];
-                                      const regex = emojiRegex();
-                                      let match;
-                                      while ((match = regex.exec(message.text)) !== null) {
-                                        emojis.push({
-                                          emoji: match[0],
-                                          index: match.index,
-                                          length: match[0].length
-                                        });
-                                      }
-
-                                      // 如果沒有 emoji，直接返回文字
-                                      if (emojis.length === 0) {
-                                        return <span className={styles.plainText}>{message.text}</span>;
-                                      }
-
-                                      // 有 emoji 的情況，組合文字和表情符號
-                                      const result = [];
-                                      let lastIndex = 0;
-
-                                      emojis.forEach((item, i) => {
-                                        // 添加 emoji 前面的純文字
-                                        if (lastIndex < item.index) {
-                                          result.push(
-                                            <span key={`text-${i}`} className={styles.plainText}>
-                                              {message.text.substring(lastIndex, item.index)}
-                                            </span>
-                                          );
-                                        }
-
-                                        // 添加 emoji
-                                        result.push(
-                                          <span key={`emoji-${i}`} className={styles.emoji}>
-                                            {item.emoji}
-                                          </span>
-                                        );
-
-                                        lastIndex = item.index + item.length;
-                                      });
-
-                                      // 添加最後一段純文字 (如果有的話)
-                                      if (lastIndex < message.text.length) {
-                                        result.push(
-                                          <span key={`text-last`} className={styles.plainText}>
-                                            {message.text.substring(lastIndex)}
-                                          </span>
-                                        );
-                                      }
-
-                                      return result;
-                                    })()
-                                  }
+                                  {renderMessageContent(message)}
                                 </div>
                               )}
                             </div>
@@ -740,6 +884,15 @@ export default function ChatWidget() {
                       </React.Fragment>
                     );
                   })}
+                  {showScrollButton && (
+                    <button
+                      className={`${styles.scrollToBottomButton} ${styles.visible}`}
+                      onClick={scrollToBottom}
+                      aria-label="滾動到底部"
+                    >
+                      <ChevronDown />
+                    </button>
+                  )}
                   <div ref={messagesEndRef} />
                 </div>
               </div>
@@ -777,6 +930,7 @@ export default function ChatWidget() {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       className={styles.messageInput}
+                      autoComplete="off"
                     />
                   </div>
                   <div className="image-send-emoji-btn d-flex align-items-center">

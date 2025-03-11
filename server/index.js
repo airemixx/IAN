@@ -36,9 +36,11 @@ import couponRouter from './routes/coupon.js'
 import collect from './routes/collect.js'
 import myorders from './routes/myorders.js'
 import getCpRouter from './routes/getCoupon.js'
+import uploadsRouter from './routes/uploads.js';
 import supportRouter from './routes/support.js'
 import { Server } from "socket.io";
 import forgot from './routes/forgot.js'
+
 
 // 讀取 .env 設定
 dotenv.config()
@@ -149,6 +151,7 @@ app.use('/api/likes', likesRouter)
 app.use('/api/users', users)
 app.use('/api/collect', collect)
 app.use('/api/myorders', myorders)
+app.use('/api/uploads', uploadsRouter);//聊天室用
 app.use('/api/forgot', forgot)
 
 
@@ -166,8 +169,8 @@ io.on("connection", (socket) => {
       console.log("🔴 用戶離線", socket.id);
   });
 });
-
-
+// 確保靜態檔案目錄可訪問
+app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));//聊天室用
 
 // 設定伺服器監聽埠號
 const PORT = process.env.PORT || 8000
