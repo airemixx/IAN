@@ -1,67 +1,203 @@
-/* News-card */
-.newsCard {
-    background-color: #23425A;
-    padding: 2rem;
+.homeArticleContainer{
+  max-width: 1440px;
+  width: 100%;
+  margin: 50px auto;
+  margin-bottom: 100px;
+}
+
+.homeArticleTitle {
+  border-left: 8px solid #FFA510;
+  padding: 0 0 0 20px;
+  margin: 50px 0;
+  display: flex;
+  align-items: center;
+  height: 50px; /* 設定適當的高度 */
+
+  h2 {
+    margin: 0;
+    font-weight: 800;
   }
-  
-  .newsCardContent {
-    border-radius: 15px;
+}
+
+.homeArticle {
+  display: flex;
+  justify-content: center;
+}
+
+.articleHomeContainer {
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.homepageArticleArea {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.homeArticleBigCard {
+  width: 50%;
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+
+  &:hover {
+    cursor: pointer;
+    border-radius: 8px;
+
+    &::after {
+      transform: scale(1.05);
+    }
   }
-  
-  .tagProduct {
-    margin-top: 2px;
+
+  /* 背景圖層 */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    transition: transform 0.3s ease;
+    background-image: inherit;
   }
-  
-  .tagProduct span {
-    background-color: #807871;
-    color: white;
-    padding: 5px 10px;
+
+  /* 漸層覆蓋層 */
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+    z-index: 1;
   }
-  
-  .underText {
-    margin: 0 10px;
+}
+
+.homeArticleSmallCard {
+  width: 50%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.smallImgContainer {
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 10px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+
+  &:hover {
+    cursor: pointer;
+    border-radius: 8px;
+
+    &::after {
+      transform: scale(1.05);
+    }
   }
-  
-  .underText p {
-    color: #1E3C54;
+
+  /* 背景圖層 */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    transition: transform 0.3s ease;
+    background-image: inherit;
   }
-  
-  .underText a {
-    color: #807871;
+
+  /* 小圖的漸層覆蓋層 */
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+    z-index: 1;
   }
-  
-  .cardNewsImg img {
-    border-radius: 15px 0 0 15px;
-    object-fit: cover;
-  }
-  
-  .btnMore button {
-  //   position: absolute;
-  // bottom: -82%;
-  // transform: translateX(-50%);
-  padding: 10px 20px;
-  background-color: #e58e41;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
   color: white;
-  border: none;
-  font-size: 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: 0.3s;
+
+  p {
+    margin: 5px 0;
+    font-size: 14px;
   }
-  
-  .btnMore button:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-  color: black;
+
+  h6 {
+    margin: 5px 0;
+    font-size: 18px;
   }
-  
-  @media (max-width: 391px) {
-    .btnMore button {
-      bottom: -200%;
-    }
-    .cardTitle {
-      font-size: 1rem;
-    }
-    .cardNewsImg img {
-      width: 200px;
-    }
+}
+
+.articleSmallCardContent {
+  composes: cardContent;
+
+  p {
+    font-size: 14px;
+    margin: 0 auto;
   }
+
+  h6 {
+    font-size: 16px;
+  }
+}
+
+.articleBigCardContent {
+  composes: cardContent;
+
+  h6 {
+    font-size: 24px;
+  }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .homepageArticleArea {
+    flex-direction: column;
+  }
+
+  .homeArticleBigCard,
+  .homeArticleSmallCard {
+    width: 100%;
+  }
+
+  .homeArticleSmallCard {
+    margin-top: 20px;
+  }
+}
