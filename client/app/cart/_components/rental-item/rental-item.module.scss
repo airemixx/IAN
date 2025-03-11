@@ -1,8 +1,7 @@
-.j-rtText{
-  
+.j-rtText {
   color: black;
 }
-.j-rtpText{
+.j-rtpText {
   color: #d0b088;
 }
 
@@ -14,7 +13,6 @@
 .j-cartItemBox {
   border-radius: 20px;
   background-color: #fff;
-  
 }
 
 .j-rentImg {
@@ -29,7 +27,7 @@
 }
 
 .j-rentCameraBrand {
-  font-family: "Noto Sans HK";
+  font-family: 'Noto Sans HK';
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -41,35 +39,44 @@
   color: #ca6d1b;
 }
 
-
-.j-delBtn>button:active,
-.j-delBtnfocus>button:focus,
-.j-delBtn>button:not(.j-cartItem){
+.j-delBtn > button:active,
+.j-delBtnfocus > button:focus,
+.j-delBtn > button:not(.j-cartItem) {
   border: none;
 }
 
-.j-delBtn{
+.j-delBtn {
   left: 92.5%;
 }
-@media (max-width: 1400px){
-  .j-rtText{
+@media (max-width: 1400px) {
+  .j-rtText {
     font-size: 16px;
   }
-  .j-rentDeadLine{
+  .j-rentDeadLine {
     font-size: 16px;
   }
 }
-@media (max-width: 1200px){
-  .j-delBtn{
+@media (max-width: 1200px) {
+  .j-delBtn {
     left: 90%;
   }
 }
-@media (max-width: 576px){
-  .j-delBtn{
+@media (max-width: 576px) {
+  .j-delBtn {
     left: 90%;
   }
-  .j-rtpText{
+  .j-rtpText {
     font-size: 14px;
     font-size: 16px;
   }
+}
+
+@media (max-width: 450px) {
+  .j-rtText {
+    font-size: 13px;
+  }
+  .j-rentDeadLine {
+    font-size: 13px;
+  }
+  
 }

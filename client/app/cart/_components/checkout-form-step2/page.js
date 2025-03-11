@@ -130,7 +130,7 @@ export default function CheckoutFormStep2() {
     };
 
     return (
-        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 me-lg-0`}>
+        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-5 col-xxl-4 me-lg-0`}>
             <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className={`${styles['j-payTitle']}`}>結帳</div>
                 <select
