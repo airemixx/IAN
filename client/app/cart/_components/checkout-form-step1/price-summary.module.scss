@@ -5,7 +5,7 @@
 }
 
 .j-payStep {
-  margin-top: 3.5rem;
+  margin-top: 4.1rem;
   height: 26rem;
   padding: 60px;
   border-radius: 20px;
@@ -121,6 +121,9 @@
 .j-btnCancel, .j-btnCancel:visited, .j-btnCancel:hover, .j-btnCancel:active, .j-btnCancel:focus{
   background-color: #ca6d1b !important;
   border-color: #ca6d1b !important;
+}
+.subPrice,.totalPrice,.discountPrice{
+  color: #d0b088;
 }
 @media (max-width: 996px) {
   .j-payStep {

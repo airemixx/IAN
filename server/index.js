@@ -11,6 +11,7 @@ import dotenv from 'dotenv'
 import sessionFileStore from 'session-file-store'
 import session from 'express-session'
 import db from './db.js'
+import http from 'http';
 
 import path from 'path'
 import coursesRouter from './routes/courses.js'
@@ -23,7 +24,6 @@ import ecpayRouter from './routes/ecpay.js'
 import articleRoutes from './routes/article.js'
 import commentsRouter from './routes/comments.js'
 import likesRouter from './routes/likes.js'
-import userRentalsRouter from './routes/user-rentals.js'
 import users from './routes/users.js'
 import ordersRouter from './routes/orders.js'
 import linePayRouter from './routes/linePay.js'
@@ -37,11 +37,24 @@ import collect from './routes/collect.js'
 import myorders from './routes/myorders.js'
 import getCpRouter from './routes/getCoupon.js'
 import uploadsRouter from './routes/uploads.js';
+import supportRouter from './routes/support.js'
+import { Server } from "socket.io";
+import forgot from './routes/forgot.js'
+
 
 // 讀取 .env 設定
 dotenv.config()
 
 const app = express()
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+
 const whiteList = ['http://localhost:5500', 'http://localhost:3000']
 const corsOptions = {
   credentials: true,
@@ -54,6 +67,7 @@ const corsOptions = {
   },
 }
 let sessionStore = null
+
 
 if (serverConfig.sessionStoreType === 'redis') {
   // 使用redis記錄session
@@ -117,6 +131,7 @@ app.use("/api/course-ct-upload", courseCtUploadRouter);
 app.use("/api/course-cv-upload", courseCvUploadRouter);
 app.use("/api/teacher-upload", teacherUploadRouter);
 app.use("/uploads", express.static(path.join(process.cwd(), "/public/uploads")));
+app.use("/api/support", supportRouter)
 
 app.use('/api/rental', rentalRouter)
 app.use('/api/rental-master', rentalMasterRouter)
@@ -133,12 +148,27 @@ app.use('/api/comments', commentsRouter)
 app.use('/api/article_comments', commentsRouter)
 app.use('/api/likes', likesRouter)
 
-app.use('/api/user/rental', userRentalsRouter)
 app.use('/api/users', users)
 app.use('/api/collect', collect)
 app.use('/api/myorders', myorders)
 app.use('/api/uploads', uploadsRouter);//聊天室用
+app.use('/api/forgot', forgot)
 
+
+io.on("connection", (socket) => {
+  console.log("🟢 有新用戶連線", socket.id);
+
+  socket.on("sendMessage", (message) => {
+      console.log("📩 收到訊息:", message);
+
+      // ✅ **只廣播給其他人，避免發送者收到兩次**
+      socket.broadcast.emit("newMessage", message);
+  });
+
+  socket.on("disconnect", () => {
+      console.log("🔴 用戶離線", socket.id);
+  });
+});
 // 確保靜態檔案目錄可訪問
 app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));//聊天室用
 
@@ -151,8 +181,7 @@ const DB_NAME = process.env.DB_NAME
 const DB_PORT = process.env.DB_PORT
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
-app.listen(PORT, () => {
-  console.log(`伺服器運行在 http://localhost:${PORT}`)
-  console.log(`Database host: ${DB_HOST}`)
-  console.log(`JWT secret key: ${JWT_SECRET_KEY}`)
-})
+
+server.listen(PORT, () => {
+  console.log(`🚀 伺服器運行在 http://localhost:${PORT}`);
+});

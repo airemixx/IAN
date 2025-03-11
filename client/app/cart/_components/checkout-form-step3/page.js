@@ -101,6 +101,8 @@ export default function CheckoutFormStep3() {
                 text: "是否前往 LINE Pay 付款？",
                 icon: "warning",
                 showCancelButton: true,
+                confirmButtonColor: "#003150",
+                cancelButtonColor: "#CA6D1B",
                 confirmButtonText: "確定",
                 cancelButtonText: "取消",
             }).then((result) => {
@@ -208,6 +210,8 @@ export default function CheckoutFormStep3() {
                     text: `是否前往 ${paymentMethod.toUpperCase()} 付款？`,
                     icon: "warning",
                     showCancelButton: true,
+                    confirmButtonColor: "#003150",
+                    cancelButtonColor: "#CA6D1B",
                     confirmButtonText: "確定",
                     cancelButtonText: "取消",
                 }).then((result) => {
@@ -225,7 +229,7 @@ export default function CheckoutFormStep3() {
     };
 
     return (
-        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 mt-xl-5">
+        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 mt-xl-5 pt-xl-1">
             <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3`}>結帳</p>
 
             <div className={`${styles['addressDetail']} d-flex flex-column mb-3 ps-3`}>
@@ -249,7 +253,7 @@ export default function CheckoutFormStep3() {
                 <div className={styles['j-payTitle']}>付款</div>
                 <div className="d-flex justify-content-between w-100 pe-1 py-2">
                     <span >總價：</span>
-                    <span className={`${styles['totalAmount']}`}>{totalAmount.toLocaleString()}元</span>
+                    <span className={`${styles['totalAmount']}`}>NT$ {totalAmount.toLocaleString()}</span>
                 </div>
                 <div className={styles['j-payContent']}>
                     <p className="mb-0">請選擇你的付款方式。之後，您將轉向相關服務頁面已完成你的訂單</p>

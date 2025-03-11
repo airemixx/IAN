@@ -80,21 +80,45 @@ export default function CheckoutFormStep2() {
     };
 
     const handleSelectChange = (e) => {
-        const selectedId = e.target.value;
-        const buyer = buyerOptions.find((b) => String(b.address) === selectedId);
-        setSelectedOption(buyer || null);
+        const selectedText = e.target.value; // 取得選中的文字 "地址1"
+        const selectedIndex = selectedText.match(/\d+/)?.[0]; // 提取數字部分
+        setSelectedOption(buyerOptions[selectedIndex-1] || null);
     };
 
     const validateForm = () => {
         const newErrors = {};
-        Object.keys(formData).forEach((key) => {
-            if (!formData[key].trim()) {
-                newErrors[key] = "此欄位為必填";
-            }
-        });
+    
+        // 正規表達式
+        const nameRegex =/^(?:[\u4e00-\u9fffA-Za-z][\u4e00-\u9fffA-Za-z\s\-\.'’]*){2,20}$/; // 允許中文、英文、空格，長度 2~20
+        const phoneRegex = /^(09\d{8}|0\d{1,2}-\d{6,8})$/; // 手機 09xxxxxxxx / 市話 0X-XXXXXXX(X)
+        const taiwanAddressRegex = /^[\u4e00-\u9fa5]{2,4}[縣市][\u4e00-\u9fa5]{2,4}[區鄉鎮市][\u4e00-\u9fa50-9\-]+(路|街|大道|巷|弄|段)[\u4e00-\u9fa50-9\-]+號?([\u4e00-\u9fa50-9\-F|樓之]*)?$/;
+    
+        // 驗證姓名
+        if (!formData.name.trim()) {
+            newErrors.name = "姓名為必填";
+        } else if (!nameRegex.test(formData.name.trim())) {
+            newErrors.name = "姓名須為 2~20 個中英文字符";
+        }
+    
+        // 驗證台灣地址
+        if (!formData.address.trim()) {
+            newErrors.address = "地址為必填";
+        } else if (!taiwanAddressRegex.test(formData.address.trim())) {
+            newErrors.address = "地址格式錯誤，請輸入完整台灣地址（包含縣市區/鄉鎮、路街巷弄門牌）";
+        }
+    
+        // 驗證電話號碼
+        if (!formData.phone.trim()) {
+            newErrors.phone = "電話號碼為必填";
+        } else if (!phoneRegex.test(formData.phone.trim())) {
+            newErrors.phone = "電話格式錯誤（手機：09xxxxxxxx / 市話：0X-XXXXXXX(X)）";
+        }
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+    
+    
 
     const handleSubmit = () => {
         if (validateForm()) {
@@ -106,7 +130,7 @@ export default function CheckoutFormStep2() {
     };
 
     return (
-        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 mt-5 me-lg-0`}>
+        <div className={`${styles['j-payStep']} col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5 me-lg-0`}>
             <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className={`${styles['j-payTitle']}`}>結帳</div>
                 <select
@@ -117,7 +141,7 @@ export default function CheckoutFormStep2() {
                     <option value="" disabled>請選擇住址</option>
                     {buyerOptions.map((buyer,index) => (
                         <option key={index} value={buyer.id}>
-                            {buyer.address}
+                            地址{`${index+1}`}
                         </option>
                     ))}
                 </select>
@@ -144,7 +168,7 @@ export default function CheckoutFormStep2() {
             {/* 顯示總價 */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <p className="fw-bold">總價：</p>
-                <p className={`${styles['j-price']} fw-bold`}>{totalAmount.toLocaleString()}元</p>
+                <p className={`${styles['j-price']} fw-bold`}>NT${totalAmount.toLocaleString()}</p>
             </div>
 
             <div className={`${styles['j-Checkout']} d-flex justify-content-center align-items-center`}>

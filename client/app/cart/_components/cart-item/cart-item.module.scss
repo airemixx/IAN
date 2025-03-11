@@ -38,6 +38,10 @@
   height: 108px;
 }
 
+.j-quantity{
+  color: #000;
+}
+
 .j-itemDetail {
   gap: 15px;
 }
@@ -47,12 +51,19 @@
   font-size: 12px;
 }
 
+.j-product{
+  max-width: 100px;
+  min-width: 100px;
+}
+
 .j-model {
   color: #000;
 }
+
 .j-model img:hover {
   width: 50%;
 }
+
 .j-amount-text {
   color: #000;
   width: 40px;
@@ -93,6 +104,9 @@
 
   .j-cartItem {
     height: auto;
+  }
+  .j-itemDetail{
+    gap: 0.5rem;
   }
 }
 @media (max-width: 390px) {

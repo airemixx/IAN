@@ -47,6 +47,8 @@ export default function CheckoutFormStep1({ slItem }) {
   }, [slItem]);
 
   const handleClose = () => {
+    setSelectedCoupons([])
+    setDiscount(0)
     setCheckState(false);
     setShow(false);
   };
@@ -118,12 +120,16 @@ export default function CheckoutFormStep1({ slItem }) {
     }
 
     if (coupon.disType === "fixed" && productTotal < coupon.discount) {
-      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 產品）`);
+      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 產品）`, {
+        autoClose: 1500, // 1.5 秒後自動關閉
+      })
       return;
     }
 
     if (coupon.disType === "percent" && lessionTotal < coupon.discount) {
-      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 課程）`);
+      toast.warning(`此優惠券需購買滿 NT$${coupon.minimum} 的商品（類型: 課程）`, {
+        autoClose: 1500, // 1.5 秒後自動關閉
+      })
       return;
     }
 
@@ -136,7 +142,7 @@ export default function CheckoutFormStep1({ slItem }) {
       } else {
         updatedCoupons.push(coupon);
       }
-
+      localStorage.setItem("selectedCoupons", JSON.stringify(updatedCoupons));
       let totalDiscount = updatedCoupons.reduce((acc, c) => {
         if (c.disType === "fixed") {
           return acc + 1500;

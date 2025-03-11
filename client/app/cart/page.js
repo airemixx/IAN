@@ -7,7 +7,7 @@ import CheckoutFormStep1 from './_components/checkout-form-step1/page'
 import CartItem from './_components/cart-item/page'
 import LessonItem from './_components/lession-item/page'
 import RentItem from './_components/rental-item/page'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { redirect, useRouter } from 'next/navigation'
 import { FaTrashCan } from "react-icons/fa6";
 import Swal from 'sweetalert2'
@@ -25,10 +25,7 @@ export default function cartPageOne() {
       const token = localStorage.getItem('loginWithToken')
 
       if (!token) {
-        setTimeout(() => {
-          router.push('/login')
-        }, 2000)
-        return
+        router.push('/cart/cart-empty')
       }
 
       // 讀取 localStorage 並更新狀態
@@ -45,6 +42,12 @@ export default function cartPageOne() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (isCartEmpty) {
+      router.push('/cart/cart-empty')
+    }
+  }, [isCartEmpty])
 
   const cartProduct = []
   const cartRent = []
@@ -65,9 +68,9 @@ export default function cartPageOne() {
           title: '可用規格 SPECIFICATIONS',
           details: [
             { label: 'camera_format', value: v.camera_format },
-            { label: 'image_stabilization', value: v.image_stabilization },
-            { label: 'release_date', value: v.release_date },
-            { label: 'waterproof_level', value: v.waterproof_level }
+            { label: '防手震等級', value: v.image_stabilization },
+            { label: '推出日期', value: v.release_date },
+            { label: '防水等級', value: v.waterproof_level }
           ]
         }
       ]
@@ -154,26 +157,31 @@ export default function cartPageOne() {
       cancelButtonText: "取消"
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("cart");
-        localStorage.removeItem("rent_cart");
-        localStorage.removeItem("shoppingCart");
+        localStorage.removeItem("cart")
+        localStorage.removeItem("rent_cart")
+        localStorage.removeItem("shoppingCart")
+        localStorage.removeItem("cartItems")
+        localStorage.removeItem("buyerData")
 
+        // 手動更新 state 來強制重新渲染畫面
+        setCartStorage([]);
+        setRentStorage([]);
+        setLessonStorage([]);
+        setIsCartEmpty(true);
+        
         Swal.fire({
           title: "已清空購物車",
           text: "購物車已成功清空。",
           icon: "success",
-          timer: 2000,
+          timer: 1500,
           showConfirmButton: false
         });
-
-        router.refresh(); // 重新整理頁面以更新購物車狀態
+        
       }
     });
   };
-
   return (
     <div className={`${styles['j-page-wrapper']}`}>
-      {isCartEmpty ? redirect('/cart/cart-empty') :
         <div className="container">
           <CartTitle count={(cartProduct.length + cartLession.length + cartRent.length)} />
           <div className="row d-flex justify-content-center">
@@ -364,7 +372,7 @@ export default function cartPageOne() {
             </div>
             <CheckoutFormStep1 slItem={selectedItems} />
           </div>
-        </div>}
+        </div>
       <div className={`${styles['j-space']}`}></div>
     </div>
   )

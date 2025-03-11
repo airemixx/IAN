@@ -4,9 +4,8 @@
 
 import { useState, useEffect } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { SnackbarProvider, useSnackbar } from "notistack";
-import Button from "@mui/material/Button";
 import 'swiper/css'
+import Swal from 'sweetalert2'
 
 // 預設 6 張圖片（當 API 沒有圖片時使用）
 const defaultImages = [
@@ -19,6 +18,9 @@ const defaultImages = [
 ]
 
 export default function RentPicture({ images = [] }) {
+
+  const [hasShownSwal, setHasShownSwal] = useState(false);
+
   // 如果 API 沒有圖片，則使用預設圖片
   const finalImages =
     images.length > 0
@@ -29,6 +31,33 @@ export default function RentPicture({ images = [] }) {
   const [mainImage, setMainImage] = useState(finalImages[0])
   const [useSticky, setUseSticky] = useState(false)
 
+  // 彈窗提示
+  useEffect(() => {
+    const hasShown = localStorage.getItem('swalShown');
+
+    if (finalImages.length >= 4 && !hasShownSwal && !hasShown) {
+      Swal.fire({
+        color: '#fff',
+        icon: 'info',
+        iconColor: '#fff',
+        iconHtml: `<img src="/images/icon/slide.png" class="k-slide-swal-icon alt="滑動提示"">`,
+        title: '左滑更多圖片',
+        text: '點擊任意處關閉',
+        position: 'bottom',
+        showConfirmButton: false,
+        background: 'transparent',
+        customClass: {
+          icon: 'k-slide-swal-icon',
+          popup: 'k-slide-swal-popup',
+          title: 'k-slide-swal-title',
+          htmlContainer: 'k-slide-swal-text',
+        },
+      });
+      localStorage.setItem('swalShown', 'true'); // 關閉後記錄，不再顯示
+      setHasShownSwal(true); // 設置為 true，避免重複彈出
+
+    }
+  }, [finalImages, hasShownSwal]);
 
   useEffect(() => {
     if (!mainImage || !finalImages.includes(mainImage)) {
@@ -86,95 +115,50 @@ export default function RentPicture({ images = [] }) {
 
 
   return (
-    <SnackbarProvider maxSnack={3}>
+    <div className={`k-picture-container ${useSticky ? 'sticky' : 'relative'}`}>
+      <div className="k-picture-sticky mb-4">
+        {/* 主圖顯示區域 */}
+        <div className="text-center k-picture-bg">
+          <img
+            src={mainImage}
+            alt="Product Image"
+            className="product-image img-fluid"
+          />
+        </div>
 
-      <div className={`k-picture-container ${useSticky ? 'sticky' : 'relative'}`}>
-        <div className="k-picture-sticky mb-4">
-          {/* 主圖顯示區域 */}
-          <div className="text-center k-picture-bg">
-            <img
-              src={mainImage}
-              alt="Product Image"
-              className="product-image img-fluid"
-            />
-          </div>
+        {/* 縮圖輪播區域 */}
+        <div className="k-thumbnails-container mt-3 d-flex align-items-center">
+          <Swiper spaceBetween={10} slidesPerView={3}>
+            {finalImages.map((img, index) => (
+              <SwiperSlide key={index}>
+                {/* 縮圖，點擊後切換主圖 */}
+                <div
+                  className="k-thumbnail k-picture-bg"
+                  onClick={() => handleThumbnailClick(img)}
+                >
+                  <img
+                    src={img}
+                    alt={`Thumbnail ${index}`}
+                    className={`img-fluid ${mainImage === img ? 'active' : ''}`}
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
 
-          {/* 縮圖輪播區域 */}
-          <div className="k-thumbnails-container mt-3 d-flex align-items-center">
-            <Swiper spaceBetween={10} slidesPerView={3}>
-              {finalImages.map((img, index) => (
-                <SwiperSlide key={index}>
-                  {/* 縮圖，點擊後切換主圖 */}
+            {/* 使用 CSS 偽元素補足空白，確保只有當圖片少於 3 張時才補齊 */}
+            {missingImages > 0 &&
+              Array.from({ length: missingImages }).map((_, index) => (
+                <SwiperSlide key={`empty-${index}`} className="empty-slide">
                   <div
                     className="k-thumbnail k-picture-bg"
-                    onClick={() => handleThumbnailClick(img)}
-                  >
-                    <img
-                      src={img}
-                      alt={`Thumbnail ${index}`}
-                      className={`img-fluid ${mainImage === img ? 'active' : ''}`}
-                    />
-                  </div>
+                    aria-hidden="true"
+                  ></div>
                 </SwiperSlide>
               ))}
-
-              {/* 使用 CSS 偽元素補足空白，確保只有當圖片少於 3 張時才補齊 */}
-              {missingImages > 0 &&
-                Array.from({ length: missingImages }).map((_, index) => (
-                  <SwiperSlide key={`empty-${index}`} className="empty-slide">
-                    <div
-                      className="k-thumbnail k-picture-bg"
-                      aria-hidden="true"
-                    ></div>
-                  </SwiperSlide>
-                ))}
-            </Swiper>
-          </div>
+          </Swiper>
         </div>
       </div>
-      {/* 自動顯示滑動提示 */}
-      <AutoSlideNotification /> {/* ⬅️ 確保這裡呼叫 */}
-
-    </SnackbarProvider>
-
+    </div>
   )
 }
 
-// 🟢 自動播放的滑動通知，且可選擇「再也不顯示」
-const AutoSlideNotification = () => {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const [neverShow, setNeverShow] = useState(false);
-
-  useEffect(() => {
-    const alertShown = localStorage.getItem("slideAlertShown");
-    if (!alertShown) {
-      setTimeout(() => {
-        enqueueSnackbar("這是一個滑動的提示訊息！", {
-          variant: "info",
-          autoHideDuration: 5000,
-          anchorOrigin: { vertical: "top", horizontal: "right" },
-          action: (key) => (
-            <div style={{ display: "flex", gap: "8px" }}>
-              <Button size="small" color="secondary" onClick={() => closeSnackbar(key)}>
-                關閉
-              </Button>
-              <Button
-                size="small"
-                color="primary"
-                onClick={() => {
-                  localStorage.setItem("slideAlertShown", "true");
-                  setNeverShow(true);
-                  closeSnackbar(key);
-                }}
-              >
-                再也不顯示
-              </Button>
-            </div>
-          ),
-        });
-      }, 500);
-    }
-  }, [enqueueSnackbar, closeSnackbar]);
-
-  return null;
-};

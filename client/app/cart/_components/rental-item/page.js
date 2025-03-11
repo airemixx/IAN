@@ -63,7 +63,7 @@ export default function RentItem({ rentalitem, id, length, page }) {
 
                         </div>
                         <div className={"d-flex align-items-center flex-grow-1 justify-content-center justify-content-xl-start justify-content-xxl-center me-xxl-2 ms-md-2"}>
-                            <span className={`d-flex flex-column ${styles['j-rtpText']} mb-2 text-center me-2`}>價格: {Number(price).toLocaleString()}元</span>
+                            <span className={`d-flex flex-column ${styles['j-rtpText']} mb-2 text-center me-2`}>NT$ {Number(price).toLocaleString()}</span>
                         </div>
                         {page ? <div className={`${styles['j-delBtn']} position-absolute`}>
                             <button className="btn" onClick={handleDeleteItem}>
@@ -91,7 +91,7 @@ export default function RentItem({ rentalitem, id, length, page }) {
                                 </div>
                             </div>
 
-                            <span className={`d-flex flex-column ${styles['j-rtpText']} text-center`}>價格: {Number(price).toLocaleString()}元</span>
+                            <span className={`d-flex flex-column ${styles['j-rtpText']} text-center`}>NT$ {Number(price).toLocaleString()}</span>
                         </div>
                         {page ? <div className={`${styles['j-delBtn']} position-absolute`}>
                             <button className="btn" onClick={handleDeleteItem}>

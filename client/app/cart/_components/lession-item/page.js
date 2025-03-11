@@ -55,7 +55,7 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                                 </span>
                             </div>
                             <div className="d-flex flex-grow-1 justify-content-center  ps-lg-0 ps-xxl-2">
-                                <p className={`ms-xxl-1 mt-2 mb-2 me-md-2 ${styles['j-lsText']}`}>價格: {Number(price).toLocaleString()}元</p>
+                                <p className={`ms-xxl-1 mt-2 mb-2 me-md-2 ${styles['j-lsText']}`}>NT$ {Number(price).toLocaleString()}</p>
                             </div>
                         </div>
                     </div>
@@ -79,7 +79,7 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                                 </span>
                             </div>
                             <div className="d-flex justify-content-center ps-md-4 ps-lg-5 ms-xxl-4 me-3 pe-3">
-                                <p className={`ps-xxl-4 ms-xxl-2 ms-1 mt-2 ${styles['j-lsText']}`}>價格: {Number(price).toLocaleString()}元</p>
+                                <p className={`ps-xxl-4 ms-xxl-2 ms-1 mt-2 ${styles['j-lsText']}`}>NT$ {Number(price).toLocaleString()}</p>
                             </div>
                         </div>
                     </div>

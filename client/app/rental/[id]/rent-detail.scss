@@ -309,6 +309,7 @@
 .k-comment {
   vertical-align: middle; // 確保圖示與文字垂直置中
   line-height: 1; // 避免圖示影響行高
+  font-size: 15px;
   margin-top: -0.1rem;
 }
 // 商品收藏
@@ -432,9 +433,6 @@
   width: 40px;
   height: 40px;
   animation: k-toast-bounce 0.8s ease forwards;
-  strong {
-    color: #f1cf99;
-  }
 }
 .k-swal-toast-popup {
   padding-top: 8px !important;
@@ -455,4 +453,116 @@
   background: linear-gradient(90deg, #e58e41, #f1cf99);
   height: 10px;
   border-radius: 5px;
+}
+
+// 彈窗(small)
+.k-swal-small-icon {
+  top: 10px;
+}
+.k-swal-small-popup {
+  width: 360px;
+  padding-top: -10px !important; // 裝飾條
+  overflow: hidden; //  確保裝飾條不會超出邊界
+}
+.k-swal-small-btn {
+  background-color: #5292c5;
+  border-radius: 50px;
+}
+
+// 彈窗(review)
+.k-review-swal-popup {
+  border-radius: 15px;
+  width: 495px;
+}
+.k-review-swal-actions {
+  justify-content: flex-end;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 10px;
+}
+.k-review-swal-btn-1 {
+  background-color: #5292c5;
+  border-radius: 50px;
+}
+.k-review-swal-btn-2 {
+  background-color: #807871;
+  border-radius: 50px;
+}
+.k-swal-label {
+  text-align: left; /* 保證靠左對齊 */
+  margin-bottom: 5px; /* 調整間距 */
+  font-weight: 500; /* 讓字體看起來更專業 */
+}
+// 彈窗(slide)
+.k-slide-swal-icon {
+  border: none;
+  color: #fff;
+  top: 50px;
+  right: 10px;
+  width: 250px;
+  height: 250px;
+  animation: k-toast-bounce 0.8s ease forwards;
+  @media (min-width: 991px) and (max-width: 1200px) {
+    width: 220px;
+    height: 220px;
+  }
+  @media (max-width: 576) {
+    width: 150px;
+    height: 150px;
+    padding-bottom: 4px;
+  }
+}
+.k-slide-swal-title {
+  padding: 0;
+  font-size: 17px;
+  left: 17px;
+  top: -56px;
+  animation: k-toast-bounce 0.8s ease forwards;
+  @media (min-width: 991px) and (max-width: 1200px) {
+    font-size: 15px;
+    left: 13px;
+    top: -45px;
+  }
+  @media (max-width: 576px) {
+    color: transparent;
+    font-size: 11px;
+    left: 6px;
+    top: -18px;
+  }
+}
+.k-slide-swal-text {
+  padding: 10px;
+  top: -12px;
+}
+.k-slide-swal-popup {
+  right: 285px;
+  margin: 0;
+  padding: 0;
+  border-radius: 15px;
+  height: auto;
+  width: 300px;
+  @media (max-width: 1400px) {
+    right: 250px;
+    // top: 42%;
+  }
+  @media (max-width: 1200px) {
+    right: 208px;
+    // top: 40%;
+  }
+  @media (max-width: 991px) {
+    right: 0;
+    // top: 35%;
+  }
+  @media (max-width: 576px) {
+    right: 0;
+    // top: 30%;
+  }
+}
+.k-slide-swal-actions {
+  justify-content: flex-end;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 10px;
 }

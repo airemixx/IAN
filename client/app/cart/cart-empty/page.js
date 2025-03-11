@@ -3,13 +3,38 @@
 import styles from "./shopping-cart-empty.module.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 export default function CartEmptyPage() {
+    const router = useRouter()
+
+    useEffect(() => {
+      require('bootstrap/dist/js/bootstrap.bundle.min.js')
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('loginWithToken')
+  
+        if (!token) {
+          Swal.fire({
+            icon: 'warning',
+            title: '未登入',
+            text: '請先登入以繼續',
+            confirmButtonColor: "#003150",
+            confirmButtonText: '確定',
+            allowOutsideClick: false, // 禁止點擊外部關閉
+            allowEscapeKey: false,    // 禁止按Esc鍵關閉
+            willClose: () => {
+              router.push('/login') // 在使用者點擊確定後跳轉
+            }
+          })
+        }
+      }
+    }, [])
+  
     let cartStorage = JSON.parse(localStorage.getItem("cart")) || {};
     const isCartEmpty = Object.keys(cartStorage).length === 0;
     return (
-
         <div className={`${styles['j-page-wrapper']}`}>
             {isCartEmpty ? <div className={"container d-xs-flex flex-sm-column pt-5"}>
                 <div className={`${styles['j-shoppingCartTitleBox']} mb-5 row justify-content-center mt-5 pt-5`}>

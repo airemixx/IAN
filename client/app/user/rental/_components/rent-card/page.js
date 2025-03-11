@@ -15,7 +15,6 @@ export default function RentCard() {
 
   useEffect(() => {
     const token = localStorage.getItem("loginWithToken");
-    console.log("發送 API 請求，Token:", token);
 
     if (!token) {
       setError("未登入，請先登入後查看租賃紀錄");
@@ -31,7 +30,6 @@ export default function RentCard() {
       }
     })
       .then(response => {
-        console.log("API 回應狀態碼:", response.status);
         if (response.status === 401) {
           throw new Error("未授權，請重新登入");
         }
@@ -41,12 +39,10 @@ export default function RentCard() {
         return response.json();
       })
       .then(data => {
-        console.log("API 回應資料:", data);
         setRentals(data.products.map(rental => ({ ...rental, comment_at: rental.comment_at || null })) || []);
         setLoading(false);
       })
       .catch(error => {
-        console.error("Error fetching rentals:", error);
         setError(error.message);
         setLoading(false);
       });
