@@ -72,8 +72,20 @@
   color: #fff;
 }
 
+@media(max-width:576px){
+  .j-shoppingCartBox{
+    width: 80%;
+  }
+  .j-cartItemBox{
+    width: auto;
+  }
+}
+
 @media(max-width:390px){
   .j-cartItemBox{
     width: auto;
+  }
+  .j-shoppingCartBox{
+    width: 100%;
   }
 }

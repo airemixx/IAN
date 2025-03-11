@@ -7,6 +7,7 @@ export default function Callback() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ 增加 `loading` 狀態
 
   useEffect(() => {
     const fetchTokenAndSaveUser = async () => {
@@ -16,26 +17,26 @@ export default function Callback() {
       try {
         console.log("LINE 授權碼:", code);
 
-        // 🟢 **修正這裡！只傳 `code` 到後端，讓後端去處理**
+        // 1️⃣ 先發送 `code` 到後端，讓後端換取 `access_token`
         const backendResponse = await axios.post("http://localhost:8000/api/auth/line", {
-          code, // ✅ 傳送 `code`，而不是 `lineId`
+          code,
         });
 
         console.log("後端回應:", backendResponse.data);
-
         const { token, user } = backendResponse.data.data;
 
-        // 儲存 Token 到 localStorage
+        // 2️⃣ 儲存 Token
         localStorage.setItem("loginWithToken", token);
 
-        // 設定用戶資料
+        // 3️⃣ 設定用戶資料
         setUserData(user);
 
-        // 導向用戶頁面
+        // 4️⃣ 導向用戶頁面
         router.push("/user");
-
       } catch (error) {
         console.error("登入失敗", error);
+      } finally {
+        setLoading(false); // ✅ API 請求完成後才結束 `loading`
       }
     };
 
@@ -44,14 +45,15 @@ export default function Callback() {
 
   return (
     <div className="container">
-      <h1>LINE 登入成功</h1>
-      {userData ? (
+      {loading ? (
+        <p>正在登入中...</p> // ✅ 在 `loading` 期間顯示「正在登入」
+      ) : userData ? (
         <div>
           <p>名稱: {userData.name}</p>
           <img src={userData.head} alt="User" width="100" />
         </div>
       ) : (
-        <p>正在載入...</p>
+        <p>登入失敗，請重新嘗試</p>
       )}
     </div>
   );

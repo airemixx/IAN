@@ -185,7 +185,7 @@ export default function cartPageOne() {
         <div className="container">
           <CartTitle count={(cartProduct.length + cartLession.length + cartRent.length)} />
           <div className="row d-flex justify-content-center">
-            <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-7 col-xl-6 p-0`}>
+            <div className={`${styles['j-shoppingCartBox']} justify-content-between mt-4 me-lg-4 col-sm-11 col-md-9 col-lg-6 col-xl-5 col-xxl-5 p-0`}>
               <div className="j-cartItemsBox d-none d-sm-block p-0">
                 <div className='d-flex justify-content-between'>
                   <div>
@@ -282,15 +282,21 @@ export default function cartPageOne() {
                 </div>
               </div>
               <div className="j-cartItemsBox d-sm-none d-block p-0">
-                <div>
-                  <input
-                    type="checkbox"
-                    id="checkAll"
-                    className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
-                    checked={checkAll}
-                    onChange={handleCheckAll}
-                  />
-                  <span className="ms-2 align-middle">全選</span>
+              <div className='d-flex justify-content-between'>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="checkAll"
+                      className={`${styles['j-ckBox']} form-check-input form-check-lg shadow-sm rounded ms-2`}
+                      checked={checkAll}
+                      onChange={handleCheckAll}
+                    />
+                    <span className="ms-2 align-middle">全選</span>
+                  </div>
+                  <button className={`btn ${styles['j-delAll']}`} onClick={handleClearCart}>
+                    <FaTrashCan />
+                    <span className="ms-1">清空</span>
+                  </button>
                 </div>
                 <div className={`mt-2 mb-5 ${cartProduct.length == 0 ? 'd-none' : ''}`}>
                   {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
