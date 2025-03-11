@@ -4,7 +4,7 @@
   margin: auto;
 }
 .supportTitle {
-margin: 2rem 0;
+  margin: 2rem 0;
   font-size: 1.5rem;
   color: var(--primary-color-med);
 }
@@ -22,6 +22,7 @@ margin: 2rem 0;
   border-bottom: 1px solid #ddd;
   cursor: pointer;
   transition: background 0.3s ease;
+  overflow: hidden; /* 隱藏溢出的文字 */
 }
 
 .chatItem:hover,
@@ -34,14 +35,19 @@ margin: 2rem 0;
   display: flex;
   flex-direction: column;
   height: 80vh;
-  padding: 20px;
+  padding: 20px 0;
 }
 
 .chatHeader {
   padding: 15px;
-  text-align: center;
-  background-color: var(--white);
+  text-align: start;
+  background-color: var(--primary-color);
   border-radius: 1rem 1rem 0 0;
+  h4 {
+    font-size: 1rem;
+    margin: 0 0 0 1rem;
+    color: var(--white);
+  }
 }
 
 /* 訊息內容 */
@@ -61,6 +67,13 @@ margin: 2rem 0;
   margin-bottom: 1rem;
 }
 
+.infoAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 8px;
+  object-fit: cover;
+}
 .avatar {
   width: 36px;
   height: 36px;
@@ -75,6 +88,10 @@ margin: 2rem 0;
   word-break: break-word;
   max-width: 100%;
   min-width: 50px;
+  text-align: justify;
+}
+.text {
+  text-align: justify;
 }
 
 /* 訊息泡泡 */
@@ -92,14 +109,14 @@ margin: 2rem 0;
 
 /* 老師 / 使用者的訊息 */
 .teacher {
-  background-color: #DCF8C6;
+  background-color: #dcf8c6;
   align-self: flex-end;
   text-align: left;
 }
 
 /* 管理員的訊息 */
 .admin {
-  background-color: #EAEAEA;
+  background-color: #eaeaea;
   align-self: flex-start;
   text-align: left;
 }
@@ -108,8 +125,9 @@ margin: 2rem 0;
 .chatFooter {
   display: flex;
   padding: 10px;
-  background: #f8f9fa;
-  border-top: 2px solid #ddd;
+  background: #dfdfe0;
+  border-top: 2px solid #c5c5ca;
+  border-radius: 0 0 1rem 1rem;
 }
 
 .inputField {
@@ -121,11 +139,11 @@ margin: 2rem 0;
 
 .sendButton {
   margin-left: 10px;
-  padding: 10px 15px;
+  padding: 10px 15px 11px 15px;
   background: var(--primary-color-med);
   color: white;
   border: none;
-  border-radius: 50px;
+  border-radius: 50%;
   cursor: pointer;
 }
 
@@ -141,14 +159,14 @@ margin: 2rem 0;
 
 /* 送出的訊息樣式 */
 .sent .messageBox {
-  background-color: #007AFF;
+  background-color: #007aff;
   color: white;
   border-bottom-right-radius: 4px;
 }
 
 /* 接收的訊息樣式 */
 .received .messageBox {
-  background-color: #E5E5EA;
+  background-color: #e5e5ea;
   color: black;
   border-bottom-left-radius: 4px;
 }
@@ -157,7 +175,7 @@ margin: 2rem 0;
 .timestamp {
   font-size: 12px;
   color: #777;
-  margin-left: 8px;
+  margin: 0 8px;
   align-self: flex-end;
 }
 
@@ -170,4 +188,32 @@ margin: 2rem 0;
 .received {
   align-self: flex-start;
   flex-direction: row;
+}
+
+.chatInfo {
+  display: flex;
+  align-items: center;
+}
+
+.chatName {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.chatInfoText {
+  flex: 1; /* 讓內容區域撐滿剩餘空間 */
+  min-width: 0; /* 重要！防止內部元素撐爆 flex 容器 */
+  overflow: hidden; /* 防止溢出 */
+  display: flex;
+  flex-direction: column;
+}
+
+.chatText {
+  font-size: 0.9rem;
+  color: #777;
+  white-space: nowrap; /* 文字不換行 */
+  text-overflow: ellipsis; /* 超出時顯示 "..." */
+  overflow: hidden; /* 隱藏超出的內容 */
+  display: block; /* 讓 text-overflow 生效 */
+  max-width: 100%; /* 限制最大寬度，防止溢出 */
 }

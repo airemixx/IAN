@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import styles from "./support-chat.module.scss";
 import { io } from "socket.io-client";
+import { LuSend } from "react-icons/lu";
 
 export default function SupportChat() {
   const [userRole, setUserRole] = useState(null);
@@ -14,6 +15,16 @@ export default function SupportChat() {
   const [userId, setUserId] = useState(null);
 
 
+  useEffect(() => {
+    const token = localStorage.getItem("loginWithToken");
+    if (token) {
+      const decoded = parseJwt(token); // 解析 JWT
+      if (decoded?.id) {
+        setUserId(decoded.id); // 設定 userId
+        console.log("✅ 設定 userId:", decoded.id);
+      }
+    }
+  }, []);
 
 
   useEffect(() => {
@@ -88,7 +99,7 @@ export default function SupportChat() {
     console.log("🎯 `selectedChat` 變更:", selectedChat);
   }, [selectedChat]);
 
-  // ✅ 取得對話列表（只有管理員能讀取）
+
   // ✅ 取得對話列表（只有管理員能讀取）
   const fetchConversations = async () => {
     if (userRole !== "admin") return;
@@ -113,20 +124,21 @@ export default function SupportChat() {
 
       const data = await res.json();
       console.log("✅ 取得對話列表:", data);
-      setConversations(data);
-      if (data.length > 0) setSelectedChat(data[0]); // 預設選擇第一個對話
+
+      if (Array.isArray(data) && data.length > 0) {
+        setConversations(data);
+        setSelectedChat(data[0]); // 預設選擇第一個對話
+      } else {
+        setConversations([]); // 清空對話列表
+        setSelectedChat(null); // 避免 undefined 錯誤
+      }
     } catch (error) {
       console.error("❌ 無法取得對話列表:", error);
     }
   };
 
-  const handleChatSelect = (chat) => {
-    setSelectedChat(chat);
-    fetchMessages(chat.id);
-  };
-
-  const fetchMessages = async () => {
-    if (!selectedChat?.id) return; // 避免 `null.id` 錯誤
+  const fetchMessages = async (chatId) => {
+    if (!chatId) return; // 避免 `null.id` 錯誤
 
     try {
       const token = localStorage.getItem("loginWithToken"); // ✅ 確保 Token 存在
@@ -135,8 +147,8 @@ export default function SupportChat() {
         return;
       }
 
-      console.log(`📡 正在請求對話 ${selectedChat.id} 的所有訊息...`);
-      const res = await fetch(`http://localhost:8000/api/support/messages/${selectedChat.id}`, {
+      console.log(`📡 正在請求對話 ${chatId} 的所有訊息...`);
+      const res = await fetch(`http://localhost:8000/api/support/messages/${chatId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -147,7 +159,7 @@ export default function SupportChat() {
       if (!res.ok) throw new Error(`無法取得歷史訊息 (錯誤碼: ${res.status})`);
 
       const data = await res.json();
-      console.log(`✅ 取得 chat_id ${selectedChat.id} 的歷史訊息:`, data);
+      console.log(`✅ 取得 chat_id ${chatId} 的歷史訊息:`, data);
 
       setMessages(data);  // **確保更新 messages 狀態**
     } catch (error) {
@@ -155,12 +167,29 @@ export default function SupportChat() {
     }
   };
 
+
+
+  const handleChatSelect = (chat) => {
+    console.log("🟢 選擇的聊天室:", chat);
+    setSelectedChat(chat);
+  };
+
+
+
+  // **監聽 `selectedChat`，確保它更新後才載入訊息**
   useEffect(() => {
     if (selectedChat?.id) {
       fetchMessages(selectedChat.id);
     }
   }, [selectedChat]);
 
+  // **確保 `fetchConversations()` 在 `userRole === "admin"` 時執行**
+  useEffect(() => {
+    if (userRole === "admin") {
+      console.log("🔄 取得對話列表...");
+      fetchConversations();
+    }
+  }, [userRole]);
 
   // ✅ 發送訊息
   const parseJwt = (token) => {
@@ -196,7 +225,7 @@ export default function SupportChat() {
     const messageData = {
       chatId: selectedChat.id || null, // ✅ 讓後端決定 `chatId`
       text: newMessage,
-      senderId: userId, // ✅ 確保 `senderId` 包含在訊息內
+      senderId: userId, // ✅ **確保 `senderId` 正確發送**
     };
 
     console.log("📩 準備發送訊息:", messageData);
@@ -234,8 +263,6 @@ export default function SupportChat() {
     setNewMessage(""); // 清空輸入框
   };
 
-
-
   return (
     <div className="container">
       <h1 className={styles.supportTitle}>客服中心</h1>
@@ -250,10 +277,27 @@ export default function SupportChat() {
                   className={`${styles.chatItem} ${selectedChat?.id === chat.id ? styles.active : ""}`}
                   onClick={() => handleChatSelect(chat)}
                 >
-                  <h4>{chat.user_name || `訪客 #${chat.id}`}</h4>
-                  <p>{chat.lastMessage}</p>
+                  <div className={styles.chatInfo}>
+                    <img
+                      src={chat.user_avatar ? `http://localhost:3000${chat.user_avatar}` : "http://localhost:3000/uploads/users.webp"}
+                      className={styles.infoAvatar}
+                      alt="User Avatar"
+                    />
+                    <div className={styles.chatInfoText}>
+                      <h4 className={styles.chatName}>{chat.user_name || `訪客 #${chat.id}`}</h4>
+                      <p className={styles.chatText}>{chat.lastMessage}</p> </div>
+                  </div>
                   <span className={styles.timestamp}>
-                    {chat.lastMessageTime ? new Date(chat.lastMessageTime).toLocaleString() : "無紀錄"}
+                    {chat.lastMessageTime
+                      ? new Date(chat.lastMessageTime).toLocaleString("zh-TW", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false, // 24 小時制
+                      })
+                      : "無紀錄"}
                   </span>
                 </div>
               ))}
@@ -267,20 +311,23 @@ export default function SupportChat() {
           <div className={styles.chatWindow}>
             <div className={styles.chatHeader}>
               <h4>
-                {selectedChat
-                  ? selectedChat.name
+                {selectedChat && selectedChat.user_name
+                  ? selectedChat.user_name
                   : userRole === "admin"
                     ? "請選擇聊天室"
-                    : ""}
+                    : "聊天室"}
               </h4>
+
+
             </div>
+
 
             {/* ✅ 對話內容 */}
             {/* ✅ 確保 messages 有內容時才顯示 */}
             <div className={styles.chatBody}>
               {messages.length > 0 ? (
-                messages.map((msg, index) => {
-                  const isSender = msg.sender_id === userId; // ✅ 確保 sender_id 是來自資料庫
+                messages.map((msg, index) => { // ✅ 直接使用 `messages.map()`
+                  const isSender = msg.sender_id === userId; // 確保 sender_id 是來自資料庫
                   return (
                     <div key={index} className={`${styles.messageWrapper} ${isSender ? styles.sent : styles.received}`}>
                       {/* ✅ 如果是接收者，顯示頭像 */}
@@ -316,6 +363,7 @@ export default function SupportChat() {
 
 
 
+
             {/* ✅ 訊息輸入框 */}
             <div className={styles.chatFooter}>
               <input
@@ -326,7 +374,7 @@ export default function SupportChat() {
                 className={styles.inputField}
               />
               <button onClick={sendMessage} className={styles.sendButton}>
-                發送
+                <LuSend size={18}/>
               </button>
             </div>
           </div>
