@@ -84,6 +84,7 @@ router.get("/conversations", authenticate, async (req, res) => {
 
 
 
+
 // ✅ 取得某個對話的歷史訊息
 router.get("/messages/:chatId", authenticate, async (req, res) => {
   try {
@@ -117,20 +118,24 @@ router.get("/messages/:chatId", authenticate, async (req, res) => {
 });
 
 
-// ✅ 發送訊息
 router.post("/messages", authenticate, async (req, res) => {
   try {
     console.log("📩 伺服器收到請求:", req.body);
 
-    let { chatId, text } = req.body;
-    const senderId = req.user.id;
-
+    let { chatId, text, is_bot } = req.body;
+    let senderId = req.user.id;
+    
+    // 如果是機器人訊息，覆蓋 senderId（根據實際情況設定管理員 ID）
+    if (is_bot) {
+      senderId = 35; // 假設 35 是管理員或機器人的 ID
+    }
+    
     if (!text || !senderId) {
       console.warn("❌ 缺少必要參數:", { chatId, senderId, text });
       return res.status(400).json({ error: "請提供完整的訊息資訊" });
     }
 
-    // ✅ **如果 `chatId` 為空，創建新對話**
+    // 如果 `chatId` 為空，創建新對話
     if (!chatId || isNaN(chatId)) {
       console.log("🔄 `chatId` 為空或不是數字，創建新對話...");
 
@@ -144,10 +149,10 @@ router.post("/messages", authenticate, async (req, res) => {
         return res.status(500).json({ error: "無法創建新對話" });
       }
 
-      chatId = newChat.insertId; // ✅ 設定 `chatId`
+      chatId = newChat.insertId;
       console.log("🆕 創建新對話 `chatId`:", chatId);
     } else {
-      // ✅ 確認 `chatId` 是否存在
+      // 確認 `chatId` 是否存在
       console.log("🔍 檢查 `chatId` 是否存在:", chatId);
       const [existingChat] = await pool.query("SELECT id FROM conversations WHERE id = ?", [chatId]);
 
@@ -157,7 +162,7 @@ router.post("/messages", authenticate, async (req, res) => {
       }
     }
 
-    // ✅ **存入訊息**
+    // 存入訊息
     console.log("💾 插入訊息:", { chatId, senderId, text });
     await pool.query("INSERT INTO messages (chat_id, sender_id, text) VALUES (?, ?, ?)", [
       chatId,
@@ -165,12 +170,29 @@ router.post("/messages", authenticate, async (req, res) => {
       text,
     ]);
 
-    // ✅ **更新 conversations `last_message`**
+    // 更新 conversations 的 last_message
     await pool.query("UPDATE conversations SET last_message = ? WHERE id = ?", [text, chatId]);
 
     console.log("✅ 訊息成功存入資料庫");
-    res.status(201).json({ message: "訊息已發送", chatId });
 
+    // ---------------------------
+    // 新增：廣播新訊息給前端
+    // ---------------------------
+    // 從 app locals 中取得 io 實例
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("newMessage", {
+        chatId,
+        sender_id: senderId,
+        text,
+        created_at: new Date(), // 或是從資料庫取得的時間
+      });
+      console.log("📡 廣播 newMessage 事件:", { chatId, sender_id: senderId, text });
+    } else {
+      console.warn("❌ 無法取得 io 實例");
+    }
+
+    res.status(201).json({ message: "訊息已發送", chatId });
   } catch (error) {
     console.error("❌ 伺服器錯誤:", error);
     res.status(500).json({ error: "伺服器錯誤" });
