@@ -111,7 +111,7 @@ export default function SupportChat() {
     }
 
     setSelectedChat(chat) // ✅ 設定選中的聊天室
-    // fetchMessages(chat.id) // ✅ 載入該聊天室的訊息
+    fetchMessages(chat.id) // ✅ 載入該聊天室的訊息
   }
 
   const fetchMessages = async (chatId) => {

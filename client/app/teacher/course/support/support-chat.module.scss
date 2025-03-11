@@ -74,12 +74,14 @@
   margin: 0 8px;
   object-fit: cover;
 }
+
 .avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   margin: 0 8px;
   object-fit: cover;
+  aspect-ratio: 1 / 1;
 }
 
 .messageBox {
@@ -90,6 +92,7 @@
   min-width: 50px;
   text-align: justify;
 }
+
 .text {
   text-align: justify;
 }
