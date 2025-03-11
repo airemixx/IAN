@@ -36,12 +36,9 @@ import couponRouter from './routes/coupon.js'
 import collect from './routes/collect.js'
 import myorders from './routes/myorders.js'
 import getCpRouter from './routes/getCoupon.js'
-<<<<<<< HEAD
 import supportRouter from './routes/support.js'
 import { Server } from "socket.io";
-=======
 import forgot from './routes/forgot.js'
->>>>>>> upstream/main
 
 // 讀取 .env 設定
 dotenv.config()
