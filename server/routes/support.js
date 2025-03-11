@@ -9,29 +9,71 @@ const router = express.Router();
 // ✅ 取得所有對話列表
 router.get("/conversations", authenticate, async (req, res) => {
   try {
-    console.log("🔍 `req.user`: ", req.user); // 確保 `level` 存在
+    console.log("🔍 `req.user`: ", req.user);
 
-    if (!req.user || req.user.level !== 88) {
-      return res.status(403).json({ error: "權限不足，請重新登入" });
+    if (!req.user) {
+      return res.status(401).json({ error: "未授權，請重新登入" });
     }
 
-    console.log("✅ 管理員登入，查詢所有對話");
+    let query;
+    let params = [];
 
-    // **查詢所有對話，包含使用者名稱 + 最後訊息時間**
-    const query = `
-      SELECT 
-        c.id, 
-        u.name AS user_name, 
-        u.head AS user_avatar, 
-        c.last_message AS lastMessage, 
-        (SELECT created_at FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) AS lastMessageTime
-      FROM conversations c
-      LEFT JOIN users u ON c.user_id = u.id;
-    `;
+    if (req.user.level === 88) {
+      // ✅ 管理員可以獲取所有對話
+      console.log("✅ 管理員登入，查詢所有對話");
+      query = `
+        SELECT 
+          c.id, 
+          u.name AS user_name, 
+          u.head AS user_avatar, 
+          c.last_message AS lastMessage, 
+          (SELECT created_at FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) AS lastMessageTime
+        FROM conversations c
+        LEFT JOIN users u ON c.user_id = u.id;
+      `;
+    } else {
+      // ✅ 老師只能獲取「自己的對話」
+      console.log(`✅ 老師 (${req.user.id}) 登入，查詢自己的對話`);
+      query = `
+        SELECT 
+          c.id, 
+          u.name AS user_name, 
+          u.head AS user_avatar, 
+          c.last_message AS lastMessage, 
+          (SELECT created_at FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) AS lastMessageTime
+        FROM conversations c
+        LEFT JOIN users u ON c.user_id = u.id
+        WHERE c.user_id = ?;
+      `;
+      params = [req.user.id];
+    }
 
     console.log("🔍 執行 SQL:", query);
-    const [rows] = await pool.query(query);
+    const [rows] = await pool.query(query, params);
     console.log("✅ 取得對話列表:", rows);
+
+    if (rows.length === 0 && req.user.level !== 88) {
+      console.warn(`⚠️ 老師 (${req.user.id}) 沒有對話，建立新對話...`);
+      
+      // **新增對話**
+      const insertQuery = `INSERT INTO conversations (user_id) VALUES (?)`;
+      const [result] = await pool.query(insertQuery, [req.user.id]);
+
+      if (result.affectedRows > 0) {
+        console.log("✅ 成功建立新對話");
+        const newChat = {
+          id: result.insertId,
+          user_name: req.user.name,
+          user_avatar: req.user.head || "/uploads/default-avatar.png",
+          lastMessage: null,
+          lastMessageTime: null,
+        };
+        return res.json([newChat]); // 回傳新對話
+      } else {
+        console.error("❌ 無法建立新對話");
+        return res.status(500).json({ error: "無法建立新對話" });
+      }
+    }
 
     res.json(rows);
   } catch (error) {
@@ -39,7 +81,6 @@ router.get("/conversations", authenticate, async (req, res) => {
     res.status(500).json({ message: "伺服器錯誤", details: error.message });
   }
 });
-
 
 
 
