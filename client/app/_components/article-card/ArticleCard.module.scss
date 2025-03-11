@@ -1,6 +1,6 @@
 .homeArticleContainer{
-  max-width: 1440px;
-  width: 100%;
+  // max-width: 1600px;
+  width: 95%;
   margin: 50px auto;
   margin-bottom: 100px;
 }
@@ -55,7 +55,7 @@
 
   &:hover {
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 25px;
 
     &::after {
       transform: scale(1.05);
@@ -114,7 +114,7 @@
 
   &:hover {
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 25px;
 
     &::after {
       transform: scale(1.05);
@@ -166,8 +166,7 @@
 }
 
 .articleSmallCardContent {
-  composes: cardContent;
-
+  @extend .cardContent;
   p {
     font-size: 14px;
     margin: 0 auto;
@@ -179,8 +178,7 @@
 }
 
 .articleBigCardContent {
-  composes: cardContent;
-
+  @extend .cardContent;
   h6 {
     font-size: 24px;
   }

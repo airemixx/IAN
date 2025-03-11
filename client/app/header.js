@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useEffect, useState } from 'react'
 import { usePathname } from "next/navigation";
+import MenuToggle from './_components/MenuToggle/MenuToggle'
 
 export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const router = useRouter()
@@ -83,9 +84,10 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
             <img src="/images/icon/lenstudio-logo.svg" alt="logo" />
           </Link>
         </div>
-        <div className="menu-icon">
-          <img src="/images/icon/menu.svg" alt="menu" />
-        </div>
+
+        {/* 替換靜態菜單為動態漢堡選單 */}
+        <MenuToggle />
+
         <nav className={`d-flex justify-content-end`}>
           <ul className="nav-left">
             <li className={pathname === "/" ? "nav-active" : ""}>
