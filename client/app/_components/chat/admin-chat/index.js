@@ -672,6 +672,53 @@ export default function ChatWidget() {
     // 不需要額外設置，只需確保使用 context 中的訊息狀態
   }, [messages]);
 
+  // 在 useEffect 中修改 socket 事件監聽
+  useEffect(() => {
+    if (!socket) return;
+
+    // 修改消息接收處理邏輯
+    const handleReceiveMessage = (message) => {
+      console.log('收到新消息:', message);
+
+      // 進階調試
+      console.log(`檢查消息: message.userId=${message.userId}, activeUserId=${activeUserId}, 匹配=${message.userId === activeUserId}`);
+
+      // 增強消息過濾 - 確保消息屬於當前用戶
+      if (message.userId === activeUserId) {
+        // 在添加消息前檢查是否已存在相同 ID 的消息
+        setSocketMessages(prev => {
+          // 檢查是否已經存在相同 ID 的消息
+          if (prev.some(m => m.id === message.id)) {
+            console.log(`消息 ID ${message.id} 已存在，不重複添加`);
+            return prev;
+          }
+
+          // 添加新消息
+          console.log(`將消息添加到用戶 ${activeUserId} 的聊天窗口`);
+          return [...prev, message];
+        });
+
+        // 如果是新消息，立即標記為已讀
+        if (!message.read && message.sender === 'user') {
+          socket.emit('mark_as_read', {
+            messageIds: [message.id],
+            userId: activeUserId
+          });
+        }
+      } else {
+        // 如果不是當前用戶的消息，只在控制台記錄，不添加到聊天窗口
+        console.log(`消息被過濾: 來自用戶 ${message.userId}，當前查看的是 ${activeUserId}`);
+      }
+    };
+
+    // 註冊事件監聽
+    socket.on('receive_message', handleReceiveMessage);
+
+    return () => {
+      socket.off('receive_message', handleReceiveMessage);
+    };
+  }, [socket, activeUserId, setSocketMessages]); // 記得也在依賴陣列中添加 setSocketMessages
+
   return (
     <div className={styles.chatWidgetContainer}>
       <CSSTransition
@@ -705,9 +752,9 @@ export default function ChatWidget() {
               </div>
               {/* 修改用戶列表渲染部分 */}
               <div className={styles.userList}>
-                {users.map(user => {
+                {users.map((user, index) => {
                   // 確保每次重新渲染時都有唯一且穩定的key
-                  const renderKey = `user-${user.id}-${user._updateId || ''}`;
+                  const renderKey = `user-${user.id}-${index}-${user._updateId || ''}`;
 
                   // 創建一個封裝函數來處理時間格式化邏輯
                   const timeDisplay = (() => {
@@ -730,7 +777,7 @@ export default function ChatWidget() {
 
                   return (
                     <div
-                      key={`user-${user.id}-${user._updateId || ''}`}
+                      key={renderKey}
                       data-user-id={user.id}
                       className={`${styles.userItem}`}
                       onClick={() => handleSelectUser(user.id)}
@@ -843,7 +890,7 @@ export default function ChatWidget() {
                     const regex = emojiRegex();
 
                     return (
-                      <React.Fragment key={message.id}>
+                      <React.Fragment key={`msg-${message.id}-${index}`}>
                         {/* 時間標記 */}
                         {shouldShowTime && (
                           <div className={styles.timeLabel}>

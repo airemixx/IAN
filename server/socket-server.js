@@ -247,8 +247,9 @@ io.on('connection', (socket) => {
 
     const userInfo = userRows[0] || {};
 
+    // 修改訊息ID生成方式
     const messageObject = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, // 改進唯一ID生成
       text: message.text || '',
       fileUrl: message.fileUrl || null,
       fileType: message.fileType || null,
@@ -302,15 +303,13 @@ io.on('connection', (socket) => {
       const unreadCount = userChatHistory.filter(m => !m.read && m.sender === 'user').length;
       console.log(`[SERVER] 用戶 ${socket.userId} 未讀消息數: ${unreadCount}`);
 
-      // 優化事件發送邏輯
+      // 優化事件發送邏輯 - 在 send_message 事件處理中
       for (const [adminId, adminSocketId] of adminSockets.entries()) {
-        // 發送三個事件，但確保它們有序到達
-
-        // 1. 先發送最新訊息更新
+        // 發送用戶更新事件
         io.to(adminSocketId).emit('update_user_last_message', {
           userId: socket.userId,
           userName: socket.userName,
-          avatar: userAvatar, // 使用從資料庫獲取的頭像
+          avatar: userAvatar,
           timestamp: new Date().toISOString(),
           lastMessage: messageObject.text || '',
           lastMessageType: messageObject.fileType || 'text',
@@ -319,23 +318,28 @@ io.on('connection', (socket) => {
           _serverTime: Date.now()
         });
 
-        // 2. 暫停一下再發送未讀計數
-        setTimeout(() => {
-          io.to(adminSocketId).emit('update_user_unread_count', {
-            userId: socket.userId,
-            unreadCount: unreadCount,
-            _serverTime: Date.now()
-          });
-        }, 50);
+        // 發送未讀計數更新
+        io.to(adminSocketId).emit('update_user_unread_count', {
+          userId: socket.userId,
+          unreadCount: unreadCount,
+          _serverTime: Date.now()
+        });
 
-        // 3. 最後發送實際消息
-        setTimeout(() => {
+        // 關鍵修改 - 只對正在查看該用戶的管理員發送聊天消息
+        const viewingUserId = adminViewingUsers.get(adminId);
+        console.log(`管理員 ${adminId} 正在查看用戶 ${viewingUserId}`);
+
+        // 僅當管理員正在查看該用戶時，才發送消息內容
+        if (viewingUserId === socket.userId) {
+          console.log(`發送消息到管理員 ${adminId}，因為他正在查看用戶 ${socket.userId}`);
           io.to(adminSocketId).emit('receive_message', {
             ...messageObject,
             userId: socket.userId,
             _serverTime: Date.now()
           });
-        }, 100);
+        } else {
+          console.log(`不發送消息到管理員 ${adminId}，因為他正在查看用戶 ${viewingUserId}`);
+        }
       }
 
       // 把這段放進來，才能在發送完消息後即時更新
