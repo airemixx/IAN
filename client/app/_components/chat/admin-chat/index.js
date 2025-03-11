@@ -593,18 +593,39 @@ export default function ChatWidget() {
       setUsers(prev => {
         // 先找到指定用戶
         const userIndex = prev.findIndex(u => u.id === data.userId);
-        if (userIndex === -1) return prev; // 找不到用戶，不更新
 
         // 建立新陣列而非直接修改
         const newUsers = [...prev];
+
+        // 如果找不到用戶，則添加新用戶
+        if (userIndex === -1) {
+          newUsers.unshift({
+            id: data.userId,
+            name: data.userName || '用戶',
+            avatar: data.avatar || '/images/chatRoom/user1.jpg',
+            lastMessage: data.lastMessage || '',
+            lastMessageType: data.lastMessageType || 'text',
+            mediaCount: data.mediaCount || 0,
+            timestamp: new Date(),
+            unreadCount: data.unreadCount || 0,
+            _updateId: Date.now()
+          });
+          return newUsers;
+        }
+
+        // 如果找到用戶，更新用戶資訊
         const userToUpdate = { ...newUsers[userIndex] };
 
-        // 更新用戶資料
-        userToUpdate.lastMessage = data.lastMessage || '';
-        userToUpdate.lastMessageType = data.lastMessageType || 'text';
-        userToUpdate.mediaCount = data.mediaCount || 0;
+        // 從服務器資料中獲取用戶信息，如果存在則更新
+        userToUpdate.lastMessage = data.lastMessage || userToUpdate.lastMessage || '';
+        userToUpdate.lastMessageType = data.lastMessageType || userToUpdate.lastMessageType || 'text';
+        userToUpdate.mediaCount = data.mediaCount || userToUpdate.mediaCount || 0;
         userToUpdate.timestamp = new Date();
         userToUpdate._updateId = Date.now();
+
+        // 保留頭像和名稱，如果服務器傳來新資料則更新
+        if (data.avatar) userToUpdate.avatar = data.avatar;
+        if (data.userName) userToUpdate.name = data.userName;
 
         // 移除舊位置
         newUsers.splice(userIndex, 1);

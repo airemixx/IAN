@@ -79,10 +79,23 @@ io.on('connection', (socket) => {
     // 驗證 token
     const user = authenticateToken(token);
 
-    // 使用驗證後的用戶信息或提供的信息
+    // 從資料庫獲取最新用戶資訊
+    const [userRows] = await pool.query(
+      `SELECT 
+        id,
+        IF(TRIM(nickname) = '', name, nickname) AS display_name,
+        COALESCE(head, '/images/chatRoom/user1.jpg') AS avatar
+      FROM users 
+      WHERE id = ?`,
+      [user?.id || userId]
+    );
+
+    const userInfo = userRows[0] || {};
+
+    // 使用資料庫資訊設置用戶屬性
     socket.userId = user?.id || userId;
-    socket.userName = user?.name || userName;
-    socket.userAvatar = user?.head || '/images/chatRoom/user1.jpg';
+    socket.userName = userInfo.display_name || user?.name || userName;
+    socket.userAvatar = userInfo.avatar || '/images/chatRoom/user1.jpg';
     socket.isAdmin = isAdmin || (user?.level === 2);
 
     console.log(`用戶已認證: ID=${socket.userId}, Name=${socket.userName}, isAdmin=${socket.isAdmin}`);
@@ -246,6 +259,12 @@ io.on('connection', (socket) => {
       read: false
     };
 
+    // 使用資料庫中的最新頭像
+    const userAvatar = userInfo.avatar || '/images/chatRoom/user1.jpg';
+
+    // 更新 socket 中的頭像信息
+    socket.userAvatar = userAvatar;
+
     // 優化用戶消息處理邏輯
     if (!socket.isAdmin) {
       // 檢查是否有管理員正在查看此用戶的聊天室
@@ -291,7 +310,7 @@ io.on('connection', (socket) => {
         io.to(adminSocketId).emit('update_user_last_message', {
           userId: socket.userId,
           userName: socket.userName,
-          avatar: socket.userAvatar,
+          avatar: userAvatar, // 使用從資料庫獲取的頭像
           timestamp: new Date().toISOString(),
           lastMessage: messageObject.text || '',
           lastMessageType: messageObject.fileType || 'text',
