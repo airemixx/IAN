@@ -1,14 +1,115 @@
 // 測試課程中心
 import express from "express";
+import axios from "axios";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 import db from "../db.js";
+
+dotenv.config(); // ✅ 確保環境變數載入
 
 import { verifyFirebaseToken } from "../firebaseAdmin.js";
 
 const router = express.Router();
 const secretKey = process.env.JWT_SECRET_KEY;
 
+//line登入
+router.post("/line", async (req, res) => {
+  console.log("📥 收到的 req.body:", req.body);
+  const { code } = req.body;
+
+  if (!code) {
+    console.error("❌ 未提供授權碼 (code)");
+    return res.status(400).json({ message: "請提供授權碼 (code)" });
+  }
+
+  try {
+    console.log("📥 LINE 授權碼:", code);
+
+    // 1️⃣ 交換 `code` 獲取 `access_token`
+    const tokenResponse = await axios.post(
+      "https://api.line.me/oauth2/v2.1/token",
+      new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: process.env.LINE_REDIRECT_URI, // ✅ 從環境變數讀取
+        client_id: process.env.LINE_CLIENT_ID,
+        client_secret: process.env.LINE_CLIENT_SECRET,
+      }).toString(), // ✅ 確保為字串
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    const { access_token } = tokenResponse.data;
+
+    // 2️⃣ 用 `access_token` 獲取 LINE 用戶資訊
+    const profileResponse = await axios.get("https://api.line.me/v2/profile", {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    const { displayName, pictureUrl } = profileResponse.data;
+    const lineUserId = profileResponse.data.userId || profileResponse.data.sub; // ✅ 確保 `userId` 存在
+    console.log("👤 LINE 用戶資訊:", profileResponse.data);
+
+    if (!lineUserId) {
+      return res.status(400).json({ message: "無法獲取 LINE 使用者 ID" });
+    }
+
+    // 3️⃣ 檢查 MySQL 是否已有該用戶
+    const sqlCheck = "SELECT * FROM users WHERE account = ?";
+    const [rows] = await db.execute(sqlCheck, [lineUserId]);
+
+    let user;
+
+    if (rows.length > 0) {
+      // ✅ 用戶已存在，更新頭像
+      user = rows[0];
+      const sqlUpdate = "UPDATE users SET head = ? WHERE account = ?";
+      await db.execute(sqlUpdate, [pictureUrl, lineUserId]);
+    } else {
+      // ✅ 新增用戶
+      const hashedPassword = await bcrypt.hash(lineUserId, 10);
+      const sqlInsert =
+        "INSERT INTO users (account, password, name, head) VALUES (?, ?, ?, ?)";
+      const [result] = await db.execute(sqlInsert, [
+        lineUserId,
+        hashedPassword,
+        displayName,
+        pictureUrl,
+      ]);
+
+      user = {
+        id: result.insertId,
+        account: lineUserId,
+        name: displayName,
+        head: pictureUrl,
+      };
+    }
+
+    // 4️⃣ 生成 JWT Token
+    const authToken = jwt.sign(
+      {
+        id: user.id,
+        account: user.account,
+        name: user.name,
+        email: user.email || "",
+        head: user.head,
+        level: user.level || 1, // 預設 level
+      },
+      secretKey,
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: { token: authToken, user },
+      message: "LINE 登入成功",
+    });
+  } catch (err) {
+    console.error("❌ LINE 登入錯誤:", err.response ? err.response.data : err.message);
+    res.status(500).json({ status: "error", message: "LINE 登入失敗" });
+  }
+});
+// line end
 // Google 登入
 router.post("/google", async (req, res) => {
   const { token } = req.body;

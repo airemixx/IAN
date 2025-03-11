@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 export default function CartItem({ id, itemData, page }) {
-  const { image, brand, name, price, specs, quantity } = itemData;
+  const { image, brand, name, price, specs} = itemData;
   useEffect(() => {
     let cart = JSON.parse(localStorage.getItem("cart")) || {};
     if (cart[id]) {
@@ -76,9 +76,6 @@ export default function CartItem({ id, itemData, page }) {
                     +詳細資訊
                   </button>
                 </div>
-                <div>
-                  <span className={`${styles['j-quantity']} `}>數量:{quantity}</span>
-                </div>
                 <div className="d-flex">
                   <p className={`${styles['j-price']} me-4`}>NT$ {Number(price).toLocaleString()}</p>
                 </div>
@@ -117,9 +114,6 @@ export default function CartItem({ id, itemData, page }) {
                   >
                     +詳細資訊
                   </button>
-                  <div className="mb-2 mb-sm-0">
-                    <span className={`${styles['j-quantity']} `}>數量:{quantity}</span>
-                  </div>
                 </div>
 
               </div>

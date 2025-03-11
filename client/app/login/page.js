@@ -4,7 +4,8 @@ import styles from './login.module.scss'
 import React, { useState, useEffect } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import { useRouter } from 'next/navigation'
-import GoogleLoginButton from "./_components/GoogleLoginButton";
+import GoogleLoginButton from "./_components/google/GoogleLoginButton";
+import LineLoginButton from "./_components/line/page";
 
 export default function loginPage() {
   const router = useRouter()
@@ -141,15 +142,19 @@ export default function loginPage() {
                 </div>
               </form>
 
-              <div className="d-flex justify-start align-items-end">
-                <GoogleLoginButton />
+              <div className="d-flex justify-content-between align-items-end">
+                <div className='d-flex '>
+                  <GoogleLoginButton />
+                  <LineLoginButton />
+                </div>
+
                 <Link href="/login/forgerpwd">
-                <div className="flex justify-start">
-                忘記密碼 ?
+                  <div className="flex justify-start">
+                    忘記密碼 ?
+                  </div>
+                </Link>
               </div>
-              </Link>
-              </div>
-              
+
             </div>
           </div>
         </div>
