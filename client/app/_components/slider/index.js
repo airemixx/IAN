@@ -14,7 +14,7 @@ export default function SliderIndex() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-    }, 3000)
+    }, 10000)
 
     return () => clearInterval(interval)
   }, [])
