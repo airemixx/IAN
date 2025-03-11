@@ -166,8 +166,7 @@
 }
 
 .articleSmallCardContent {
-  composes: cardContent;
-
+  @extend .cardContent;
   p {
     font-size: 14px;
     margin: 0 auto;
@@ -179,8 +178,7 @@
 }
 
 .articleBigCardContent {
-  composes: cardContent;
-
+  @extend .cardContent;
   h6 {
     font-size: 24px;
   }
