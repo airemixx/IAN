@@ -5,35 +5,122 @@
   overflow: hidden;
 }
 
+.slideItem {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  display: flex;
+  flex-direction: column; // 改為縱向排列
+  justify-content: flex-end; // 內容從底部開始排列
+  align-items: flex-start; // 內容左對齊
+}
+
 .slideImage {
   position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
 }
 
 .active {
   opacity: 1;
 }
 
+.textCard {
+  position: relative;
+  left: 10vw; // 使用視窗寬度的相對單位
+  margin-bottom: 10vh; // 從底部留出空間
+  width: 50%; // 寬度使用百分比，會隨容器變化
+  // max-width: 400px; // 設置最大寬度，避免在大屏幕上過寬
+  min-width: 250px; // 設置最小寬度，保證在小屏幕上的可讀性
+  padding: 3vmin; // 使用視窗相對單位，在小屏幕上自動縮小
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; // 內容左對齊
+
+  h1 {
+    font-size: 4rem; // 字體大小隨視窗寬度變化
+    margin-bottom: 0.2em; // 減少間距
+    color: white; // 更改為白色以提高對比度
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); // 添加文字陰影提高可讀性
+  }
+
+  p {
+    font-size: calc(0.9rem + 0.2vw); // 字體大小隨視窗寬度變化
+    color: white; // 更改為白色以提高對比度
+    line-height: 1.5;
+    margin-bottom: 0.8em; // 減少與按鈕的間距
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); // 添加文字陰影提高可讀性
+  }
+}
+
 .slideButton {
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 20px;
+  padding: 12px 30px;
   background-color: #e58e41;
   color: white;
   border: none;
-  font-size: 18px;
+  font-size: 16px;
   border-radius: 50px;
   cursor: pointer;
   transition: 0.3s;
+  margin-top: 1rem; // 增加與描述的間距
+  min-width: 180px; // 設置最小寬度，確保文字不會換行
+  text-align: center; // 確保文字置中對齊
 }
 
 .slideButton:hover {
   background-color: rgba(255, 255, 255, 0.8);
   color: black;
+}
+
+/* 響應式調整 */
+@media (max-width: 992px) {
+  .textCard {
+    left: 8vw;
+    width: 50%;
+    h1 {
+      font-size: 3rem;
+    }
+    .slideButton {
+      width: auto; // 移除固定寬度限制
+      min-width: 160px; // 設置最小寬度
+      padding: 12px 20px; // 調整內邊距
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .textCard {
+    left: 5vw;
+    width: 50%;
+    padding: 20px;
+  }
+  .slideButton {
+    width: auto; // 移除固定寬度
+    min-width: 150px; // 設置合適的最小寬度
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .textCard {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    bottom: 0%;
+    top: auto;
+    h1 {
+      font-size: 2rem;
+    }
+    p {
+      font-size: 0.8rem;
+    }
+    .slideButton {
+      width: 100%; // 小螢幕保持全寬
+      min-width: 0; // 移除最小寬度約束
+    }
+  }
 }
