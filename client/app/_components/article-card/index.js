@@ -1,34 +1,80 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import styles from "./ArticleCard.module.scss";
 import { format } from "date-fns";
 import Link from "next/link";
 
-const ArticleCard = ({ id, category, title, date, backgroundImage }) => (
-  <Link href={`/article/${id}`} className={styles.cardLink}>
-    <div className={styles.smallImgContainer} style={{ backgroundImage: `url(${backgroundImage})` }}>
-      <div className={`${styles.cardContent} ${styles.articleSmallCardContent}`}>
-        <p>{category}</p>
-        <h6>{title}</h6>
-        <p>{date}</p>
-      </div>
-    </div>
-  </Link>
-);
+// 使用 Intersection Observer 來觸發動畫
+const useIntersectionObserver = (ref, options) => {
+  const [isVisible, setIsVisible] = useState(false);
 
-const BigArticleCard = ({ id, category, title, date, backgroundImage }) => (
-  <Link href={`/article/${id}`} className={styles.cardLink}>
-    <div className={styles.homeArticleBigCard} style={{ backgroundImage: `url(${backgroundImage})` }}>
-      <div className={`${styles.cardContent} ${styles.articleBigCardContent}`}>
-        <p>{category}</p>
-        <h6>{title}</h6>
-        <p>{date}</p>
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    }, options);
+
+    observer.observe(ref.current);
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [ref, options]);
+
+  return isVisible;
+};
+
+const ArticleCard = ({ id, category, title, date, backgroundImage, delay = 0 }) => {
+  const cardRef = useRef(null);
+  const isVisible = useIntersectionObserver(cardRef, { threshold: 0.1 });
+
+  return (
+    <Link href={`/article/${id}`} className={styles.cardLink}>
+      <div ref={cardRef} className={styles.cardContainer}>
+        <div
+          className={`${styles.smallImgContainer} ${isVisible ? styles.animatedCard : ''}`}
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            animationDelay: `${delay}s`
+          }}
+        >
+          <div className={`${styles.cardContent} ${styles.articleSmallCardContent} ${isVisible ? styles.animatedContent : ''}`}>
+            <p>{category}</p>
+            <h6>{title}</h6>
+            <p>{date}</p>
+          </div>
+        </div>
       </div>
-    </div>
-  </Link>
-);
+    </Link>
+  );
+};
+
+const BigArticleCard = ({ id, category, title, date, backgroundImage }) => {
+  const cardRef = useRef(null);
+  const isVisible = useIntersectionObserver(cardRef, { threshold: 0.1 });
+
+  return (
+    <Link href={`/article/${id}`} className={styles.cardLink}>
+      <div ref={cardRef} className={styles.cardContainer}>
+        <div
+          className={`${styles.homeArticleBigCard} ${isVisible ? styles.animatedCard : ''}`}
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        >
+          <div className={`${styles.cardContent} ${styles.articleBigCardContent} ${isVisible ? styles.animatedContent : ''}`}>
+            <p>{category}</p>
+            <h6>{title}</h6>
+            <p>{date}</p>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+};
 
 const ArticleHomeContainer = () => {
   const [articles, setArticles] = useState([]);
@@ -93,6 +139,7 @@ const ArticleHomeContainer = () => {
                   title={article.title || "無標題"}
                   date={formatDate(article.created_at)}
                   backgroundImage={article.image_path || "/images/HomePage-images/SC1.jpg"}
+                  delay={0.2 * (index + 1)}
                 />
               ))}
             </div>

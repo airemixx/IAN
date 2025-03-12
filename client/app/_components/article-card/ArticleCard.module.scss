@@ -5,17 +5,57 @@
   margin-bottom: 100px;
 }
 
+// 修改標題區域樣式，添加動畫效果
 .homeArticleTitle {
-  border-left: 8px solid #ffa510;
-  padding: 0 0 0 20px;
+  position: relative;
+  padding: 0 0 0 20px; // 保留左邊距，但移除邊框
   margin: 50px 0;
   display: flex;
   align-items: center;
-  height: 50px; /* 設定適當的高度 */
+  height: 50px;
+  border-left: none; // 移除原來的邊線，將使用偽元素創建
+  overflow: hidden; // 隱藏溢出的文字
+
+  // 左邊線動畫
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 8px;
+    background-color: #ffa510;
+    height: 0; // 初始高度為0
+    animation: borderUp 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  }
 
   h2 {
     margin: 0;
     font-weight: 800;
+    opacity: 0;
+    transform: translateX(-20px); // 初始位置向左偏移
+    animation: textSlide 0.6s ease 0.7s forwards; // 在邊線動畫完成後開始
+  }
+}
+
+// 邊線向上生長動畫
+@keyframes borderUp {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+// 文字滑入動畫
+@keyframes textSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -89,6 +129,8 @@
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
     z-index: 1;
   }
+
+  clip-path: inset(0 0 100% 0);
 }
 
 .homeArticleSmallCard {
@@ -148,6 +190,8 @@
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
     z-index: 1;
   }
+
+  clip-path: inset(0 0 100% 0);
 }
 
 .cardContent {
@@ -163,6 +207,15 @@
   h6 {
     margin: 5px 0;
     font-size: 18px;
+  }
+
+  opacity: 0;
+  transform: translateY(20px);
+
+  p,
+  h6 {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
 
@@ -210,5 +263,72 @@
 
   .homeArticleSmallCard {
     margin-top: 20px;
+  }
+}
+
+// 卡片容器動畫
+.cardContainer {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+// 修改捲軸式展開動畫 (使用clip-path)
+@keyframes revealAnimation {
+  0% {
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+// 文字內容淡入
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// 動畫類應用於現有的卡片
+.animatedCard {
+  animation: revealAnimation 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+// 內容淡入動畫
+.animatedContent {
+  animation: fadeIn 0.5s ease 0.6s forwards;
+}
+
+// 文字內容淡入動畫
+@keyframes contentFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 為內容創建特定的動畫
+.animatedContent {
+  animation: contentFadeIn 0.5s ease 0.8s forwards;
+
+  p:first-child {
+    animation: contentFadeIn 0.5s ease 0.8s forwards;
+  }
+
+  h6 {
+    animation: contentFadeIn 0.5s ease 1s forwards;
+  }
+
+  p:last-child {
+    animation: contentFadeIn 0.5s ease 1.2s forwards;
   }
 }
