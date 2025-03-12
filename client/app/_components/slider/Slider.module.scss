@@ -28,6 +28,17 @@
   opacity: 1;
 }
 
+@keyframes slideUp {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .textCard {
   position: relative;
   left: 10vw; // 使用視窗寬度的相對單位
@@ -46,6 +57,9 @@
     margin-bottom: 0.2em; // 減少間距
     color: white; // 更改為白色以提高對比度
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); // 添加文字陰影提高可讀性
+    opacity: 0; // 初始狀態為透明
+    transform: translateY(40px); // 初始位置在下方
+    transition: opacity 0.5s ease; // 只用於消失動畫
   }
 
   p {
@@ -54,6 +68,22 @@
     line-height: 1.5;
     margin-bottom: 0.8em; // 減少與按鈕的間距
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); // 添加文字陰影提高可讀性
+    opacity: 0; // 初始狀態為透明
+    transform: translateY(40px); // 初始位置在下方
+    transition: opacity 0.5s ease; // 只用於消失動畫
+  }
+}
+
+// 當幻燈片為活躍狀態時應用出現動畫
+.active .textCard {
+  h1 {
+    animation: slideUp 0.8s ease forwards;
+    animation-delay: 0.2s; // 標題先出現
+  }
+
+  p {
+    animation: slideUp 0.8s ease forwards;
+    animation-delay: 0.4s; // 描述文字晚一點出現
   }
 }
 
