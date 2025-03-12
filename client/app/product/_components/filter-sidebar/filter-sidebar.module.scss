@@ -77,19 +77,13 @@
   border: none;
   border-radius: 30px;
   padding: 12px 20px;
-  font-size: 16px;
   z-index: 1050;
-}
-
-.filterToggleBtn.hidden {
-  opacity: 0;
-  visibility: hidden;
 }
 
 /* 手機版篩選側邊欄 */
 .mobileAsideFilter {
   position: fixed;
-  top: 0px;
+  top: 10px;
   right: -100%;
   width: 80%;
   height: 100%;
@@ -97,12 +91,13 @@
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
   transition: right 0.3s ease-in-out;
   z-index: 1100;
-  padding: 20px;
+  padding: 10px;
+  padding-top: 50px;
 }
 
 .mobileAsideFilter.show {
   right: 0px;
-  width: 250px;
+  width: 100%;
 }
 
 .closeBtn {
@@ -110,7 +105,7 @@
   border: none;
   font-size: 20px;
   position: absolute;
-  top: -5px;
+  top: 10px;
   right: 10px;
 }
 

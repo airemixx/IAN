@@ -102,9 +102,17 @@
 }
 
 // 麵包屑
-.k-breadcrumb a {
-  color: #23425a;
+.k-breadcrumb {
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: '>';
+    font-size: 14px;
+    color: #807871;
+  }
+  a {
+    color: #23425a;
+  }
 }
+
 // 大部分按鈕 圓角
 .k-main-radius {
   border-radius: 50px;
@@ -164,6 +172,9 @@
   transition: all 0.3s ease;
   height: auto;
   min-height: 710px;
+  @media (max-width: 991px) {
+    min-height: auto;
+  }
 }
 // (大螢幕)
 .sticky .k-picture-sticky {
@@ -370,6 +381,18 @@
   left: 0;
   z-index: 99;
 }
+.k-policy-swal-text {
+  text-align: start;
+  padding-left: 86px;
+}
+.k-policy-swal-text-m {
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  li {
+    list-style: none;
+  }
+}
 .k-policy-swal-icon {
   top: 10px;
 }
@@ -544,19 +567,15 @@
   width: 300px;
   @media (max-width: 1400px) {
     right: 250px;
-    // top: 42%;
   }
   @media (max-width: 1200px) {
     right: 208px;
-    // top: 40%;
   }
   @media (max-width: 991px) {
     right: 0;
-    // top: 35%;
   }
-  @media (max-width: 576px) {
-    right: 0;
-    // top: 30%;
+  @media (max-width: 390px) {
+    bottom: 161px;
   }
 }
 .k-slide-swal-actions {

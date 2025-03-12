@@ -235,6 +235,10 @@ export default function CheckoutFormStep3() {
             <div className={`${styles['addressDetail']} d-flex flex-column mb-3 ps-3`}>
                 <div className="d-flex mb-3">
                     <span className={styles['j-adDetailtitle']}>送貨方式：</span>
+                    <span>標準物流</span>
+                </div>
+                <div className="d-flex mb-3">
+                    <span className={styles['j-adDetailtitle']}>處理時間：</span>
                     <span className={styles['j-adDetailContent']}>
                         2-3個工作天<br /> (將在3-5個工作天送達)<br />
                     </span>

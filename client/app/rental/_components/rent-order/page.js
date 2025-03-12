@@ -4,7 +4,7 @@
 
 export default function RentOrder({ setSorting }) {
   return (
-    <div className="d-flex justify-content-end mb-3">
+    <div className="d-flex justify-content-end mb-3 k-order-mobile">
       <select
         className="form-select w-auto"
         onChange={(e) => setSorting(e.target.value)}

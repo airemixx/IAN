@@ -50,7 +50,7 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                         </div>
                         <div className="d-flex align-items-center flex-lg-row flex-grow-1">
                             <div >
-                                <span className={`${styles['j-lsTitle']} ms-3 me-2`}>
+                                <span className={`${styles['j-lsTitle']} ms-sm-3 me-sm-2 ms-xxl-0 me-xxl-0`}>
                                     {name}
                                 </span>
                             </div>
