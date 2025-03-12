@@ -166,7 +166,7 @@ export default function RentList() {
       {/* 📌 主要內容區域 */}
       <main className="col-12 col-md-8 col-lg-9">
         {/* 📌 總數 & 排序 */}
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex flex-wrap justify-content-between align-items-center">
           <RentTotal
             totalItems={filteredRentals.length}
             itemsPerPage={itemsPerPage}

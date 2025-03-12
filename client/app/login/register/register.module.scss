@@ -30,6 +30,32 @@ body {
   object-fit: cover;
   border: 2px solid #ccc;
 }
+.mdEdit {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  /* ✅ 讓按鈕固定在圖片右下角 */
+  bottom: 5px;
+  right: 5px;
+  
+  /* ✅ 添加 hover 效果 */
+  transition: 0.3s;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+.width1{
+  width: 100px;
+  position: relative;
+}
 .formBox{
   margin: 120px 0;
     background: white;
