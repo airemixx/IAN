@@ -442,7 +442,6 @@ export default function FilterSidebar({ onFilterChange }) {
                     {/* 確認 & 清除按鈕 */}
                     <div className="d-flex justify-content-between mt-3">
                       <button className="btn btn-secondary" onClick={handleClearPrice}>清除</button>
-                      <button className="btn btn-primary" onClick={handleApplyPrice}>確認</button>
                     </div>
                   </div>
                 </div>
