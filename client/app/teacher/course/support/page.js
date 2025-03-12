@@ -95,7 +95,7 @@ export default function SupportChat() {
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
 
       // 解析 JSON
-      return JSON.parse(decodeURIComponent(escape(atob(base64))))
+      return JSON.parse(atob(base64))
     } catch (error) {
       console.error('❌ JWT 解析錯誤:', error)
       return null
@@ -195,8 +195,8 @@ export default function SupportChat() {
         storedRole === '1'
           ? 'teacher'
           : storedRole === '88'
-          ? 'admin'
-          : storedRole
+            ? 'admin'
+            : storedRole
       )
     }
   }, [])
@@ -205,26 +205,72 @@ export default function SupportChat() {
     console.log("嘗試建立 socket 連線...");
     const newSocket = io("http://localhost:8000");
     console.log("建立 socket 成功:", newSocket.id);
-  
+
     setSocket(newSocket);
-  
+
     // 組件卸載時斷開連線
     return () => {
       console.log("斷開 socket 連線:", newSocket.id);
       newSocket.disconnect();
     };
   }, []);
-  
+
   // 🔹 監聽 WebSocket 訊息
   useEffect(() => {
-    if (!socket) return
-    const handleNewMessage = (message) => {
-      setMessages((prevMessages) => [...prevMessages, message])
-    }
-    socket.on('newMessage', handleNewMessage)
-    return () => socket.off('newMessage', handleNewMessage)
-  }, [socket])
+    if (!socket) return;
 
+    const handleNewMessage = (message) => {
+      // 僅當收到的訊息屬於目前選中的聊天室時才更新對話視窗
+      if (selectedChat?.id === message.chatId) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
+    };
+
+    socket.on("newMessage", handleNewMessage);
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [socket, selectedChat]);
+
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleConversationUpdated = (data) => {
+      console.log("📡 收到 conversationUpdated 事件:", data);
+
+      setConversations((prevConversations) => {
+        const updatedConversations = prevConversations.map((conv) =>
+          conv.id === data.chatId
+            ? {
+              ...conv,
+              lastMessage: data.lastMessage,  // 更新訊息內容
+              updated_at: new Date(data.updated_at).toISOString(),  // 更新時間
+              unreadCount: selectedChat?.id === data.chatId ? 0 : (conv.unreadCount || 0) + 1, // ✅ 修正 unreadCount
+            }
+            : conv
+        );
+
+        console.log("📊 更新後的 conversations:", updatedConversations);
+        return updatedConversations;
+      });
+
+      // ✅ 確保 `selectedChat` 也能更新
+      if (selectedChat?.id === data.chatId) {
+        setSelectedChat((prevChat) => ({
+          ...prevChat,
+          lastMessage: data.lastMessage,
+          updated_at: new Date(data.updated_at).toISOString(),
+        }));
+      }
+    };
+
+    socket.on("conversationUpdated", handleConversationUpdated);
+
+    return () => {
+      socket.off("conversationUpdated", handleConversationUpdated);
+    };
+  }, [socket, selectedChat]);
 
 
   // 🔹 處理首次載入
@@ -330,10 +376,22 @@ export default function SupportChat() {
       console.log('✅ 取得對話列表:', data)
 
       if (data.length > 0) {
-        setConversations(data)
-        console.log('🟢 設定 `selectedChat`: ', data[0])
-        setSelectedChat(data[0]) // ✅ 設定聊天室
-        fetchMessages(data[0].id) // ✅ 確保載入第一個聊天室訊息
+        // 根據 `lastMessageTime` 排序，選擇最新的聊天室
+        const sortedConversations = data.sort((a, b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime))
+
+        console.log('🟢 排序後的聊天室:', sortedConversations)
+
+        setConversations(sortedConversations)
+
+        // 管理員預設選擇最新的聊天室
+        if (userRole === 'admin' && sortedConversations.length > 0) {
+          const defaultChat = sortedConversations[0]
+          setSelectedChat(defaultChat)
+          fetchMessages(defaultChat.id)
+        } else {
+          setSelectedChat(sortedConversations[0])
+          fetchMessages(sortedConversations[0].id)
+        }
       } else {
         setConversations([])
         setSelectedChat(null)
@@ -425,55 +483,69 @@ export default function SupportChat() {
 
 
   return (
-    <div className="container">
-      <h1 className={styles.supportTitle}>客服中心</h1>
+    <div className={styles['center-content']}>
+      <div className={styles['nav-bar']}>
+        <h1>客服中心</h1>
+      </div>
       <div className="row">
         {/* ✅ 左側：管理員才能看到對話列表 */}
         {userRole === 'admin' && (
           <div className="col-md-4">
             <div className={styles.chatList}>
-              {conversations.map((chat) => (
-                <div
-                  key={chat.id}
-                  className={`${styles.chatItem} ${
-                    selectedChat?.id === chat.id ? styles.active : ''
-                  }`}
-                  onClick={() => handleChatSelect(chat)}
-                >
-                  <div className={styles.chatInfo}>
-                    <img
-                      src={
-                        chat.user_avatar
-                          ? `http://localhost:3000${chat.user_avatar}`
-                          : 'http://localhost:3000/uploads/1741674302756-lenstudio.jpg'
-                      }
-                      className={styles.infoAvatar}
-                      alt="User Avatar"
-                    />
-                    <div className={styles.chatInfoText}>
-                      <h4 className={styles.chatName}>
-                        {chat.user_name || `訪客 #${chat.id}`}
-                      </h4>
-                      <p className={styles.chatText}>{chat.lastMessage}</p>{' '}
+              {conversations
+                .slice()
+                .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)) // ✅ 改用 updated_at 排序
+                .map((chat) => (
+                  <div
+                    key={chat.id}
+                    className={`${styles.chatItem} ${selectedChat?.id === chat.id ? styles.active : ''}`}
+                    onClick={() => handleChatSelect(chat)}
+                  >
+                    <div className={styles.chatInfo}>
+                      <img
+                        src={
+                          chat.user_avatar
+                            ? `http://localhost:3000${chat.user_avatar}`
+                            : 'http://localhost:3000/uploads/1741674302756-lenstudio.jpg'
+                        }
+                        className={styles.infoAvatar}
+                        alt="User Avatar"
+                      />
+                      <div className={styles.chatInfoText}>
+                        <h4 className={styles.chatName}>
+                          {chat.user_name || `訪客 #${chat.id}`}
+                        </h4>
+                        <div className={styles.textCon}>
+                          <p className={styles.chatText}>{chat.lastMessage}</p>
+                          {/* 顯示未讀訊息數量 */}
+                          {chat.unreadCount > 0 && (
+                            <span className={styles.unreadCount}>
+                              {chat.unreadCount}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <span className={styles.timestamp}>
-                    {chat.lastMessageTime
-                      ? new Date(chat.lastMessageTime).toLocaleString('zh-TW', {
+                    <span className={styles.timestamp}>
+                      {chat.updated_at  // ✅ 改用 updated_at 顯示時間
+                        ? new Date(chat.updated_at).toLocaleString('zh-TW', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit',
-                          hour12: false, // 24 小時制
+                          hour12: false,
                         })
-                      : '無紀錄'}
-                  </span>
-                </div>
-              ))}
+                        : '無紀錄'}
+                    </span>
+
+
+                  </div>
+                ))}
             </div>
           </div>
         )}
+
 
         {/* ✅ 右側：對話視窗 */}
         <div className={userRole === 'admin' ? 'col-md-8' : 'col-12'}>
@@ -483,10 +555,10 @@ export default function SupportChat() {
                 {selectedChat?.user_name
                   ? selectedChat.user_name
                   : userRole === 'teacher'
-                  ? 'Hi, 需要幫忙嗎？'
-                  : userRole === 'admin'
-                  ? '請選擇聊天室'
-                  : '聊天室'}
+                    ? 'Hi, 需要幫忙嗎？'
+                    : userRole === 'admin'
+                      ? '請選擇聊天室'
+                      : '聊天室'}
               </h4>
             </div>
 
@@ -496,9 +568,8 @@ export default function SupportChat() {
                 return (
                   <div
                     key={index}
-                    className={`${styles.messageWrapper} ${
-                      isSender ? styles.sent : styles.received
-                    }`}
+                    className={`${styles.messageWrapper} ${isSender ? styles.sent : styles.received
+                      }`}
                   >
                     {!isSender && (
                       <img
@@ -519,15 +590,15 @@ export default function SupportChat() {
                     <div className={styles.timestamp}>
                       {msg.created_at
                         ? new Date(msg.created_at).toLocaleString('zh-TW', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                          })
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })
                         : new Date().toLocaleString('zh-TW', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                          })}
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })}
                     </div>
                   </div>
                 )
@@ -557,18 +628,38 @@ export default function SupportChat() {
 
             {/* ✅ 訊息輸入框 */}
             <div className={styles.chatFooter}>
-              <input
-                type="text"
+              <textarea
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (e.shiftKey) {
+                      e.preventDefault(); // 讓 Shift + Enter 插入換行
+                      setNewMessage((prev) => prev + "\n");
+                    } else {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }
+                }}
                 placeholder="輸入訊息..."
                 className={styles.inputField}
+                rows={1}
+                style={{
+                  resize: "none",
+                  overflowY: "auto",
+                  maxHeight: "150px",
+                }}
+                onInput={(e) => {
+                  e.target.style.height = "auto";
+                  e.target.style.height = e.target.scrollHeight + "px";
+                }}
               />
               <button onClick={sendMessage} className={styles.sendButton}>
                 <LuSend size={18} />
               </button>
             </div>
+
           </div>
         </div>
       </div>

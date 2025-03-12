@@ -27,7 +27,7 @@ router.get("/conversations", authenticate, async (req, res) => {
           u.name AS user_name, 
           u.head AS user_avatar, 
           c.last_message AS lastMessage, 
-          (SELECT created_at FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) AS lastMessageTime
+          c.updated_at AS updated_at
         FROM conversations c
         LEFT JOIN users u ON c.user_id = u.id;
       `;
@@ -40,7 +40,7 @@ router.get("/conversations", authenticate, async (req, res) => {
           u.name AS user_name, 
           u.head AS user_avatar, 
           c.last_message AS lastMessage, 
-          (SELECT created_at FROM messages WHERE chat_id = c.id ORDER BY created_at DESC LIMIT 1) AS lastMessageTime
+          c.updated_at AS updated_at
         FROM conversations c
         LEFT JOIN users u ON c.user_id = u.id
         WHERE c.user_id = ?;
@@ -54,7 +54,7 @@ router.get("/conversations", authenticate, async (req, res) => {
 
     if (rows.length === 0 && req.user.level !== 88) {
       console.warn(`⚠️ 老師 (${req.user.id}) 沒有對話，建立新對話...`);
-      
+
       // **新增對話**
       const insertQuery = `INSERT INTO conversations (user_id) VALUES (?)`;
       const [result] = await pool.query(insertQuery, [req.user.id]);
@@ -66,7 +66,7 @@ router.get("/conversations", authenticate, async (req, res) => {
           user_name: req.user.name,
           user_avatar: req.user.head || "/uploads/default-avatar.png",
           lastMessage: null,
-          lastMessageTime: null,
+          updated_at: null,
         };
         return res.json([newChat]); // 回傳新對話
       } else {
@@ -81,6 +81,7 @@ router.get("/conversations", authenticate, async (req, res) => {
     res.status(500).json({ message: "伺服器錯誤", details: error.message });
   }
 });
+
 
 
 
@@ -124,12 +125,12 @@ router.post("/messages", authenticate, async (req, res) => {
 
     let { chatId, text, is_bot } = req.body;
     let senderId = req.user.id;
-    
+
     // 如果是機器人訊息，覆蓋 senderId（根據實際情況設定管理員 ID）
     if (is_bot) {
       senderId = 35; // 假設 35 是管理員或機器人的 ID
     }
-    
+
     if (!text || !senderId) {
       console.warn("❌ 缺少必要參數:", { chatId, senderId, text });
       return res.status(400).json({ error: "請提供完整的訊息資訊" });
@@ -140,7 +141,7 @@ router.post("/messages", authenticate, async (req, res) => {
       console.log("🔄 `chatId` 為空或不是數字，創建新對話...");
 
       const [newChat] = await pool.query(
-        "INSERT INTO conversations (user_id, last_message) VALUES (?, ?)", 
+        "INSERT INTO conversations (user_id, last_message) VALUES (?, ?)",
         [senderId, text]
       );
 
@@ -170,24 +171,50 @@ router.post("/messages", authenticate, async (req, res) => {
       text,
     ]);
 
-    // 更新 conversations 的 last_message
-    await pool.query("UPDATE conversations SET last_message = ? WHERE id = ?", [text, chatId]);
+    // 更新 conversations 的 last_message 與更新時間
+    await pool.query("UPDATE conversations SET last_message = ?, updated_at = NOW() WHERE id = ?", [text, chatId]);
+
+    // 從資料庫取得最新的 updated_at
+    const [updatedRows] = await pool.query(
+      "SELECT updated_at FROM conversations WHERE id = ?",
+      [chatId]
+    );
+    const updated_at = updatedRows.length > 0 ? updatedRows[0].updated_at : new Date();
 
     console.log("✅ 訊息成功存入資料庫");
 
-    // ---------------------------
-    // 新增：廣播新訊息給前端
-    // ---------------------------
+    let user_avatar = null;
+    let sender_name = null;
+    const [rows] = await pool.query(
+      "SELECT name AS sender_name, head AS user_avatar FROM users WHERE id = ?",
+      [senderId]
+    );
+    if (rows.length > 0) {
+      sender_name = rows[0].sender_name;
+      user_avatar = rows[0].user_avatar;
+    }
+
     // 從 app locals 中取得 io 實例
     const io = req.app.get("io");
     if (io) {
+      // 廣播新訊息給聊天室內容
       io.emit("newMessage", {
         chatId,
         sender_id: senderId,
         text,
-        created_at: new Date(), // 或是從資料庫取得的時間
+        created_at: new Date(),
+        user_avatar,
+        sender_name,
       });
       console.log("📡 廣播 newMessage 事件:", { chatId, sender_id: senderId, text });
+
+      // 廣播對話更新事件給管理員側邊欄，傳遞最新的 `updated_at`
+      io.emit("conversationUpdated", {
+        chatId,
+        lastMessage: text,
+        updated_at: updated_at, // 使用從資料庫獲取的 `updated_at`
+      });
+      console.log("📡 廣播 conversationUpdated 事件:", { chatId, lastMessage: text, updated_at });
     } else {
       console.warn("❌ 無法取得 io 實例");
     }
@@ -198,7 +225,6 @@ router.post("/messages", authenticate, async (req, res) => {
     res.status(500).json({ error: "伺服器錯誤" });
   }
 });
-
 
 
 
