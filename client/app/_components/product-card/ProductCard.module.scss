@@ -14,6 +14,14 @@
   transform: translateY(0) !important;
 }
 
+ /* 標題 */
+ .courseTitle {
+  background-color: transparent;
+  font-family: "Noto Sans TC", serif;
+  font-weight: 700;
+  border-left: solid 7px #f9a11b;
+}
+
 .productPrice {
   color: black;
   font-weight: bold;
