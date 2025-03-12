@@ -3,6 +3,9 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  perspective: 1000px; // 添加透視效果，增強視差感
+  will-change: transform; // 優化性能
+  transition: transform 0.2s ease-out;
 }
 
 .slideItem {
@@ -10,11 +13,12 @@
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out, transform 0.5s ease-out;
   display: flex;
   flex-direction: column; // 改為縱向排列
   justify-content: flex-end; // 內容從底部開始排列
   align-items: flex-start; // 內容左對齊
+  transform-origin: center center; // 確保從中心縮放
 }
 
 .slideImage {
@@ -22,6 +26,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform-origin: center center;
+  transition: transform 0.2s ease-out;
 }
 
 .active {
@@ -44,13 +50,14 @@
   left: 10vw; // 使用視窗寬度的相對單位
   margin-bottom: 10vh; // 從底部留出空間
   width: 50%; // 寬度使用百分比，會隨容器變化
-  // max-width: 400px; // 設置最大寬度，避免在大屏幕上過寬
   min-width: 250px; // 設置最小寬度，保證在小屏幕上的可讀性
   padding: 3vmin; // 使用視窗相對單位，在小屏幕上自動縮小
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; // 內容左對齊
+  align-items: flex-start;
+  // 移除任何與視差效果相關的屬性
+  transform: none !important; // 強制覆蓋可能的內聯樣式
 
   h1 {
     font-size: 4rem; // 字體大小隨視窗寬度變化
@@ -87,23 +94,95 @@
   }
 }
 
+// 新的 Leica 風格按鈕
 .slideButton {
+  position: relative;
   padding: 12px 30px;
-  background-color: #e58e41;
-  color: white;
+  border-radius: 50px;
+  background-color: white;
+  color: black;
   border: none;
   font-size: 16px;
-  border-radius: 50px;
   cursor: pointer;
-  transition: 0.3s;
-  margin-top: 1rem; // 增加與描述的間距
-  min-width: 180px; // 設置最小寬度，確保文字不會換行
-  text-align: center; // 確保文字置中對齊
+  min-width: 180px;
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
+  margin-top: 1rem;
+
+  // 橘色點
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #e58e41;
+    transition: background-color 0.3s ease;
+    z-index: 2;
+  }
+
+  // 擴散背景
+  &::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background-color: #e58e41;
+    transition: width 0.5s ease, height 0.5s ease;
+    z-index: -1;
+  }
+
+  span {
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+    margin-left: 10px; // 為橘點留出空間
+  }
+
+  &:hover {
+    // 懸停時的效果
+    &::after {
+      width: 800px; // 大到足以覆蓋整個按鈕
+      height: 800px;
+    }
+
+    &::before {
+      background-color: white;
+    }
+
+    span {
+      color: white;
+    }
+  }
 }
 
-.slideButton:hover {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: black;
+// 添加視差效果類
+.parallaxEffect {
+  transform-origin: 50% 50%;
+}
+
+// 為不同元素添加不同的視差速度
+.parallaxSlow {
+  transform: translateY(var(--parallax-translate-slow, 0));
+  scale: var(--parallax-scale, 1);
+}
+
+.parallaxMedium {
+  transform: translateY(var(--parallax-translate-medium, 0));
+  scale: var(--parallax-scale, 1);
+}
+
+.parallaxFast {
+  transform: translateY(var(--parallax-translate-fast, 0));
+  scale: var(--parallax-scale, 1);
 }
 
 /* 響應式調整 */
@@ -114,11 +193,9 @@
     h1 {
       font-size: 3rem;
     }
-    .slideButton {
-      width: auto; // 移除固定寬度限制
-      min-width: 160px; // 設置最小寬度
-      padding: 12px 20px; // 調整內邊距
-    }
+  }
+  .slideButton {
+    min-width: 160px;
   }
 }
 
@@ -129,9 +206,7 @@
     padding: 20px;
   }
   .slideButton {
-    width: auto; // 移除固定寬度
-    min-width: 150px; // 設置合適的最小寬度
-    padding: 12px 20px;
+    min-width: 150px;
   }
 }
 
