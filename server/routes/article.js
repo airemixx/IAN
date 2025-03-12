@@ -99,14 +99,17 @@ router.get('/', async (req, res) => {
 // 修改 /latest 路由
 router.get('/latest', cors(corsOptions), async (req, res) => {
   try {
+    const limit = req.query.limit ? parseInt(req.query.limit) : 4; // 預設4篇，但允許通過查詢參數調整
+
     const [rows] = await pool.query(`
-      SELECT a.*, c.name as category_name
+      SELECT a.*, c.name as category_name, u.nickname as user_nickname, u.name as user_name
       FROM article a
       LEFT JOIN article_category c ON a.category_id = c.id
+      LEFT JOIN users u ON a.user_id = u.id
       WHERE a.is_deleted = 0
       ORDER BY a.created_at DESC
-      LIMIT 4
-    `)
+      LIMIT 5
+    `, [limit])
     res.json({ data: rows })
   } catch (error) {
     console.error('Error fetching latest articles:', error)

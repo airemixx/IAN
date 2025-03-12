@@ -21,6 +21,8 @@ export default function UserPage(props) {
   const MySwal = withReactContent(Swal);
   const [addresses, setAddresses] = useState([]); // 存所有住址
   const [latestAddress, setLatestAddress] = useState(''); // 記錄資料庫中的最新地址
+  const [previewImage, setPreviewImage] = useState(user.head || "/uploads/users.webp"); // 預覽圖片
+
 
 
 
@@ -112,9 +114,13 @@ export default function UserPage(props) {
     const file = e.target.files[0];
     if (!file) return;
 
+    // 先顯示預覽圖片
+    const imageUrl = URL.createObjectURL(file);
+    setPreviewImage(imageUrl);
+
     const formData = new FormData();
     formData.append("avatar", file);
-    formData.append("account", user.account); // 傳遞帳號，讓後端知道要更新誰
+    formData.append("account", user.account);
 
     try {
       const response = await fetch("http://localhost:8000/api/users/upload", {
@@ -124,12 +130,28 @@ export default function UserPage(props) {
 
       const result = await response.json();
       if (result.status !== "success") throw new Error(result.message);
+      
 
-      // ✅ 更新 user.head，讓前端立即顯示新頭像
+      // ✅ 更新 `user.head`，讓前端立即顯示新頭像
       setUser({ ...user, head: result.imageUrl });
+
+      // 🔥 移除預覽的本地 URL，避免內存洩漏
+      URL.revokeObjectURL(imageUrl);
+      if (result.token) {
+        console.log("✅ 從 API 取得新 Token:", result.token);
+
+        // **更新 localStorage & useAuth 狀態**
+        localStorage.setItem("loginWithToken", result.token);
+        setToken(result.token);
+      }
+
+      // 🔥 **步驟 2：重新獲取使用者資訊**
+      await fetchUserData();
+      
     } catch (error) {
       console.error("圖片上傳失敗:", error);
       alert("圖片上傳失敗，請稍後再試");
+      setPreviewImage(user.head); // 上傳失敗時，還原回原本的圖片
     }
   };
 
@@ -233,9 +255,9 @@ export default function UserPage(props) {
 
 
 
- 
-    
-    
+
+
+
   const AddressList = () => {
     const [addresses, setAddresses] = React.useState([]);
 
@@ -283,22 +305,27 @@ export default function UserPage(props) {
                 <div className={styles.customCard}>
                   <form onSubmit={handleUpdate}>
                     <div className="d-flex flex-column align-items-center ">
-                      <div className="avatar-container mb-3">
+                      <div className="avatar-container mb-3" onClick={() => document.getElementById("fileInput").click()} style={{ cursor: "pointer" }}>
+                      <div className={styles.width1} >
                         <img
                           id="avatar"
                           src={user.head ? user.head : "/uploads/users.webp"} // ✅ 使用相對路徑
                           alt="大頭貼"
-                          className={styles.avatar}
+                          className="rounded-circle border border-gray-300"
+                          style={{ width: "100px", height: "100px", objectFit: "cover" }}
                         />
+                        <label htmlFor="fileInput" className={styles.mdEdit}><MdEdit /></label>
+                        </div>
                       </div>
                       <div className="mb-3 ">
                         <input
                           type="file"
                           id="fileInput"
-                          className="fileInput"
+                          className="d-none"
                           accept="image/*"
-                          onChange={handleImageUpload} // ✅ 綁定上傳函式
+                          onChange={handleImageUpload}
                         />
+                        
                       </div>
                     </div>
                     <div className="mb-3">
@@ -371,15 +398,15 @@ export default function UserPage(props) {
 
             {/* 地址區域 */}
             <div className={`${styles.customCard} mt-4`}>
-              
-                <div>
-                  <Address/>
-                </div>
+
+              <div>
+                <Address />
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   )
 }
 

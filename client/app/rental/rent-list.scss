@@ -85,8 +85,28 @@
   color: #7e7267;
 }
 // 麵包屑
-.k-breadcrumb a {
-  color: #23425a;
+.k-breadcrumb {
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: '>';
+    font-size: 14px;
+    color: #807871;
+  }
+  a {
+    color: #23425a;
+  }
+}
+
+// 總數
+.k-total-mobile {
+  width: 220px;
+  @media (max-width: 767px) {
+    margin-left: 4px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 451px) {
+    margin-left: 4px;
+    margin-bottom: 14px;
+  }
 }
 
 /* 左半邊 */
