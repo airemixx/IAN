@@ -118,7 +118,15 @@
   max-width: 100%;
   min-width: 50px;
   text-align: justify;
+  white-space: pre-wrap;
 }
+
+/* ✅ 如果是圖片，移除 padding */
+.noPadding {
+  padding: 0;
+  border-radius: 8px; /* 避免圖片變成奇怪的形狀 */
+}
+
 
 .text {
   text-align: justify;
@@ -151,21 +159,35 @@
   text-align: left;
 }
 
-/* 訊息輸入框 */
 .chatFooter {
   display: flex;
-  align-items: flex-end; /* 讓按鈕始終保持在底部 */
+  align-items: center;
+  background: #e0e2e6;
   padding: 10px;
-  background: #dfdfe0;
-  border-top: 2px solid #c5c5ca;
-  border-radius: 0 0 1rem 1rem;
+  border-radius:  0 0 20px 20px ;
+  position: relative;
+  min-height: 50px;
 }
 
-.inputField {
-  flex: 1;
-  padding: 9px 20px;
-  border: 1px solid #ccc;
+
+.inputContainer {
+  display: flex;
+  align-items: flex-start; // ✅ 讓圖片和輸入框都從上方對齊
+  flex-grow: 1;
+  background: white;
   border-radius: 20px;
+  padding: 10px;
+  min-height: 50px; // ✅ 避免過低
+  gap: 10px; // ✅ 讓圖片與文字有間距
+}
+
+
+.inputField {
+  flex-grow: 1;
+  border: none;
+  background: white;
+  font-size: 16px;
+  resize: none;
   overflow-y: auto;
 }
 
@@ -303,6 +325,56 @@
   align-items: center;
   justify-content: center;
   margin-left: 10px;
+}
+
+.uploadLabel {
+  cursor: pointer;
+  font-size: 20px;
+  padding-right: 5px;
+  // margin-bottom: 2px;
+}
+
+.imagePreviewContainer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 50px;
+  max-height: 50px;
+}
+
+
+
+.imagePreview {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+
+.removeImageButton {
+  background: white;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 30px; 
+  margin-top: -30px;
+  position: absolute;
+  border: 1px solid rgb(206, 206, 206);
+}
+
+.chatImage {
+  max-width: 200px; /* 限制最大寬度 */
+  max-height: 200px; /* 限制最大高度 */
+  border-radius: 8px; /* 圓角 */
+  object-fit: cover; /* 保持圖片比例 */
 }
 
 @media (max-width: 1200px) {

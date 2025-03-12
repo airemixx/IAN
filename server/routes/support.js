@@ -1,6 +1,9 @@
 import express from 'express';
 import pool from '../db.js';
 import authenticate from '../middlewares.js';
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs/promises'
 
 const router = express.Router();
 
@@ -95,17 +98,18 @@ router.get("/messages/:chatId", authenticate, async (req, res) => {
     }
 
     const query = `
-      SELECT 
-        m.sender_id, 
-        m.text, 
-        m.created_at,
-        u.name AS sender_name, 
-        u.head AS user_avatar  -- ✅ 取得發送者的名稱與頭貼
-      FROM messages m
-      LEFT JOIN users u ON m.sender_id = u.id  -- 🔗 連接 users 資料表
-      WHERE m.chat_id = ?
-      ORDER BY m.created_at ASC
-    `;
+    SELECT 
+      m.sender_id, 
+      m.text, 
+      m.type,  -- ✅ 加入 type 欄位，確保前端知道訊息類型
+      m.created_at,
+      u.name AS sender_name, 
+      u.head AS user_avatar  -- ✅ 取得發送者的名稱與頭貼
+    FROM messages m
+    LEFT JOIN users u ON m.sender_id = u.id  -- 🔗 連接 users 資料表
+    WHERE m.chat_id = ?
+    ORDER BY m.created_at ASC
+  `;
 
     const [messages] = await pool.query(query, [chatId]);
 
@@ -119,113 +123,158 @@ router.get("/messages/:chatId", authenticate, async (req, res) => {
 });
 
 
-router.post("/messages", authenticate, async (req, res) => {
+
+// ✅ 設定圖片上傳目錄
+const uploadDir = path.join(process.cwd(), "/public/uploads/images/chat-messages");
+
+// ✅ 設定 Multer 存儲規則
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    try {
+      await fs.access(uploadDir);
+    } catch {
+      await fs.mkdir(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const fileExt = path.extname(file.originalname);
+    const originalName = path.basename(file.originalname, fileExt);
+    const filename = `${timestamp}-${originalName}${fileExt}`;
+    cb(null, filename);
+  },
+});
+
+// ✅ 限制檔案類型
+const fileFilter = (req, file, cb) => {
+  const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif", "image/avif", "image/webp"];
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("❌ 只能上傳圖片格式 (JPG, PNG, GIF, AVIF, WEBP)"), false);
+  }
+};
+
+const upload = multer({ storage, fileFilter });
+
+router.post("/messages", authenticate, upload.single("upload"), async (req, res) => {
   try {
-    console.log("📩 伺服器收到請求:", req.body);
+    console.log("📩 伺服器收到請求:", req.body, req.file);
 
     let { chatId, text, is_bot } = req.body;
     let senderId = req.user.id;
+    let messageType = "text"; // 預設為文字訊息
+    let messageContent = text ? text.trim() : "";
 
-    // 如果是機器人訊息，覆蓋 senderId（根據實際情況設定管理員 ID）
+    // ✅ 確保 `chatId` 轉換為數字（避免 `null` 或 `undefined`）
+    chatId = chatId && !isNaN(chatId) ? Number(chatId) : null;
+
+    // ✅ 如果是機器人訊息，設定固定 senderId
     if (is_bot) {
-      senderId = 35; // 假設 35 是管理員或機器人的 ID
+      senderId = 35;
     }
 
-    if (!text || !senderId) {
-      console.warn("❌ 缺少必要參數:", { chatId, senderId, text });
-      return res.status(400).json({ error: "請提供完整的訊息資訊" });
+    // ✅ 如果有圖片，則設定為圖片訊息，並產生完整 URL
+    if (req.file) {
+      messageType = "image";
+      const filePath = `/uploads/images/chat-messages/${req.file.filename}`;
+      messageContent = `http://localhost:8000${filePath}`; // 🔹 加上完整 URL
+      console.log("📂 圖片已成功上傳:", messageContent);
     }
 
-    // 如果 `chatId` 為空，創建新對話
-    if (!chatId || isNaN(chatId)) {
-      console.log("🔄 `chatId` 為空或不是數字，創建新對話...");
+    if (!messageContent && !req.file) {
+      return res.status(400).json({ error: "請提供文字或圖片" });
+    }
 
+    // ✅ 如果 `chatId` 為空，創建新對話
+    if (!chatId) {
+      console.log("🔄 `chatId` 為空，創建新對話...");
       const [newChat] = await pool.query(
         "INSERT INTO conversations (user_id, last_message) VALUES (?, ?)",
-        [senderId, text]
+        [senderId, messageContent]
       );
 
       if (!newChat.insertId) {
-        console.error("❌ 創建對話失敗");
         return res.status(500).json({ error: "無法創建新對話" });
       }
-
       chatId = newChat.insertId;
       console.log("🆕 創建新對話 `chatId`:", chatId);
     } else {
-      // 確認 `chatId` 是否存在
       console.log("🔍 檢查 `chatId` 是否存在:", chatId);
       const [existingChat] = await pool.query("SELECT id FROM conversations WHERE id = ?", [chatId]);
 
       if (existingChat.length === 0) {
-        console.error("❌ `chatId` 無效:", chatId);
         return res.status(400).json({ error: "無效的 chatId" });
       }
     }
 
-    // 存入訊息
-    console.log("💾 插入訊息:", { chatId, senderId, text });
-    await pool.query("INSERT INTO messages (chat_id, sender_id, text) VALUES (?, ?, ?)", [
+    // ✅ 存入訊息
+    console.log("💾 插入訊息:", { chatId, senderId, messageType, messageContent });
+    await pool.query(
+      "INSERT INTO messages (chat_id, sender_id, text, type) VALUES (?, ?, ?, ?)",
+      [chatId, senderId, messageContent, messageType]
+    );
+
+    // ✅ 更新 conversations 的 `last_message`
+    await pool.query("UPDATE conversations SET last_message = ?, updated_at = NOW() WHERE id = ?", [
+      messageContent,
       chatId,
-      senderId,
-      text,
     ]);
 
-    // 更新 conversations 的 last_message 與更新時間
-    await pool.query("UPDATE conversations SET last_message = ?, updated_at = NOW() WHERE id = ?", [text, chatId]);
-
-    // 從資料庫取得最新的 updated_at
-    const [updatedRows] = await pool.query(
-      "SELECT updated_at FROM conversations WHERE id = ?",
-      [chatId]
-    );
+    // ✅ 取得 `updated_at`
+    const [updatedRows] = await pool.query("SELECT updated_at FROM conversations WHERE id = ?", [chatId]);
     const updated_at = updatedRows.length > 0 ? updatedRows[0].updated_at : new Date();
 
     console.log("✅ 訊息成功存入資料庫");
 
+    // ✅ 取得發送者資訊
     let user_avatar = null;
     let sender_name = null;
-    const [rows] = await pool.query(
-      "SELECT name AS sender_name, head AS user_avatar FROM users WHERE id = ?",
-      [senderId]
-    );
+    const [rows] = await pool.query("SELECT name AS sender_name, head AS user_avatar FROM users WHERE id = ?", [
+      senderId,
+    ]);
     if (rows.length > 0) {
       sender_name = rows[0].sender_name;
       user_avatar = rows[0].user_avatar;
     }
 
-    // 從 app locals 中取得 io 實例
+    // ✅ 廣播 WebSocket 訊息
     const io = req.app.get("io");
     if (io) {
-      // 廣播新訊息給聊天室內容
       io.emit("newMessage", {
         chatId,
         sender_id: senderId,
-        text,
+        text: messageContent,
+        type: messageType,
         created_at: new Date(),
         user_avatar,
         sender_name,
       });
-      console.log("📡 廣播 newMessage 事件:", { chatId, sender_id: senderId, text });
+      console.log("📡 廣播 newMessage 事件:", { chatId, sender_id: senderId, text: messageContent });
 
-      // 廣播對話更新事件給管理員側邊欄，傳遞最新的 `updated_at`
       io.emit("conversationUpdated", {
         chatId,
-        lastMessage: text,
-        updated_at: updated_at, // 使用從資料庫獲取的 `updated_at`
+        lastMessage: messageContent,
+        updated_at: updated_at,
       });
-      console.log("📡 廣播 conversationUpdated 事件:", { chatId, lastMessage: text, updated_at });
+      console.log("📡 廣播 conversationUpdated 事件:", { chatId, lastMessage: messageContent, updated_at });
     } else {
       console.warn("❌ 無法取得 io 實例");
     }
 
-    res.status(201).json({ message: "訊息已發送", chatId });
+    res.status(201).json({
+      message: "訊息已發送",
+      chatId,
+      type: messageType,
+      content: messageContent
+    });
+
   } catch (error) {
     console.error("❌ 伺服器錯誤:", error);
-    res.status(500).json({ error: "伺服器錯誤" });
+    res.status(500).json({ error: "伺服器錯誤", details: error.message });
   }
 });
-
 
 
 export default router;

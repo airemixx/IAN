@@ -6,6 +6,8 @@ import { io } from 'socket.io-client'
 import { LuSend } from 'react-icons/lu'
 import Lottie from 'lottie-react'
 import typingAnimation from '@/public/animations/typing.json'
+import { RxCross2 } from "react-icons/rx";
+import { IoImageOutline } from "react-icons/io5";
 
 export default function SupportChat() {
   const [userRole, setUserRole] = useState(null)
@@ -18,6 +20,8 @@ export default function SupportChat() {
   const [isTyping, setIsTyping] = useState(false)
   const chatBodyRef = useRef(null)
   const [initialLoadDone, setInitialLoadDone] = useState(false)
+  const [selectedFile, setSelectedFile] = useState(null);
+
 
   // 🔹 FAQ 快速回覆選單
   const FAQ = [
@@ -110,8 +114,16 @@ export default function SupportChat() {
       return
     }
 
-    setSelectedChat(chat) // ✅ 設定選中的聊天室
-    fetchMessages(chat.id) // ✅ 載入該聊天室的訊息
+    setSelectedChat(chat) // 設定選中的聊天室
+
+    //將該聊天室的未讀訊息數量歸零
+    setConversations((prevConversations) =>
+      prevConversations.map((conv) =>
+        conv.id === chat.id ? { ...conv, unreadCount: 0 } : conv
+      )
+    );
+
+    fetchMessages(chat.id) // 載入該聊天室的訊息
   }
 
   const fetchMessages = async (chatId) => {
@@ -376,8 +388,8 @@ export default function SupportChat() {
       console.log('✅ 取得對話列表:', data)
 
       if (data.length > 0) {
-        // 根據 `lastMessageTime` 排序，選擇最新的聊天室
-        const sortedConversations = data.sort((a, b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime))
+        // 根據 `updated_at` 排序，選擇最新的聊天室
+        const sortedConversations = data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
 
         console.log('🟢 排序後的聊天室:', sortedConversations)
 
@@ -409,77 +421,82 @@ export default function SupportChat() {
 
   // 🔹 發送訊息到資料庫
   // 🔹 發送訊息到資料庫
-  const sendMessageToDatabase = async (text) => {
-    const token = localStorage.getItem('loginWithToken')
+  const sendMessageToDatabase = async (text, file) => {
+    const token = localStorage.getItem("loginWithToken");
     if (!token) {
-      console.warn('❌ 沒有 Token，請先登入')
-      return null
+      console.warn("❌ 沒有 Token，請先登入");
+      return null;
     }
 
-    if (!text.trim()) {
-      console.warn('❌ 訊息不可為空')
-      return null
+    if (!text?.trim() && !file) {
+      console.warn("❌ 訊息或圖片不可為空");
+      return null;
     }
 
-    const messageData = {
-      chatId: selectedChat?.id || null, // 讓後端決定是否建立新對話
-      text: text,
-    }
+    const formData = new FormData();
 
-    console.log('📩 準備發送訊息:', messageData)
+    // ✅ 允許 `chatId` 為空，讓後端決定是否創建新聊天室
+    formData.append("chatId", selectedChat?.id || "");
+
+    if (text) formData.append("text", text);
+    if (file) formData.append("upload", file);
+
+    console.log("📩 準備發送訊息:", { text, file });
 
     try {
-      const res = await fetch('http://localhost:8000/api/support/messages', {
-        method: 'POST',
+      const res = await fetch("http://localhost:8000/api/support/messages", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(messageData),
-      })
+        body: formData, // ✅ 使用 `FormData` 傳送
+      });
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(`API 回應錯誤: ${data.error}`)
+      const data = await res.json();
+      if (!res.ok) throw new Error(`API 回應錯誤: ${data.error}`);
 
-      console.log('✅ 訊息成功送出:', data)
+      console.log("✅ 訊息成功送出:", data);
 
-      // 如果是新聊天室，更新 selectedChat，但不直接更新訊息列表或發送歡迎訊息
       if (!selectedChat?.id && data.chatId) {
-        setSelectedChat({ id: data.chatId })
-        // 不在這裡呼叫 sendWelcomeMessage，避免重複送出
+        setSelectedChat({ id: data.chatId });
       }
 
-      return data.chatId
+      return data.chatId;
     } catch (error) {
-      console.error('❌ 訊息發送錯誤:', error)
-      return null
+      console.error("❌ 訊息發送錯誤:", error);
+      return null;
     }
-  }
+  };
+
+
+
 
   // 🔹 發送訊息
   const sendMessage = async () => {
-    if (!newMessage.trim()) return
+    if (!newMessage.trim() && !selectedFile) return;
+    await sendMessageToDatabase(newMessage, selectedFile);
+    setNewMessage(""); // ✅ 清空輸入框
+    setSelectedFile(null); // ✅ 清空圖片
+    resetTextareaHeight();
+  };
 
-    // 只發送訊息到資料庫，不進行樂觀更新
-    const chatId = await sendMessageToDatabase(newMessage)
-
-    // 清空輸入框
-    setNewMessage('')
-
-    // 如果有特殊邏輯需要（例如首次歡迎訊息），可以在這裡判斷
-    if (userRole === 'teacher' && chatId && messages.length === 0) {
-      console.log('🟠 老師首次發送訊息，發送歡迎訊息...')
-      await sendWelcomeMessage(chatId)
+  const resetTextareaHeight = () => {
+    const textarea = document.getElementById("messageInput");
+    if (textarea) {
+      textarea.style.height = "30px"; 
     }
-  }
+  };
 
-  // 🔹 監聽 Enter 鍵發送訊息c8 8c 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
     }
-  }
+  };
+
+  const removeImage = () => {
+    setSelectedFile(null);
+  };
 
 
   return (
@@ -516,7 +533,10 @@ export default function SupportChat() {
                           {chat.user_name || `訪客 #${chat.id}`}
                         </h4>
                         <div className={styles.textCon}>
-                          <p className={styles.chatText}>{chat.lastMessage}</p>
+                          <p className={styles.chatText}>
+                            {chat.lastMessage.startsWith("http") ? "已傳送一張圖片" : chat.lastMessage}
+                          </p>
+
                           {/* 顯示未讀訊息數量 */}
                           {chat.unreadCount > 0 && (
                             <span className={styles.unreadCount}>
@@ -524,6 +544,7 @@ export default function SupportChat() {
                             </span>
                           )}
                         </div>
+
                       </div>
                     </div>
                     <span className={styles.timestamp}>
@@ -583,9 +604,19 @@ export default function SupportChat() {
                       />
                     )}
 
-                    <div className={styles.messageBox}>
-                      <div className={styles.text}>{msg.text}</div>
+                    <div className={`${styles.messageBox} ${msg.type === "image" ? styles.noPadding : ""}`}>
+                      {msg.type === "image" ? (
+                        <img
+                          src={msg.text}
+                          alt="發送的圖片"
+                          className={styles.chatImage}
+                          onError={(e) => (e.target.style.display = "none")}
+                        />
+                      ) : (
+                        <div className={styles.text}>{msg.text}</div>
+                      )}
                     </div>
+
 
                     <div className={styles.timestamp}>
                       {msg.created_at
@@ -628,38 +659,65 @@ export default function SupportChat() {
 
             {/* ✅ 訊息輸入框 */}
             <div className={styles.chatFooter}>
-              <textarea
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    if (e.shiftKey) {
-                      e.preventDefault(); // 讓 Shift + Enter 插入換行
-                      setNewMessage((prev) => prev + "\n");
-                    } else {
-                      e.preventDefault();
-                      sendMessage();
+
+
+              <div className={styles.inputContainer}>
+                {/* 圖片預覽區 */}
+                {selectedFile && (
+                  <div className={styles.imagePreviewContainer}>
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt="預覽圖片"
+                      className={styles.imagePreview}
+                    />
+                    <button onClick={removeImage} className={styles.removeImageButton}>
+                      <RxCross2 />
+                    </button>
+                  </div>
+                )}
+
+                {/* ✅ 訊息輸入框，會自動變高 */}
+                <textarea
+                  value={newMessage}
+                  id="messageInput"
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  disabled={selectedFile !== null}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (e.shiftKey) {
+                        e.preventDefault();
+                        setNewMessage((prev) => prev + "\n");
+                      } else {
+                        e.preventDefault();
+                        sendMessage();
+                      }
                     }
-                  }
-                }}
-                placeholder="輸入訊息..."
-                className={styles.inputField}
-                rows={1}
-                style={{
-                  resize: "none",
-                  overflowY: "auto",
-                  maxHeight: "150px",
-                }}
-                onInput={(e) => {
-                  e.target.style.height = "auto";
-                  e.target.style.height = e.target.scrollHeight + "px";
-                }}
-              />
+                  }}
+                  placeholder={selectedFile ? "" : "輸入訊息..."}
+                  className={styles.inputField}
+                  rows={1}
+                  style={{
+                    resize: "none",
+                    overflowY: "auto",
+                    maxHeight: "150px",
+                  }}
+                  onInput={(e) => {
+                    e.target.style.height = "auto";
+                    e.target.style.height = e.target.scrollHeight + "px";
+                  }}
+                />
+                   {/* 上傳圖片按鈕 */}
+                   <label className={styles.uploadLabel}>
+                  <IoImageOutline />
+                  <input type="file" accept="image/*" onChange={handleFileChange} hidden />
+                </label>
+              </div>
+
+              {/* 送出按鈕 */}
               <button onClick={sendMessage} className={styles.sendButton}>
                 <LuSend size={18} />
               </button>
             </div>
-
           </div>
         </div>
       </div>
