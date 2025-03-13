@@ -74,10 +74,11 @@
 
 // 容器和排版樣式 (Apple風格)
 .productContainer {
-  max-width: 100%; // 從95%改為100%
-  padding: 0 0 0 50px; // 只保留左側padding，移除右側padding
-  margin: 40px auto;
+  max-width: 100%;
+  padding: 0; // 移除所有padding，通過內部元素控制
+  margin: 0 0 300px 0;
   font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden; // 避免滾動溢出
 }
 
 // 調整標題區域為Flex佈局以使按鈕對齊
@@ -86,7 +87,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  padding: 0 24px 0 24px; // 調整左右padding
+  padding: 0 24px 0 80px; // 左側保持大間距，與初始卡片位置一致
 }
 
 .sectionTitle {
@@ -95,6 +96,7 @@
   line-height: 1.1;
   letter-spacing: -0.003em;
   margin-bottom: 6px;
+  margin-left: 24px;
   color: #ffffff; // 修正標題顏色為黑色
 }
 
@@ -118,8 +120,8 @@
   position: relative;
   width: 100%;
   margin-bottom: 20px;
-  // 添加高度計算，確保按鈕對齊的基準正確
-  height: 500px; // 與卡片主體高度相同，不包含卡片的下邊距
+  height: 500px;
+  padding: 0; // 移除padding
 }
 
 // 修改卡片容器增加額外空間
@@ -128,15 +130,22 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  padding: 10px 0 100px; // 添加底部padding 100px，取代卡片的大margin
-  padding-right: 0; // 確保右側沒有padding
+  padding: 10px 0 100px; // 保持上下padding
+  padding-left: 80px; // 初始較大的左邊距，與蘋果官網類似
+  padding-right: 24px; // 右側保持小邊距
   margin: 5px 0;
+  transition: padding-left 0.8s ease; // 平滑過渡左邊距變化
   /* 隱藏滾動條但保留功能 */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+  }
+
+  // 滾動時的狀態 - 由JS控制添加此類
+  &.scrolled {
+    padding-left: 24px; // 滾動後左邊距變小，與右邊距相同
   }
 }
 
@@ -151,7 +160,7 @@
   background-color: #fff;
   border-radius: 18px;
   margin: 10px 20px 10px 20px; // 修改下邊距為10px，與上邊距一致
-  padding-bottom: 0; // 確保沒有額外的內部底部間距
+  padding-bottom: 0; // 碮保沒有額外的內部底部間距
   min-width: 330px;
   flex: 0 0 330px; // 固定寬度
   height: 500px; // 固定高度
@@ -476,5 +485,22 @@
 // 新增立即顯示的類別 - 用於滾動顯示的卡片
 .instantShow {
   animation: fadeInUp 0.15s ease forwards !important;
-  animation-delay: 0s !important; // 立即顯示，無延遲
+  animation-delay: 0s; // 立即顯示，無延遲
+}
+
+// 添加特殊狀態類
+.navButtonHidden {
+  opacity: 0 !important;
+  pointer-events: none; // 確保隱藏時不能點擊
+}
+
+// 針對滾動邊界時的特殊樣式
+.atStart .navButtonLeft {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.atEnd .navButtonRight {
+  opacity: 0 !important;
+  pointer-events: none;
 }

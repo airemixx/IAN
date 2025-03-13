@@ -11,6 +11,8 @@ export default function ProductCardIndex() {
   const [isMouseInImageArea, setIsMouseInImageArea] = useState(false) // 新增：追蹤滑鼠是否在圖片區域
   const [isTooCloseToEdge, setIsTooCloseToEdge] = useState(false) // 新增：追蹤滑鼠是否太靠近邊緣
   const scrollContainerRef = useRef(null); // 添加對滾動容器的引用
+  const [isAtStart, setIsAtStart] = useState(true); // 新增：追蹤是否在起始位置
+  const [isAtEnd, setIsAtEnd] = useState(false); // 新增：追蹤是否在結尾位置
 
   useEffect(() => {
     async function fetchProducts() {
@@ -63,6 +65,46 @@ export default function ProductCardIndex() {
 
     return () => observer.disconnect();
   }, [products]);
+
+  // 修改滾動狀態監控函數
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const container = scrollContainerRef.current;
+        const scrollLeft = container.scrollLeft;
+        const scrollWidth = container.scrollWidth;
+        const clientWidth = container.clientWidth;
+
+        // 確定是否在起始位置 (允許5px誤差)
+        setIsAtStart(scrollLeft < 5);
+
+        // 確定是否在結尾位置 (允許5px誤差)
+        setIsAtEnd(Math.abs(scrollWidth - clientWidth - scrollLeft) < 5);
+
+        // 當滾動位置大於一定值時，添加scrolled類
+        if (scrollLeft > 50) {
+          container.classList.add(styles.scrolled);
+        } else {
+          container.classList.remove(styles.scrolled);
+        }
+      }
+    };
+
+    // 添加滾動事件監聽
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+      // 初始調用一次，確保初始狀態正確
+      handleScroll();
+    }
+
+    // 清理函數
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [scrollContainerRef.current]);
 
   // 當鼠標進入卡片時
   const handleMouseEnter = (index) => {
@@ -264,7 +306,7 @@ export default function ProductCardIndex() {
       </div>
 
       {/* 產品卡片區域 - 包含左右兩側的導航按鈕 */}
-      <div className={styles.productCarouselContainer}>
+      <div className={`${styles.productCarouselContainer} ${isAtStart ? styles.atStart : ''} ${isAtEnd ? styles.atEnd : ''}`}>
         {/* 左側導航按鈕 - 使用 SVG chevron */}
         <button
           onClick={scrollLeft}
