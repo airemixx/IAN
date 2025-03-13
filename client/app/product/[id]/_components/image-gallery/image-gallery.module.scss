@@ -110,8 +110,16 @@
 
   .mainImageContainer {
     position: relative;
-    max-width: 76%;
+    max-width: 70%;
     margin: 0 auto;
     top: -40px;
+
+  }
+  .arrowRight {
+    margin-right: 17px;
+  }
+
+  .arrowLeft {
+    margin-left: 17px;
   }
 }
