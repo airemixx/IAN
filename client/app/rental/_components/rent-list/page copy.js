@@ -163,8 +163,8 @@ export default function RentList() {
   useEffect(() => {
     const filtersChanged = JSON.stringify(filters) !== JSON.stringify(filtersRef.current);
 
-    if (filtersChanged || searchQuery !== filtersRef.current.searchQuery) {
-      filtersRef.current = { ...filters, searchQuery }; // ✅ 確保 `searchQuery` 變化時也更新
+    if (filtersChanged || searchQuery !== '') {
+      filtersRef.current = filters;
       fetchData();
       setCurrentPage(1);
     }

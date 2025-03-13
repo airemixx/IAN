@@ -30,7 +30,7 @@ export default function RentHashtag({ hashtags = [], onHashtagClick }) {
   const hiddenTags = hashtags.slice(maxVisibleTags)
   return (
     <>
-      {/* 📌 **前 4 個標籤** */}
+      {/* 📌 前 4 個標籤  */}
       <div className="my-2 d-flex flex-wrap align-items-center">
         {visibleTags.map((tag) => (
           <span
@@ -58,23 +58,24 @@ export default function RentHashtag({ hashtags = [], onHashtagClick }) {
       {/* 📌 **Bootstrap Modal - 顯示所有標籤** */}
       <Modal
         show={showModal}
+        className='d-flex align-items-center justify-content-center k-modal'
         onHide={() => setShowModal(false)}
         size="sm"
         centered
       >
-        <Modal.Header closeButton>
-          <Modal.Title>點擊查詢</Modal.Title>
+        <Modal.Header closeButton className="k-modal-close">
+          <Modal.Title className="k-modal-title">點擊查詢</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* 📌 **標籤最多 4 個一排** */}
+          {/* 📌 標籤最多 4 個一排 (手機板 3個) */}
           <div className="d-flex flex-wrap">
             {hashtags.map((tag) => (
               <span
                 key={tag.id}
-                className="badge k-tag-bg m-1 d-flex align-items-center justify-content-center"
+                className="badge k-tag-bg m-1 d-flex align-items-center justify-content-center k-modal-tag"
                 style={{
                   cursor: 'pointer',
-                  width: 'calc(25% - 8px)', // 讓每行最多 4 個，留點間距
+                  width: window.innerWidth < 768 ? 'calc(33.33% - 8px)' : 'calc(25% - 8px)', // 依視窗大小調整
                   textAlign: 'center',
                   display: 'inline-block',
                 }}
