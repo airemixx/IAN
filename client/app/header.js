@@ -17,6 +17,13 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const [cartAmount, setCartAmount] = useState(null); // 預設為 null，避免 hydration 錯誤
   const { compareList } = useCompare()
 
+  const [isClient, setIsClient] = useState(false);
+  const hasCompareItems = isClient && compareList.length > 0;
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -259,25 +266,10 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <Link href="/login">
                 <img src="/images/icon/user.svg" alt="" />
               </Link>
-              <Link href="/product/spec" style={{ position: 'relative', display: 'inline-block' }}>
+              <Link href="/product/spec" className={isClient ? "compare-link" : "compare-link"}>
                 <img src="/images/icon/compare.svg" alt="Compare" />
-                {compareList.length > 0 && (
-                  <span
-                    className="compare-badge"
-                    style={{
-                      position: 'absolute',
-                      top: '-3px',
-                      right: '-8px',
-                      backgroundColor: '#e58e41',
-                      borderRadius: '50%',
-                      width: '8px',
-                      height: '8px',
-                      display: 'block',
-                    }}
-                  ></span>
-                )}
+                {hasCompareItems && <span className="compare-badge"></span>}
               </Link>
-              
               <Link href="/cart" className='d-flex'>
                 <img src="/images/icon/cart.svg" alt="" />
                 {cartAmount > 0 && <div className="cartAmount text-center">{cartAmount}</div>}
