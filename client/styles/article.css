@@ -52,13 +52,15 @@
   }
 }
 
-.page-container {
+.y-page-container {
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
   padding-left: 4px;
   padding-right: 4px;
   box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
 }
 /* .Sticky-Card{
   padding-top: 80px;
@@ -148,13 +150,19 @@
   overflow-x: hidden; */
 }
 
-@media screen and (max-width: 1155px){
-  .y-bg-list{
+@media screen and (max-width: 1155px) {
+  .y-bg-list {
     padding: 0 3px;
   }
 }
 
-
+@media screen and (max-width: 1375px) {
+  .y-page-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+  }
+}
 
 @media screen and (max-width: 390px) {
   .y-container {

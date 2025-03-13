@@ -201,7 +201,7 @@ export default function NewsPage() {
             <h1>最新消息 News</h1>
           </div>
           <div className="y-bg-use">
-            <div className="page-container d-flex justify-content-between">
+            <div className="y-page-container">
               <StickyCard className="Sticky-Card" />
               <MasonryLayouts />
             </div>
