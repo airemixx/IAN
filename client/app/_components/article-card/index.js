@@ -5,6 +5,7 @@ import axios from "axios";
 import styles from "./ArticleCard.module.scss";
 import { format } from "date-fns";
 import Link from "next/link";
+import ShopAllButton from "../ShopAllButton";
 
 // 使用 Intersection Observer 來觸發動畫
 const useIntersectionObserver = (ref, options) => {
@@ -111,7 +112,13 @@ const ArticleHomeContainer = () => {
     <div className={styles.homeArticleContainer}>
       <div className={styles.homeArticleTitle}>
         <h2>最新消息 News</h2>
+        <div className={styles.desktopButton}>
+          <ShopAllButton onClick={() => ("")} />
+        </div>
       </div>
+      {/* <div className={styles.mobileButton}>
+        <ShopAllButton onClick={() => ("")} />
+      </div> */}
       <div className={styles.homeArticle}>
         {loading ? (
           <div>載入中...</div>

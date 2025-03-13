@@ -8,15 +8,22 @@
 // 修改標題區域樣式，添加動畫效果
 .homeArticleTitle {
   position: relative;
-  padding: 0 0 0 20px; // 保留左邊距，但移除邊框
+  padding: 0 20px;
   margin: 50px 0;
   display: flex;
+  justify-content: space-between; // 新增：兩邊分散
   align-items: center;
   height: 50px;
-  border-left: none; // 移除原來的邊線，將使用偽元素創建
-  overflow: hidden; // 隱藏溢出的文字
+  overflow: visible; // 修改這裡讓子元素的 hover 模糊效果不被裁切
 
-  // 左邊線動畫
+  h2 {
+    margin: 0;
+    font-weight: 800;
+    opacity: 0;
+    transform: translateX(-20px); // 初始位置向左偏移
+    animation: textSlide 0.6s ease 0.7s forwards; // 在邊線動畫完成後開始
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -26,14 +33,6 @@
     background-color: #ffa510;
     height: 0; // 初始高度為0
     animation: borderUp 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
-  }
-
-  h2 {
-    margin: 0;
-    font-weight: 800;
-    opacity: 0;
-    transform: translateX(-20px); // 初始位置向左偏移
-    animation: textSlide 0.6s ease 0.7s forwards; // 在邊線動畫完成後開始
   }
 }
 
@@ -138,6 +137,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
+  aspect-ratio: 4/3;
   gap: 10px;
 }
 
@@ -194,6 +194,7 @@
   clip-path: inset(0 0 100% 0);
 }
 
+// 修改基礎卡片內容中的標題樣式
 .cardContent {
   position: relative;
   z-index: 2;
@@ -207,18 +208,22 @@
   h6 {
     margin: 5px 0;
     font-size: 18px;
+    // 添加多行文本截斷
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; // 標準屬性
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; // 顯示省略號
+    max-height: 2.4em; // 大約兩行高度
+    line-height: 1.2; // 設置合適的行高
   }
 
   opacity: 0;
   transform: translateY(20px);
-
-  p,
-  h6 {
-    opacity: 0;
-    transform: translateY(10px);
-  }
 }
 
+// 小卡片額外樣式設定
 .articleSmallCardContent {
   @extend .cardContent;
   p {
@@ -228,13 +233,18 @@
 
   h6 {
     font-size: 16px;
+    margin-bottom: 5px; // 確保下方有足夠間距
+    font-weight: 600; // 稍微加粗以提高可讀性
   }
 }
 
+// 大卡片額外樣式設定
 .articleBigCardContent {
   @extend .cardContent;
   h6 {
     font-size: 24px;
+    line-height: 1.2; // 調整大標題的行高
+    margin-bottom: 8px; // 大卡片需要更多間距
   }
 }
 
@@ -251,7 +261,7 @@
 }
 
 /* 響應式設計 */
-@media (max-width: 768px) {
+@media (max-width: 576px) {
   .homepageArticleArea {
     flex-direction: column;
   }
@@ -332,3 +342,24 @@
     animation: contentFadeIn 0.5s ease 1.2s forwards;
   }
 }
+
+// .desktopButton {
+//   display: block;
+// }
+
+// .mobileButton {
+//   display: none;
+// }
+
+// @media (max-width: 576px) {
+//   .homeArticleTitle{
+//     margin-bottom: 1rem;
+//   }
+//   .desktopButton {
+//     display: none;
+//   }
+//   .mobileButton {
+//     display: block;
+//     margin-bottom: 1rem; // 調整按鈕與標題的間距
+//   }
+// }

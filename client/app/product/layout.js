@@ -1,9 +1,7 @@
-import { CompareProvider } from "@/app/product/_context/CompareContext";
-
 export default function ProductLayout({ children }) {
   return (
-    <CompareProvider>
+    <div className="product-layout">
       {children}
-    </CompareProvider>
+    </div>
   );
 }

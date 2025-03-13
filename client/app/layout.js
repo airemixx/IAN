@@ -118,7 +118,7 @@ export default function RootLayout({ children }) {
             className="custom-toast-container"
             style={{ marginTop: "80px" }}
           />
-
+          <CompareProvider>
           {!isTeacherPage && (
             <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
           )}
@@ -133,6 +133,7 @@ export default function RootLayout({ children }) {
           </AppProvider>
 
           {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}
+          </CompareProvider>
         </div>
 
         {/* top按鈕 */}
