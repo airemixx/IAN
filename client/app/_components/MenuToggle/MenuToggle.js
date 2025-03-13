@@ -32,7 +32,6 @@ export default function MenuToggle() {
     { text: '租借服務', path: '/rental' },
     { text: '影像學院', path: '/courses' },
     { text: '影像誌', path: '/article' },
-    // { text: '聯絡我們', path: '#' },
   ]
 
   // 選單動畫變量
@@ -202,7 +201,30 @@ export default function MenuToggle() {
               </Link>
             </motion.li>
           ))}
+
+          {/* 登入選項加入動畫列表中 */}
+          <motion.li
+            variants={itemVariants}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              cursor: 'pointer',
+              margin: '15px 0',
+              padding: '10px 0',
+            }}
+          >
+            <Link href="/login" onClick={() => setIsOpen(false)}>
+              <img src="/images/icon/user-hamburger.svg" alt="登入" style={{ width: '24px', height: '24px' }} />
+              <span style={{ marginLeft: '10px', color: '#143146' }}>登入</span>
+            </Link>
+          </motion.li>
         </motion.ul>
+
+        {/* 移除此區塊，因為已加入上方動畫列表 */}
+        {/* <div style={{ padding: '0 25px', marginTop: '20px' }}>
+          <Link href="/login" onClick={() => setIsOpen(false)}>
+            <img src="/images/icon/user-hamburger.svg" alt="登入" style={{ width: '24px', height: '24px' }} />
+          </Link>
+        </div> */}
       </motion.div>
     </div>
   )

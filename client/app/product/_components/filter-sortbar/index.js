@@ -53,7 +53,8 @@ export default function FilterSortBar({ onBrandSelect, onSortChange }) {
 
   return (
     <div className={`d-flex justify-content-between align-items-center mb-3 ${styles.filterSortBar}`}>
-      <div className="d-flex flex-wrap gap-2">
+      {/* 🔹 品牌篩選區，增加滾動效果 */}
+      <div className={styles.brandContainer}>
         {brands.map((brand) => (
           <button
             key={brand.id || "all"}
@@ -73,6 +74,7 @@ export default function FilterSortBar({ onBrandSelect, onSortChange }) {
             {compareList.length > 0 && <span>{compareList.length}</span>}
           </button>
         </Link>
+
         <div className={styles.sortContainer}>
           <select
             id="sortSelect"
@@ -88,6 +90,6 @@ export default function FilterSortBar({ onBrandSelect, onSortChange }) {
         </div>
       </div>
     </div>
-
   );
+
 }

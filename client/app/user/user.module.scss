@@ -79,8 +79,8 @@
 }
   .heroSection {
     background-image: url(../../public/images/user/1.jpg);
-    background-size: cover;
-    background-position: center;
+      background-position-x: 18%;
+  background-position-y: 60%;
     border-radius: 20px;
     min-height: 222px;
   }
@@ -110,7 +110,7 @@
       color: white;
     }
   }
-  
+
   @media (max-width: 768px) {
     .sidenav {
       margin-bottom: 1rem;
