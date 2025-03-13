@@ -1097,4 +1097,21 @@
     max-width: 320px;
     right: 10px;
   }
+  .chatButton {
+    width: 45px !important;
+    height: 45px !important;
+    min-width: 45px !important;
+    min-height: 45px !important;
+    bottom: 75px !important; // 與使用者聊天按鈕位於同一位置
+    right: 20px !important; // 或根據需要調整，避免與使用者聊天按鈕重疊
+    padding: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    img {
+      width: 20px !important;
+      height: 20px !important;
+    }
+  }
 }

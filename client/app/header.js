@@ -248,7 +248,7 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <Link href="/article">影像誌</Link>
             </li>
             <li>
-              <a href="#">聯絡我們</a>
+              {/* <a href="#">聯絡我們</a> */}
             </li>
           </ul>
 

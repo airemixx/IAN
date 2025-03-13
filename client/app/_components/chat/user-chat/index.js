@@ -9,6 +9,9 @@ import styles from "./index.module.scss"
 import EmojiPicker, { SkinTones } from 'emoji-picker-react';
 import emojiRegex from 'emoji-regex';
 import { useSocket } from '../context/socketContext';
+import Link from 'next/link';
+import usePublicAuth from '@/hooks/usePublicAuth'; // 引入認證 hook
+import { useRouter } from 'next/navigation'; // 使用 Next.js 13+ 的新路由系統
 
 // 檢查兩個日期是否是同一天
 const isSameDay = (date1, date2) => {
@@ -52,27 +55,24 @@ const formatMessageTime = (timestamp) => {
 const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
 
 export default function ChatWidget() {
-  // 先獲取 socket context，只調用一次 useSocket
+  // 使用 hook 取得登入狀態
+  const { token, user } = usePublicAuth();
+  const isAuthenticated = !!token;
+
+  // 現有的狀態和 context
   const socketContext = useSocket();
 
-  // 解構賦值，提供預設值（修改這部分）
   const {
-    messages,  // 直接從 context 獲取最新的訊息狀態
-    sendMessage: socketSendMessage = () => { }, // 重命名為 socketSendMessagee
+    messages = [],
+    sendMessage: socketSendMessage = () => { },
     markAsRead = () => { },
     isConnected = false,
     typingUsers = {},
     notifyTyping = () => { },
-    setMessages = () => { } // 添加這行來解構 setMessages
+    setMessages = () => { }
   } = socketContext || {};
 
-  // 檢查上下文是否可用
-  useEffect(() => {
-    if (!socketContext) {
-      console.error('Socket上下文不可用。請確保ChatWidget組件已被SocketProvider包裹。');
-    }
-  }, [socketContext]);
-
+  // 其他原有狀態保持不變...
   const [isOpen, setIsOpen] = useState(false)
   const [newMessage, setNewMessage] = useState("")
   const messagesEndRef = useRef(null)
@@ -143,34 +143,45 @@ export default function ChatWidget() {
     setIsOpen(!isOpen)
   }
 
-  // 修改發送消息的處理函數
+  // 顯示登入提示模態框的狀態和函數
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  // 顯示登入提示
+  const showAuthModal = () => {
+    // 這裡可以導航到登入頁面或顯示登入模態框
+    // 目前簡單地設置狀態讓提示訊息出現
+    setShowAuthPrompt(true);
+  };
+
+  // 修改訊息發送函數，增加登入檢查
   const handleSendMessage = (e) => {
     e.preventDefault();
 
+    // 未登入時顯示提示
+    if (!isAuthenticated) {
+      showAuthModal();
+      return;
+    }
+
+    // 原有的訊息發送邏輯...
     const hasText = newMessage.trim() !== "";
     const hasFiles = selectedFiles.length > 0;
 
     if (!hasText && !hasFiles) return;
 
-    // 發送文字消息
     if (hasText) {
-      // 按照伺服器期望的格式構造消息對象
       const messageData = {
         message: {
           text: newMessage,
-          // 如果有其他屬性，例如 fileUrl, fileType 放這裡
         }
-        // 普通用戶不需要指定 to
       };
 
       socketSendMessage(messageData);
       setNewMessage("");
     }
 
-    // 處理文件發送
     if (hasFiles) {
       selectedFiles.forEach(fileObj => {
-        // 不需要再次使用 FileReader，直接使用預覽 URL
         sendFileMessage(fileObj);
       });
 
@@ -182,6 +193,11 @@ export default function ChatWidget() {
   };
 
   const handleFileSelect = (e) => {
+    if (!isAuthenticated) {
+      showAuthModal();
+      return;
+    }
+
     const files = Array.from(e.target.files);
 
     // 檢查並處理文件
@@ -291,7 +307,12 @@ export default function ChatWidget() {
   };
 
   const toggleEmojiPicker = (e) => {
-    e.preventDefault();
+    if (!isAuthenticated) {
+      showAuthModal();
+      return;
+    }
+
+    // 原有的表情選擇器邏輯...
     setShowEmojiPicker(!showEmojiPicker);
   };
 
@@ -420,6 +441,16 @@ export default function ChatWidget() {
     }
   }, [isOpen, markAsRead]);
 
+  const router = useRouter();
+
+  const handleLoginRedirect = () => {
+    router.push('/login');
+    // 使用 setTimeout 確保導航完成後再滾動
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+  };
+
   return (
     <div className={styles.chatWidgetContainer}>
       <CSSTransition
@@ -539,8 +570,24 @@ export default function ChatWidget() {
                     </React.Fragment>
                   );
                 })}
+
+                {/* 如果未登入，顯示登入提示 */}
+                {!isAuthenticated && (
+                  <div className={styles.authPromptContainer}>
+                    <div className={styles.authPrompt}>
+                      <p>登入後才能發送訊息</p>
+                      <button
+                        className={styles.loginButton}
+                        onClick={handleLoginRedirect}
+                      >
+                        立即登入
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {showScrollButton && (
-                  <button 
+                  <button
                     className={`${styles.scrollToBottomButton} ${styles.visible}`}
                     onClick={scrollToBottom}
                     aria-label="滾動到底部"
@@ -591,26 +638,28 @@ export default function ChatWidget() {
                   <input
                     id="messageInput"
                     type="text"
-                    placeholder="輸入訊息..."
+                    placeholder={isAuthenticated ? "輸入訊息..." : "請先登入後再發送訊息"}
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onFocus={handleInputFocus}
                     onBlur={handleInputBlur}
-                    className={styles.messageInput}
+                    className={`${styles.messageInput} ${!isAuthenticated ? styles.disabledInput : ''}`}
                     autoComplete="off"
+                    disabled={!isAuthenticated} // 未登入時禁用輸入
                   />
                 </div>
                 <div className="image-send-emoji-btn d-flex align-items-center">
                   <div className={styles.emojiButtonContainer}>
                     <button
                       type="button"
-                      className={styles.emojiButton}
+                      className={`${styles.emojiButton} ${!isAuthenticated ? styles.disabledButton : ''}`}
                       onMouseEnter={() => setIsEmojiHovered(true)}
                       onMouseLeave={() => setIsEmojiHovered(false)}
                       onClick={toggleEmojiPicker}
+                      disabled={!isAuthenticated} // 未登入時禁用
                     >
                       <img
-                        src={isEmojiHovered
+                        src={isEmojiHovered && isAuthenticated
                           ? "/images/chatRoom/emoji-active.svg"
                           : "/images/chatRoom/emoji-origin.svg"}
                         alt=""
@@ -640,16 +689,18 @@ export default function ChatWidget() {
                       accept="image/*,video/*"
                       onChange={handleFileSelect}
                       style={{ display: 'none' }}
+                      disabled={!isAuthenticated} // 未登入時禁用
                     />
                     <button
                       type="button"
-                      className={styles.imageButton}
+                      className={`${styles.imageButton} ${!isAuthenticated ? styles.disabledButton : ''}`}
                       onMouseEnter={() => setIsImageHovered(true)}
                       onMouseLeave={() => setIsImageHovered(false)}
-                      onClick={() => fileInputRef.current.click()}
+                      onClick={() => isAuthenticated && fileInputRef.current.click()}
+                      disabled={!isAuthenticated} // 未登入時禁用
                     >
                       <img
-                        src={isImageHovered
+                        src={isImageHovered && isAuthenticated
                           ? "/images/chatRoom/image-update-active.svg"
                           : "/images/chatRoom/image-update-origin.svg"}
                         alt="上傳圖片或影片"
@@ -658,8 +709,8 @@ export default function ChatWidget() {
                   </>
                   <button
                     type="submit"
-                    className={styles.sendButton}
-                    disabled={newMessage.trim() === "" && selectedFiles.length === 0}
+                    className={`${styles.sendButton} ${!isAuthenticated ? styles.disabledButton : ''}`}
+                    disabled={!isAuthenticated || (newMessage.trim() === "" && selectedFiles.length === 0)} // 未登入時禁用
                   >
                     <img src="/images/chatRoom/send-origin.svg" alt="" />
                   </button>

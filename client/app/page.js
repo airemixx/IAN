@@ -9,9 +9,11 @@ import CoursesCardIndex2 from './_components/courses-card2'
 import Chat from './_components/chat'
 import CouponButton from './_components/getCoupon/page'
 
-// 文章區和產品區的背景顏色
-const ARTICLE_COLOR = [255, 255, 255] // 藍色 (RGB)
+// 定義各區域的背景顏色
+const SLIDER_COLOR = [245, 245, 247] // 淺灰色 (RGB)
+const ARTICLE_COLOR = [255, 255, 255] // 白色 (RGB)
 const PRODUCT_COLOR = [20, 49, 70]   // 深藍色 (RGB)
+const COURSE_COLOR = [56, 96, 128]
 
 // 顏色插值函數 - 用於平滑過渡
 function interpolateColor(color1, color2, factor) {
@@ -48,8 +50,10 @@ function throttle(func, limit) {
 }
 
 export default function Home() {
+  const sliderRef = useRef(null);
   const articleRef = useRef(null);
   const productRef = useRef(null);
+  const courseRef = useRef(null);
   const bgOverlayRef = useRef(null);
   const lastScrollYRef = useRef(0);
 
@@ -64,34 +68,42 @@ export default function Home() {
       width: 100%;
       height: 100%;
       z-index: -1;
-      background-color: rgb(${ARTICLE_COLOR.join(',')});
+      background-color: rgb(${SLIDER_COLOR.join(',')});
       transition: background-color 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
       pointer-events: none;
     `;
     document.body.appendChild(overlay);
     bgOverlayRef.current = overlay;
 
-    // 滾動監聽處理函數 - 只處理文章區到產品區的過渡
+    // 滾動監聽處理函數 - 處理所有區域的過渡
     const handleScroll = () => {
-      // 確保兩個區域都已經載入
-      if (!articleRef.current || !productRef.current) return;
+      // 確保所有區域都已經載入
+      if (!sliderRef.current || !articleRef.current || !productRef.current || !courseRef.current) return;
 
       const scrollY = window.scrollY;
       const viewHeight = window.innerHeight;
 
-      // 獲取文章區和產品區的位置信息
+      // 獲取所有區域的位置信息
+      const sliderRect = sliderRef.current.getBoundingClientRect();
       const articleRect = articleRef.current.getBoundingClientRect();
       const productRect = productRef.current.getBoundingClientRect();
+      const courseRect = courseRef.current.getBoundingClientRect();
 
-      // 計算文章區和產品區的中心位置
+      // 計算各區域的中心位置
+      const sliderCenter = sliderRect.top + scrollY + sliderRect.height / 2;
       const articleCenter = articleRect.top + scrollY + articleRect.height / 2;
       const productCenter = productRect.top + scrollY + productRect.height / 2;
+      const courseCenter = courseRect.top + scrollY + courseRect.height / 2;
 
-      // 更早開始過渡：視窗底部接近文章區中心時就開始
-      // 更晚結束過渡：視窗頂部離開產品區中心時才結束
-      const transitionStart = articleCenter - viewHeight * 0.8; // 視窗到達文章區上方就開始過渡
-      const transitionEnd = productCenter - viewHeight * 0.2; // 視窗到達產品區中間才完成過渡
-      const transitionLength = transitionEnd - transitionStart;
+      // 定義各過渡區間
+      const sliderToArticleStart = sliderCenter - viewHeight * 0.8;
+      const sliderToArticleEnd = articleCenter - viewHeight * 0.2;
+
+      const articleToProductStart = articleCenter - viewHeight * 0.8;
+      const articleToProductEnd = productCenter - viewHeight * 0.2;
+
+      const productToCourseStart = productCenter - viewHeight * 0.8;
+      const productToCourseEnd = courseCenter - viewHeight * 0.2;
 
       // 檢測滾動方向 - 對於快速滾動優化過渡
       const isScrollingDown = scrollY > lastScrollYRef.current;
@@ -101,20 +113,43 @@ export default function Home() {
       const transitionDuration = isScrollingDown ? '1.0s' : '0.8s';
       bgOverlayRef.current.style.transition = `background-color ${transitionDuration} cubic-bezier(0.34, 1.56, 0.64, 1)`;
 
-      // 計算過渡進度 (0-1)
-      if (scrollY >= transitionStart && scrollY <= transitionEnd && transitionLength > 0) {
-        const progress = (scrollY - transitionStart) / transitionLength;
-        const color = interpolateColor(ARTICLE_COLOR, PRODUCT_COLOR, progress);
-        bgOverlayRef.current.style.backgroundColor = color;
+      // 根據滾動位置設置顏色
+      let backgroundColor;
+
+      // 滑塊到文章區過渡
+      if (scrollY >= sliderToArticleStart && scrollY <= sliderToArticleEnd) {
+        const progress = (scrollY - sliderToArticleStart) / (sliderToArticleEnd - sliderToArticleStart);
+        backgroundColor = interpolateColor(SLIDER_COLOR, ARTICLE_COLOR, progress);
       }
-      // 如果在文章區之前，使用文章區顏色
-      else if (scrollY < transitionStart) {
-        bgOverlayRef.current.style.backgroundColor = `rgb(${ARTICLE_COLOR.join(',')})`;
+      // 文章區到產品區過渡
+      else if (scrollY >= articleToProductStart && scrollY <= articleToProductEnd) {
+        const progress = (scrollY - articleToProductStart) / (articleToProductEnd - articleToProductStart);
+        backgroundColor = interpolateColor(ARTICLE_COLOR, PRODUCT_COLOR, progress);
       }
-      // 如果在產品區之後，使用產品區顏色
-      else if (scrollY > transitionEnd) {
-        bgOverlayRef.current.style.backgroundColor = `rgb(${PRODUCT_COLOR.join(',')})`;
+      // 產品區到課程區過渡
+      else if (scrollY >= productToCourseStart && scrollY <= productToCourseEnd) {
+        const progress = (scrollY - productToCourseStart) / (productToCourseEnd - productToCourseStart);
+        backgroundColor = interpolateColor(PRODUCT_COLOR, COURSE_COLOR, progress);
       }
+      // 在滑塊區之前
+      else if (scrollY < sliderToArticleStart) {
+        backgroundColor = `rgb(${SLIDER_COLOR.join(',')})`;
+      }
+      // 在文章區與產品區之間
+      else if (scrollY < articleToProductStart) {
+        backgroundColor = `rgb(${ARTICLE_COLOR.join(',')})`;
+      }
+      // 在產品區與課程區之間
+      else if (scrollY < productToCourseStart) {
+        backgroundColor = `rgb(${PRODUCT_COLOR.join(',')})`;
+      }
+      // 在課程區之後
+      else {
+        backgroundColor = `rgb(${COURSE_COLOR.join(',')})`;
+      }
+
+      // 更新背景顏色
+      bgOverlayRef.current.style.backgroundColor = backgroundColor;
     };
 
     // 使用節流處理滾動事件，而非防抖 - 更適合快速滾動
@@ -134,15 +169,19 @@ export default function Home() {
 
   return (
     <main>
-      <SliderIndex />
+      <div ref={sliderRef}>
+        <SliderIndex />
+      </div>
       <div ref={articleRef} style={{ padding: '80px 0' }}>
         <ArticleCardIndex />
       </div>
-      <div ref={productRef}>
+      <div ref={productRef} style={{ padding: '0px 0' }}>
         <ProductCardIndex />
       </div>
       <CouponButton />
-      <CoursesCardIndex2 />
+      <div ref={courseRef} style={{ padding: '0px 0' }}>
+        <CoursesCardIndex2 />
+      </div>
       <Chat />
     </main>
   )
