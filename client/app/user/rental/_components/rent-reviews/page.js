@@ -29,7 +29,7 @@ export default function RentReviews({ reviews = [] }) {
 
     // 按鈕顯示邏輯
     const showConfirmButton = canLeaveComment; // 超過 30 天未留言，不顯示「儲存」
-    const showDenyButton = review.comment !== null && canLeaveComment; // 超過 30 天已留言，不顯示「刪除」
+    const showDenyButton = review.comment !== null; // 超過 30 天已留言，不顯示「刪除」
 
     // 快速留言
     const showQuickReplyButtons = review.comment === null && canLeaveComment; // ✅ 只有當 `comment === null` 才會顯示
