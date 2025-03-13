@@ -306,7 +306,7 @@
   }
 }
 
-@media screen and (max-width: 734px) {
+@media screen and (max-width: 768px) {
   .productCard {
     min-width: 270px;
     flex: 0 0 270px;
@@ -327,6 +327,7 @@
 
   .productContainer {
     padding: 0 10px;
+    margin-bottom: 0;
   }
 
   .sectionHeader {

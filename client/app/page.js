@@ -179,7 +179,7 @@ export default function Home() {
         <ProductCardIndex />
       </div>
       <CouponButton />
-      <div ref={courseRef} style={{ padding: '80px 0' }}>
+      <div ref={courseRef} style={{ padding: '0px 0' }}>
         <CoursesCardIndex2 />
       </div>
       <Chat />
