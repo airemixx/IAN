@@ -55,7 +55,7 @@ export default function loginPage() {
       setUser(userData)
 
       // 根據 level 跳轉不同頁面
-      if (userData.level === 1) {
+      if (userData.level === 1 || 88) {
         router.push('/teacher') // 講師跳轉至課程管理中心
       } else if (userData.level === 2) {
         router.push('/user/article') // 編輯跳轉至文章管理中心
@@ -68,7 +68,7 @@ export default function loginPage() {
     }
   }
   if (loading) {
- return null;
+    return null;
   }
 
   return (

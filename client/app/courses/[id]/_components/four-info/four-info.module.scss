@@ -46,8 +46,8 @@
   color: var(--primary-color);
 }
 
-.info-content a{
-  text-decoration: none
+.info-content a {
+  text-decoration: none;
 }
 
 /* 響應式樣式 */
@@ -92,5 +92,11 @@
   .info-content {
     padding-top: 1.5rem;
     width: 50%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .four-course-info-container {
+    padding: 0 16px;
   }
 }

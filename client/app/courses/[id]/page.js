@@ -19,8 +19,17 @@ export default function CourseDetailPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    window.scrollTo(0, 0); //  每次進入時滾動到最上方
+    if (window.location.hash === "#course-rating" || window.location.hash === "#teacher-info") {
+      setTimeout(() => {
+        const targetSection = document.getElementById(window.location.hash.substring(1)); 
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 300); 
+    }
   }, []);
+
+
 
   useEffect(() => {
     if (!id) return // ✅ 避免 ID 未載入時發送錯誤請求
@@ -81,7 +90,7 @@ export default function CourseDetailPage() {
           <section className={styles['course-detail-container']}>
             <div className="container">
               <DetailNav />
-              <div className={styles['course-detail-title']}  id="course-content">
+              <div className={styles['course-detail-title']} id="course-content">
                 <div className={styles['title-block']}></div>
                 <h2>課程內容</h2>
                 <div className={`${styles['line']} d-block d-sm-none`}></div>
@@ -93,8 +102,8 @@ export default function CourseDetailPage() {
                   <CourseRating />
                 </div>
                 <div className="col-12 col-md-4 d-block">
-                {/* <div className="col-md-4 d-none d-xl-block"> */}
-                  <PriceFixed course={course}/>
+                  {/* <div className="col-md-4 d-none d-xl-block"> */}
+                  <PriceFixed course={course} />
                 </div>
               </div>
               <RelatedCourses course={course} />

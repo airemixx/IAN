@@ -5,6 +5,7 @@ import styles from './course-rating.module.scss'
 import CourseComment from '../course-comment/page'
 import StarRating from '@/app/courses/_components/star-rating/page'
 import { useParams } from 'next/navigation'
+import Link from "next/link";
 
 export default function CourseRating() {
   const { id } = useParams()
@@ -14,6 +15,7 @@ export default function CourseRating() {
   const [showAllComments, setShowAllComments] = useState(false)
   const modalContentRef = useRef(null)
   const [scrollToCommentId, setScrollToCommentId] = useState(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     if (!id) return
@@ -35,7 +37,7 @@ export default function CourseRating() {
         //  計算平均評分
         const avg = validRatings.length
           ? validRatings.reduce((sum, rating) => sum + rating, 0) /
-            validRatings.length
+          validRatings.length
           : 0
         setAverageRating(avg.toFixed(1)) // ✅ 確保這行執行
       } catch (err) {
@@ -63,7 +65,7 @@ export default function CourseRating() {
           if (modalContent && targetComment) {
             const rect = targetComment.getBoundingClientRect()
             const scrollToPosition =
-            targetComment.offsetTop - modalContent.clientHeight / 2 + targetComment.clientHeight / 2
+              targetComment.offsetTop - modalContent.clientHeight / 2 + targetComment.clientHeight / 2
 
             modalContent.scrollTo({
               top: scrollToPosition,
@@ -92,7 +94,7 @@ export default function CourseRating() {
       comments.filter((comment) => Math.round(comment.rating) === star).length
   )
 
-  const totalReviews = comments.length || 1 
+  const totalReviews = comments.length || 1
   const ratingPercentages = ratingCounts.map(
     (count) => (count / totalReviews) * 100
   )
@@ -106,6 +108,17 @@ export default function CourseRating() {
       setScrollToCommentId(null)
     }
   }
+
+  useEffect(() => {
+    const scrollPosition = sessionStorage.getItem("scrollPosition");
+    if (scrollPosition !== null) {
+      setTimeout(() => {
+        window.scrollTo({ top: parseInt(scrollPosition, 10), behavior: "smooth" });
+        sessionStorage.removeItem("scrollPosition"); // ✅ 只滾動一次，之後清除
+      }, 500);
+    }
+  }, []);
+
 
   return (
     <section className={styles['course-rating-container']} id="course-rating">
@@ -159,6 +172,7 @@ export default function CourseRating() {
         {comments.slice(0, 4).map((comment, index) => (
           <CourseComment
             key={comment.id}
+            courseId={id}
             isModal={false}
             commentId={comment.id}
             name={comment.user_name}
@@ -172,6 +186,7 @@ export default function CourseRating() {
               setScrollToCommentId(id)
               setShowAllComments(true)
             }}
+            isMobile={isMobile}
           />
         ))}
       </div>
@@ -179,8 +194,18 @@ export default function CourseRating() {
       {/* 所有評價按鈕（打開彈出視窗） */}
       {comments.length > 4 && (
         <div className={styles['all-comment-link']}>
-          <button onClick={() => setShowAllComments(true)}>
-            所有評價 <img src="/images/icon/all-comment.svg" alt="所有評價" />
+          <button
+            onClick={() => {
+              sessionStorage.setItem("scrollPosition", window.scrollY);
+              if (isMobile) {
+                window.location.href = `/courses/${id}/comment`; // 手機版跳轉新頁面
+              } else {
+                setShowAllComments(true)
+              }
+            }}
+            className={styles['open-modal-btn']}
+          >
+            所有評論 <img src="/images/icon/all-comment.svg" alt="所有評價" />
           </button>
         </div>
       )}
@@ -203,8 +228,8 @@ export default function CourseRating() {
             <div className={styles['modal-content']} ref={modalContentRef}>
               {comments.map((comment, index) => (
                 <CourseComment
-                  key={comment.id} 
-                  commentId={comment.id} 
+                  key={comment.id}
+                  commentId={comment.id}
                   name={comment.user_name}
                   date={comment.created_at}
                   rating={comment.rating}

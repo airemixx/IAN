@@ -44,6 +44,15 @@ export default function CartItem({ id, itemData, page }) {
           confirmButtonText: "確定",
         }).then(() => {
           // 刷新頁面或通知父層更新購物車
+          const removeFromCart = (itemId) => {
+            let cart = JSON.parse(localStorage.getItem('cart')) || []
+            cart = cart.filter(item => item.id !== itemId)
+            localStorage.setItem('cart', JSON.stringify(cart))
+          
+            // ✅ 觸發購物車更新
+            window.dispatchEvent(new Event('cartUpdated'))
+          }
+          removeFromCart()
           window.location.reload();
         });
       }
@@ -100,7 +109,7 @@ export default function CartItem({ id, itemData, page }) {
             </div>
             <div className="d-flex flex-column flex-grow-1 align-self-sm-stretch align-self-xl-center ">
               <div className={`${styles['j-content']} d-flex justify-content-around align-items-center flex-grow-1`}>
-                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0 flex-grow-1 `}>
+                <div className={`${styles['j-itemDetail']} d-flex flex-column ms-sm-3 ms-xl-0 flex-grow-1 align-items-center`}>
                   <div className="ms-lg-2 ms-xl-0">
                     <span className={`${styles['j-brand']} ${styles['j-publicFont']} `}>{brand}</span>
                     <br />
@@ -118,7 +127,7 @@ export default function CartItem({ id, itemData, page }) {
 
               </div>
               <div className="d-flex justify-content-center me-4 mt-2 mt-sm-0 ">
-                <p className={`${styles['j-price']} d-flex  flex-grow-1`}>NT$ {Number(price).toLocaleString()}</p>
+                <p className={`${styles['j-price']} d-flex justify-content-center  flex-grow-1 `}>NT$ {Number(price).toLocaleString()}</p>
               </div>
             </div>
 
