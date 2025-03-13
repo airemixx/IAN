@@ -15,9 +15,13 @@ export default function CourseComment({
   onShowAllComments,
   commentId,
   onScrollToComment,
+  isMobile,
+  courseId,
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const commentRef = useRef(null)
+
+  
 
   return (
     <div
@@ -27,9 +31,8 @@ export default function CourseComment({
       data-aos="fade-up"
     >
       <div
-        className={`${styles['course-comment']} ${
-          isModal ? styles['modal-comment'] : ''
-        }`}
+        className={`${styles['course-comment']} ${isModal ? styles['modal-comment'] : ''
+          }`}
       >
         <div className={styles['comment-card-nav']}>
           <div className={styles['commenter']}>
@@ -48,32 +51,30 @@ export default function CourseComment({
         <div className={styles['comment-card-content']}>
           <p className={styles['title']}>{title}</p>
           <p
-            className={`${styles['content']} ${
-              isExpanded ? styles['expanded'] : ''
-            }`}
+            className={`${styles['content']} ${isExpanded ? styles['expanded'] : ''
+              }`}
           >
             {isExpanded || !isModal ? content : `${content.slice(0, 100)}...`}
           </p>
         </div>
 
-        <div className={styles['go-page-link']}>
+        <div className={styles["go-page-link"]}>
           {isModal ? (
+            <button onClick={() => setIsExpanded(!isExpanded)} className={styles["show-all-btn"]}>
+              {isExpanded ? "收起內容" : "查看更多"}
+              {isExpanded ? <FaChevronUp size={10} /> : <FaChevronDown size={10} />}
+            </button>
+          ) : isMobile ? (
             <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className={styles['show-all-btn']}
+              onClick={() => {
+                window.location.href = `/courses/${courseId}/comment?commentId=${commentId}`;
+              }}
+              className={styles["show-all-btn"]}
             >
-              {isExpanded ? '收起內容' : '查看更多'}
-              {isExpanded ? (
-                <FaChevronUp size={10} />
-              ) : (
-                <FaChevronDown size={10} />
-              )}
+              查看更多 <FaChevronDown size={10} />
             </button>
           ) : (
-            <button
-              onClick={() => onShowAllComments(commentId)}
-              className={styles['show-all-btn']}
-            >
+            <button onClick={() => onShowAllComments(commentId)} className={styles["show-all-btn"]}>
               查看更多 <FaChevronDown size={10} />
             </button>
           )}

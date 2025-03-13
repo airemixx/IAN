@@ -4,14 +4,15 @@ import { useParams } from "next/navigation"
 import { useState, useEffect } from "react";
 import styles from './teacher-mobile.module.scss'
 import {
-  FaChevronRight,
-  FaGlobe,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
+    FaChevronRight,
+    FaGlobe,
+    FaFacebook,
+    FaInstagram,
+    FaYoutube,
 } from 'react-icons/fa'
 import Link from "next/link";
 import TeacherCoursesList from '@/app/courses/[id]/_components/teacher-courses-list/page'
+import { IoIosArrowBack } from "react-icons/io";
 
 export default function IdPage() {
     const { id } = useParams(); // 取得 teacherId
@@ -24,7 +25,7 @@ export default function IdPage() {
         const fetchTeacher = async () => {
             try {
                 const response = await fetch(`http://localhost:8000/api/teachers/${id}`);
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -50,6 +51,22 @@ export default function IdPage() {
         <div className={styles['modal-body']}>
             {/* 左側：講師頭像 + 社群連結 */}
             <div className={styles['modal-left-container']}>
+                <div className={styles["back-btn"]}>
+                    <button
+                        onClick={() => {
+                            if (teacher.courses.length > 0) {
+                                window.location.href = `/courses/${teacher.courses[0].id}#teacher-info`; // ✅ 返回對應課程
+                            } else {
+                                window.location.href = "/courses"; // ✅ 如果沒有課程，則回到課程列表
+                            }
+                        }}
+                        className={styles["back-link"]}
+                    >
+                        <IoIosArrowBack /> 返回頁面
+                    </button>
+                </div>
+
+
                 <div className={styles['modal-left']}>
                     <div className={styles['modal-left-img']}>
                         <img
@@ -114,7 +131,7 @@ export default function IdPage() {
                         </p>
                     </li>
                     <li className={styles['data-item']}>
-                        <Link href={`/article?user_id=${teacher.user_id}&author_name=${encodeURIComponent(teacher.author_name)}`} className={styles['link-wrapper']}>
+                        <Link href={`/article?user_id=${teacher.user_id}&author_name=${encodeURIComponent(teacher.author_name)}`} className={styles['link-wrapper']} >
                             <img src="/images/icon/article-icon-w.svg" alt="" />
                             <p>{teacher.articleCount?.toLocaleString() || "0"} 篇文章</p>
                         </Link>

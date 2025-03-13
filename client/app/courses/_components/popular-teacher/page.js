@@ -7,9 +7,11 @@ import TeacherInfoModal from '../teacher-info-modal/page'
 import "hover.css"
 
 export default function PopularTeacher() {
-  const [topTeachers, setTopTeachers] = useState([]) 
-  const [isModalOpen, setIsModalOpen] = useState(false) 
-  const [selectedTeacher, setSelectedTeacher] = useState(null) 
+  const [topTeachers, setTopTeachers] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedTeacher, setSelectedTeacher] = useState(null)
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -31,20 +33,28 @@ export default function PopularTeacher() {
 
   // 📌 點擊講師圖片時，請求該講師詳細資料 ，並顯示彈跳視窗
   const handleTeacherClick = async (teacherId) => {
-    try {
-      const res = await fetch(`/api/teachers/${teacherId}`)
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`)
+    if (isMobile) {
+      // ✅ 手機版：跳轉到獨立頁面
+      window.location.href = `/courses/teacher/${teacherId}`;
+    } else {
+      // ✅ 桌機版：開啟彈出視窗
+      try {
+        const res = await fetch(`/api/teachers/${teacherId}`);
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
-      const data = await res.json()
-      console.log('📌 選擇的講師資料:', data) // ✅ 確保 API 有回應
-      setSelectedTeacher(data) // ✅ 設定選中的講師資料
-      setIsModalOpen(true) // ✅ 開啟彈跳視窗
-    } catch (error) {
-      console.error('❌ 獲取講師資料失敗:', error)
+        const data = await res.json();
+        console.log("📌 選擇的講師資料:", data);
+        setSelectedTeacher(data);
+        setIsModalOpen(true);
+      } catch (error) {
+        console.error("❌ 獲取講師資料失敗:", error);
+      }
     }
-  }
+  };
 
-   useEffect(() => {
+
+  // 576px 移除 container
+  useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';  // 禁止背景滾動
     } else {
@@ -55,9 +65,21 @@ export default function PopularTeacher() {
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 576);
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize(); // ✅ 先執行一次，確保初始狀態正確
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
   return (
-    <section className={styles['popular-teacher']}>
-      <div className="container">
+    <section className={styles['popular-teacher']} id="teacher-info">
+      <div className={isSmallScreen ? "w-100" : "container"}>
         <div className={styles['teacher-title']} data-aos="fade-right">
           <div className={styles['title-block']}></div>
           <h2>熱門講師</h2>
@@ -72,7 +94,7 @@ export default function PopularTeacher() {
                 data-aos="fade-up"
                 data-aos-duration={1000 + index * 500} // 動畫延遲
               >
-                <a onClick={() => handleTeacherClick(teacher.teacher_id)}> {/* ✅ 點擊時開啟彈跳視窗 */}
+                <a onClick={() => handleTeacherClick(teacher.teacher_id)} className={styles["teacher-card-btn"]}>
                   <div className={`${styles['teacher-card']} hvr-grow`}>
                     <div className={styles['teacher-card-img']}>
                       <img src={teacher.teacher_image} alt={teacher.teacher_name} />
@@ -83,7 +105,7 @@ export default function PopularTeacher() {
                         </div>
                       </div>
                       <h3>{teacher.teacher_name}</h3>
-                      <p>{teacher.teacher_bio || '這位講師暫無簡介'}</p> {/* ✅ 避免 `null` 值 */}
+                      <p>{teacher.teacher_bio || '這位講師暫無簡介'}</p> 
                     </div>
                   </div>
                 </a>
@@ -93,7 +115,7 @@ export default function PopularTeacher() {
         </div>
       </div>
 
-      {/* ✅ 引入彈跳視窗組件 */}
+      {/* 引入彈跳視窗組件 */}
       {isModalOpen && selectedTeacher && (
         <TeacherInfoModal
           teacher={selectedTeacher}
