@@ -318,6 +318,26 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
+@media screen and (max-width: 1200px) {
+  .modal-content {
+    width: 85%;
+    max-width: 1000px;
+  }
+  .modal-teacher-data {
+    margin-top: 3rem;
+    .data-item {
+      margin: 1rem 0 10px 2rem;
+      img {
+        width: 18px;
+        height: 18px;
+      }
+      p {
+        color: var(--line-color-gray-light);
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 768px) {
   /* -- 關於講師 -- */
   .teacher-info {

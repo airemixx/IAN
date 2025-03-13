@@ -49,6 +49,9 @@
 }
 
 @media screen and (max-width: 567px) {
+  .course-detail-container{
+    padding: 1.5rem 16px;
+  }
   .container {
     margin: 0;
     padding-left: 32px !important;

@@ -243,6 +243,9 @@
 }
 
 @media screen and (max-width: 567px) {
+  .course-info-container {
+    padding: 0 16px;
+  }
   /* --- 上方課程簡介 --- */
   .course-detail {
     position: relative;
@@ -253,7 +256,7 @@
   }
   .original-price {
     position: absolute;
-    left: 120px;
+    left: 100px;
     bottom: 60px;
   }
 

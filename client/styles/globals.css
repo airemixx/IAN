@@ -29,10 +29,9 @@
   --ck-content-min-height: 500px !important;
 }
 
-
-
-html, body {
-  height: 100%; 
+html,
+body {
+  height: 100%;
 }
 
 body {
@@ -99,13 +98,11 @@ header {
   width: 160px;
 }
 
-
 nav {
   display: flex;
   align-items: center;
   width: 100%;
 }
-
 
 .nav-left {
   display: flex;
@@ -121,13 +118,11 @@ nav {
   position: relative;
 }
 
-
 .nav-left li a {
   color: var(--white);
   text-decoration: none;
   transition: color 0.3s ease;
 }
-
 
 .nav-left li a .icon {
   display: block;
@@ -135,13 +130,11 @@ nav {
   opacity: 0;
 }
 
-
 .nav-left > li.nav-active a,
 .nav-left > li a:hover,
 .nav-left > li:hover > a {
   color: var(--secondary-color-med);
 }
-
 
 .nav-left > li::after {
   content: '';
@@ -162,7 +155,6 @@ nav {
 .nav-left > li.nav-active {
   position: relative;
 }
-
 
 .nav-right {
   list-style-type: none;
@@ -245,8 +237,8 @@ nav {
 .search-button {
   margin-left: 1.5rem;
   padding: 0.4rem 2rem;
-  border:1px solid #7e726700;
-  background: #7E7267;
+  border: 1px solid #7e726700;
+  background: #7e7267;
   color: #fff;
   border-radius: 25px;
   cursor: pointer;
@@ -255,8 +247,8 @@ nav {
 
 .search-button:hover {
   background: #ffffff;
-  color: #7E7267;
-  border:1px solid #7E7267;
+  color: #7e7267;
+  border: 1px solid #7e7267;
 }
 
 /* 透明緩衝區 */
@@ -346,21 +338,19 @@ nav {
 
 /* ---content--- */
 
-.layout-container{
+.layout-container {
   display: flex;
   flex-direction: column;
-  min-height: 200vh; 
+  min-height: 80vh;
 }
-.layout-cart-container{
-  min-height: 0; 
+.layout-cart-container {
+  min-height: 0;
 }
 .root-content {
-  flex: 1; 
+  flex: 1;
 }
 
 /* --- top btn --- */
-
-
 
 /* ---footer--- */
 footer {
@@ -448,57 +438,57 @@ footer-title {
   font-size: 0.8rem;
 }
 
-
-.copyrightColor{
+.copyrightColor {
   background-color: #f6f6f6;
   color: #000;
 }
 
-.aColor a{
+.aColor a {
   color: #000;
- 
 }
 
 /* --- 滾輪樣式 --- */
+
 /* 整體滾動條 */
 ::-webkit-scrollbar {
-  width: 13px; 
-  height: 10px; 
+  width: 10px;
+  height: 10px;
 }
 
 /* 滾動條背景 */
 ::-webkit-scrollbar-track {
-  background: var(--secondary-color-lig2);
+  background: var(--gray--50);
   padding: 0 5px;
 }
 
 /* 滑塊（拖動的部分） */
 ::-webkit-scrollbar-thumb {
-  background: var(--secondary-color-med);
+  background: var(--gray--200);
   border-radius: 10px;
 }
 
 /* 滑塊懸停效果 */
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color-dark);
+  background: var(--gray--300);
 }
 
-::-webkit-scrollbar-button:vertical:decrement {
-  background: var(--secondary-color-lig2);
+/* ::-webkit-scrollbar-button:vertical:decrement {
+  background: var(--gray--50);
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="%23807871" viewBox="0 0 8 8"><polygon points="4,0 0,4 8,4"/></svg>');
   background-repeat: no-repeat;
   background-position: center;
-  height: 16px; /* 調整按鈕大小 */
-}
+  height: 16px; /* 調整按鈕大小 
+}*/
 
-/* 下滾按鈕 */
-::-webkit-scrollbar-button:vertical:increment {
-  background: var(--secondary-color-lig2);
+
+/* ::-webkit-scrollbar-button:vertical:increment {
+  background: var(--gray--50);
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="%23807871" viewBox="0 0 8 8"><polygon points="0,0 8,0 4,4"/></svg>');
   background-repeat: no-repeat;
   background-position: center;
   height: 16px;
-}
+} */
+
 
 /* 響應式樣式 */
 @media screen and (max-width: 1200px) {
@@ -656,9 +646,7 @@ footer-title {
   cursor: pointer;
   z-index: 10;
   opacity: 0;
-  transition:
-    opacity 0.3s ease-in-out,
-    transform 0.2s ease-in-out;
+  transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .e-card-img:hover .e-favorite-icon {
@@ -666,19 +654,18 @@ footer-title {
   transform: scale(1.1);
 }
 
-
 /*  全局 Toast 樣式 */
 .custom-toast-container .Toastify__toast {
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
   border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
-  justify-content: flex-start
+  justify-content: flex-start;
 }
 
 /*  成功類型 Toast */
 .Toastify__toast--success {
-  background: var(--primary-color-med) !important; 
+  background: var(--primary-color-med) !important;
   color: var(--white) !important;
   box-shadow: var(--box-shadow);
 }
@@ -690,7 +677,7 @@ footer-title {
 /*  錯誤類型 Toast */
 
 .Toastify__toast--warning {
-  background: var(--secondary-color-med) !important; 
+  background: var(--secondary-color-med) !important;
   color: var(--primary-color) !important;
   box-shadow: var(--box-shadow);
 }
@@ -700,7 +687,7 @@ footer-title {
 }
 
 .Toastify__toast--error {
-  background: var(--warning-color) !important; 
+  background: var(--warning-color) !important;
   color: var(--white) !important;
 }
 
@@ -710,7 +697,7 @@ footer-title {
 
 /*  資訊類型 Toast */
 .Toastify__toast--info {
-  background: var(--secondary-color-dark) !important; 
+  background: var(--secondary-color-dark) !important;
   color: var(--white) !important;
 }
 
@@ -718,29 +705,28 @@ footer-title {
   fill: var(--secondary-color-med) !important;
 }
 
-
 /* ckeditor */
 
 /* .ck{
   border: 1xp solid var(--secondary-color-med) !important;
 } */
 
-.ck-toolbar__separator{
+.ck-toolbar__separator {
   border: 1xp solid var(--secondary-color-med) !important;
 }
 
-.ck.ck-toolbar .ck.ck-toolbar__separator{
+.ck.ck-toolbar .ck.ck-toolbar__separator {
   background: var(--white) !important;
 }
 
-.ck-button:hover{
+.ck-button:hover {
   border-radius: 50px !important;
-  background-color: var(--secondary-color-lig)!important;
+  background-color: var(--secondary-color-lig) !important;
   color: black;
 }
 
 .ck-editor__editable_inline {
-  min-height:650px;
+  min-height: 650px;
 }
 
 .ck-editor__editable h3 {
@@ -748,5 +734,3 @@ footer-title {
   font-weight: bold;
   color: var(--primary-color);
 }
-
-

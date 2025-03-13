@@ -6,11 +6,23 @@ import styles from "./courses-list.module.scss";
 
 export default function CourseList({ courses }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const coursesPerPage = 12;
   const [popularCourses, setPopularCourses] = useState([]);
   const [filterChangeId, setFilterChangeId] = useState(0);
   const [favorites, setFavorites] = useState(new Set());
   const [token, setToken] = useState(null);
+  const coursesPerPage = 12;
+  const mobileLoadMore = 4;
+  const [visibleCourses, setVisibleCourses] = useState(mobileLoadMore);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 576);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      setVisibleCourses(mobileLoadMore);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (courses.length > 0) {
@@ -26,9 +38,15 @@ export default function CourseList({ courses }) {
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
   const currentCourses = useMemo(() => {
-    return publishedCourses.slice(indexOfFirstCourse, indexOfLastCourse);
-  }, [publishedCourses, currentPage]);
+    return isMobile
+      ? publishedCourses.slice(0, visibleCourses)
+      : publishedCourses.slice((currentPage - 1) * coursesPerPage, currentPage * coursesPerPage);
+  }, [publishedCourses, currentPage, visibleCourses, isMobile]);
 
+  // 手機版點擊「更多課程」按鈕時增加可見數量
+  const loadMoreCourses = () => {
+    setVisibleCourses((prev) => Math.min(prev + mobileLoadMore, publishedCourses.length));
+  };
   useEffect(() => {
     const fetchPopularCourses = async () => {
       try {
@@ -105,7 +123,7 @@ export default function CourseList({ courses }) {
         if (isFavorited) updatedFavorites.delete(Number(courseId));
         else updatedFavorites.add(Number(courseId));
 
-        console.log("📌 收藏狀態更新:", updatedFavorites); 
+        console.log("📌 收藏狀態更新:", updatedFavorites);
         return updatedFavorites;
       });
 
@@ -117,9 +135,22 @@ export default function CourseList({ courses }) {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    const courseList = document.getElementById("course-list");
+    if (courseList) {
+      const offset = 200; // 例如：上移 50px
+      const elementTop = courseList.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementTop - offset,
+        behavior: "smooth",
+      });
+    }
+  };
+
 
   return (
-    <section className={`container ${styles["course-list"]}`}>
+    <section className={`container ${styles["course-list"]}`} id="course-list">
       {publishedCourses.length === 0 && currentCourses.length === 0 ? (
         <>
           <div className={styles["notfound"]}>
@@ -164,12 +195,19 @@ export default function CourseList({ courses }) {
             )}
           </div>
 
-          {/* ✅ 加回 Pagination */}
           <Pagination
             currentPage={currentPage}
             totalPages={Math.ceil(publishedCourses.length / coursesPerPage)}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
           />
+
+          {isMobile && visibleCourses < publishedCourses.length && (
+            <div className={styles["load-more-btn-container"]}>
+            <button onClick={loadMoreCourses} className={styles["load-more-btn"]}>
+              更多課程
+            </button>
+            </div>
+          )}
         </>
       )}
     </section>
