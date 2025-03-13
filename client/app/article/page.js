@@ -192,7 +192,7 @@ export default function NewsPage() {
   }, [])
 
   return (
-    <div className='bg-list'>
+    <div className='y-bg-list'>
       <Breadcrumb />
       {/* 只在沒有搜尋條件時顯示 */}
       {!hasSearch && (
@@ -200,7 +200,7 @@ export default function NewsPage() {
           <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
             <h1>最新消息 News</h1>
           </div>
-          <div className="bg-use">
+          <div className="y-bg-use">
             <div className="page-container d-flex justify-content-between">
               <StickyCard className="Sticky-Card" />
               <MasonryLayouts />
