@@ -261,7 +261,6 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               </Link>
               <Link href="/product/spec" style={{ position: 'relative', display: 'inline-block' }}>
                 <img src="/images/icon/compare.svg" alt="Compare" />
-                {/* ✅ 如果 compareList 有商品，顯示紅點 */}
                 {compareList.length > 0 && (
                   <span
                     className="compare-badge"
