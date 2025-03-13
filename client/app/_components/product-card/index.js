@@ -315,6 +315,7 @@ export default function ProductCardIndex() {
   };
 
   return (
+
     <div className={styles.productContainer}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>新登場</h2>
@@ -340,6 +341,24 @@ export default function ProductCardIndex() {
         <button
           onClick={scrollRight}
           className={`${styles.navButton} ${styles.navButtonRight}`}
+
+//     <div className={`${styles.productArea} text-white py-5`}>
+//       <div className="mx-5 py-5">
+//         <h2 className={`${styles.productTitle} text-left mb-4 ps-4`}>商品推薦</h2>
+
+//         {/* Swiper 輪播區塊 */}
+//         <Swiper
+//           modules={[Pagination]}
+//           spaceBetween={20}
+//           slidesPerView={1}
+//           breakpoints={{
+//             768: { slidesPerView: 2 },
+//             1024: { slidesPerView: 3 },
+//             1280: { slidesPerView: 4 }
+//           }}
+//           pagination={{ clickable: true }}
+//           className={styles.mySwiper}
+
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 16">
             <path d="M2.1 0L0.7 1.3 7.3 8 0.7 14.7 2.1 16 10 8z"></path>

@@ -177,6 +177,16 @@ export default function cartPageOne() {
           showConfirmButton: false
         });
         
+        const removeFromCart = (itemId) => {
+          let cart = JSON.parse(localStorage.getItem('cart')) || []
+          cart = cart.filter(item => item.id !== itemId)
+          localStorage.setItem('cart', JSON.stringify(cart))
+        
+          // ✅ 觸發購物車更新
+          window.dispatchEvent(new Event('cartUpdated'))
+        }
+        removeFromCart()
+        
       }
     });
   };

@@ -44,6 +44,15 @@ export default function CartItem({ id, itemData, page }) {
           confirmButtonText: "確定",
         }).then(() => {
           // 刷新頁面或通知父層更新購物車
+          const removeFromCart = (itemId) => {
+            let cart = JSON.parse(localStorage.getItem('cart')) || []
+            cart = cart.filter(item => item.id !== itemId)
+            localStorage.setItem('cart', JSON.stringify(cart))
+          
+            // ✅ 觸發購物車更新
+            window.dispatchEvent(new Event('cartUpdated'))
+          }
+          removeFromCart()
           window.location.reload();
         });
       }
