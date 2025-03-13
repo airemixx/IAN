@@ -1,8 +1,8 @@
-// 修改fadeInUp動畫以匹配新的transform初始值
+// 優化動畫設置 - 快速出現
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(15px); // 進一步縮短移動距離
   }
   to {
     opacity: 1;
@@ -11,8 +11,7 @@
 }
 
 .fadeInUp {
-  animation: fadeInUp 0.8s ease forwards;
-  // 動畫將保持在最後一幀
+  animation: fadeInUp 0.25s ease forwards; // 縮短到0.25秒
   animation-fill-mode: forwards;
 }
 
@@ -59,10 +58,10 @@
   }
 }
 
-// 添加依序延遲的動畫類別
+// 移除延遲類的延遲時間
 @for $i from 0 through 10 {
   .delay-#{$i} {
-    animation-delay: #{$i * 0.1}s !important;
+    animation-delay: #{$i * 0.02}s !important; // 大幅減少延遲時間到0.02秒
   }
 }
 
@@ -75,15 +74,19 @@
 
 // 容器和排版樣式 (Apple風格)
 .productContainer {
-  max-width: 95%;
-  padding: 0 20px;
+  max-width: 100%; // 從95%改為100%
+  padding: 0 0 0 50px; // 只保留左側padding，移除右側padding
   margin: 40px auto;
   font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+// 調整標題區域為Flex佈局以使按鈕對齊
 .sectionHeader {
-  margin-bottom: 30px;
-  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 24px 0 24px; // 調整左右padding
 }
 
 .sectionTitle {
@@ -110,14 +113,24 @@
   padding: 40px 0;
 }
 
+// 修改產品輪播外容器，用於正確定位導航按鈕
+.productCarouselContainer {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+  // 添加高度計算，確保按鈕對齊的基準正確
+  height: 500px; // 與卡片主體高度相同，不包含卡片的下邊距
+}
+
 // 修改卡片容器增加額外空間
 .productScrollContainer {
   display: flex;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  padding: 10px 24px 20px; // 增加底部padding
-  margin: 5px 0; // 增加上下margin
+  padding: 10px 0 100px; // 添加底部padding 100px，取代卡片的大margin
+  padding-right: 0; // 確保右側沒有padding
+  margin: 5px 0;
   /* 隱藏滾動條但保留功能 */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
@@ -137,7 +150,8 @@
 .productCard {
   background-color: #fff;
   border-radius: 18px;
-  margin: 10px 20px 10px 0; // 添加上下margin為邊框提供空間
+  margin: 10px 20px 10px 20px; // 修改下邊距為10px，與上邊距一致
+  padding-bottom: 0; // 確保沒有額外的內部底部間距
   min-width: 330px;
   flex: 0 0 330px; // 固定寬度
   height: 500px; // 固定高度
@@ -395,4 +409,72 @@
 
 .focusFrameActive {
   border: 5px solid rgba(76, 217, 100, 0.9); // 綠色框框
+}
+
+// 滾動控制按鈕樣式
+.scrollControls {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+// 導航按鈕樣式 - Apple Store 風格
+.navButton {
+  position: absolute;
+  top: 250px; // 卡片高度的一半
+  transform: translateY(-50%);
+  width: 50px; // 更小的按鈕
+  height: 50px; // 更小的按鈕
+  border-radius: 50%;
+  background-color: rgba(210, 210, 215, 0.64);
+  backdrop-filter: blur(20px); // 毛玻璃效果
+  -webkit-backdrop-filter: blur(20px); // Safari 支援
+  border: none;
+  box-shadow: none; // 移除陰影
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  opacity: 0; // 預設隱藏
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+
+  // SVG 圖示樣式
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: #1d1d1f; // 深灰色填充
+  }
+
+  &:hover {
+    background-color: rgba(210, 210, 215, 0.8); // 懸停時背景更不透明
+  }
+}
+
+// 設定導航按鈕容器懸停時顯示按鈕
+.productCarouselContainer:hover .navButton {
+  opacity: 1;
+}
+
+// 左側按鈕位置
+.navButtonLeft {
+  left: 16px;
+}
+
+// 右側按鈕位置
+.navButtonRight {
+  right: 16px;
+}
+
+// 響應式設計 - 移動設備上隱藏按鈕
+@media screen and (max-width: 734px) {
+  .navButton {
+    display: none; // 在移動設備上完全隱藏
+  }
+}
+
+// 新增立即顯示的類別 - 用於滾動顯示的卡片
+.instantShow {
+  animation: fadeInUp 0.15s ease forwards !important;
+  animation-delay: 0s !important; // 立即顯示，無延遲
 }
