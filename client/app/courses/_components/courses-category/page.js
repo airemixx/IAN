@@ -17,23 +17,27 @@ export default function CoursesCategory({ selectedCategory, setSelectedCategory 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/courses/categories')
-        if (!res.ok) throw new Error(`HTTP 錯誤！狀態碼：${res.status}`)
+        const res = await fetch('http://localhost:8000/api/courses/categories');
+        if (!res.ok) throw new Error(`HTTP 錯誤！狀態碼：${res.status}`);
 
-        const data = await res.json()
-        console.log('📢 取得的分類資料:', data)
+        const data = await res.json();
+        console.log('📢 取得的分類資料:', data);
 
-        setCategories([{ name: '所有課程' }, ...data]) // ✅ 確保 "所有課程" 始終存在
+        // ✅ 過濾掉空白分類
+        const filteredData = data.filter(category => category.name.trim() !== '');
+
+        setCategories([{ name: '所有課程' }, ...filteredData]); // 確保「所有課程」在第一個
       } catch (err) {
-        console.error('❌ 無法取得分類資料:', err.message)
-        setError(err.message)
+        console.error('❌ 無法取得分類資料:', err.message);
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchCategories()
-  }, [])
+    fetchCategories();
+  }, []);
+
 
   // 🚀 **監聽 URL `category` 變更時，更新 `selectedCategory`**
   useEffect(() => {
