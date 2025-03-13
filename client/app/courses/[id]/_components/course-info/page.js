@@ -56,7 +56,8 @@ export default function CourseInfo({ course }) {
       localStorage.setItem('shoppingCart', JSON.stringify(updatedCart))
       setCart(updatedCart)
     }
-
+    // ✅ 觸發購物車更新
+    window.dispatchEvent(new Event('cartUpdated'))
     // ✅ 直接導向購物車頁面
     router.push('/cart')
   }
@@ -107,6 +108,8 @@ export default function CourseInfo({ course }) {
         autoClose: 2000,
       })
     }
+     // ✅ 觸發購物車更新
+    window.dispatchEvent(new Event('cartUpdated'))
   }
 
   const scrollToSection = (id) => {

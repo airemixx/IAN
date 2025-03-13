@@ -36,7 +36,9 @@ export default function CartButton({ product }) {
     // 如果商品不在購物車中，則新增
     cart.push({ ...product, quantity: 1 })
     localStorage.setItem('cart', JSON.stringify(cart))
-
+    
+    // ✅ 觸發購物車更新
+    window.dispatchEvent(new Event('cartUpdated'))
     toast.success(`${product.name} 已加入購物車`, {
       position: 'top-right',
       autoClose: 1500,

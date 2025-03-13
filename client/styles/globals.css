@@ -207,6 +207,14 @@ nav {
   display: none;
 }
 
+.cartAmount{
+  width: 25px;
+  height: 25px;
+  background-color: orange;
+  border-radius: 50%;
+  color: #fff;
+}
+
 /* search area */
 @keyframes slideDown {
   from {

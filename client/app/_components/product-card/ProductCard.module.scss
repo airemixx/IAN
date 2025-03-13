@@ -15,6 +15,7 @@
   animation-fill-mode: forwards;
 }
 
+
 // 新增相機對焦動畫效果
 @keyframes focusBlurSharp {
   0% {
@@ -29,6 +30,19 @@
     filter: blur(0);
     transform: scale(1.05);
   }
+
+ /* 標題 */
+//  .productTitle {
+//   background-color: transparent;
+//   font-family: "Noto Sans TC", serif;
+//   font-weight: 700;
+//   border-left: solid 7px #f9a11b;
+// }
+
+// .productPrice {
+//   color: black;
+//   font-weight: bold;
+
 }
 
 @keyframes focusFrameAppear {
@@ -124,6 +138,7 @@
   padding: 0; // 移除padding
 }
 
+
 // 修改卡片容器增加額外空間
 .productScrollContainer {
   display: flex;
@@ -153,6 +168,11 @@
 .cardLink {
   text-decoration: none;
   color: inherit;
+
+// /* 產品區塊背景 */
+// .productArea {
+//   background-color: #143146;
+
 }
 
 // 修改產品卡片樣式
@@ -403,6 +423,7 @@
   padding: 0.4em 0.6em;
 }
 
+
 // 相機對焦框
 .focusFrame {
   position: absolute;
@@ -505,3 +526,10 @@
   opacity: 0 !important;
   pointer-events: none;
 }
+
+// @media (max-width: 576px) {
+//   .productTitle {
+//     margin-left: -33px;
+//   }
+// }
+

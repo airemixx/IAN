@@ -473,6 +473,8 @@ export default function RentShopping({ rental, onDateChange, onFeeChange }) {
         successSound.stop(); // 關閉視窗時停止音效 (適用於長音效)
       }
     })
+    // ✅ 觸發購物車更新
+    window.dispatchEvent(new Event('cartUpdated'))
   }
 
   return (
