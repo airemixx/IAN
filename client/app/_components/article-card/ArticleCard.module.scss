@@ -8,15 +8,22 @@
 // 修改標題區域樣式，添加動畫效果
 .homeArticleTitle {
   position: relative;
-  padding: 0 0 0 20px; // 保留左邊距，但移除邊框
+  padding: 0 20px;
   margin: 50px 0;
   display: flex;
+  justify-content: space-between; // 新增：兩邊分散
   align-items: center;
   height: 50px;
-  border-left: none; // 移除原來的邊線，將使用偽元素創建
-  overflow: hidden; // 隱藏溢出的文字
+  overflow: visible; // 修改這裡讓子元素的 hover 模糊效果不被裁切
 
-  // 左邊線動畫
+  h2 {
+    margin: 0;
+    font-weight: 800;
+    opacity: 0;
+    transform: translateX(-20px); // 初始位置向左偏移
+    animation: textSlide 0.6s ease 0.7s forwards; // 在邊線動畫完成後開始
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -26,14 +33,6 @@
     background-color: #ffa510;
     height: 0; // 初始高度為0
     animation: borderUp 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
-  }
-
-  h2 {
-    margin: 0;
-    font-weight: 800;
-    opacity: 0;
-    transform: translateX(-20px); // 初始位置向左偏移
-    animation: textSlide 0.6s ease 0.7s forwards; // 在邊線動畫完成後開始
   }
 }
 
@@ -262,7 +261,7 @@
 }
 
 /* 響應式設計 */
-@media (max-width: 768px) {
+@media (max-width: 576px) {
   .homepageArticleArea {
     flex-direction: column;
   }
@@ -343,3 +342,24 @@
     animation: contentFadeIn 0.5s ease 1.2s forwards;
   }
 }
+
+// .desktopButton {
+//   display: block;
+// }
+
+// .mobileButton {
+//   display: none;
+// }
+
+// @media (max-width: 576px) {
+//   .homeArticleTitle{
+//     margin-bottom: 1rem;
+//   }
+//   .desktopButton {
+//     display: none;
+//   }
+//   .mobileButton {
+//     display: block;
+//     margin-bottom: 1rem; // 調整按鈕與標題的間距
+//   }
+// }

@@ -13,6 +13,7 @@ export default function ProductCardIndex() {
   const scrollContainerRef = useRef(null); // 添加對滾動容器的引用
   const [isAtStart, setIsAtStart] = useState(true); // 新增：追蹤是否在起始位置
   const [isAtEnd, setIsAtEnd] = useState(false); // 新增：追蹤是否在結尾位置
+  const [isHovering, setIsHovering] = useState(false); // 新增：追蹤滑鼠是否在輪播容器上
 
   useEffect(() => {
     async function fetchProducts() {
@@ -104,7 +105,21 @@ export default function ProductCardIndex() {
         scrollContainer.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [scrollContainerRef.current]);
+  }, [products.length]);
+
+  // 添加此 useEffect
+  useEffect(() => {
+    if (products.length > 0 && scrollContainerRef.current) {
+      // 強制重新計算滾動狀態
+      const container = scrollContainerRef.current;
+      const scrollLeft = container.scrollLeft;
+      const scrollWidth = container.scrollWidth;
+      const clientWidth = container.clientWidth;
+
+      setIsAtStart(scrollLeft < 5);
+      setIsAtEnd(Math.abs(scrollWidth - clientWidth - scrollLeft) < 5);
+    }
+  }, [products]);
 
   // 當鼠標進入卡片時
   const handleMouseEnter = (index) => {
@@ -306,7 +321,11 @@ export default function ProductCardIndex() {
       </div>
 
       {/* 產品卡片區域 - 包含左右兩側的導航按鈕 */}
-      <div className={`${styles.productCarouselContainer} ${isAtStart ? styles.atStart : ''} ${isAtEnd ? styles.atEnd : ''}`}>
+      <div
+        className={`${styles.productCarouselContainer} ${isAtStart ? styles.atStart : ''} ${isAtEnd ? styles.atEnd : ''} ${isHovering ? styles.hovering : ''}`}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
         {/* 左側導航按鈕 - 使用 SVG chevron */}
         <button
           onClick={scrollLeft}

@@ -78,7 +78,7 @@
   padding: 0; // 移除所有padding，通過內部元素控制
   margin: 0 0 120px 0;
   font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
-  overflow: hidden; // 避免滾動溢出
+  overflow: visible; // 改為 visible，讓按鈕可顯示
 }
 
 // 調整標題區域為Flex佈局以使按鈕對齊
@@ -120,7 +120,7 @@
   position: relative;
   width: 100%;
   margin-bottom: 20px;
-  height: 500px;
+  height: 600px;
   padding: 0; // 移除padding
 }
 
@@ -130,9 +130,9 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  padding: 10px 0 100px; // 保持上下padding
-  padding-left: 80px; // 初始較大的左邊距，與蘋果官網類似
-  padding-right: 24px; // 右側保持小邊距
+  padding: 10px 0 10px; // 保持上下padding
+  padding-left: 80px; // 調整左側空間
+  padding-right: 80px; // 調整右側空間
   margin: 5px 0;
   transition: padding-left 0.8s ease; // 平滑過渡左邊距變化
   /* 隱藏滾動條但保留功能 */
@@ -162,7 +162,7 @@
   margin: 10px 20px 10px 20px; // 修改下邊距為10px，與上邊距一致
   padding-bottom: 0; // 碮保沒有額外的內部底部間距
   min-width: 330px;
-  flex: 0 0 330px; // 固定寬度
+  flex: 0 0 330px; // 固定寧度
   height: 500px; // 固定高度
   overflow: visible; // 確保overflow為visible
   display: flex;
@@ -460,8 +460,8 @@
   }
 }
 
-// 設定導航按鈕容器懸停時顯示按鈕
-.productCarouselContainer:hover .navButton {
+// 改為在整個 .productContainer 裡懸停時就顯示按鈕
+.productContainer:hover .navButton {
   opacity: 1;
 }
 
@@ -475,8 +475,9 @@
   right: 16px;
 }
 
+
 // 響應式設計 - 移動設備上隱藏按鈕
-@media screen and (max-width: 734px) {
+@media screen and (max-width: 1200px) {
   .navButton {
     display: none; // 在移動設備上完全隱藏
   }
