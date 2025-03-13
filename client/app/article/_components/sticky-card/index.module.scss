@@ -81,3 +81,43 @@
   font-size: 0.8rem;
   color: #ffffff;
 }
+
+@media screen and (max-width: 990px) {
+  .card-custom{
+    position: relative;
+    top: 0;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 710px) {
+.card-custom {
+    height: auto;
+    aspect-ratio: 1/1.5; /* 維持一個適合小螢幕的寬高比 */
+    max-height: 80vh; /* 確保高度不會超過視窗高度的80% */
+    width: 99%; /* 使卡片寬度稍微縮小以避免貼邊 */
+  }
+  
+  .card-content {
+    bottom: 20px; /* 調整內容位置 */
+    padding: 0 10px;
+  }
+  
+  .card-title a {
+    font-size: 1.5rem; /* 縮小標題字體大小 */
+    padding: 0 5px;
+  }
+  
+  .card-category a {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+  
+  .card-author {
+    font-size: 0.8rem;
+  }
+  
+  .card-date {
+    font-size: 0.7rem;
+  }
+}

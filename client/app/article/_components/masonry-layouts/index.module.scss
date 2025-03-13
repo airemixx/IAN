@@ -113,10 +113,58 @@
   }
 }
 
+@media screen and (max-width: 990px) {
+  .article-list-card-area {
+    max-width: 700px;
+    width: 100%;
+    
+    /* 修改為space-between分布 */
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+  
+  /* 取消左右欄位的外邊距 */
+  :global(.left.me-4) {
+    margin-right: 0 !important;
+    width: 48%;
+  }
+  
+  :global(.right.ms-4) {
+    margin-left: 0 !important;
+    width: 48%;
+  }
+  
+  .article-card-1-image img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    aspect-ratio: 3/4.5;
+  }
+
+  /* 第二種卡片圖片縮放 */
+  .article-card-2-image img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    aspect-ratio: 1/1;
+  }
+  
+  /* 內容區域樣式 */
+  .article-card-content {
+    max-width: 100%;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .container{
+    margin-top: 50px;
+  }
+}
+
+
 /* 進一步壓縮在更小尺寸 */
 @media screen and (max-width: 768px) {
-  .left,
-  .right {
-    width: 100% !important;
-  }
+
 }

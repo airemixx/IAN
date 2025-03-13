@@ -150,11 +150,6 @@
   overflow-x: hidden; */
 }
 
-@media screen and (max-width: 1155px) {
-  .y-bg-list {
-    padding: 0 3px;
-  }
-}
 
 @media screen and (max-width: 1375px) {
   .y-page-container {
@@ -164,11 +159,32 @@
   }
 }
 
+@media screen and (max-width: 1155px) {
+  .y-bg-list {
+    padding: 0 3px;
+  }
+}
+
+@media screen and (max-width: 990px) {
+  .y-page-container{
+    display: inline-block;
+    overflow: visible;
+  }
+}
+@media screen and (max-width: 576px) {
+  .y-bg-use {
+    margin-top: 50px;
+  }
+}
+
+
+
 @media screen and (max-width: 390px) {
+
   .y-container {
     max-width: 390px;
     width: 100%;
-    padding: 0 32px;
+    padding: 0 8px;
   }
 
   .y-article-content {
@@ -177,5 +193,8 @@
 
   .y-aside {
     display: none;
+  }
+  .y-bg-use {
+    margin-top: 50px;
   }
 }
