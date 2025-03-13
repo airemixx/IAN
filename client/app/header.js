@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, { useRef, useEffect, useState } from 'react'
 import { usePathname } from "next/navigation";
 import MenuToggle from './_components/MenuToggle/MenuToggle'
+import { useCompare } from '@/app/product/_context/CompareContext'
 
 export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const router = useRouter()
@@ -12,6 +13,16 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const inputRef = useRef(null)
   const selectRef = useRef(null)
   const pathname = usePathname();
+
+  const [cartAmount, setCartAmount] = useState(null); // 預設為 null，避免 hydration 錯誤
+  const { compareList } = useCompare()
+
+  const [isClient, setIsClient] = useState(false);
+  const hasCompareItems = isClient && compareList.length > 0;
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -26,6 +37,30 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
     }
   }, [setSearchOpen])
 
+  useEffect(() => {
+    // ✅ 確保只在瀏覽器執行（避免 SSR 錯誤）
+    if (typeof window === 'undefined') return
+
+    const updateCartAmount = () => {
+      const camera = JSON.parse(localStorage.getItem('cart')) || []
+      const lesson = JSON.parse(localStorage.getItem('shoppingCart')) || []
+      const rental = JSON.parse(localStorage.getItem('rent_cart')) || []
+
+      const cart = [...camera, ...lesson, ...rental]
+      setCartAmount(cart.length)
+    }
+
+    updateCartAmount() // 初始載入時更新數量
+
+    // 監聽 `cartUpdated` 事件
+    const handleCartUpdate = () => updateCartAmount()
+    window.addEventListener('cartUpdated', handleCartUpdate)
+
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+    }
+  }, [])
+  
   const handleSearch = async (e) => {
     e.preventDefault()
     const keyword = inputRef.current.value.trim()
@@ -213,12 +248,12 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <Link href="/article">影像誌</Link>
             </li>
             <li>
-              <a href="#">聯絡我們</a>
+              {/* <a href="#">聯絡我們</a> */}
             </li>
           </ul>
 
           <ul className="nav-right">
-            <li>
+            <li className='d-flex'>
               <a
                 href="#"
                 onClick={(e) => {
@@ -231,11 +266,13 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <Link href="/login">
                 <img src="/images/icon/user.svg" alt="" />
               </Link>
-              <Link href="/product/spec">
-                <img src="/images/icon/compare.svg" alt="" />
+              <Link href="/product/spec" className={isClient ? "compare-link" : "compare-link"}>
+                <img src="/images/icon/compare.svg" alt="Compare" />
+                {hasCompareItems && <span className="compare-badge"></span>}
               </Link>
-              <Link href="/cart">
+              <Link href="/cart" className='d-flex'>
                 <img src="/images/icon/cart.svg" alt="" />
+                {cartAmount > 0 && <div className="cartAmount text-center">{cartAmount}</div>}
               </Link>
             </li>
           </ul>

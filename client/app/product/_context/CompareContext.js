@@ -1,4 +1,5 @@
 "use client";
+import Header from "@/app/header";
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CompareContext = createContext();
@@ -78,6 +79,7 @@ export function CompareProvider({ children }) {
 
   return (
     <CompareContext.Provider value={{ compareList, addToCompare, removeFromCompare, updateCompare }}>
+      <Header />
       {children}
     </CompareContext.Provider>
   );
