@@ -835,10 +835,29 @@
 }
 
 @media (max-width: 768px) {
+  .chatButton {
+    width: 45px !important;
+    height: 45px !important;
+    min-width: 45px !important;
+    min-height: 45px !important;
+    bottom: 75px !important; // 放在頂部按鈕上方 (20px + 45px + 10px)
+    right: 20px !important;
+    padding: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    img {
+      width: 20px !important;
+      height: 20px !important;
+    }
+  }
+  
   .chatWindow {
     width: calc(100vw - 40px);
     max-width: 320px;
     right: 10px;
+    bottom: 130px; // 調整窗口位置
   }
 }
 
@@ -911,3 +930,4 @@
     transform: none !important;
   }
 }
+

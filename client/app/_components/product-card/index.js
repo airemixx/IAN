@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/css'
-import 'swiper/css/pagination'
-import { Pagination } from 'swiper/modules'
 import styles from './ProductCard.module.scss'
 
 export default function ProductCardIndex() {
   const [products, setProducts] = useState([])
   const productRefs = useRef([]) // 用來儲存所有 productCard 的 ref
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [hoveredCard, setHoveredCard] = useState(null)
+  const [focusStage, setFocusStage] = useState(0) // 0: 無焦點, 1: 聚焦中, 2: 聚焦完成
+  const [isMouseInImageArea, setIsMouseInImageArea] = useState(false) // 新增：追蹤滑鼠是否在圖片區域
+  const [isTooCloseToEdge, setIsTooCloseToEdge] = useState(false) // 新增：追蹤滑鼠是否太靠近邊緣
 
   useEffect(() => {
     async function fetchProducts() {
@@ -20,7 +21,7 @@ export default function ProductCardIndex() {
         const sortedProducts = data
           .filter(product => product.category_id === 1 && ![18, 15, 16].includes(product.id))
           .sort((a, b) => b.price - a.price)
-        setProducts(sortedProducts.slice(0, 7))
+        setProducts(sortedProducts.slice(0, 6))
       } catch (error) {
         console.error("獲取商品失敗:", error)
       }
@@ -35,69 +36,155 @@ export default function ProductCardIndex() {
           if (entry.isIntersecting) {
             entry.target.classList.add(styles.fadeInUp);
           } else {
-            entry.target.classList.remove(styles.fadeInUp); // ✅ 滑出畫面後移除動畫，確保可以重複觸發
+            entry.target.classList.remove(styles.fadeInUp);
           }
         });
       },
-      { threshold: 0.3 } // ✅ 30% 出現在視野內就觸發
+      { threshold: 0.3 }
     );
-  
+
     productRefs.current.forEach((el) => {
       if (el) observer.observe(el);
     });
-  
+
     return () => observer.disconnect();
   }, [products]);
-  
+
+  // 當鼠標進入卡片時
+  const handleMouseEnter = (index) => {
+    setHoveredCard(index);
+    setFocusStage(1); // 開始聚焦
+
+    // 0.8秒後切換到聚焦完成狀態
+    setTimeout(() => {
+      setFocusStage(2);
+    }, 800);
+  };
+
+  // 當鼠標離開卡片時
+  const handleMouseLeave = () => {
+    setHoveredCard(null);
+    setFocusStage(0);
+  };
+
+  // 追蹤滑鼠位置
+  const handleMouseMove = (e, index) => {
+    if (hoveredCard === index) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMousePosition({ x, y });
+    }
+  };
+
+  // 當鼠標進入圖片區域
+  const handleImageAreaMouseEnter = (index) => {
+    setHoveredCard(index);
+    setFocusStage(1); // 開始聚焦
+    setIsMouseInImageArea(true);
+
+    // 0.8秒後切換到聚焦完成狀態
+    setTimeout(() => {
+      setFocusStage(2);
+    }, 800);
+  };
+
+  // 當鼠標離開圖片區域
+  const handleImageAreaMouseLeave = () => {
+    setIsMouseInImageArea(false);
+    setFocusStage(0);
+  };
+
+  // 追蹤圖片區域內的滑鼠位置，並處理邊界檢測
+  const handleImageAreaMouseMove = (e, index) => {
+    if (hoveredCard === index && isMouseInImageArea) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // 計算對焦框的一半尺寸 (框的寬和高各自的一半)
+      const frameHalfWidth = 20; // 40px 寬度的一半
+      const frameHalfHeight = 25; // 50px 高度的一半
+
+      // 計算邊界緩衝區 - 當靠近邊緣這個距離時隱藏對焦框
+      const buffer = 5; // 5px 的額外緩衝
+
+      // 檢查滑鼠是否太靠近邊緣
+      const tooCloseToEdge =
+        x - frameHalfWidth - buffer <= 0 || // 左邊緣
+        x + frameHalfWidth + buffer >= rect.width || // 右邊緣
+        y - frameHalfHeight - buffer <= 0 || // 上邊緣
+        y + frameHalfHeight + buffer >= rect.height; // 下邊緣
+
+      // 設置滑鼠位置
+      setMousePosition({ x, y });
+
+      // 如果太靠近邊緣，就暫時隱藏對焦框，否則顯示
+      if (tooCloseToEdge) {
+        // 隱藏對焦框但不更改聚焦狀態
+        setIsTooCloseToEdge(true);
+      } else {
+        setIsTooCloseToEdge(false);
+      }
+    }
+  };
 
   return (
-    <div className={`${styles.productArea} text-white py-5`}>
-      <div className="mx-5 py-5">
-        <h2 className="text-center mb-5">產品推薦</h2>
+    <div className={styles.productContainer}>
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>新登場</h2>
+      </div>
 
-        {/* Swiper 輪播區塊 */}
-        <Swiper
-          modules={[Pagination]}
-          spaceBetween={20}
-          slidesPerView={1}
-          breakpoints={{
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-            1280: { slidesPerView: 4 }
-          }}
-          pagination={{ clickable: true }}
-          className={styles.mySwiper}
-        >
-          {products.length > 0 ? (
-            products.map((product, index) => (
-              <SwiperSlide key={product.id}>
-                <div
-                  ref={(el) => (productRefs.current[index] = el)} // ✅ 設定 ref
-                  className={`card ${styles.productCard}`} // ✅ 預設沒有動畫，滑入時才加
-                >
-                  <div className="card-body">
-                    <div className={`bg-white mb-3 ${styles.cardArea}`}>
-                      <div className={`d-flex justify-content-between align-items-center mb-2 px-2 py-2 ${styles.cardImgArea}`}>
-                        <span className="badge rounded-pill">{product.brand_name}</span>
-                      </div>
-                      <img src={product.image_url} className="card-img-top rounded main-product-img" alt={product.title} />
-                    </div>
-                    <div className={styles.productDetail}>
-                      <h5 className="card-title">{product.title}</h5>
-                      <p className={`${styles.productName}`}>{product.name}</p>
-                      <p className={`${styles.productPrice}`}>NT$ {product.price.toLocaleString()}</p>
-                    </div>
-                    <Link href={`/product/${product.id}`} className="d-flex justify-content-center mt-3">
-                      <img src="images/HomePage-images/search-black.svg" alt="Search Icon" />
-                    </Link>
-                  </div>
+      <div className={styles.productScrollContainer}>
+        {products.length > 0 ? (
+          products.map((product, index) => (
+            <Link href={`/product/${product.id}`} key={product.id} className={styles.cardLink}>
+              <div
+                ref={(el) => (productRefs.current[index] = el)}
+                className={styles.productCard}
+                onMouseEnter={() => setHoveredCard(index)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className={styles.productInfo}>
+                  <p className={styles.productCategory}>{product.brand_name}</p>
+                  <h2 className={styles.productName}>{product.name}</h2>
+                  <p className={styles.productPrice}>NT$ {product.price.toLocaleString()}</p>
                 </div>
-              </SwiperSlide>
-            ))
-          ) : (
-            <p className="text-center">載入中...</p>
-          )}
-        </Swiper>
+
+                {/* 圖片容器，事件處理移到這裡 */}
+                <div
+                  className={`${styles.productImageContainer} ${hoveredCard === index && isMouseInImageArea ?
+                    (focusStage === 1 ? styles.focusing : styles.focused)
+                    : ''
+                    }`}
+                  onMouseEnter={() => handleImageAreaMouseEnter(index)}
+                  onMouseLeave={handleImageAreaMouseLeave}
+                  onMouseMove={(e) => handleImageAreaMouseMove(e, index)}
+                >
+                  {/* 對焦框只在圖片區域內顯示 */}
+                  {hoveredCard === index && isMouseInImageArea && !isTooCloseToEdge && (
+                    <div
+                      className={`${styles.focusFrame} ${focusStage === 2 ? styles.focusFrameActive : ''}`}
+                      style={{
+                        left: `${mousePosition.x}px`,
+                        top: `${mousePosition.y}px`,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    ></div>
+                  )}
+
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className={styles.productImage}
+                  />
+                </div>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className={styles.loadingText}>載入中...</p>
+        )}
       </div>
     </div>
   )

@@ -195,6 +195,7 @@
   clip-path: inset(0 0 100% 0);
 }
 
+// 修改基礎卡片內容中的標題樣式
 .cardContent {
   position: relative;
   z-index: 2;
@@ -208,18 +209,22 @@
   h6 {
     margin: 5px 0;
     font-size: 18px;
+    // 添加多行文本截斷
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; // 標準屬性
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; // 顯示省略號
+    max-height: 2.4em; // 大約兩行高度
+    line-height: 1.2; // 設置合適的行高
   }
 
   opacity: 0;
   transform: translateY(20px);
-
-  p,
-  h6 {
-    opacity: 0;
-    transform: translateY(10px);
-  }
 }
 
+// 小卡片額外樣式設定
 .articleSmallCardContent {
   @extend .cardContent;
   p {
@@ -229,13 +234,18 @@
 
   h6 {
     font-size: 16px;
+    margin-bottom: 5px; // 確保下方有足夠間距
+    font-weight: 600; // 稍微加粗以提高可讀性
   }
 }
 
+// 大卡片額外樣式設定
 .articleBigCardContent {
   @extend .cardContent;
   h6 {
     font-size: 24px;
+    line-height: 1.2; // 調整大標題的行高
+    margin-bottom: 8px; // 大卡片需要更多間距
   }
 }
 
