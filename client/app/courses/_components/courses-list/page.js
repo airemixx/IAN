@@ -135,9 +135,22 @@ export default function CourseList({ courses }) {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    const courseList = document.getElementById("course-list");
+    if (courseList) {
+      const offset = 200; // 例如：上移 50px
+      const elementTop = courseList.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementTop - offset,
+        behavior: "smooth",
+      });
+    }
+  };
+
 
   return (
-    <section className={`container ${styles["course-list"]}`}>
+    <section className={`container ${styles["course-list"]}`} id="course-list">
       {publishedCourses.length === 0 && currentCourses.length === 0 ? (
         <>
           <div className={styles["notfound"]}>
@@ -182,11 +195,10 @@ export default function CourseList({ courses }) {
             )}
           </div>
 
-          {/* 加回 Pagination */}
           <Pagination
             currentPage={currentPage}
             totalPages={Math.ceil(publishedCourses.length / coursesPerPage)}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
           />
 
           {isMobile && visibleCourses < publishedCourses.length && (

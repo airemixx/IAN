@@ -101,10 +101,10 @@ router.get('/me', async (req, res) => {
 
     // ✅ 回傳老師完整資訊
     res.json({
-      id: user.id, 
-      name: user.name, 
-      email: user.mail, 
-      level: user.level, // ✅ 讓前端可以判斷身份
+      id: user.id,
+      name: user.name,
+      email: user.mail,
+      level: user.level, // 讓前端可以判斷身份
       teacher_id: teacher.teacher_id,
       bio: teacher.bio,
       website: teacher.website,
@@ -123,7 +123,7 @@ router.get('/me', async (req, res) => {
 
 // 編輯老師資料
 router.put('/me', authenticate, async (req, res) => {
-  console.log('✅ 收到更新請求 /api/teachers/me')
+  console.log('收到更新請求 /api/teachers/me')
 
   const { name, email, bio, website, facebook, instagram, youtube } = req.body
   const userId = req.userId // 從 Token 取得 userId
@@ -335,22 +335,22 @@ router.post('/login', async (req, res) => {
 // **取得當前老師的課程**
 router.get('/me/courses', async (req, res) => {
   try {
-    console.log('✅ 收到 /me/courses API 請求')
+    // console.log('✅ 收到 /me/courses API 請求')
 
     // **1️⃣ 確保有 Token**
     if (!req.headers.authorization) {
-      console.log('❌ 未提供驗證 token')
+      // console.log('❌ 未提供驗證 token')
       return res.status(401).json({ error: '未提供驗證 token' })
     }
 
     const token = req.headers.authorization.split(' ')[1]
     if (!token) {
-      console.log('❌ Token 格式錯誤')
+      // console.log('❌ Token 格式錯誤')
       return res.status(401).json({ error: 'Token 格式錯誤' })
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
-  
+
 
     // **2️⃣ 檢查是否為老師**
     if (!decoded || decoded.level !== 1) {
@@ -372,21 +372,22 @@ router.get('/me/courses', async (req, res) => {
 
     // **4️⃣ 查詢老師的課程**
     const sqlCourses = `
-      SELECT 
-        c.*,
-        t.name AS teacher_name, 
-        t.image AS teacher_image,
-        u.level,  
-        u.mail,
-        IFNULL(AVG(cm.rating), 0) AS rating,
-        COUNT(cm.id) AS review_count
-      FROM courses c
-      LEFT JOIN teachers t ON c.teacher_id = t.id
-      LEFT JOIN users u ON t.user_id = u.id
-      LEFT JOIN comments cm ON c.id = cm.course_id
-      WHERE c.teacher_id = ?
-      GROUP BY c.id, t.id, u.level
-    `
+    SELECT 
+      c.*,
+      t.name AS teacher_name, 
+      t.image AS teacher_image,
+      u.level,  
+      u.mail,
+      IFNULL(AVG(cm.rating), 0) AS rating,
+      COUNT(cm.id) AS review_count
+    FROM courses c
+    LEFT JOIN teachers t ON c.teacher_id = t.id
+    LEFT JOIN users u ON t.user_id = u.id
+    LEFT JOIN comments cm ON c.id = cm.course_id
+    WHERE c.teacher_id = ? AND c.is_deleted = FALSE
+    GROUP BY c.id, t.id, u.level
+  `;
+
 
     const [courses] = await pool.query(sqlCourses, [teacherId])
 

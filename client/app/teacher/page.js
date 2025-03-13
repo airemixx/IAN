@@ -7,6 +7,7 @@ import { FaBars, FaList, FaSearch, FaPlusSquare, FaEye } from 'react-icons/fa'
 import { FiEdit, FiTrash2 } from 'react-icons/fi'
 import Pagination from '../courses/_components/pagination/page'
 import Link from 'next/link'
+import Swal from 'sweetalert2';
 
 export default function CourseManagement() {
   const [user, setUser] = useState(null);
@@ -51,7 +52,7 @@ export default function CourseManagement() {
         console.log("📌 `userRole` 已存入 localStorage:", userRole);
 
         setUser({
-          name: userData.teacher_name || "未命名",
+          name: userData.teacher_name || userData.name || "未命名",
           level: userData.level,
           email: userData.mail,
         });
@@ -68,12 +69,12 @@ export default function CourseManagement() {
   // **獲取課程資訊**
   useEffect(() => {
     if (!user) return;
-  
+
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("loginWithToken");
         let coursesUrl = "";
-    
+
         if (user.level === 1) {
           coursesUrl = "http://localhost:8000/api/teachers/me/courses";
         } else if (user.level === 88) {
@@ -84,22 +85,22 @@ export default function CourseManagement() {
           router.push("/dashboard");
           return;
         }
-    
+
         console.log("📡 正在發送請求到:", coursesUrl);
         const coursesRes = await fetch(coursesUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
-    
+
         if (!coursesRes.ok) throw new Error(`API 錯誤: ${coursesRes.status}`);
-    
+
         const coursesData = await coursesRes.json();
         console.log("✅ 取得課程資料:", coursesData);
-    
+
         // **這裡確保 coursesData 是陣列**
         if (!Array.isArray(coursesData)) {
           throw new Error("課程資料格式錯誤，應為陣列");
         }
-    
+
         setCourses(coursesData);
       } catch (error) {
         console.error("❌ 獲取課程失敗:", error);
@@ -108,12 +109,9 @@ export default function CourseManagement() {
         setLoading(false);
       }
     };
-    
-    
-  
     fetchCourses();
   }, [user]);
-  
+
 
   useEffect(() => {
     console.log('📌 目前的 courses:', courses);
@@ -121,6 +119,114 @@ export default function CourseManagement() {
       setCurrentPage(1);
     }
   }, [courses]);
+
+  // 刪除課程
+  const handleDeleteCourse = async (courseId) => {
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "確定要刪除此課程嗎?",
+      html: `
+    <p style="line-height: 1.6; font-size: 16px; color: #666;">
+      若想保留課程內容，請先下架或備份內容
+    </p>
+  `,
+      showCancelButton: true,
+      confirmButtonColor: "#e58e41",
+      cancelButtonColor: "#666666",
+      confirmButtonText: "刪除",
+      cancelButtonText: "取消",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem("loginWithToken");
+        const res = await fetch(`http://localhost:8000/api/courses/${courseId}/delete`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) throw new Error("刪除課程失敗");
+
+        setCourses(prevCourses => prevCourses.filter(course => course.id !== courseId));
+
+        Swal.fire({
+          title: "已刪除！",
+          text: "該課程已成功刪除。",
+          icon: "success",
+          showConfirmButton: true,
+          confirmButtonText: "OK",
+          confirmButtonColor: "#143146",
+        });
+      } catch (error) {
+        console.error("❌ 刪除課程失敗:", error);
+        Swal.fire("錯誤！", "刪除失敗，請稍後再試。", "error");
+      }
+    }
+  };
+
+
+  //修改上下架狀態
+  const handleToggleStatus = async (courseId, currentStatus) => {
+    const newStatus = currentStatus === "published" ? "draft" : "published"; 
+
+    
+    const result = await Swal.fire({
+      title: `確定要${newStatus === "published" ? "上架" : "下架"}這堂課程嗎？`,
+      text: newStatus === "published"
+        ? "上架後，學員可以瀏覽及購買此課程。"
+        : "下架後，學員將無法瀏覽及購買此課程。",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: newStatus === "published" ? "#4CAF50" : "#d33", 
+      confirmButtonColor: "#e58e41",
+      cancelButtonColor: "#666666",
+      confirmButtonText: newStatus === "published" ? "上架課程" : "下架課程",
+      cancelButtonText: "取消",
+    });
+
+    if (!result.isConfirmed) return; 
+
+    try {
+      const token = localStorage.getItem("loginWithToken");
+
+      const res = await fetch(`http://localhost:8000/api/courses/${courseId}/status`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) throw new Error("更新狀態失敗");
+
+
+      setCourses((prevCourses) =>
+        prevCourses.map((course) =>
+          course.id === courseId ? { ...course, status: newStatus } : course
+        )
+      );
+
+      await Swal.fire({
+        title: `${newStatus === "published" ? "已上架！" : "已下架！"}`,
+        text: `課程已成功${newStatus === "published" ? "上架" : "下架"}。`,
+        icon: "success",
+        confirmButtonColor: "#143146",
+      });
+
+      console.log(`📌 課程 ${courseId} 狀態已更新為 ${newStatus}`);
+    } catch (error) {
+      console.error("❌ 狀態更新失敗:", error);
+
+      Swal.fire({
+        title: "更新失敗",
+        text: "無法更改課程狀態，請稍後再試。",
+        icon: "error",
+        confirmButtonColor: "#d33",
+      });
+    }
+  };
+
 
   // **搜尋 & 分頁**
   const filteredCourses = courses.filter(
@@ -198,7 +304,7 @@ export default function CourseManagement() {
             </thead>
             <tbody>
               {currentCourses.map((course) => {
-                {/* console.log(`📌 顯示課程:`, course) */}
+                {/* console.log(`📌 顯示課程:`, course) */ }
                 const safeImage = course.image_url
                   ? course.image_url
                   : `/uploads/course-cover/${course.image_url}` ||
@@ -241,16 +347,19 @@ export default function CourseManagement() {
                     </td> */}
                     <td data-label="學生人數">{course.student_count.toLocaleString()}</td>
                     <td data-label="發布狀態">
-                      <div className={styles['state-circle']}>
-                        <div
-                          className={` ${course.status === 'published'
-                            ? styles['published']
-                            : styles['draft']
-                            }`}
-                        ></div>
-                        {course.status === 'published' ? '上架中' : '未上架'}
+                      <div className={styles["state-toggle"]}>
+                        <label className={styles["switch"]}>
+                          <input
+                            type="checkbox"
+                            checked={course.status === "published"}
+                            onChange={() => handleToggleStatus(course.id, course.status)}
+                          />
+                          <span className={styles["slider"]}></span>
+                        </label>
+                        <span>{course.status === "published" ? "上架中" : "未上架"}</span>
                       </div>
                     </td>
+
                     <td>
                       <Link
                         href={`/teacher/course/course-edit?id=${course.id}`}
@@ -261,9 +370,10 @@ export default function CourseManagement() {
                       </Link>
                     </td>
                     <td>
-                      <button className={styles['delete-btn']}>
+                      <button className={styles['delete-btn']} onClick={() => handleDeleteCourse(course.id)}>
                         <FiTrash2 />
                       </button>
+
                     </td>
                   </tr>
                 )

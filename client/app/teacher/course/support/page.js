@@ -8,6 +8,7 @@ import Lottie from 'lottie-react'
 import typingAnimation from '@/public/animations/typing.json'
 import { RxCross2 } from "react-icons/rx";
 import { IoImageOutline } from "react-icons/io5";
+import Modal from "react-modal";
 
 export default function SupportChat() {
   const [userRole, setUserRole] = useState(null)
@@ -21,6 +22,8 @@ export default function SupportChat() {
   const chatBodyRef = useRef(null)
   const [initialLoadDone, setInitialLoadDone] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
 
   // 🔹 FAQ 快速回覆選單
@@ -483,7 +486,7 @@ export default function SupportChat() {
   const resetTextareaHeight = () => {
     const textarea = document.getElementById("messageInput");
     if (textarea) {
-      textarea.style.height = "30px"; 
+      textarea.style.height = "30px";
     }
   };
 
@@ -498,6 +501,11 @@ export default function SupportChat() {
     setSelectedFile(null);
   };
 
+  //訊息圖片放大
+  const openModal = (imageSrc) => {
+    setSelectedImage(imageSrc);
+    setIsOpen(true);
+  };
 
   return (
     <div className={styles['center-content']}>
@@ -611,7 +619,10 @@ export default function SupportChat() {
                           alt="發送的圖片"
                           className={styles.chatImage}
                           onError={(e) => (e.target.style.display = "none")}
+                          onClick={() => openModal(msg.text)}
                         />
+
+
                       ) : (
                         <div className={styles.text}>{msg.text}</div>
                       )}
@@ -639,6 +650,17 @@ export default function SupportChat() {
                   <Lottie animationData={typingAnimation} loop={true} />
                 </div>
               )}
+
+              <Modal
+                isOpen={isOpen}
+                onRequestClose={() => setIsOpen(false)}
+                className={styles.modal}
+                overlayClassName={styles.overlay}
+                ariaHideApp={false} // 防止警告
+              >
+                {selectedImage && <img src={selectedImage} alt="放大圖片" className={styles.fullImage} />}
+                <button className={styles.closeBtn} onClick={() => setIsOpen(false)}>✖</button>
+              </Modal>
             </div>
 
             {/* FAQ 快速回應按鈕 */}
@@ -676,7 +698,7 @@ export default function SupportChat() {
                   </div>
                 )}
 
-                {/* ✅ 訊息輸入框，會自動變高 */}
+                {/* 訊息輸入框，會自動變高 */}
                 <textarea
                   value={newMessage}
                   id="messageInput"
@@ -706,8 +728,8 @@ export default function SupportChat() {
                     e.target.style.height = e.target.scrollHeight + "px";
                   }}
                 />
-                   {/* 上傳圖片按鈕 */}
-                   <label className={styles.uploadLabel}>
+                {/* 上傳圖片按鈕 */}
+                <label className={styles.uploadLabel}>
                   <IoImageOutline />
                   <input type="file" accept="image/*" onChange={handleFileChange} hidden />
                 </label>

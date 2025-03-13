@@ -448,22 +448,22 @@ footer-title {
   background: var(--gray--300);
 }
 
-::-webkit-scrollbar-button:vertical:decrement {
+/* ::-webkit-scrollbar-button:vertical:decrement {
   background: var(--gray--50);
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="%23807871" viewBox="0 0 8 8"><polygon points="4,0 0,4 8,4"/></svg>');
   background-repeat: no-repeat;
   background-position: center;
-  height: 16px; /* 調整按鈕大小 */
-}
+  height: 16px; /* 調整按鈕大小 
+}*/
 
-/* 下滾按鈕 */
-::-webkit-scrollbar-button:vertical:increment {
+
+/* ::-webkit-scrollbar-button:vertical:increment {
   background: var(--gray--50);
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="%23807871" viewBox="0 0 8 8"><polygon points="0,0 8,0 4,4"/></svg>');
   background-repeat: no-repeat;
   background-position: center;
   height: 16px;
-}
+} */
 
 
 /* 響應式樣式 */

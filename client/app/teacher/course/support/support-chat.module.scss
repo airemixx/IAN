@@ -23,7 +23,7 @@
   border-bottom: 1px solid #ddd;
   cursor: pointer;
   transition: background 0.3s ease;
-  overflow: hidden; /* 隱藏溢出的文字 */
+  overflow: hidden; 
 }
 
 .chatItem:hover,
@@ -80,10 +80,10 @@
   flex: 1;
   overflow-y: auto;
   padding: 20px;
-  padding-bottom: 30px; /* ✅ 預留空間，避免 `.quickReplies` 被聊天內容擠壓 */
+  padding-bottom: 30px; 
   display: flex;
   flex-direction: column;
-  min-height: 0; /* ✅ 確保 `flex: 1` 不會影響 `.quickReplies` */
+  min-height: 0; 
   background-color: white;
 }
 
@@ -121,12 +121,11 @@
   white-space: pre-wrap;
 }
 
-/* ✅ 如果是圖片，移除 padding */
+/* 如果是圖片，移除 padding */
 .noPadding {
   padding: 0;
-  border-radius: 8px; /* 避免圖片變成奇怪的形狀 */
+  border-radius: 8px; 
 }
-
 
 .text {
   text-align: justify;
@@ -136,7 +135,7 @@
 .message {
   display: flex;
   flex-direction: column;
-  max-width: 60%; /* 讓訊息框不會過寬 */
+  max-width: 60%; 
   padding: 10px 15px;
   border-radius: 12px;
   margin-bottom: 8px;
@@ -164,11 +163,10 @@
   align-items: center;
   background: #e0e2e6;
   padding: 10px;
-  border-radius:  0 0 20px 20px ;
+  border-radius: 0 0 20px 20px;
   position: relative;
   min-height: 50px;
 }
-
 
 .inputContainer {
   display: flex;
@@ -180,7 +178,6 @@
   min-height: 50px; // ✅ 避免過低
   gap: 10px; // ✅ 讓圖片與文字有間距
 }
-
 
 .inputField {
   flex-grow: 1;
@@ -260,9 +257,9 @@
 }
 
 .chatInfoText {
-  flex: 1; /* 讓內容區域撐滿剩餘空間 */
-  min-width: 0; /* 重要！防止內部元素撐爆 flex 容器 */
-  overflow: hidden; /* 防止溢出 */
+  flex: 1; 
+  min-width: 0; 
+  overflow: hidden; 
   display: flex;
   flex-direction: column;
 }
@@ -270,11 +267,11 @@
 .chatText {
   font-size: 0.9rem;
   color: #777;
-  white-space: nowrap; /* 文字不換行 */
-  text-overflow: ellipsis; /* 超出時顯示 "..." */
-  overflow: hidden; /* 隱藏超出的內容 */
-  display: block; /* 讓 text-overflow 生效 */
-  max-width: 90%; /* 限制最大寬度，防止溢出 */
+  white-space: nowrap;
+  text-overflow: ellipsis; 
+  overflow: hidden; 
+  display: block;
+  max-width: 90%; 
 }
 
 .quickReplies {
@@ -291,7 +288,7 @@
   flex-wrap: wrap;
   min-height: 60px; /* ✅ 確保按鈕區塊不會被壓縮 */
   max-height: 100px; /* 避免過高 */
-  overflow-y: auto;
+  // overflow-y: auto;
 }
 
 /* 隱藏滾動條（Chrome/Safari） */
@@ -342,15 +339,12 @@
   max-height: 50px;
 }
 
-
-
 .imagePreview {
   width: 40px;
   height: 40px;
   border-radius: 8px;
   object-fit: cover;
 }
-
 
 .removeImageButton {
   background: white;
@@ -364,7 +358,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 30px; 
+  margin-left: 30px;
   margin-top: -30px;
   position: absolute;
   border: 1px solid rgb(206, 206, 206);
@@ -375,6 +369,84 @@
   max-height: 200px; /* 限制最大高度 */
   border-radius: 8px; /* 圓角 */
   object-fit: cover; /* 保持圖片比例 */
+}
+
+//放大圖片彈窗
+/* 預覽圖片 */
+.thumbnail {
+  width: 100px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.thumbnail:hover {
+  transform: scale(1.1);
+}
+
+/* 彈窗背景 */
+.overlay {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+
+.modal {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; 
+  animation: modalFadeInZoom 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  animation: fadeIn 0.3s ease-out;
+}
+
+
+/* 讓圖片決定自己的縮放規則 */
+.fullImage {
+  width: auto; 
+  height: auto; 
+  max-width: 60vw; 
+  max-height: 90vh; 
+  object-fit: contain; 
+}
+
+/* 修正關閉按鈕 */
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--gray-500);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 10px;
 }
 
 @media (max-width: 1200px) {

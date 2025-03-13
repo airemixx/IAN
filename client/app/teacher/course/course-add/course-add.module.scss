@@ -80,7 +80,7 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 20px;
-  border: 2px solid var(--bg-color-gray);
+  border: 1px solid var(--gray--50);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,6 +168,10 @@
 }
 
 // ckeditor
+.editor-container{
+  padding-top: 4px;
+}
+
 .ck-editor__editable {
   border-radius: 12px;
   padding: 10px;
