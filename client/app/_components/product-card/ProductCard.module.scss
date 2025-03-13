@@ -12,6 +12,8 @@
 
 .fadeInUp {
   animation: fadeInUp 0.8s ease forwards;
+  // 動畫將保持在最後一幀
+  animation-fill-mode: forwards;
 }
 
 // 新增相機對焦動畫效果
@@ -54,6 +56,13 @@
   100% {
     transform: scale(1.025);
     opacity: 1;
+  }
+}
+
+// 添加依序延遲的動畫類別
+@for $i from 0 through 10 {
+  .delay-#{$i} {
+    animation-delay: #{$i * 0.1}s !important;
   }
 }
 

@@ -34,13 +34,23 @@ export default function ProductCardIndex() {
       (entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            entry.target.classList.add(styles.fadeInUp);
+            // 獲取卡片的索引
+            const cardIndex = productRefs.current.findIndex(ref => ref === entry.target);
+            if (cardIndex !== -1) {
+              // 添加淡入動畫和對應的延遲類別
+              entry.target.classList.add(styles.fadeInUp);
+              entry.target.classList.add(styles[`delay-${cardIndex}`]); // 依序延遲
+            }
           } else {
             entry.target.classList.remove(styles.fadeInUp);
+            // 移除所有延遲類別
+            for (let i = 0; i <= 10; i++) {
+              entry.target.classList.remove(styles[`delay-${i}`]);
+            }
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 } // 降低閾值以更早觸發動畫
     );
 
     productRefs.current.forEach((el) => {
