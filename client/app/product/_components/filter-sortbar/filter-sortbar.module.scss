@@ -135,7 +135,7 @@
     overflow-x: auto; // 允許水平滾動
     white-space: nowrap; // 防止換行
     scrollbar-width: none; // 隱藏滾動條 (Firefox)
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid rgba(120, 114, 114, 0.445);
     scroll-snap-type: x mandatory; // 讓滑動有吸附效果
   }
 

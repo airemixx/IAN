@@ -1,6 +1,7 @@
 .comparisonTable {
   margin-top: 40px;
   margin-bottom: 60px;
+  table-layout: fixed;
 
   th,
   td {
@@ -21,16 +22,17 @@
 
   @media (max-width: 391px) {
     .comparisonTable {
-      overflow-x: auto; /* ✅ 允許手機上滾動 */
+      overflow-x: auto;
       display: block;
     }
   
     th, td {
-      // width: auto; /* ✅ 讓欄位根據內容調整 */
       padding: 8px;
       font-size: 0.85rem;
       word-wrap: break-word;
-      // border: 1px solid red;
+    }
+    th {
+      width: 50px;
     }
   }
   
