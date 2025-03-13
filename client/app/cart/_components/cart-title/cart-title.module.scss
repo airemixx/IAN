@@ -11,6 +11,11 @@
     font-style: normal;
     line-height: normal;
   }
+  @media(min-width:1920px) {
+    .j-shoppingCartTitleBox{
+      margin-left: 9rem;
+    }
+  }
   @media(max-width:1920px) {
     .j-shoppingCartTitleBox{
       margin-left: 9rem;
