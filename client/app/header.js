@@ -13,6 +13,8 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const inputRef = useRef(null)
   const selectRef = useRef(null)
   const pathname = usePathname();
+
+  const [cartAmount, setCartAmount] = useState(null); // 預設為 null，避免 hydration 錯誤
   const { compareList } = useCompare()
 
   useEffect(() => {
@@ -28,6 +30,30 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
     }
   }, [setSearchOpen])
 
+  useEffect(() => {
+    // ✅ 確保只在瀏覽器執行（避免 SSR 錯誤）
+    if (typeof window === 'undefined') return
+
+    const updateCartAmount = () => {
+      const camera = JSON.parse(localStorage.getItem('cart')) || []
+      const lesson = JSON.parse(localStorage.getItem('shoppingCart')) || []
+      const rental = JSON.parse(localStorage.getItem('rent_cart')) || []
+
+      const cart = [...camera, ...lesson, ...rental]
+      setCartAmount(cart.length)
+    }
+
+    updateCartAmount() // 初始載入時更新數量
+
+    // 監聽 `cartUpdated` 事件
+    const handleCartUpdate = () => updateCartAmount()
+    window.addEventListener('cartUpdated', handleCartUpdate)
+
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+    }
+  }, [])
+  
   const handleSearch = async (e) => {
     e.preventDefault()
     const keyword = inputRef.current.value.trim()
@@ -220,7 +246,7 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
           </ul>
 
           <ul className="nav-right">
-            <li>
+            <li className='d-flex'>
               <a
                 href="#"
                 onClick={(e) => {
@@ -252,8 +278,10 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
                   ></span>
                 )}
               </Link>
-              <Link href="/cart">
+              
+              <Link href="/cart" className='d-flex'>
                 <img src="/images/icon/cart.svg" alt="" />
+                {cartAmount > 0 && <div className="cartAmount text-center">{cartAmount}</div>}
               </Link>
             </li>
           </ul>

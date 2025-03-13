@@ -53,7 +53,10 @@ export default function PriceFixed({ course }) {
       localStorage.setItem('shoppingCart', JSON.stringify(updatedCart))
       setCart(updatedCart)
     }
-    router.push('/cart/cart-step1')
+
+    // ✅ 觸發購物車更新
+    window.dispatchEvent(new Event('cartUpdated'))
+    router.push('/cart')
   }
 
   // 加入購物車
@@ -102,6 +105,8 @@ export default function PriceFixed({ course }) {
         autoClose: 2000,
       })
     }
+    // ✅ 觸發購物車更新
+    window.dispatchEvent(new Event('cartUpdated'))
   }
 
   useEffect(() => {
