@@ -14,6 +14,14 @@
   transform: translateY(0) !important;
 }
 
+ /* 標題 */
+ .productTitle {
+  background-color: transparent;
+  font-family: "Noto Sans TC", serif;
+  font-weight: 700;
+  border-left: solid 7px #f9a11b;
+}
+
 .productPrice {
   color: black;
   font-weight: bold;
@@ -30,7 +38,7 @@
 
 /* 產品區塊背景 */
 .productArea {
-  background-color: #14314600;
+  background-color: #143146;
 }
 
 /* 卡片區塊 */
@@ -115,4 +123,10 @@
 .badge {
   font-size: 0.8rem;
   padding: 0.4em 0.6em;
+}
+
+@media (max-width: 576px) {
+  .productTitle {
+    margin-left: -33px;
+  }
 }

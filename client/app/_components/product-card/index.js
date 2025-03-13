@@ -53,7 +53,7 @@ export default function ProductCardIndex() {
   return (
     <div className={`${styles.productArea} text-white py-5`}>
       <div className="mx-5 py-5">
-        <h2 className="text-center mb-5">產品推薦</h2>
+        <h2 className={`${styles.productTitle} text-left mb-4 ps-4`}>商品推薦</h2>
 
         {/* Swiper 輪播區塊 */}
         <Swiper

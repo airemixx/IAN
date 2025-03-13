@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, { useRef, useEffect, useState } from 'react'
 import { usePathname } from "next/navigation";
 import MenuToggle from './_components/MenuToggle/MenuToggle'
+import { useCompare } from '@/app/product/_context/CompareContext'
 
 export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const router = useRouter()
@@ -12,7 +13,9 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const inputRef = useRef(null)
   const selectRef = useRef(null)
   const pathname = usePathname();
+
   const [cartAmount, setCartAmount] = useState(null); // 預設為 null，避免 hydration 錯誤
+  const { compareList } = useCompare()
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -256,8 +259,24 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               <Link href="/login">
                 <img src="/images/icon/user.svg" alt="" />
               </Link>
-              <Link href="/product/spec">
-                <img src="/images/icon/compare.svg" alt="" />
+              <Link href="/product/spec" style={{ position: 'relative', display: 'inline-block' }}>
+                <img src="/images/icon/compare.svg" alt="Compare" />
+                {/* ✅ 如果 compareList 有商品，顯示紅點 */}
+                {compareList.length > 0 && (
+                  <span
+                    className="compare-badge"
+                    style={{
+                      position: 'absolute',
+                      top: '-3px',
+                      right: '-8px',
+                      backgroundColor: '#e58e41',
+                      borderRadius: '50%',
+                      width: '8px',
+                      height: '8px',
+                      display: 'block',
+                    }}
+                  ></span>
+                )}
               </Link>
               
               <Link href="/cart" className='d-flex'>
