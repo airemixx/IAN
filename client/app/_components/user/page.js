@@ -18,15 +18,24 @@ export default function UserMenu() {
   // 讀取 `localStorage` 並解析 JWT
   const fetchUserData = () => {
     const token = localStorage.getItem('loginWithToken');
-    const decoded = jwtDecode(token);
-    console.log(decoded);
+  
     if (!token) {
       setUser(null);
       return;
     }
-
+  
     try {
-      // const payload = JSON.parse(atob(token.split('.')[1]));
+      const decoded = jwtDecode(token);
+      console.log(decoded);
+  
+      // Check if the token is expired
+      const expirationTime = decoded.exp * 1000;
+      if (Date.now() > expirationTime) {
+        console.error('Token 已過期');
+        setUser(null);
+        return;
+      }
+  
       setUser({
         id: decoded.id,
         account: decoded.account,
