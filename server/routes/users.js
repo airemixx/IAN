@@ -514,7 +514,7 @@ router.post("/login", upload.none(), async (req, res) => {
         name: user.name,
         nickname: user.nickname || "",
         mail: user.mail,
-        head: user.head,
+        head: user.head || "/uploads/users.webp",
         level: user.level,
         birthday: user.birthday
           ? (() => {

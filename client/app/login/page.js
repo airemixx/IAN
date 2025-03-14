@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode'
 import { useRouter } from 'next/navigation'
 import GoogleLoginButton from "./_components/google/GoogleLoginButton";
 import LineLoginButton from "./_components/line/page";
+import Swal from 'sweetalert2'
 
 export default function loginPage() {
   const router = useRouter()
@@ -24,7 +25,9 @@ export default function loginPage() {
         const decodedUser = jwtDecode(savedToken)
         setToken(savedToken)
         setUser(decodedUser)
-        router.push('/user')
+        if (decodedUser) {
+          router.replace('/user'); 
+        }
       } catch (error) {
         console.error('Token 解碼失敗', error)
         localStorage.removeItem(appKey)
@@ -35,41 +38,63 @@ export default function loginPage() {
 
   // 登入處理，根據 level 導向不同頁面
   const handleLogin = async (e) => {
-    e.preventDefault()
-    const API = 'http://localhost:8000/api/users/login'
-
+    e.preventDefault();
+    const API = "http://localhost:8000/api/users/login";
+  
     try {
       const res = await fetch(API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ account, password }),
-      })
-
-      const result = await res.json()
-      if (result.status !== 'success') throw new Error(result.message)
-
-      const newToken = result.data.token
-      localStorage.setItem(appKey, newToken)
-      const userData = jwtDecode(newToken)
-      setToken(newToken)
-      setUser(userData)
-
-      // 根據 level 跳轉不同頁面
-      if (userData.level === 1 || 88) {
-        router.push('/teacher') // 講師跳轉至課程管理中心
-      } else if (userData.level === 2) {
-        router.push('/user/article') // 編輯跳轉至文章管理中心
-      } else {
-        router.push('/') // 其他使用者導回主頁
-        window.location.reload()
+      });
+  
+      const result = await res.json();
+  
+      if (result.status !== "success") {
+        throw new Error(result.message);
       }
+  
+      // ✅ 登入成功
+      const newToken = result.data.token;
+      localStorage.setItem(appKey, newToken);
+      const userData = jwtDecode(newToken);
+      setToken(newToken);
+      setUser(userData);
+  
+      Swal.fire({
+        icon: "success",
+        title: "登入成功",
+        text: "歡迎回來！",
+        confirmButtonText: "確定",
+      }).then(() => {
+        // 根據 level 跳轉不同頁面
+        if (userData.level === 1 || userData.level === 88) {
+          router.push("/teacher");
+        } else if (userData.level === 2) {
+          router.push("/user/article");
+        } else {
+          router.push("/");
+          window.location.reload();
+        }
+      });
     } catch (err) {
-      // console.error(err)
-      // alert(err.message)
+      // ❌ 錯誤處理
+      Swal.fire({
+        icon: "error",
+        title: "登入失敗",
+        text: err.message || "請稍後再試",
+        confirmButtonText: "確定",
+      });
     }
-  }
+  };
+  
   if (loading) {
-    return null;
+    return (
+      <div className="text-center mt-5">
+        <span className="spinner-border text-primary" role="status"></span>
+        <p>載入中...</p>
+      </div>
+    );
   }
 
   return (

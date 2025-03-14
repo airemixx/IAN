@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { FiLogOut } from "react-icons/fi";
+import { FiMenu, FiUser, FiShoppingCart, FiEdit, FiBox, FiBookOpen, FiHeart, FiGift, FiLogOut } from "react-icons/fi";
 import Swal from 'sweetalert2';
 import styles from './user.module.scss';
 import { useRouter } from "next/navigation";
@@ -152,6 +152,7 @@ export default function UserMenu() {
                 <Link href="/user/rental" className={styles.menuItem}>我的租借</Link>
                 <Link href="/user/course" className={styles.menuItem}>我的課程</Link>
                 <Link href="/user/collect" className={styles.menuItem}>我的收藏</Link>
+                <Link href="/user/coupon" className={styles.menuItem}>優惠券</Link>
                 <button className={styles.logout} onClick={handleLogout}>
                   <FiLogOut />
                   登出
