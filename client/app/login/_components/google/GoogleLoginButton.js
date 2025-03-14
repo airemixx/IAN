@@ -14,6 +14,7 @@ export default function GoogleLoginButton() {
       const userData = await signInWithGoogle();
       setUser(userData);
       router.push("/");
+      window.location.reload()
     } catch (error) {
       console.error("登入錯誤", error);
     }

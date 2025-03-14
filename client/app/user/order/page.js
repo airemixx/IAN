@@ -95,7 +95,8 @@ export default function UserPage() {
                                                             <div className="flex-grow-1">
                                                                 <h6 className={`mt-3 ${styles.productBrand}`}>{rental.brand || '無'}</h6>
                                                                 <h5>{rental.name}</h5>
-                                                                <span>價格 : {new Intl.NumberFormat('zh-TW').format(rental.fee)}/天</span>
+                                                                <span>價格 : {new Intl.NumberFormat('zh-TW').format(rental.rent_fee)}
+                                                                ，每日租金{new Intl.NumberFormat('zh-TW').format(rental.fee)}/天</span>
                                                             </div>
                                                         </div>
                                                     </div>

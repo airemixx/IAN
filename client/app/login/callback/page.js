@@ -41,6 +41,7 @@ export default function Callback() {
     };
 
     fetchTokenAndSaveUser();
+    
   }, [searchParams]);
 
   return (
@@ -50,7 +51,6 @@ export default function Callback() {
       ) : userData ? (
         <div>
           <p>名稱: {userData.name}</p>
-          <img src={userData.head} alt="User" width="100" />
         </div>
       ) : (
         <p>登入失敗，請重新嘗試</p>

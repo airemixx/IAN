@@ -279,8 +279,9 @@ export default function UserPage(props) {
     <div>
       <div className={`container py-4`}>
         <div className={`row ${styles.marginTop}`}>
+        <div className="col-md-3 py-4">
           <Sidenav />
-
+          </div>
           {/* 主要內容區 */}
           <div className="col-md-9 py-4">
             <div className="mb-4">
