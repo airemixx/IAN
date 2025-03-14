@@ -141,7 +141,7 @@ export default function CheckoutFormStep3() {
                     title: "付款成功",
                     text: "即將跳轉回首頁...",
                     icon: "success",
-                    timer: 3000, // 3秒後自動關閉
+                    timer: 1500, // 3秒後自動關閉
                     showConfirmButton: false, // 隱藏按鈕
                     allowOutsideClick: false, // 禁止點擊外部關閉
                     allowEscapeKey: false, // 禁止按 ESC 關閉
