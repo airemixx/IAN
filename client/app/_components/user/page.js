@@ -6,7 +6,7 @@ import { FiLogOut } from "react-icons/fi";
 import Swal from 'sweetalert2';
 import styles from './user.module.scss';
 import { useRouter } from "next/navigation";
-
+import { jwtDecode } from "jwt-decode";
 export default function UserMenu() {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,20 +18,22 @@ export default function UserMenu() {
   // 讀取 `localStorage` 並解析 JWT
   const fetchUserData = () => {
     const token = localStorage.getItem('loginWithToken');
+    const decoded = jwtDecode(token);
+    console.log(decoded);
     if (!token) {
       setUser(null);
       return;
     }
 
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      // const payload = JSON.parse(atob(token.split('.')[1]));
       setUser({
-        id: payload.id,
-        account: payload.account,
-        name: payload.name,
-        nickname: payload.nickname,
-        email: payload.mail || "",
-        avatar: payload.head,
+        id: decoded.id,
+        account: decoded.account,
+        name: decoded.name,
+        nickname: decoded.nickname,
+        email: decoded.mail || "",
+        avatar: decoded.head,
       });
     } catch (error) {
       console.error('無法解析 Token:', error);
