@@ -60,7 +60,7 @@ const CouponButton = () => {
       if (couponsToClaim.length === 0) {
         Swal.fire({
           title: '提示',
-          text: '您已經領取了所有優惠券，無法再領取！',
+          text: '您已領取所有優惠券，無法再領取！',
           icon: 'info',
           confirmButtonText: '確定',
           allowOutsideClick: true,
@@ -85,7 +85,7 @@ const CouponButton = () => {
       if (successCoupons.length > 0) {
         Swal.fire({
           title: '成功',
-          text: `優惠券已全部成功領取！`,
+          text: `已領取新會員優惠券！`,
           icon: 'success',
           confirmButtonText: '確定',
           allowOutsideClick: true,
