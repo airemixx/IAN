@@ -6,6 +6,7 @@ import styles from "./ArticleCard.module.scss";
 import { format } from "date-fns";
 import Link from "next/link";
 import ShopAllButton from "../ShopAllButton";
+import { useRouter } from 'next/navigation';
 
 // 使用 Intersection Observer 來觸發動畫
 const useIntersectionObserver = (ref, options) => {
@@ -80,6 +81,7 @@ const BigArticleCard = ({ id, category, title, date, backgroundImage }) => {
 const ArticleHomeContainer = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();  // 初始化 router
 
   useEffect(() => {
     const fetchLatestArticles = async () => {
@@ -113,7 +115,7 @@ const ArticleHomeContainer = () => {
       <div className={styles.homeArticleTitle}>
         <h2>最新消息 News</h2>
         <div className={styles.desktopButton}>
-          <ShopAllButton onClick={() => ("")} />
+          <ShopAllButton onClick={() => router.push('/article')} />
         </div>
       </div>
       {/* <div className={styles.mobileButton}>
