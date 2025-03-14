@@ -108,11 +108,11 @@ export default function UserArticleFilter({ onFilterChange, resultCount }) {
     handleFilterChange()
   }
 
-  // 渲染 select
+  // 修改 renderSelect 函數，使樣式與 select-list 一致
   const renderSelect = (id, options, title) => (
     <select
       id={id}
-      className="form-select select04 me-sm-2"
+      className={`form-select select04 me-sm-2 ${styles['y-custom-select']}`}
       title={title}
       onChange={handleFilterChange}
     >
@@ -134,8 +134,8 @@ export default function UserArticleFilter({ onFilterChange, resultCount }) {
         )}
       </div>
       <div className="mb-3">
-        <div className={`d-flex justify-content-between y-selection`}>
-          <div className={`d-flex justify-content-start ${styles['y-collapse-area']}`}>
+        <div className={`d-flex flex-wrap justify-content-between y-selection`}>
+          <div className={`d-flex flex-wrap justify-content-start ${styles['y-collapse-area']}`}>
             {renderSelect('select-category', categories, 'Select Category')}
             {renderSelect('select-year', years, 'Select Year')}
             {renderSelect('select-month', months, 'Select Month')}

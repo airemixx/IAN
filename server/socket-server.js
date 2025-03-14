@@ -622,7 +622,7 @@ io.on('connection', (socket) => {
 });
 
 
-const PORT = process.env.SOCKET_PORT || 8001;
+const PORT = process.env.SOCKET_PORT || 8000;
 server.listen(PORT, () => {
   console.log(`Socket.io 伺服器運行在端口 ${PORT}`);
 });
