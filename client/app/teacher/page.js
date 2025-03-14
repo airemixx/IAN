@@ -29,42 +29,51 @@ export default function CourseManagement() {
           router.push('/login');
           return;
         }
-
+  
         console.log('📡 正在發送請求取得使用者資訊...');
         const userRes = await fetch('http://localhost:8000/api/teachers/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         if (!userRes.ok) throw new Error(`API 錯誤: ${userRes.status}`);
-
+  
         const userData = await userRes.json();
         console.log('✅ 取得使用者資訊:', userData);
-
-        if (!userData.level) {
-          console.error('❌ API 回傳錯誤，沒有 level 值');
-          router.push('/dashboard');
-          return;
-        }
-
+  
+        // **確保 `level` 有值，預設為 0 (一般會員)**
+        const userLevel = userData.level ?? 0; // 如果 `level` 為 `null` 或 `undefined`，預設為 0
+        console.log(`📌 使用者 Level: ${userLevel}`);
+  
         // **儲存 `userRole` 到 localStorage**
-        const userRole = userData.level === 1 ? "teacher" : userData.level === 88 ? "admin" : "unknown";
+        const userRole =
+          userLevel === 1 ? "teacher" :
+          userLevel === 88 ? "admin" :
+          "user"; // 🚀 預設為一般會員
+  
         localStorage.setItem("userRole", userRole);
         console.log("📌 `userRole` 已存入 localStorage:", userRole);
-
+  
         setUser({
           name: userData.teacher_name || userData.name || "未命名",
-          level: userData.level,
+          level: userLevel, // ✅ 確保 `level` 一定有值
           email: userData.mail,
         });
-
+  
+        // **如果是一般會員 (`level === 0`)，跳轉 `/dashboard`**
+        if (userRole === "user") {
+          console.warn("⚠️ 一般會員登入，導向 dashboard");
+          router.push('/');
+        }
+  
       } catch (error) {
         console.error('❌ 獲取使用者資訊失敗:', error);
         router.push('/login');
       }
     };
-
+  
     fetchUser();
   }, []);
+  
 
   // **獲取課程資訊**
   useEffect(() => {
@@ -81,8 +90,8 @@ export default function CourseManagement() {
           console.log("🔹 管理員登入");
           coursesUrl = "http://localhost:8000/api/teachers/admin/courses";
         } else {
-          console.warn("⚠️ 無權限訪問，跳轉到 /dashboard");
-          router.push("/dashboard");
+          console.warn("⚠️ 無權限訪問，跳轉到 /");
+          router.push("/");
           return;
         }
 
@@ -167,9 +176,9 @@ export default function CourseManagement() {
 
   //修改上下架狀態
   const handleToggleStatus = async (courseId, currentStatus) => {
-    const newStatus = currentStatus === "published" ? "draft" : "published"; 
+    const newStatus = currentStatus === "published" ? "draft" : "published";
 
-    
+
     const result = await Swal.fire({
       title: `確定要${newStatus === "published" ? "上架" : "下架"}這堂課程嗎？`,
       text: newStatus === "published"
@@ -177,14 +186,14 @@ export default function CourseManagement() {
         : "下架後，學員將無法瀏覽及購買此課程。",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: newStatus === "published" ? "#4CAF50" : "#d33", 
+      confirmButtonColor: newStatus === "published" ? "#4CAF50" : "#d33",
       confirmButtonColor: "#e58e41",
       cancelButtonColor: "#666666",
       confirmButtonText: newStatus === "published" ? "上架課程" : "下架課程",
       cancelButtonText: "取消",
     });
 
-    if (!result.isConfirmed) return; 
+    if (!result.isConfirmed) return;
 
     try {
       const token = localStorage.getItem("loginWithToken");
