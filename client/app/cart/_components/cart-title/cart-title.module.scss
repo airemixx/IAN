@@ -23,18 +23,34 @@
   }
   @media(max-width:1400px) {
     .j-shoppingCartTitleBox{
-      margin-left: 5rem;
+      margin-left: 8rem;
     }
   }
 
   @media(max-width:1200px) {
     .j-shoppingCartTitleBox{
-      margin-left: 1rem;
+      margin-left: 4rem;
     }
   }
+  @media(max-width:996px) {
+    
+    .j-shoppingCartTitleBox{
+      margin-left: 0;
+    }
+  }
+
+  @media(max-width:576px) {
+    .j-shoppingCartTitleBox{
+      margin-left: 0;
+    }
+  }
+
   @media(max-width:390px) {
+    .j-shoppingCartTitleBox{
+      margin-left: 0;
+    }
     .j-shoppingCartTitleBox .j-shoppingCartTitle {
-      font-size: 45px;
+      font-size: 2.1rem;
       font-style: normal;
       font-weight: 400;
       line-height: normal;
