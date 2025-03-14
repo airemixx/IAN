@@ -71,7 +71,7 @@ export function SocketProvider({ children, user = null, isAdmin = false }) {
       console.log('嘗試建立Socket.io連接...');
 
       // 優化 Socket.io 連接配置
-      const newSocket = io('http://localhost:8000', {
+      const newSocket = io('http://localhost:8001', {
         transports: ['websocket'], // 只使用 WebSocket，不要降級到輪詢
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,

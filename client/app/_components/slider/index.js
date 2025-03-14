@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'  // 導入 useRouter
 import styles from './Slider.module.scss'
 
 // 圖片和對應的字卡內容
@@ -17,6 +18,7 @@ const slides = [
 ]
 
 export default function SliderIndex() {
+  const router = useRouter()  // 初始化 router
   const [currentIndex, setCurrentIndex] = useState(0)
   const sliderContainerRef = useRef(null)
   const parallaxElementsRef = useRef([])
@@ -62,6 +64,11 @@ export default function SliderIndex() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // 處理按鈕點擊事件
+  const handleExploreClick = () => {
+    router.push('/product')
+  }
+
   return (
     <div className={styles.sliderContainer} ref={sliderContainerRef}>
       {slides.map((slide, index) => (
@@ -82,7 +89,10 @@ export default function SliderIndex() {
           >
             <h1>{slide.title}</h1>
             <p>{slide.description}</p>
-            <button className={styles.slideButton}>
+            <button 
+              className={styles.slideButton}
+              onClick={handleExploreClick}
+            >
               <span>探索詳情</span>
             </button>
           </div>
