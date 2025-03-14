@@ -6,10 +6,13 @@ import styles from './index.module.scss';
 import StarRating from '@/app/courses/_components/star-rating/page.js';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 // 從資料庫取得推薦課程
 function ProductCard({ course }) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [token, setToken] = useState(null);
   const safeImage = course.image_url || '/images/default-course.jpg';
 
   useEffect(() => {
@@ -18,7 +21,93 @@ function ProductCard({ course }) {
       once: true,
       offset: 100,
     });
-  }, []);
+
+    // 讀取 token
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('loginWithToken');
+      setToken(storedToken);
+
+      // 如果有 token，檢查課程收藏狀態
+      if (storedToken && course.id) {
+        checkFavoriteStatus(storedToken, course.id);
+      }
+    }
+  }, [course.id]);
+
+  // 檢查收藏狀態
+  const checkFavoriteStatus = async (token, courseId) => {
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/courses/collection/${courseId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error('無法取得收藏狀態');
+
+      const data = await res.json();
+      setIsFavorite(data.isFavorite);
+    } catch (error) {
+      console.error('❌ 無法確認收藏狀態:', error);
+    }
+  };
+
+  // 收藏或取消收藏
+  const handleFavoriteClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) {
+      toast.warn('請先登入，即可收藏課程！', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    try {
+      const method = isFavorite ? 'DELETE' : 'POST';
+      let url = 'http://localhost:8000/api/courses/collection';
+
+      if (method === 'DELETE') {
+        url = `http://localhost:8000/api/courses/collection/${course.id}`;
+      }
+
+      console.log('📌 送出的請求:', method, url);
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body:
+          method === 'POST' ? JSON.stringify({ course_id: course.id }) : null,
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText);
+      }
+
+      setIsFavorite(!isFavorite);
+      toast.success(isFavorite ? '已取消收藏！' : '成功加入收藏！', {
+        position: 'top-right',
+        autoClose: 2000,
+      });
+    } catch (error) {
+      console.error('收藏錯誤:', error);
+      toast.error('操作失敗：' + (error.message || '發生錯誤，請稍後再試'), {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+    }
+  };
 
   return (
     <div className="col-lg-3 col-sm-6 col-12" data-aos="fade-up">
@@ -34,15 +123,13 @@ function ProductCard({ course }) {
             <div className={styles['img-overlay']}></div>
             <button
               className={styles['favorite-icon']}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsFavorite(!isFavorite);
-              }}
+              onClick={handleFavoriteClick}
             >
-              <img
-                src={isFavorite ? "/images/icon/heart-filled.svg" : "/images/article/heart-dark.svg"}
-                alt="收藏"
-              />
+              {isFavorite ? (
+                <FaHeart size={18} style={{ color: 'var(--secondary-color)' }} />
+              ) : (
+                <FaRegHeart size={18} style={{ color: 'var(--secondary-color)' }} />
+              )}
             </button>
           </div>
           <div className="card-body p-0 mt-3">
@@ -80,12 +167,12 @@ export default function Recommends() {
       console.log('正在獲取推薦課程...');
       const response = await fetch('/api/courses/recommend');
       console.log('推薦課程 API 響應狀態:', response.status);
-      
+
       if (!response.ok) {
         console.warn(`API 返回錯誤: ${response.status}`);
         return [];
       }
-      
+
       const data = await response.json();
       console.log('獲取到的課程數據:', data ? data.length : 'none');
       return data || [];
@@ -108,7 +195,7 @@ export default function Recommends() {
         setLoading(false);
       }
     };
-    
+
     loadCourses();
   }, []);
 
