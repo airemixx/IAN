@@ -64,8 +64,8 @@ export default function loginPage() {
         window.location.reload()
       }
     } catch (err) {
-      console.error(err)
-      alert(err.message)
+      // console.error(err)
+      // alert(err.message)
     }
   }
   if (loading) {

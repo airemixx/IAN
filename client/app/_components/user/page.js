@@ -115,9 +115,11 @@ export default function UserMenu() {
         onMouseEnter={handleMouseEnter}  // 滑鼠移入打開選單
         onMouseLeave={handleMouseLeave}  // 滑鼠移出時延遲關閉選單
       >
-        <button className={styles.userButton}>
+      
+
+        <Link href="/user">
           <Image src={"/images/icon/user.svg"} alt="User Icon" width={24} height={24} />
-        </button>
+          </Link>
 
         {/* 下拉選單 */}
         {menuOpen && (
