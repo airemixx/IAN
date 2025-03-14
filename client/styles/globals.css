@@ -215,10 +215,11 @@ nav {
   display: none;
 }
 
-.cartAmount{
+.cartAmount {
   width: 25px;
   height: 25px;
-  background-color: orange;
+  margin-left: 3px;
+  background-color: var(--warning-color);
   border-radius: 50%;
   color: #fff;
 }
@@ -480,7 +481,6 @@ footer-title {
   height: 16px; /* 調整按鈕大小 
 }*/
 
-
 /* ::-webkit-scrollbar-button:vertical:increment {
   background: var(--gray--50);
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="%23807871" viewBox="0 0 8 8"><polygon points="0,0 8,0 4,4"/></svg>');
@@ -488,7 +488,6 @@ footer-title {
   background-position: center;
   height: 16px;
 } */
-
 
 /* 響應式樣式 */
 @media screen and (max-width: 1200px) {

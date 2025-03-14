@@ -98,7 +98,7 @@ export default function RootLayout({ children }) {
   //loading
   useEffect(() => {
     setIsLoading(true); //pathname 變化時 顯示 Loading
-    const timer = setTimeout(() => setIsLoading(false), 500); 
+    const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
   }, [pathname]); // 每次網址變化時，重新執行
 
@@ -106,38 +106,42 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
-        <div className={isTeacherPage ? "" : isCartPage ? "layout-cart-container" : "layout-container"}>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={true}
-            closeOnClick
-            pauseOnHover
-            draggable
-            theme="dark"
-            className="custom-toast-container"
-            style={{ marginTop: "80px" }}
-          />
-          <CompareProvider>
-          {!isTeacherPage && (
-            <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
-          )}
+        {isExcluded ? (
 
-          {/* 確保 AppProvider 包住 main，但 Loading 只影響內容 */}
-          <AppProvider>
-            <SocketProvider user={defaultUser} isAdmin={false}>
-              <main className={isExcluded ? "" : "root-content"}>
-                {isLoading ? <Loading /> : children}
-              </main>
-            </SocketProvider>
-          </AppProvider>
+          <main>{isLoading ? <Loading /> : children}</main>
+        ) : (
 
-          {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}
-          </CompareProvider>
-        </div>
+          <div className={isCartPage ? "layout-cart-container" : "layout-container"}>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={true}
+              closeOnClick
+              pauseOnHover
+              draggable
+              theme="dark"
+              className="custom-toast-container"
+              style={{ marginTop: "80px" }}
+            />
+            <CompareProvider>
+              {!isTeacherPage && (
+                <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
+              )}
 
-        {/* top按鈕 */}
-        <ScrollTopButton />
+              {/* 確保 AppProvider 包住 main，但 Loading 只影響內容 */}
+              <AppProvider>
+                <SocketProvider user={defaultUser} isAdmin={false}>
+                  <main className={isExcluded ? "" : "root-content"}>
+                    {isLoading ? <Loading /> : children}
+                  </main>
+                </SocketProvider>
+              </AppProvider>
+
+              {isTeacherPage ? <TeacherFooter /> : <Footer isCartPage={isCartPage} />}
+            </CompareProvider>
+          </div>
+        )}
+        < ScrollTopButton />
       </body>
     </html>
   )
