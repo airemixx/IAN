@@ -17,7 +17,7 @@ import { IoIosArrowUp } from 'react-icons/io'
 import dynamic from "next/dynamic";
 import { SocketProvider } from './_components/chat/context/socketContext';
 import ScrollTopButton from "@/app/_components/top-btn/page.js"
-
+const Loading = dynamic(() => import("@/app/_components/loading/page.js"), { ssr: false });
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -29,7 +29,6 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
-const Loading = dynamic(() => import("@/app/_components/loading/page.js"), { ssr: false });
 
 export default function RootLayout({ children }) {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -124,7 +123,7 @@ export default function RootLayout({ children }) {
             <Header searchOpen={searchOpen} setSearchOpen={setSearchOpen} isCartPage={isCartPage} />
           )}
 
-          {/* 🔹 確保 AppProvider 包住 main，但 Loading 只影響內容 */}
+          {/* 確保 AppProvider 包住 main，但 Loading 只影響內容 */}
           <AppProvider>
             <SocketProvider user={defaultUser} isAdmin={false}>
               <main className={isExcluded ? "" : "root-content"}>

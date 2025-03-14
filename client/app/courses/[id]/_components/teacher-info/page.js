@@ -17,7 +17,9 @@ export default function TeacherInfo({ teacherId }) {
   const [teacher, setTeacher] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTeacher, setSelectedTeacher] = useState(null); // ✅ 保留你的狀態
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
   const [teacherData, setTeacherData] = useState({
     user_id: null,
     author_name: "",
@@ -62,6 +64,14 @@ export default function TeacherInfo({ teacherId }) {
       document.body.style.overflow = "auto"; // 彈出視窗關閉時恢復滾動
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   console.log("📌 TeacherInfo 接收到的 teacherId:", teacherId);
   if (loading) return <p></p>;
@@ -109,8 +119,12 @@ export default function TeacherInfo({ teacherId }) {
           <div className={styles['go-page-link']}>
             <button
               onClick={() => {
-                setSelectedTeacher(teacher) // 設定選擇的講師
-                setIsModalOpen(true)
+                if (isMobile) {
+                  window.location.href = `/courses/teacher/${teacherId}`; // 手機版跳轉新頁面
+                } else {
+                  setSelectedTeacher(teacher); // 桌機版開啟 Modal
+                  setIsModalOpen(true);
+                }
               }}
               className={styles['open-modal-btn']}
             >

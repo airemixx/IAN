@@ -418,5 +418,56 @@ router.delete('/collection/:courseId', authenticate, async (req, res) => {
   }
 });
 
+router.delete("/:courseId/delete", async (req, res) => {
+  console.log(`📡 收到刪除請求: /api/courses/${req.params.courseId}/delete`);
+  const { courseId } = req.params;
+
+  try {
+    if (!courseId) {
+      return res.status(400).json({ message: "課程 ID 缺失" });
+    }
+
+    // 執行 SQL 更新，將 is_deleted 設為 TRUE，並將 status 設為 "draft"
+    const [result] = await pool.query(
+      "UPDATE courses SET is_deleted = TRUE, status = 'draft' WHERE id = ?",
+      [courseId]
+    );
+
+    if (result.affectedRows === 0) {
+      console.error(`❌ 找不到課程 ID: ${courseId}`);
+      return res.status(404).json({ message: "找不到課程，刪除失敗" });
+    }
+
+    console.log(`✅ 課程 ${courseId} 已標記為刪除`);
+    res.json({ message: "課程已標記為刪除", courseId });
+
+  } catch (error) {
+    console.error("❌ 伺服器錯誤，刪除課程失敗:", error);
+    res.status(500).json({ message: "伺服器錯誤，請稍後再試" });
+  }
+});
+
+router.patch("/:courseId/status", authenticate, async (req, res) => {
+  const { courseId } = req.params;
+  const { status } = req.body; // 從前端取得新狀態（published / draft）
+
+  try {
+    console.log(`🔄 更新課程 ${courseId} 狀態為 ${status}`);
+
+    const updateSql = `UPDATE courses SET status = ? WHERE id = ?`;
+    const [result] = await pool.query(updateSql, [status, courseId]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "找不到課程，更新失敗" });
+    }
+
+    res.json({ message: "✅ 課程狀態更新成功！", courseId, newStatus: status });
+  } catch (error) {
+    console.error("❌ 更新課程狀態失敗:", error);
+    res.status(500).json({ error: "無法更新課程狀態" });
+  }
+});
+
+
 
 export default router

@@ -2,7 +2,7 @@
   position: relative;
   box-shadow: var(--box-shadow);
   background-color: var(--white);
-  padding: 2rem 2rem 3rem 2rem;
+  padding: 1rem 2rem 3rem 2rem;
   border-radius: 10px;
   max-height: 1200px; /* 設定一個固定的高度 */
   overflow: hidden; /* 隱藏超出部分 */
@@ -270,7 +270,10 @@
 }
 
 @media screen and (max-width: 567px) {
-
+  .course-detail-container {
+    padding: 1rem 0;
+    background-color: var(--white);
+  }
   /* --- 上方課程簡介 --- */
   .course-detail {
     position: relative;
