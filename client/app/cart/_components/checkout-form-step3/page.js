@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { jwtDecode } from "jwt-decode";
 import moment from "moment"
 import Swal from "sweetalert2";
+import { refresh } from "aos";
 
 export default function CheckoutFormStep3() {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function CheckoutFormStep3() {
             if (storedToken) {
                 setToken(storedToken);
                 const decodedToken = jwtDecode(storedToken);
-                setDecoded(decodedToken);
+                setDecoded(decodedToken.id);
             }
         }
     }, []);
@@ -127,22 +128,33 @@ export default function CheckoutFormStep3() {
 
             if (resData.status === "success") {
                 setResult(resData.data);
-                toast.success("付款成功");
-                LineInsertDB();
+                await LineInsertDB();
                 localStorage.removeItem('cart')
                 localStorage.removeItem('rent_cart')
                 localStorage.removeItem('shoppingCart')
                 localStorage.removeItem('cartItems')
                 localStorage.removeItem('buyerData')
                 localStorage.removeItem('discountMoney')
+                
+                window.dispatchEvent(new Event('cartUpdated'))
+                Swal.fire({
+                    title: "付款成功",
+                    text: "即將跳轉回首頁...",
+                    icon: "success",
+                    timer: 3000, // 3秒後自動關閉
+                    showConfirmButton: false, // 隱藏按鈕
+                    allowOutsideClick: false, // 禁止點擊外部關閉
+                    allowEscapeKey: false, // 禁止按 ESC 關閉
+                    willClose: () => {
+                        window.location.href = "/";
+                    }
+                });
+               
             } else {
                 toast.error("付款失敗");
             }
 
-            setTimeout(() => {
-                setLoading(false);
-                router.replace("/");
-            }, 3000);
+           
         } catch (error) {
             console.error("確認交易失敗:", error);
             toast.error("交易確認失敗");
@@ -151,18 +163,27 @@ export default function CheckoutFormStep3() {
     };
 
     async function LineInsertDB() {
+        
         try {
+            let decodedToken;
+            if (typeof window !== "undefined") {
+                const storedToken = localStorage.getItem("loginWithToken");
+                if (storedToken) {
+                    decodedToken = jwtDecode(storedToken);
+                   
+                }
+            }
             const orderData = {
                 merchantTradeNo: `od${moment().format('YYYYMMDDhhmmss')}`,
                 buyerData: JSON.parse(localStorage.getItem("buyerData")) || {},
                 cartItems: JSON.parse(localStorage.getItem("cartItems")) || [],
-                userId: decoded.id,
+                userId: decodedToken.id,
                 disMoney: JSON.parse(localStorage.getItem("discountMoney")) || 0
             };
-
+            
             console.log("送出訂單資料:", orderData);
 
-            const response = await fetch('/api/orders', {
+            const response = await fetch('http://localhost:8000/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData),
