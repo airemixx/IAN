@@ -260,6 +260,12 @@
     cursor: default;
   }
 }
+.k-detail-tag {
+  @media (max-width: 767px) {
+    line-height: 1.1;
+    font-size: 13px;
+  }
+}
 // 商品評論
 .k-star {
   vertical-align: middle; // 確保圖示與文字垂直置中
@@ -382,14 +388,21 @@
   z-index: 99;
 }
 .k-policy-swal-text {
-  text-align: start;
-  padding-left: 86px;
-}
-.k-policy-swal-text-m {
   text-align: center;
+  line-height: 1.8;
   padding: 0;
   margin: 0;
   li {
+    list-style: none;
+  }
+}
+.k-policy-swal-text-m {
+  text-align: center;
+  line-height: 1.8;
+  padding: 0;
+  margin: 0;
+  li {
+    margin-right: 5px;
     list-style: none;
   }
 }
@@ -575,7 +588,7 @@
     right: 0;
   }
   @media (max-width: 390px) {
-    bottom: 161px;
+    bottom: 131px;
   }
 }
 .k-slide-swal-actions {

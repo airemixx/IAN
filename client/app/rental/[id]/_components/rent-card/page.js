@@ -54,7 +54,7 @@ export default function RentCard({ rental }) {
           </h3>
           <div className="d-flex justify-content-between align-items-center">
             <span className="fs-6 fw-semibold">
-              NT$ {rental.fee} / 天
+              NT$ {rental.fee.toLocaleString()} / 天
             </span>
             <FavoriteButton rentId={rental.id} rental={rental} />
           </div>
