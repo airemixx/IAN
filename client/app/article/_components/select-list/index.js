@@ -249,7 +249,7 @@ export default function SelectList({ onFilterChange }) {
 
   return (
     <>
-      <div className={`${styles['y-title-line']} mt-5`}></div>
+      <div id="article-filter-section" className={`${styles['y-title-line']} mt-5`}></div>
       <div
         className={`my-sm-3 ${styles['y-list-title']} d-flex justify-content-between align-items-center`}
       >

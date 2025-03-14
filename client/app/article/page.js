@@ -52,22 +52,40 @@ export default function NewsPage() {
     ? articles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     : []
 
+  // 修改現有的 handlePageChange 函數
   const handlePageChange = (page) => {
-    setCurrentPage(page)
+    setCurrentPage(page);
 
     // 更新 URL，加入頁碼但保留其他搜尋參數
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('page', page.toString())
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
 
     // 使用 { scroll: false } 避免頁面自動捲動到頂部
-    router.push(`/article?${params.toString()}`, { scroll: false })
+    router.push(`/article?${params.toString()}`, { scroll: false });
 
-    // 找到「所有文章」標題元素並捲動到該位置
-    const titleElement = document.querySelector('.y-list-title h2')
-    if (titleElement) {
-      titleElement.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
+    // 使用 setTimeout 確保在 DOM 更新後執行滾動
+    setTimeout(() => {
+      // 檢查是否為小螢幕設備
+      if (window.innerWidth <= 768) {
+        // 嘗試找到 SelectList 區域的標題或容器
+        const titleElement = document.querySelector('.y-list-title h2, #article-filter-section');
+
+        if (titleElement) {
+          // 滾動到該元素，使用平滑滾動效果
+          titleElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        } else {
+          // 如果找不到特定元素，滾動到 SelectList 區域的估計位置
+          window.scrollTo({
+            top: document.querySelector('section.y-container').offsetTop - 20,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }, 200);
+  };
 
   // 當 URL 的 search 參數改變時，更新 filters
   useEffect(() => {
@@ -192,7 +210,7 @@ export default function NewsPage() {
   }, [])
 
   return (
-    <div className='bg-list'>
+    <div className='y-bg-list'>
       <Breadcrumb />
       {/* 只在沒有搜尋條件時顯示 */}
       {!hasSearch && (
@@ -200,8 +218,8 @@ export default function NewsPage() {
           <div className="my-sm-5 y-list-title y-container d-flex justify-content-between">
             <h1>最新消息 News</h1>
           </div>
-          <div className="bg-use">
-            <div className="page-container d-flex justify-content-between">
+          <div className="y-bg-use">
+            <div className="y-page-container">
               <StickyCard className="Sticky-Card" />
               <MasonryLayouts />
             </div>
@@ -232,7 +250,7 @@ export default function NewsPage() {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
+            onPageChange={handlePageChange}  // 使用您已修改的 handlePageChange
           />
         </div>
       </section>

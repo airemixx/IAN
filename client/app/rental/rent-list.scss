@@ -101,15 +101,23 @@
   width: 220px;
   @media (max-width: 767px) {
     margin-left: 4px;
+    margin-top: 4px;
     margin-bottom: 16px;
   }
   @media (max-width: 451px) {
     margin-left: 4px;
-    margin-bottom: 14px;
+    margin-top: 8px;
+    margin-bottom: 6px;
   }
 }
 
 /* 左半邊 */
+.k-filter-top {
+  margin-top: 25px;
+  @media (max-width: 767) {
+    margin-top: 0px;
+  }
+}
 // 商品標籤
 .k-main-bg {
   background-color: #23425a;
@@ -124,8 +132,115 @@
     background: #143146;
   }
 }
-
+.k-modal {
+  width: auto !important; /* 避免 Bootstrap 預設 */
+  min-width: 300px;
+  margin: auto !important; /* 確保能夠水平置中 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1999;
+  @media (max-width: 767px) {
+    top: -100px;
+  }
+}
+// 更多標籤
+.k-modal-title {
+  font-size: 23px;
+  color: #143146;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  margin-top: 4px;
+  @media (max-width: 767px) {
+    font-size: 24px;
+  }
+}
+.k-modal-tag {
+  line-height: 1.1;
+  font-size: 13px;
+  @media (max-width: 767px) {
+    line-height: 1.2;
+    font-size: 14px;
+  }
+}
+.k-modal-close {
+  color: #8f8f8f;
+  &:hover,
+  &:active,
+  &:active:focus,
+  &:active:hover {
+    color: #23425a;
+  }
+}
+// 模擬 radio
+.k-radio-group {
+  display: flex;
+  flex-direction: column;
+}
+.k-custom-radio {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  // width: 100%; /* ✅ 讓 radio 滿版 */
+  &:hover .radio,
+  &:active .radio,
+  &:active:focus .radio,
+  &:active:hover .radio {
+    color: #0056b3;
+    border-color: #555;
+  }
+  &:hover .dot,
+  &:active .dot,
+  &:active:focus .dot,
+  &:active:hover .dot {
+    background-color: #0066e3;
+  }
+  .radio {
+    width: 14px;
+    height: 14px;
+    border: 1px solid #666;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 3px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    background-color: #007bff;
+    border-radius: 50%;
+  }
+  input:checked + .radio {
+    border-color: #007bff;
+    &:hover .radio,
+    &:active .radio,
+    &:active:focus .radio,
+    &:active:hover .radio {
+      border-color: #0066e3;
+    }
+  }
+}
 /* 右半邊 */
+// 上升動畫效果
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUpAnimation 0.5s ease-out forwards;
+}
+
+@keyframes fadeUpAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 // 商品卡片
 .k-card {
   background: #fff;
@@ -303,21 +418,46 @@
   height: 10px;
   border-radius: 5px;
 }
-
-/* fade-up 動畫效果 */
-.fade-up {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUpAnimation 0.5s ease-out forwards;
+// 彈窗手機板 (filter)
+.k-filter-btn {
+  cursor: pointer;
+  border: none;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #e58e41;
+  &:hover,
+  &:active,
+  &:active:focus,
+  &:active:hover {
+    background: #ca6d1b;
+  }
+  img {
+    transform: translateX(-1px);
+    width: 28px;
+    height: 28px;
+  }
 }
-
-@keyframes fadeUpAnimation {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
+.k-filter-swal-title {
+  color: #143146;
+  font-size: 24px;
+  line-height: 1;
+}
+.k-filter-swal-popup {
+  top: 80px;
+}
+.k-filter-swal-close {
+  color: #8f8f8f;
+  padding: 8px 8px 0px 0px;
+  font-size: 36px;
+  transition: transform 0.3s;
+  &:hover,
+  &:active,
+  &:active:focus,
+  &:active:hover {
+    color: #23425a;
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+}
+.k-filter-swal-container {
+  line-height: 1.4 !important;
 }

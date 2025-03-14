@@ -6,6 +6,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import { usePathname } from "next/navigation";
 import MenuToggle from './_components/MenuToggle/MenuToggle'
 import { useCompare } from '@/app/product/_context/CompareContext'
+import UserMenu from './_components/user/page'
 
 export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
   const router = useRouter()
@@ -263,15 +264,15 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               >
                 <img src="/images/icon/search.svg" alt="" />
               </a>
-              <Link href="/login">
-                <img src="/images/icon/user.svg" alt="" />
-              </Link>
+              <div>
+              <UserMenu />
+              </div>
               <Link href="/product/spec" className={isClient ? "compare-link" : "compare-link"}>
                 <img src="/images/icon/compare.svg" alt="Compare" />
                 {hasCompareItems && <span className="compare-badge"></span>}
               </Link>
               <Link href="/cart" className='d-flex'>
-                <img src="/images/icon/cart.svg" alt="" />
+                <img src="/images/icon/cart.svg" alt="" width={24} height={24} />
                 {cartAmount > 0 && <div className="cartAmount text-center">{cartAmount}</div>}
               </Link>
             </li>

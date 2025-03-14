@@ -61,6 +61,7 @@ export default function loginPage() {
         router.push('/user/article') // 編輯跳轉至文章管理中心
       } else {
         router.push('/') // 其他使用者導回主頁
+        window.location.reload()
       }
     } catch (err) {
       console.error(err)
