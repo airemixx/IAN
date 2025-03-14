@@ -66,6 +66,13 @@ router.get('/me', async (req, res) => {
 
     const user = userRows[0]
 
+    // **如果是一般會員，靜默回應，不回傳錯誤**
+    if (user.level !== 1 && user.level !== 88) {
+      console.log(`🟢 user_id = ${decoded.id} 不是教師或管理員，回傳空資料`);
+      return res.json({ status: "ok", message: "一般會員，不需要教師資訊" });
+    }
+
+
     // **如果是管理員，直接回傳，不查詢 teachers 表**
     if (user.level === 88) {
       console.log("🔹 管理員登入，不查詢 teachers 表")
@@ -83,6 +90,7 @@ router.get('/me', async (req, res) => {
         image: '/images/teachers/default-avatar.jpg', // 預設圖像
       })
     }
+
 
     // **如果是老師，繼續查詢 `teachers` 表**
     console.log(`📌 正在查詢 user_id = ${decoded.id} 的講師資料`)
