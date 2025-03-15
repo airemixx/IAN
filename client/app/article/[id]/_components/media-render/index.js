@@ -16,9 +16,9 @@ export default function MediaRenderer({ media_type, media_url }) {
             src={`/images/article_com_media/${media_url}`}
             alt="Reply attachment"
             style={{
-              width: '40%',
+              width: '35%',
               height: 'auto',
-              aspectRatio: '16 / 9',
+              // aspectRatio: '16 / 9',
               objectFit: 'cover',
               cursor: 'pointer'
             }}
