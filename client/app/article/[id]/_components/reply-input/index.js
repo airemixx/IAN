@@ -261,10 +261,8 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
   }
 
   return (
-    <div
-      className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <div className={`p-3 bg-white border border-secondary ${styles['y-comment-area']}`}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
         <img
           src={user?.head || "/images/user.png"}
           alt="用戶頭像"
@@ -280,7 +278,7 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
         <input
           type="text"
           id="comment"
-          className="p-2 py-3"
+          className={`p-2 py-3 ${styles['comment-input-responsive']}`}
           placeholder="我有話想說...."
           value={comment}
           onChange={(e) => setComment(e.target.value)}

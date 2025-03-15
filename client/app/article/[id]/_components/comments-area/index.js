@@ -14,6 +14,40 @@ import { jwtDecode } from 'jwt-decode' // 添加 jwtDecode 導入
 import { toast } from 'react-toastify' // 添加 toast 導入，用於錯誤訊息
 import Swal from 'sweetalert2'
 
+// 自定義時間格式化函數 - 放在import之後，組件定義之前
+const formatSimpleTimeAgo = (date) => {
+  try {
+    // 使用 date-fns 格式化時間
+    const fullText = formatDistanceToNow(date, { locale: zhTW, addSuffix: true });
+
+    // 移除「大約」前綴
+    let simplifiedText = fullText.replace(/大約|約|將近|超過|少於|不到/g, '');
+
+    // 確保只顯示到「周」為單位
+    const timeUnits = ['分鐘', '小時', '天', '周'];
+    let found = false;
+
+    for (const unit of timeUnits) {
+      if (simplifiedText.includes(unit)) {
+        found = true;
+        break;
+      }
+    }
+
+    // 如果找不到這些單位，或者時間超過「周」，則顯示「x周前」
+    if (!found || simplifiedText.includes('月') || simplifiedText.includes('年')) {
+      // 計算周數（粗略計算）
+      const weeksDiff = Math.floor((new Date() - date) / (7 * 24 * 60 * 60 * 1000));
+      return `${weeksDiff > 0 ? weeksDiff : 1}周前`;
+    }
+
+    return simplifiedText;
+  } catch (error) {
+    console.error('時間格式化錯誤:', error);
+    return '未知時間';
+  }
+};
+
 // 將 CustomSwal 定義移到頂層，讓所有組件都能使用
 const CustomSwal = Swal.mixin({
   customClass: {
@@ -245,10 +279,7 @@ function ReplyItem({
   }, [updatedTime, time, isEdited]);
 
   // 計算顯示時間
-  const timeAgo = formatDistanceToNow(new Date(time), {
-    locale: zhTW,
-    addSuffix: true
-  });
+  const timeAgo = formatSimpleTimeAgo(new Date(time));
   const formattedTime = updatedTime && !isNaN(new Date(updatedTime).getTime())
     ? format(new Date(updatedTime), 'yyyy/MM/dd HH:mm')
     : format(new Date(time), 'yyyy/MM/dd HH:mm');
@@ -662,16 +693,15 @@ function ReplyItem({
                       }}
                     />
                     <span
-                      className={`${numVibrate ? styles.vibrate : ''}`}
+                      className={`${styles['like-counter']} ${numVibrate ? styles.vibrate : ''}`}
                       onAnimationEnd={() => setNumVibrate(false)}
-                      style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
                     >
                       {commentLikeCount}
                     </span>
                   </button>
                   <button
                     className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
-                    onClick={onReplyButtonClick} // 修改這裡，使用新的處理函數
+                    onClick={onReplyButtonClick}
                   >
                     <img src="/images/article/reply-origin.svg" alt="Reply" />
                     <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
@@ -698,16 +728,16 @@ function ReplyItem({
                 <div
                   ref={inputRef}
                   id={`reply-input-${commentId}`}
-                  className={styles['fade-in']}
-                  style={{ transition: 'opacity 0.3s', width: '850px' }}
+                  className={`${styles['fade-in']} ${styles['nested-reply-input-container']}`}
+                  style={{ transition: 'opacity 0.3s' }}
                 >
                   <ReplyInput
                     articleId={articleId}
                     parentId={commentId}
                     onCommentSubmitted={(newNestedReply) => handleNestedReplySubmitted(commentId, newNestedReply)}
                     replyTo={replyTo}
-                    isAuthenticated={isAuthenticated} // 已在留言區內，所以一定是登入的
-                    showAuthModal={showAuthModal} // 在此環境下不需要真正調用，但需要提供一個空函數
+                    isAuthenticated={isAuthenticated}
+                    showAuthModal={showAuthModal}
                   />
                 </div>
               )}
@@ -822,10 +852,7 @@ function NestedReplyItem({
   const parsedTime = new Date(props.time)
   const validTime = isNaN(parsedTime.getTime()) ? new Date() : parsedTime
 
-  const timeAgo = formatDistanceToNow(validTime, {
-    locale: zhTW,
-    addSuffix: true,
-  })
+  const timeAgo = formatSimpleTimeAgo(validTime);
   const formattedTime = format(validTime, 'yyyy/MM/dd HH:mm')
 
   // 定義選單識別字串
@@ -1234,9 +1261,8 @@ function NestedReplyItem({
                   }}
                 />
                 <span
-                  className={`${numVibrate ? styles.vibrate : ''}`}
+                  className={`${styles['like-counter']} ${numVibrate ? styles.vibrate : ''}`}
                   onAnimationEnd={() => setNumVibrate(false)}
-                  style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
                 >
                   {commentLikeCount}
                 </span>

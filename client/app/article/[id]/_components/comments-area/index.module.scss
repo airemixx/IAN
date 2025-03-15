@@ -40,11 +40,33 @@
   width: 100%;
   aspect-ratio: 1/1;
 }
-.y-reply-time-like button {
-  border: none;
-  background-color: #ffffff00;
-  border-radius: 25px;
-  padding: 5px 5px;
+.y-reply-time-like {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap; // 防止換行
+
+  button {
+    border: none;
+    background-color: transparent;
+    border-radius: 25px;
+    padding: 3px 3px; // 減少內邊距
+    margin-right: 3px; // 減少按鈕間距
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 18px; // 縮小圖示大小
+      height: 18px;
+    }
+
+    span {
+      font-size: 13px; // 縮小數字文字
+      margin-left: 2px; // 減少左邊距
+      display: inline-block;
+      min-width: 30px; // 調低最小寬度
+      text-align: center;
+    }
+  }
 }
 .y-reply-time-like button:focus {
   border: none;
@@ -54,6 +76,17 @@
 }
 .y-btn-reply-in-reply {
   color: #000;
+  font-size: 13px; // 縮小文字大小
+
+  img {
+    width: 18px; // 縮小圖示
+    height: 18px;
+  }
+
+  .reply-text {
+    margin-left: 2px; // 減少文字與圖示間距
+    white-space: nowrap; // 防止文字換行
+  }
   &:hover {
     img {
       content: url('/images/article/reply-hover.svg'); // 替換為 hover 狀態的 SVG
@@ -166,6 +199,14 @@
   max-width: 100%;
   width: 100%;
   overflow: hidden;
+
+  img,
+  video {
+    max-width: 100%; // 確保媒體不會超過容器
+    width: auto; // 讓寬度自適應
+    height: auto; // 保持比例
+    // border-radius: 6px;
+  }
 }
 
 .y-reply-content-nested-out img,
@@ -189,6 +230,28 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  
+  /* 防止按鈕縮小 */
+  &:active, &:focus {
+    transform: none !important;
+    width: 20px !important;
+    height: 20px !important;
+    padding: 0 !important;
+    outline: none !important;
+  }
+  
+  /* 確保按鈕內的圖示不會縮小 */
+  img {
+    width: 16px;
+    height: 16px;
+    transition: none; /* 防止任何過渡效果 */
+    
+    &:active, &:focus {
+      transform: none !important;
+      width: 16px !important;
+      height: 16px !important;
+    }
+  }
 }
 
 .moreOptions {
@@ -407,12 +470,50 @@
 }
 
 @media screen and (max-width: 576px) {
-  .y-reply-time-like h6 {
-    font-size: 14px;
+  .y-reply-time-like {
+    h6 {
+      font-size: 12px;
+    }
+    button {
+      padding: 2px;
+
+      img {
+        width: 16px;
+        height: 16px;
+      }
+
+      span {
+        font-size: 12px;
+        min-width: 25px;
+      }
+    }
+    .y-all-comment-btn button {
+      font-size: 14px !important;
+      // padding: 4px 12px;
+    }
+    .y-hidden-reply-btn button {
+      font-size: 14px !important;
+      // padding: 4px 12px;
+    }
+    .y-btn-reply-in-reply {
+      font-size: 12px;
+  
+      img {
+        width: 16px;
+        height: 16px;
+      }
+    }
   }
 }
 
-@media screen and (max-width: 390px) {
+
+@media screen and (max-width: 420px) {
+  .y-reply-time-like {
+    h6 {
+      font-size: 10px !important;
+      margin: 0 0  !important;
+    }
+  }
   .y-sort-dropdown select {
     width: 40%;
   }
@@ -440,5 +541,92 @@
 
   .y-btn-reply-in-reply span {
     font-size: 12px;
+  }
+
+  .more-btn {
+    width: 20px !important;
+    height: 20px !important;
+    padding: 0 !important;
+    
+    img {
+      width: 16px !important;
+      height: 16px !important;
+    }
+  }
+  
+  /* 修復可能的交互問題 */
+  .moreBtnReply {
+    height: 20px !important;
+  }
+}
+
+.y-reply-img {
+  margin: 6px 0; // 減少上下邊距
+  max-width: 100%;
+
+  img,
+  video {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+}
+
+/* 優化按鈕排列 */
+.mb-like-reply {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  // gap: 2px; /* 減少按鈕間距 */
+}
+
+/* 響應式調整 */
+@media screen and (max-width: 768px) {
+/* 點讚計數器樣式調整 */
+.like-counter {
+  display: inline-block;
+  width: 25px !important; /* 將寬度從40px縮小到25px */
+  text-align: center;
+  font-size: 13px;
+  padding: 0;
+  margin: 0 2px;
+}
+  
+.reply-text {
+  font-size: 11px !important; /* 將回覆字體縮小 */
+  white-space: nowrap;
+}
+}
+
+// 嵌套回覆輸入框容器
+.nested-reply-input-container {
+  width: 100%;
+  max-width: 850px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  position: relative;
+  
+  /* 根據不同屏幕尺寸自動調整 */
+  @media screen and (max-width: 991px) {
+    max-width: 90%;
+  }
+  
+  @media screen and (max-width: 768px) {
+    max-width: 95%;
+  }
+  
+  @media screen and (max-width: 576px) {
+    max-width: 100%;
+  }
+}
+
+/* 確保嵌套回覆區域內容不溢出 */
+.y-reply-content-nested-out {
+  overflow-wrap: break-word;
+  
+  /* 內部輸入框容器 */
+  .fade-in {
+    width: 100%;
+    max-width: 100%;
   }
 }

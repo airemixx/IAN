@@ -204,12 +204,168 @@ export default function Recommends() {
       <div className={`my-5 ${styles['y-recommends-area']}`}>
         <h2 className="px-4">Lenstudio Recommends</h2>
         <div className={styles['y-recommends-line']}></div>
-        <div className="row px-4">
+
+        {/* 網格布局 - 大螢幕 */}
+        <div className={`row px-4 ${styles['grid-view']}`}>
           {recommendCourses.map((course) => (
             <ProductCard key={course.id} course={course} />
           ))}
         </div>
+
+        {/* 滑動布局 - 小螢幕 */}
+        <div className={`px-4 ${styles['scroll-view']}`}>
+          <div className={styles['scroll-container']}>
+            {recommendCourses.map((course) => (
+              <div key={course.id} className={styles['card-item']}>
+                <ProductCardScroll course={course} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
+  );
+}
+
+// 滑動版卡片組件
+function ProductCardScroll({ course }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [token, setToken] = useState(null);
+  const safeImage = course.image_url || '/images/default-course.jpg';
+
+  // 保留原有的所有功能（獲取token、檢查收藏狀態、收藏功能等）
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 100,
+    });
+
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('loginWithToken');
+      setToken(storedToken);
+
+      if (storedToken && course.id) {
+        checkFavoriteStatus(storedToken, course.id);
+      }
+    }
+  }, [course.id]);
+
+  // 檢查收藏狀態
+  const checkFavoriteStatus = async (token, courseId) => {
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/courses/collection/${courseId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error('無法取得收藏狀態');
+
+      const data = await res.json();
+      setIsFavorite(data.isFavorite);
+    } catch (error) {
+      console.error('❌ 無法確認收藏狀態:', error);
+    }
+  };
+
+  // 收藏或取消收藏
+  const handleFavoriteClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) {
+      toast.warn('請先登入，即可收藏課程！', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    try {
+      const method = isFavorite ? 'DELETE' : 'POST';
+      let url = 'http://localhost:8000/api/courses/collection';
+
+      if (method === 'DELETE') {
+        url = `http://localhost:8000/api/courses/collection/${course.id}`;
+      }
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body:
+          method === 'POST' ? JSON.stringify({ course_id: course.id }) : null,
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText);
+      }
+
+      setIsFavorite(!isFavorite);
+      toast.success(isFavorite ? '已取消收藏！' : '成功加入收藏！', {
+        position: 'top-right',
+        autoClose: 2000,
+      });
+    } catch (error) {
+      console.error('收藏錯誤:', error);
+      toast.error('操作失敗：' + (error.message || '發生錯誤，請稍後再試'), {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+    }
+  };
+
+  return (
+    <Link href={`/courses/${course.id}`} className={styles['course-card-link']}>
+      <div className={`${styles['course-card']} mb-md-5 mb-4`}>
+        <div className={styles['card-img']} data-aos="fade-in">
+          <img
+            src={safeImage}
+            alt={course.title}
+            className="img-fluid"
+            loading="lazy"
+          />
+          <div className={styles['img-overlay']}></div>
+          <button
+            className={styles['favorite-icon']}
+            onClick={handleFavoriteClick}
+          >
+            {isFavorite ? (
+              <FaHeart size={18} style={{ color: 'var(--secondary-color)' }} />
+            ) : (
+              <FaRegHeart size={18} style={{ color: 'var(--secondary-color)' }} />
+            )}
+          </button>
+        </div>
+        <div className="card-body p-0 mt-3">
+          <h6 className={styles['teacher-name']}>{course.teacher_name}</h6>
+          <h5 className={styles['course-title']}>{course.title}</h5>
+          <div className={styles['rating-student']}>
+            <div className={styles['rating']}>
+              <p>{parseFloat(course.rating || 0).toFixed(1)}</p>
+              <StarRating rating={course.rating || 0} />
+            </div>
+            <div className={styles['student-count']}>
+              <img src="/images/icon/student-count.svg" alt="學生數量" />
+              <div className={styles['student-num']}>
+                {course.student_count ? course.student_count.toLocaleString('en-US') : '0'}
+              </div>
+            </div>
+          </div>
+          <h6 className={styles['course-price']}>
+            <p>NT$ {course.sale_price ? course.sale_price.toLocaleString('en-US') : 'N/A'}</p>
+          </h6>
+        </div>
+      </div>
+    </Link>
   );
 }
