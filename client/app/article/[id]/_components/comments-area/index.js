@@ -1200,6 +1200,7 @@ function NestedReplyItem({
                   key={`${props.commentId}-media-${index}`}
                   media_type={type}
                   media_url={url}
+                  isNested={true}
                 />
               );
             });

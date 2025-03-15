@@ -156,13 +156,21 @@
 }
 
 .y-reply-content-nested {
-  max-width: 720px;
+  max-width: 100%;
   word-wrap: break-word;
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
 .y-reply-content-nested-out {
-  max-width: 800px;
-  width: 800px;
+  max-width: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.y-reply-content-nested-out img,
+.y-reply-content-nested-out video {
+  max-width: 100%;
 }
 
 .moreBtnReply {
