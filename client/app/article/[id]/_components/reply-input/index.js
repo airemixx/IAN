@@ -53,15 +53,41 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
   const { token, user } = usePublicAuth()
   const router = useRouter()
 
+  // 1. 先定義所有 state hooks，確保順序正確
   const [comment, setComment] = useState(replyTo || '') // 留言文字
   const [previews, setPreviews] = useState([]) // 圖片和 GIF 預覽
   const [showGifPicker, setShowGifPicker] = useState(false) // 是否顯示 GIF 選擇器
   const [searchTerm, setSearchTerm] = useState('') // GIF 搜尋用的關鍵字
   const [isHovered, setIsHovered] = useState(false) // 新增 hover state
   const [isSent, setIsSent] = useState(false) // 是否已送出
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [isGifPickerReady, setIsGifPickerReady] = useState(false);
+
+  // 2. 定義所有 ref hooks
   const fileInputRef = useRef(null) // 文件上傳輸入框的參考引用
-  // 移除硬編碼，使用從 token 解析出的 user.id
-  // const userId = 1
+  const gifContainerRef = useRef(null);
+
+  // 3. 然後再使用 useEffect 等其他 hooks
+  // 添加監聽容器寬度的 effect
+  useEffect(() => {
+    if (showGifPicker && gifContainerRef.current) {
+      setContainerWidth(gifContainerRef.current.offsetWidth);
+      setIsGifPickerReady(true);
+
+      const resizeObserver = new ResizeObserver(entries => {
+        setContainerWidth(entries[0].contentRect.width);
+      });
+
+      resizeObserver.observe(gifContainerRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    } else if (!showGifPicker) {
+      // 重置狀態，確保下次顯示時重新計算
+      setIsGifPickerReady(false);
+    }
+  }, [showGifPicker]); // 依賴 showGifPicker，確保每次顯示時都重新計算
 
   // 如果父層切換了 replyTo，需要同步更新
   useEffect(() => {
@@ -374,29 +400,32 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
               placeholder="搜尋 GIF"
               className="mb-2 border border-dark py-2 rounded ps-2"
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ width: '800px', margin: '0 auto', display: 'block' }}
+              style={{ width: '100%', margin: '0 auto', display: 'block' }}
             />
             <div
+              ref={gifContainerRef}
               style={{
                 position: 'relative',
-                width: '800px',
+                width: '100%',
                 height: '600px',
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 margin: '0 auto'
               }}
             >
-              <Grid
-                fetchGifs={searchGifs}
-                key={searchTerm} // 讓 searchTerm 改變時強制重新渲染
-                width={800} // 與父層寬度一致
-                columns={3}
-                gutter={6}
-                onGifClick={(gif, e) => {
-                  e.preventDefault() // 避免導到外部網頁
-                  handleGifSelect(gif)
-                }}
-              />
+              {isGifPickerReady && (
+                <Grid
+                  fetchGifs={searchGifs}
+                  key={searchTerm}
+                  width={containerWidth} // 不再需要默認值，因為已確保寬度正確計算
+                  columns={containerWidth < 576 ? 2 : 3}
+                  gutter={6}
+                  onGifClick={(gif, e) => {
+                    e.preventDefault()
+                    handleGifSelect(gif)
+                  }}
+                />
+              )}
             </div>
           </ErrorBoundary>
         </div>
