@@ -107,8 +107,16 @@ export default function EditArticlePage() {
   // 新增: 當編輯器就緒且文章數據可用時，設置編輯器內容
   useEffect(() => {
     if (editorReady && articleData && articleData.content) {
-      // console.log('編輯器已就緒，設置內容');
-      window.editorInstance.html.set(articleData.content);
+      try {
+        // 添加安全檢查
+        if (window.editorInstance && typeof window.editorInstance.html === 'object') {
+          window.editorInstance.html.set(articleData.content);
+        } else {
+          console.log('編輯器實例尚未準備好，等待下次嘗試');
+        }
+      } catch (error) {
+        console.error('設置編輯器內容時出錯:', error);
+      }
     }
   }, [editorReady, articleData]);
 
@@ -157,10 +165,17 @@ export default function EditArticlePage() {
         removedHashtags, // 傳送被刪除的 hashtags
       })
 
+      // 修改成功彈窗 - 自動關閉無按鈕版本
       Swal.fire({
         icon: 'success',
         title: '更新成功',
-        text: '文章已成功更新'
+        text: '文章已成功更新',
+        timer: 1000, // 1秒後自動關閉
+        // timerProgressBar: true, // 顯示倒計時進度條
+        showConfirmButton: false, // 隱藏確認按鈕
+        customClass: {
+          popup: "y-custom-popup"
+        }
       }).then(() => {
         confirmClose()
       })
@@ -169,6 +184,11 @@ export default function EditArticlePage() {
         icon: 'error',
         title: 'Oops...',
         text: '更新失敗，請稍後再試',
+        customClass: {
+          confirmButton: "btn-custom-confirm-OK",
+          popup: "y-custom-popup"
+        },
+        buttonsStyling: false
       })
       console.error('Error updating article:', error)
     }
