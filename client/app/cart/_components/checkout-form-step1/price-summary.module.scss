@@ -28,6 +28,10 @@
   font-size: 16px;
 }
 
+.j-cpName{
+  font-size: 20px;
+}
+
 .j-Checkout {
   height: 50px;
   border-radius: 50px;
@@ -55,7 +59,7 @@
   width: 100%;
 }
 .j-cpEndDate {
-  bottom: 21%;
+  bottom: 25%;
   left: 39%;
   color: #fff;
 }
@@ -123,7 +127,7 @@
   border-color: #ca6d1b !important;
 }
 .subPrice,.totalPrice,.discountPrice{
-  color: #d0b088;
+  color: #e58e41;
 }
 @media (max-width: 996px) {
   .j-payStep {

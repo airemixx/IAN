@@ -55,6 +55,8 @@ const AddressManager = () => {
       showCancelButton: true,
       confirmButtonText: "更新",
       cancelButtonText: "取消",
+      confirmButtonColor: "#143146",
+      cancelButtonColor: "#d0b088",
       inputValidator: (value) => {
         if (!value) return "住址不能為空";
       },
@@ -93,6 +95,8 @@ const AddressManager = () => {
       showCancelButton: true,
       confirmButtonText: "刪除",
       cancelButtonText: "取消",
+      confirmButtonColor: "#143146",
+      cancelButtonColor: "#d0b088",
     });
 
     if (isConfirmed) {
@@ -126,6 +130,8 @@ const AddressManager = () => {
       showCancelButton: true,
       confirmButtonText: "新增",
       cancelButtonText: "取消",
+      confirmButtonColor: "#143146",
+      cancelButtonColor: "#d0b088",
       inputValidator: (value) => {
         if (!value) return "住址不能為空";
       },
@@ -147,6 +153,7 @@ const AddressManager = () => {
         if (result.status === "success") {
           await fetchAddresses(); // **確保即時刷新**
           Swal.fire("成功", "住址已添加", "success");
+          
         } else {
           Swal.fire("錯誤", result.message || "無法添加住址", "error");
         }

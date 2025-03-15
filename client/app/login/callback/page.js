@@ -7,7 +7,7 @@ export default function Callback() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ 增加 `loading` 狀態
+  const [loading, setLoading] = useState(true); //增加 `loading` 狀態
 
   useEffect(() => {
     const fetchTokenAndSaveUser = async () => {
@@ -36,7 +36,7 @@ export default function Callback() {
       } catch (error) {
         console.error("登入失敗", error);
       } finally {
-        setLoading(false); // ✅ API 請求完成後才結束 `loading`
+        setLoading(false); // API 請求完成後才結束 `loading`
       }
     };
 
@@ -47,7 +47,7 @@ export default function Callback() {
   return (
     <div className="container">
       {loading ? (
-        <p>正在登入中...</p> // ✅ 在 `loading` 期間顯示「正在登入」
+        <p>正在登入中...</p> // 在 `loading` 期間顯示「正在登入」
       ) : userData ? (
         <div>
           <p>名稱: {userData.name}</p>

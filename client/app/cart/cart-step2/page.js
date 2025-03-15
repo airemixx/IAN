@@ -83,7 +83,7 @@ export default function cartPageTwo() {
 
             <div className={`${styles['j-cartItemsBox']} d-sm-none d-block p-0 d-flex flex-grow-1 flex-column`}>
               {cartProduct.length == 0 ? '' :
-                <div className={`mt-2 ${cartProduct.length == 0 ? 'mb-5' : ''}`}>
+                <div className={`mt-2 ${cartProduct.length == 0 ? 'mb-5' : 'mb-4'}`}>
                   {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
                   {cartProduct.map((item, index) => (
                     <div
@@ -96,7 +96,7 @@ export default function cartPageTwo() {
                 </div>}
 
               {cartLession.length == 0 ? '' :
-                <div className={`mt-2 ${cartLession.length == 0 ? 'mb-5' : ''}`}>
+                <div className={`mt-2 ${cartLession.length == 0 ? 'mb-5' : 'mb-4'}`}>
                   {cartLession.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>課程</h3> : ''}
                   {cartLession.map((lession, index) => {
                     const lessonIndex = index + cartProduct.length

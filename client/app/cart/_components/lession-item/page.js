@@ -55,7 +55,7 @@ export default function LessonItem({ lessionitem, page, length, id }) {
                                 </span>
                             </div>
                             <div className="d-flex flex-grow-1 justify-content-center  ps-lg-0 ps-xxl-2">
-                                <p className={`ms-xxl-1 mt-2 mb-2 me-md-2 ${styles['j-lsText']}`}>NT$ {Number(price).toLocaleString()}</p>
+                                <p className={`ps-xxl-4 ps-lg-2 ms-lg-1 ms-xxl-1 mt-2 mb-2 me-md-2 ${styles['j-lsText']}`}>NT$ {Number(price).toLocaleString()}</p>
                             </div>
                         </div>
                     </div>
