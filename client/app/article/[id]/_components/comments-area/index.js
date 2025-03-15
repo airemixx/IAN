@@ -1431,17 +1431,15 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
       {
         !isCollapsed && (
           <>
-            <div className={`${styles['y-sort-dropdown']} my-4`}>
+            <div className={styles['y-sort-dropdown']}>
               <select
-                id="sort-comments"
-                name="sort-comments"
-                className="form-select"
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
+                className="form-select"
               >
-                <option value="1">由新到舊</option>
-                <option value="2">由舊到新</option>
-                <option value="3">熱門留言</option>
+                <option value="1">最新發佈</option>
+                <option value="2">最早發佈</option>
+                <option value="3">按讚數量</option>
               </select>
             </div>
             <div className="pt-3">
