@@ -101,7 +101,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-const uploadDir = path.join(process.cwd(), "../client/public/uploads"); // ✅ 指定 Next.js 的 `public/`
+const uploadDir = path.join(process.cwd(), "../client/public/uploads"); // 指定 Next.js 的 `public/`
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -118,7 +118,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ 新增上傳圖片 API
+// 新增上傳圖片 API
 router.post("/upload", upload.single("avatar"), async (req, res) => {
   try {
     if (!req.file) throw new Error("請選擇圖片");
@@ -147,7 +147,7 @@ router.post("/upload", upload.single("avatar"), async (req, res) => {
 
 
 
-// ✅ 註冊 API（允許上傳圖片）
+//註冊 API  上傳圖片
 router.post("/", upload.single("avatar"), async (req, res) => {
   try {
     let { account, name, nickname, mail, password, gender } = req.body;
@@ -165,7 +165,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ status: "error", message: "此帳號已被註冊，請使用其他帳號。" });
     }
 
-    // 轉換性別為 `0`（先生）或 `1`（女士）
+    // 轉換性別為 0 or 1
     gender = gender === "先生" ? 0 : gender === "女士" ? 1 : null;
     if (gender === null) return res.status(400).json({ status: "error", message: "性別格式錯誤" });
 
@@ -370,7 +370,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
       value.push(name);
     }
     if (nickname) {
-      // 🔥 **檢查 nickname 是否已被使用**
+      // 檢查 nickname 是否已被使用
       const [existingNicknames] = await db.execute(
         "SELECT id FROM users WHERE nickname = ? AND account != ?",
         [nickname, account]
@@ -422,7 +422,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
     if (result.affectedRows == 0) throw new Error("更新失敗");
 
 
-    // 🔥 **步驟 1：更新後，重新從資料庫取得最新的 user 資料**
+    // 重新從資料庫取得最新的 user
     const getUserSql = "SELECT id, account, name, nickname, mail, head, level, DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday FROM `users` WHERE account = ?;";
     const [userRows] = await db.execute(getUserSql, [account]);
 
@@ -431,7 +431,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
     const updatedUser = userRows[0]; // ✅ 確保拿到最新的 `user` 資料
     console.log("📌 更新後的最新 user 資料:", updatedUser);
 
-    // 🔥 **步驟 2：產生新的 Token，確保使用 `updatedUser` 的最新資料**
+    // 產生新的 Token，確保使用 `updatedUser` 的最新資料
 
     // **🔹 產生新的 Token**
 
@@ -453,7 +453,7 @@ router.put("/:account", checkToken, upload.none(), async (req, res) => {
     res.status(200).json({
       status: "success",
       message: `更新成功: ${account}`,
-      token: newToken, // ✅ 回傳最新的 Token
+      token: newToken, //回傳最新的 Token
     });
 
   } catch (err) {
@@ -514,13 +514,13 @@ router.post("/login", upload.none(), async (req, res) => {
         name: user.name,
         nickname: user.nickname || "",
         mail: user.mail,
-        head: user.head,
+        head: user.head || "/uploads/users.webp",
         level: user.level,
         birthday: user.birthday
           ? (() => {
             const date = new Date(user.birthday);
-            date.setDate(date.getDate() + 1); // ✅ 加一天
-            return date.toISOString().split("T")[0]; // ✅ 轉回 `YYYY-MM-DD`
+            date.setDate(date.getDate() + 1); //加一天
+            return date.toISOString().split("T")[0]; //轉回 `YYYY-MM-DD`
           })()
           : "",
       },
@@ -563,7 +563,7 @@ router.get("/users/me", checkToken, async (req, res) => {
 
     res.status(200).json({
       status: "success",
-      data: rows[0], // ✅ birthday 已經是 `YYYY-MM-DD`
+      data: rows[0], // birthday 已經是 `YYYY-MM-DD`
     });
   } catch (error) {
     console.error(error);
@@ -620,11 +620,11 @@ router.post("/status", checkToken, (req, res) => {
 //collect 
 
 
-// ✅ 透過 JWT 獲取 `user_id`，查詢用戶的收藏產品
+// 透過 JWT 獲取 `user_id`，查詢用戶的收藏產品
 router.get("/favorites/me", checkToken, async (req, res) => {
   try {
-    const connection = await db.getConnection(); // ✅ 取得資料庫連線
-    const userId = req.decoded.id; // ✅ 直接從 JWT 解析 `user_id`
+    const connection = await db.getConnection(); // 取得資料庫連線
+    const userId = req.decoded.id; // 直接從 JWT 解析 `user_id`
 
     console.log(`取得收藏資料，使用者 ID: ${userId}`);
 
@@ -653,12 +653,12 @@ router.get("/favorites/me", checkToken, async (req, res) => {
         cs.id AS course_id,
         cs.title AS course_title,
         cs.teacher_id AS instructor,
-        t.name AS instructor_name,  -- ✅ 講師名稱
-        t.image AS instructor_image,  -- ✅ 講師頭像
-        t.bio AS instructor_bio,  -- ✅ 講師簡介
-        t.facebook AS instructor_facebook,  -- ✅ 講師 Facebook
-        t.instagram AS instructor_instagram,  -- ✅ 講師 Instagram
-        t.youtube AS instructor_youtube,  -- ✅ 講師 YouTube
+        t.name AS instructor_name,  --  講師名稱
+        t.image AS instructor_image,  -- 講師頭像
+        t.bio AS instructor_bio,  --  講師簡介
+        t.facebook AS instructor_facebook,  --  講師 Facebook
+        t.instagram AS instructor_instagram,  --  講師 Instagram
+        t.youtube AS instructor_youtube,  --  講師 YouTube
         cs.sale_price AS price, 
         CONCAT('', COALESCE(cs.image_url, 'default.jpg')) AS image_url 
       FROM collection c
@@ -704,9 +704,9 @@ router.get("/favorites/me", checkToken, async (req, res) => {
       [userId]
     );
 
-    connection.release(); // ✅ 釋放連線
+    connection.release(); // 釋放連線
 
-    // ✅ 如果沒有任何收藏
+    // 如果沒有任何收藏
     if (products.length === 0 && courses.length === 0 && rents.length === 0 && articles.length === 0) {
       return res.json({ products: [], courses: [], rents: [], articles: [] });
     }
@@ -742,7 +742,7 @@ router.get("/rent", checkToken, async (req, res) => {
       [userId]
     );
 
-    connection.release(); // ✅ 釋放連線
+    connection.release(); // 釋放連線
 
     if (products.length === 0) {
       return res.json({ products: [] });
@@ -766,13 +766,13 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// 📌 產生 OTP
+// 產生 OTP
 const generateOTP = () => crypto.randomInt(100000, 999999).toString();
 
-// 📌 模擬資料庫
+// 模擬資料庫
 
 
-// 📌 1️⃣ 發送 OTP
+//發送 OTP
 router.post('/send-otp/me', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ success: false, message: '請提供 Email' });
@@ -796,7 +796,7 @@ router.post('/send-otp/me', async (req, res) => {
   }
 });
 
-// 📌 2️⃣ 驗證 OTP 並產生 JWT Token
+//驗證 OTP 並產生 JWT Token
 router.post('/api/verify-otp', (req, res) => {
   const { email, otp } = req.body;
   if (!email || !otp) return res.status(400).json({ success: false, message: '請提供 Email 和 OTP' });
@@ -810,7 +810,7 @@ router.post('/api/verify-otp', (req, res) => {
   }
 });
 
-// 📌 3️⃣ 使用 JWT 來重設密碼
+// 使用 JWT 來重設密碼
 router.post('/api/reset-password', async (req, res) => {
   const { token, newPassword } = req.body;
   if (!token || !newPassword) return res.status(400).json({ success: false, message: '請提供 Token 和新密碼' });

@@ -42,7 +42,7 @@ export const signInWithGoogle = async () => {
   
       // ✅ 確保 account 存到 localStorage
       localStorage.setItem("loginWithToken", data.data.token);
-      localStorage.setItem("account", data.data.user.account);
+      // localStorage.setItem("account", data.data.user.account);
       localStorage.setItem("profilePic", picture);
   
       return data.user;

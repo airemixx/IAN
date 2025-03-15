@@ -27,7 +27,7 @@ export default function UserPage(props) {
 
 
   useEffect(() => {
-    console.log("📌 useEffect 內 user:", user); // ✅ 檢查 user 內容
+    console.log(" useEffect 內 user:", user); // ✅ 檢查 user 內容
 
     if (user && Object.keys(user).length > 0) {
       setName(user.name || '');
@@ -35,7 +35,7 @@ export default function UserPage(props) {
 
       let birthdayFormatted = "";
       if (user.birthday) {
-        console.log("📌 原始 user.birthday:", user.birthday, "類型:", typeof user.birthday);
+        console.log(" 原始 user.birthday:", user.birthday, "類型:", typeof user.birthday);
 
         if (typeof user.birthday === "string") {
           // 可能是 "2025-02-04T16:00:00.000Z" 或 "2025-02-04"
@@ -56,10 +56,10 @@ export default function UserPage(props) {
         }
       }
 
-      console.log("📌 格式化後的 birthday:", birthdayFormatted);
+      console.log(" 格式化後的 birthday:", birthdayFormatted);
       setBirthday(birthdayFormatted);
     }
-  }, [user]); // ✅ 當 `user` 變更時，`name` 和 `birthday` 才會更新
+  }, [user]); //  當 `user` 變更時，`name` 和 `birthday` 才會更新
 
 
   // **初始載入時獲取資料**
@@ -90,7 +90,7 @@ export default function UserPage(props) {
 
       // 🔥 **步驟 1：如果後端有提供新 Token，就更新**
       if (result.token) {
-        console.log("✅ 從 API 取得新 Token:", result.token);
+        console.log(" 從 API 取得新 Token:", result.token);
         localStorage.setItem("loginWithToken", result.token);
         setToken(result.token);
       }
@@ -132,20 +132,20 @@ export default function UserPage(props) {
       if (result.status !== "success") throw new Error(result.message);
       
 
-      // ✅ 更新 `user.head`，讓前端立即顯示新頭像
+      // 更新 `user.head`，讓前端立即顯示新頭像
       setUser({ ...user, head: result.imageUrl });
 
-      // 🔥 移除預覽的本地 URL，避免內存洩漏
+      // 移除預覽的本地 URL，避免內存洩漏
       URL.revokeObjectURL(imageUrl);
       if (result.token) {
         console.log("✅ 從 API 取得新 Token:", result.token);
 
-        // **更新 localStorage & useAuth 狀態**
+        //更新 localStorage & useAuth 狀態
         localStorage.setItem("loginWithToken", result.token);
         setToken(result.token);
       }
 
-      // 🔥 **步驟 2：重新獲取使用者資訊**
+      // 重新獲取使用者資訊**
       await fetchUserData();
       
     } catch (error) {
@@ -183,39 +183,41 @@ export default function UserPage(props) {
       );
 
       const result = await response.json();
-      console.log("📌 更新 API 回應:", result);
+      console.log(" 更新 API 回應:", result);
 
       if (result.status !== 'success') throw new Error(result.message);
 
-      // ✅ **更新成功，使用 Swal 彈出成功訊息**
+      // 更新成功，使用 Swal 彈出成功訊息
       Swal.fire({
         icon: "success",
         title: "更新成功！",
         text: result.message, // 從 API 回應顯示成功訊息
         confirmButtonText: "確定",
+        confirmButtonColor: "#143146",
       });
 
-      // 🔥 **步驟 1：檢查後端是否提供新的 Token**
+      // 檢查後端是否提供新的 Token
       if (result.token) {
         console.log("✅ 從 API 取得新 Token:", result.token);
 
-        // **更新 localStorage & useAuth 狀態**
+        // 更新 localStorage & useAuth 狀態
         localStorage.setItem("loginWithToken", result.token);
         setToken(result.token);
       }
 
-      // 🔥 **步驟 2：重新獲取使用者資訊**
+      // 重新獲取使用者資訊
       await fetchUserData();
 
-      // 🔥 **步驟 3：導向 `/user` 頁面**
+      // 導向 `/user` 頁面
       // window.location.href = "/user";
     } catch (error) {
-      // ❌ **更新失敗，使用 Swal 彈出錯誤訊息**
+      //更新失敗，使用 Swal 彈出錯誤訊息 
       Swal.fire({
         icon: "error",
         title: "更新失敗",
         text: error.message || "請稍後再試",
         confirmButtonText: "確定",
+        confirmButtonColor: "#143146",
       });
     } finally {
       setUpdating(false);
@@ -279,7 +281,7 @@ export default function UserPage(props) {
     <div>
       <div className={`container py-4`}>
         <div className={`row ${styles.marginTop}`}>
-        <div className="col-md-3 py-4">
+        <div className="col-md-3 py-4 row">
           <Sidenav />
           </div>
           {/* 主要內容區 */}

@@ -86,7 +86,7 @@ export default function CartItem({ id, itemData, page }) {
                   </button>
                 </div>
                 <div className={"d-flex"}>
-                  <p className={`${styles['j-price']} me-4`}>NT$ {Number(price).toLocaleString()}</p>
+                  <p className={`${styles['j-price']} me-lg-2 me-xl-0 me-xxl-3 me-md-4 me-sm-4`}>NT$ {Number(price).toLocaleString()}</p>
                 </div>
               </div>
             </div>
