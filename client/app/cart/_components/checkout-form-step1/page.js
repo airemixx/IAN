@@ -187,7 +187,7 @@ export default function CheckoutFormStep1({ slItem }) {
                     <span className={`position-absolute ${styles["j-cpEndDate"]}`}>
                       {moment(coupon.created_at).add(5,"days").format("YYYY-MM-DD HH:mm:ss")}
                     </span>
-                    <span>{coupon.cpName}</span>
+                    <span className={`${styles['j-cpName']}`}>{coupon.cpName}</span>
                   </div>
                 ))
               ) : (
@@ -215,15 +215,15 @@ export default function CheckoutFormStep1({ slItem }) {
         </div>
         <div className={`${styles["subTotalBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["subTotal"]}>小計</div>
-          <div className={styles["subPrice"]}>NT${price}</div>
+          <div className={styles["subPrice"]}>NT${Number(price).toLocaleString()}</div>
         </div>
         <div className={`${styles["discountBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["discount"]}>折扣</div>
-          <div className={styles["discountPrice"]}>- NT${discount}</div>
+          <div className={styles["discountPrice"]}>- NT${Number(discount).toLocaleString()}</div>
         </div>
         <div className={`${styles["totalPriceBox"]} d-flex justify-content-between ${styles["j-publicFont"]} ms-lg-3 ms-xl-0 me-lg-3 me-xl-0`}>
           <div className={styles["total"]}>總額</div>
-          <div className={styles["totalPrice"]}>NT${totalPrice}</div>
+          <div className={styles["totalPrice"]}>NT${Number(totalPrice).toLocaleString()}</div>
         </div>
       </div>
       <div className={`${styles["j-Checkout"]} d-flex justify-content-center align-items-center align-self-stretch`}>
