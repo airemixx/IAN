@@ -116,6 +116,7 @@ const formatUnreadCount = (count) => {
   return count;
 };
 
+
 // 決定未讀標記的樣式類
 const getUnreadBadgeClass = (count) => {
   // 當數字大於等於100或顯示為"99+"時使用藥丸型
@@ -127,6 +128,7 @@ const getUnreadBadgeClass = (count) => {
 };
 
 const captureEmojiRegex = new RegExp(`(${emojiRegex().source})`, 'gu');
+
 
 export default function ChatWidget() {
   // 使用 Socket 上下文
@@ -329,23 +331,27 @@ export default function ChatWidget() {
     }
     setIsOpen(!isOpen);
   }
+  
 
-  // 修改 handleSelectUser 函數
   const handleSelectUser = (userId) => {
-    // 移除相同用戶檢查，讓每次點擊都能觸發
+    console.log("handleSelectUser - 傳入的 userId:", userId);
     if (activeUserId) {
       leaveUserChat(activeUserId);
     }
-
-    // 確保每次都能觸發切換
-    socketSelectUser(userId);
+    socketSelectUser(userId); // 確認這裡會發送 userId 給 server
     setActiveUserId(userId);
+    console.log("handleSelectUser - 更新後的 activeUserId:", userId);
     setIsMenuOpen(false);
-
-    // 延遲執行標記已讀
-    setTimeout(() => {
-      markAsRead(userId);
-    }, 500);
+    
+    // 若有未讀消息則觸發標記已讀
+    const unreadMessages = messages.filter(msg => !msg.read && msg.sender === 'user');
+    const messageIds = unreadMessages.map(msg => msg.id);
+    if(messageIds.length > 0) {
+      setTimeout(() => {
+        console.log("markAsRead - 傳入參數:", { messageIds, userId });
+        markAsRead({ messageIds, userId });
+      }, 500);
+    }
   };
 
   // 修改發送消息函數以使用 Socket
@@ -672,6 +678,7 @@ export default function ChatWidget() {
     // 不需要額外設置，只需確保使用 context 中的訊息狀態
   }, [messages]);
 
+
   // 在 useEffect 中修改 socket 事件監聽
   useEffect(() => {
     if (!socket) return;
@@ -718,6 +725,40 @@ export default function ChatWidget() {
       socket.off('receive_message', handleReceiveMessage);
     };
   }, [socket, activeUserId, setSocketMessages]); // 記得也在依賴陣列中添加 setSocketMessages
+
+
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleChatHistory = (chatHistory) => {
+      console.log('收到 chat_history 更新:', chatHistory);
+      setSocketMessages(chatHistory);
+    };
+  
+    socket.on('chat_history', handleChatHistory);
+  
+    return () => {
+      socket.off('chat_history', handleChatHistory);
+    };
+  }, [socket, setSocketMessages]);
+
+  useEffect(() => {
+    if (!socket) return;
+    
+    const handleMessagesRead = (payload) => {
+      console.log('管理員收到 messages_read 更新:', payload);
+      const messageIds = Array.isArray(payload) ? payload : payload.messageIds;
+      if (!messageIds) return;
+      setSocketMessages(prev => prev.map(msg =>
+        messageIds.includes(msg.id) ? { ...msg, read: true } : msg
+      ));
+    };
+  
+    socket.on('messages_read', handleMessagesRead);
+    return () => {
+      socket.off('messages_read', handleMessagesRead);
+    };
+  }, [socket, setSocketMessages]);
 
   return (
     <div className={styles.chatWidgetContainer}>
