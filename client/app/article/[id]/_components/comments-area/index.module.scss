@@ -230,23 +230,25 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  
+
   /* 防止按鈕縮小 */
-  &:active, &:focus {
+  &:active,
+  &:focus {
     transform: none !important;
     width: 20px !important;
     height: 20px !important;
     padding: 0 !important;
     outline: none !important;
   }
-  
+
   /* 確保按鈕內的圖示不會縮小 */
   img {
     width: 16px;
     height: 16px;
     transition: none; /* 防止任何過渡效果 */
-    
-    &:active, &:focus {
+
+    &:active,
+    &:focus {
       transform: none !important;
       width: 16px !important;
       height: 16px !important;
@@ -497,7 +499,7 @@
     }
     .y-btn-reply-in-reply {
       font-size: 12px;
-  
+
       img {
         width: 16px;
         height: 16px;
@@ -506,12 +508,11 @@
   }
 }
 
-
 @media screen and (max-width: 420px) {
   .y-reply-time-like {
     h6 {
       font-size: 10px !important;
-      margin: 0 0  !important;
+      margin: 0 0 !important;
     }
   }
   .y-sort-dropdown select {
@@ -543,17 +544,22 @@
     font-size: 12px;
   }
 
+  .y-hidden-reply-btn button {
+    font-size: 12px !important;
+    // padding: 4px 12px;
+  }
+
   .more-btn {
     width: 20px !important;
     height: 20px !important;
     padding: 0 !important;
-    
+
     img {
       width: 16px !important;
       height: 16px !important;
     }
   }
-  
+
   /* 修復可能的交互問題 */
   .moreBtnReply {
     height: 20px !important;
@@ -582,20 +588,20 @@
 
 /* 響應式調整 */
 @media screen and (max-width: 768px) {
-/* 點讚計數器樣式調整 */
-.like-counter {
-  display: inline-block;
-  width: 25px !important; /* 將寬度從40px縮小到25px */
-  text-align: center;
-  font-size: 13px;
-  padding: 0;
-  margin: 0 2px;
-}
-  
-.reply-text {
-  font-size: 11px !important; /* 將回覆字體縮小 */
-  white-space: nowrap;
-}
+  /* 點讚計數器樣式調整 */
+  .like-counter {
+    display: inline-block;
+    width: 25px !important; /* 將寬度從40px縮小到25px */
+    text-align: center;
+    font-size: 13px;
+    padding: 0;
+    margin: 0 2px;
+  }
+
+  .reply-text {
+    font-size: 11px !important; /* 將回覆字體縮小 */
+    white-space: nowrap;
+  }
 }
 
 // 嵌套回覆輸入框容器
@@ -605,16 +611,16 @@
   margin-top: 10px;
   margin-bottom: 15px;
   position: relative;
-  
+
   /* 根據不同屏幕尺寸自動調整 */
   @media screen and (max-width: 991px) {
     max-width: 90%;
   }
-  
+
   @media screen and (max-width: 768px) {
     max-width: 95%;
   }
-  
+
   @media screen and (max-width: 576px) {
     max-width: 100%;
   }
@@ -623,10 +629,86 @@
 /* 確保嵌套回覆區域內容不溢出 */
 .y-reply-content-nested-out {
   overflow-wrap: break-word;
-  
+
   /* 內部輸入框容器 */
   .fade-in {
     width: 100%;
     max-width: 100%;
+  }
+}
+
+/* 留言文字和標記大小調整 */
+.y-reply-text {
+  font-size: 16px; /* 默認留言文字大小 */
+}
+
+.editedMark {
+  font-size: 0.85em; /* 原始大小 */
+}
+
+/* 加入到現有媒體查詢或創建新的 */
+@media screen and (max-width: 1200px) {
+  .y-reply-text {
+    font-size: 15px;
+  }
+
+  .editedMark {
+    font-size: 0.8em;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .y-reply-text {
+    font-size: 14px;
+  }
+
+  .editedMark {
+    font-size: 0.75em;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .y-reply-text {
+    font-size: 14px;
+  }
+
+  .editedMark {
+    font-size: 0.75em;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .y-reply-text {
+    font-size: 13px;
+  }
+
+  .editedMark {
+    font-size: 0.75em;
+  }
+
+  /* 調整時間文字大小 */
+  .y-reply-time-like h6 {
+    font-size: 12px !important;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .y-reply-text {
+    font-size: 12px;
+  }
+
+  .editedMark {
+    font-size: 0.8em;
+    margin-left: 2px; /* 減少空間 */
+  }
+
+  .y-reply-time-like h6 {
+    font-size: 10px !important;
+    margin: 0 !important;
+  }
+
+  /* 輸入框內文字大小調整 */
+  .editingTextArea {
+    font-size: 12px;
   }
 }

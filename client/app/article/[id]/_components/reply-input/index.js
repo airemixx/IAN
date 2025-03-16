@@ -306,7 +306,7 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
         className={`mt-2 d-flex justify-content-end ${styles['y-comment-area-icons']}`}
       >
         <div className="d-flex">
-          <button className="p-1" onClick={triggerFileInput}>
+          <button className="p-1 action-btn image-btn" onClick={triggerFileInput}>
             <img
               src="/images/article/imageup-b.svg"
               alt="圖/影"
@@ -314,7 +314,7 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
             />
           </button>
           <button
-            className="p-1"
+            className="p-1 action-btn gif-btn"
             onClick={() => setShowGifPicker(!showGifPicker)}
           >
             <img
@@ -324,7 +324,7 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
             />
           </button>
           <button
-            className="p-1 sendIcon"
+            className="p-1 action-btn send-btn sendIcon"
             style={{ transition: 'transform 0.3s ease', transform: isSent ? 'scale(1.5)' : 'scale(1)' }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -335,55 +335,36 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
         </div>
       </div>
       {previews.length > 0 && (
-        <div style={{ width: '20%', marginTop: '1rem' }}>
+        <div className={styles['preview-container']}>
           {previews.map((file, index) => (
             <div
               key={index}
-              style={{
-                position: 'relative',
-                marginBottom: '0.5rem',
-                display: 'flex',
-              }}
+              className={styles['preview-item']}
             >
               {file.type.startsWith('image') ? (
                 <img
                   src={file.url}
                   alt={`預覽-${index}`}
-                  style={{ width: '100%', borderRadius: '15px' }}
+                  className={styles['preview-media']}
                 />
               ) : file.type === 'gif' ? (
                 <img
                   src={file.url}
                   alt={`預覽-${index}`}
-                  style={{ width: '100%', borderRadius: '15px' }}
+                  className={styles['preview-media']}
                 />
               ) : (
                 <video
                   src={file.url}
-                  style={{ width: '100%', borderRadius: '15px' }}
+                  className={styles['preview-media']}
+                  controls
                 />
               )}
               <div
                 onClick={() => removePreview(index)}
-                style={{
-                  position: 'absolute',
-                  top: '5px',
-                  right: '5px',
-                  backgroundColor: 'red',
-                  borderRadius: '50%',
-                  width: '20px',
-                  height: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
+                className={styles['preview-remove-btn']}
               >
-                <span
-                  style={{ color: 'white', fontSize: '14px', lineHeight: '0' }}
-                >
-                  ✕
-                </span>
+                <span>✕</span>
               </div>
             </div>
           ))}

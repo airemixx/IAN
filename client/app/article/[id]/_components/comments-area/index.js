@@ -23,7 +23,7 @@ const formatSimpleTimeAgo = (date) => {
     // 移除「大約」前綴
     let simplifiedText = fullText.replace(/大約|約|將近|超過|少於|不到/g, '');
 
-    // 確保只顯示到「周」為單位
+    // 碮保只顯示到「周」為單位
     const timeUnits = ['分鐘', '小時', '天', '周'];
     let found = false;
 
@@ -185,7 +185,7 @@ function ReplyItem({
   const [showNestedReplies, setShowNestedReplies] = useState(false)
   const [isNestedRepliesLoading, setIsNestedRepliesLoading] = useState(false)
   const [moreHover, setMoreHover] = useState(false)
-  const inputRef = useRef(null)
+  const replyInputRef = useRef(null)
 
   // 將本地 isEditing 狀態與全局編輯ID綁定
   const isEditing = currentEditingId === commentId;
@@ -726,7 +726,7 @@ function ReplyItem({
               </div>
               {showReplyInput && (
                 <div
-                  ref={inputRef}
+                  ref={replyInputRef} // 添加這個 ref
                   id={`reply-input-${commentId}`}
                   className={`${styles['fade-in']} ${styles['nested-reply-input-container']}`}
                   style={{ transition: 'opacity 0.3s' }}
@@ -1335,6 +1335,8 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
   const [currentEditingId, setCurrentEditingId] = useState(null)
   const [activeReplyId, setActiveReplyId] = useState(null) // 新增
   const [currentReplyTo, setCurrentReplyTo] = useState('') // 新增
+  // 添加這個參考引用來跟踪輸入框元素
+  const replyInputRef = useRef(null);
 
   const toggleComments = () => setIsCollapsed((prev) => !prev)
 
@@ -1435,16 +1437,52 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
 
   // 新增：統一處理回覆框打開關閉的函數
   const handleReplyClick = (commentId, replyToName) => {
-    // 如果點擊的是當前已打開的回覆框，則關閉它
+    // 如果點擊的是當前已打開的輸入框對應的按鈕，則關閉它
     if (activeReplyId === commentId) {
       setActiveReplyId(null);
       setCurrentReplyTo('');
     } else {
-      // 否則打開新的回覆框，關閉之前的
+      // 否則，打開該輸入框
       setActiveReplyId(commentId);
       setCurrentReplyTo(replyToName ? `@${replyToName} ` : '');
+
+      // 設置 ref 到當前活動的輸入框
+      setTimeout(() => {
+        const inputElement = document.getElementById(`reply-input-${commentId}`);
+        if (inputElement) {
+          replyInputRef.current = inputElement;
+        }
+      }, 0);
     }
   };
+
+  // 在 handleReplyClick 函數之後添加以下 useEffect
+  useEffect(() => {
+    // 只有當有活動輸入框時才添加監聽器
+    if (activeReplyId) {
+      // 創建點擊處理函數
+      const handleOutsideClick = (e) => {
+        // 如果點擊事件發生在輸入框外部
+        if (replyInputRef.current && !replyInputRef.current.contains(e.target)) {
+          // 檢查點擊的元素是否是回覆按鈕（避免點擊回覆按鈕時立即關閉）
+          const isReplyButton = e.target.closest(`.${styles['y-btn-reply-in-reply']}`);
+          if (!isReplyButton) {
+            // 關閉輸入框
+            setActiveReplyId(null);
+            setCurrentReplyTo('');
+          }
+        }
+      };
+
+      // 添加點擊事件監聽器
+      document.addEventListener('mousedown', handleOutsideClick);
+
+      // 清理函數
+      return () => {
+        document.removeEventListener('mousedown', handleOutsideClick);
+      };
+    }
+  }, [activeReplyId]); // 依賴於 activeReplyId
 
   return (
     <div>
