@@ -129,12 +129,12 @@ export default function CheckoutFormStep3() {
             if (resData.status === "success") {
                 setResult(resData.data);
                 await LineInsertDB();
-                // localStorage.removeItem('cart')
-                // localStorage.removeItem('rent_cart')
-                // localStorage.removeItem('shoppingCart')
-                // localStorage.removeItem('cartItems')
-                // localStorage.removeItem('buyerData')
-                // localStorage.removeItem('discountMoney')
+                localStorage.removeItem('cart')
+                localStorage.removeItem('rent_cart')
+                localStorage.removeItem('shoppingCart')
+                localStorage.removeItem('cartItems')
+                localStorage.removeItem('buyerData')
+                localStorage.removeItem('discountMoney')
                 
                 window.dispatchEvent(new Event('cartUpdated'))
                 Swal.fire({

@@ -51,13 +51,13 @@ export default function ECPayCallback() {
             setOrderSaved(true);
             console.log('訂單已成功存入資料庫');
             //清除 localStorage 中的資料
-            // localStorage.removeItem('cart');
-            // localStorage.removeItem('rent_cart');
-            // localStorage.removeItem('shoppingCart');
-            // localStorage.removeItem('cartItems');
-            // localStorage.removeItem('buyerData');
-            // localStorage.removeItem('discountMoney');
-            // localStorage.removeItem('selectedCoupons');
+            localStorage.removeItem('cart');
+            localStorage.removeItem('rent_cart');
+            localStorage.removeItem('shoppingCart');
+            localStorage.removeItem('cartItems');
+            localStorage.removeItem('buyerData');
+            localStorage.removeItem('discountMoney');
+            localStorage.removeItem('selectedCoupons');
           } else {
             console.error('存入失敗:', await response.text());
           }
@@ -70,7 +70,7 @@ export default function ECPayCallback() {
       //   window.location.href = "/"; // 替換成你的目標頁面 URL
       // }, 3000);
 
-      return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
+      // return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
     }
   }, [decoded, searchParams]);
 
@@ -88,7 +88,7 @@ export default function ECPayCallback() {
       <p>回應訊息: {searchParams?.get('RtnMsg')}</p> */}
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="container text-center p-4">
-          <div className="d-flex d-none d-sm-block align-items-center justify-content-center mb-3">
+          <div className="d-none d-sm-flex align-items-center justify-content-center mb-3">
             <CheckCircle className="text-success me-5" size={100} />
             <div>
               <h2>謝謝你! 你的訂單已成立</h2>
