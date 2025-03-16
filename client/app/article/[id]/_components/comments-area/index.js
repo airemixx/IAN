@@ -678,8 +678,7 @@ function ReplyItem({
                   place="bottom"
                   style={{ backgroundColor: '#7E7267' }}
                 />
-                <div className="d-flex mb-like-reply align-items-center">
-                  <button className="ms-sm-3 d-flex align-items-center" onClick={handleLike}>
+                  <button className="ms-sm-0 d-flex align-items-center justify-content-start" onClick={handleLike}>
                     <img
                       src={
                         isLiked
@@ -700,7 +699,7 @@ function ReplyItem({
                     </span>
                   </button>
                   <button
-                    className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
+                    className={`d-flex align-items-center ms-sm-0 ${styles['y-btn-reply-in-reply']}`}
                     onClick={onReplyButtonClick}
                   >
                     <img src="/images/article/reply-origin.svg" alt="Reply" />
@@ -709,7 +708,7 @@ function ReplyItem({
 
                   {/* 只有留言發布者且滑鼠在留言上才顯示編輯選單 */}
                   {effectiveUserId === commentUserId && (
-                    <div className={`${styles.moreBtnReply} ms-sm-3 d-flex align-items-center h-100`}
+                    <div className={`${styles.moreBtnReply} ms-sm-0 d-flex align-items-center `}
                       onMouseEnter={() => setMoreHover(true)}
                       onMouseLeave={() => setMoreHover(false)}
                     >
@@ -722,7 +721,7 @@ function ReplyItem({
                       </button>
                     </div>
                   )}
-                </div>
+
               </div>
               {showReplyInput && (
                 <div
@@ -1183,8 +1182,8 @@ function NestedReplyItem({
           <img src={props.userProfile} alt={userName} />
         </a>
       </div>
-      <div className="w-100 mx-3">
-        <div className={` ${styles['y-reply-content-nested-out']}`}>
+      <div className="w-100">
+        <div className={` mx-3 ${styles['y-reply-content-nested-out']}`}>
           <a href="#" className="text-black text-decoration-none">
             <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
           </a>
