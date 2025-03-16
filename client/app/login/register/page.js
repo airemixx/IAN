@@ -162,7 +162,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-3">
-            <label className={styles.formLabel}>名字 *</label>
+            <label className={styles.formLabel}>姓名 *</label>
             <input
               type="text"
               className={`form-control ${styles.formControl}`}
