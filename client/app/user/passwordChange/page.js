@@ -86,10 +86,11 @@ export default function UserPage(props) {
     <div className="container py-4">
       <div className={`row ${styles.marginTop}`}>
         {/* 側邊選單 */}
-        <Sidenav />
-
+        <div className="col-md-3 py-4 row">
+          <Sidenav />
+        </div>
         {/* 主要內容 */}
-        <main className={`col-md-9 ${styles.mainContent}`}>
+        <main className={`col-md-9 py-4`}>
           <div className="mb-4">
             <h1 className={`margin ${styles.h1}`}>更改我的密碼</h1>
           </div>
