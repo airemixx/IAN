@@ -43,7 +43,7 @@
   }
 }
 
-// 聊天按鈕進入動畫
+
 .chatButtonEnter {
   opacity: 0;
   transform: scale(0.3);
@@ -55,17 +55,8 @@
   transition: opacity 300ms, transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-// 聊天按鈕離開動畫 (先縮小再消失)
-.chatButtonExit {
-  opacity: 1;
-  transform: scale(1);
-}
 
-.chatButtonExitActive {
-  opacity: 0;
-  transform: scale(0.3);
-  transition: opacity 300ms, transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+
 
 // 聊天窗口主容器
 .chatWindow {
@@ -83,30 +74,65 @@
   flex-direction: column;
 }
 
-// 聊天窗口進入動畫 (從按鈕位置展開)
 .chatWindowEnter {
   opacity: 0;
-  transform: scale(0.2) translateY(150px) translateX(100px);
-  transform-origin: bottom right;
+  transform: scale(0) translateY(20px) translateX(20px);
+  transform-origin: bottom right; // 以右下角為縮放中心
 }
+
 
 .chatWindowEnterActive {
   opacity: 1;
   transform: scale(1) translateY(0) translateX(0);
-  transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  transition-delay: 150ms; // 延遲進入，等待按鈕縮小完成
+  transition: opacity 400ms ease, transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+
 // 聊天窗口離開動畫 (先縮小)
-.chatWindowExit {
+.chatWindowExitActive {
+  opacity: 0;
+  transform: scale(0.2) translateY(0px) translateX(0px);
+  border-radius: 50%; // 轉換到按鈕圓形
+  width: 55px;       // 與按鈕相同寬度
+  height: 55px;      // 與按鈕相同高度
+  transition: 
+    opacity 300ms ease, 
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-radius 300ms ease,
+    width 300ms ease,
+    height 300ms ease;
+}
+
+.chatWidgetContainer.chatOpen .chatButton {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0);
+  transition: opacity 300ms ease, transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+// 當按鈕由隱藏進入時，延遲顯示，讓退出動畫先結束
+// .chatButtonEnter {
+//   opacity: 0;
+//   transform: scale(0);
+// }
+
+.chatButtonEnterActive {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms ease, transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 300ms; // 延遲300ms等待聊天室退出動畫完成
+}
+// 聊天按鈕離開動畫 (先縮小再消失)
+.chatButtonExit {
   opacity: 1;
   transform: scale(1);
 }
 
-.chatWindowExitActive {
+.chatButtonExitActive {
   opacity: 0;
-  transform: scale(0.2) translateY(150px) translateX(100px);
-  transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0.3);
+  transition: opacity 300ms, transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .chatButtonWrapper {
@@ -114,28 +140,42 @@
   height: 56px;
   position: relative; /* 添加相對定位 */
 }
+.chatButtonWrapper.open {
+  width: 390px;
+  height: 500px;
+  bottom: 90px;
+  right: 20px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+// .chatButtonWrapper.open .chatButton {
+//   width: 100% !important;
+//   height: 100% !important;
+//   border-radius: 15px !important; // 改成聊天室的圓角
+//   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+// }
 
 .chatButton {
-  position: fixed !important;
-  bottom: 80px !important;
-  right: 30px !important;
-  width: 56px !important;
-  height: 56px !important;
-  min-width: 50px !important;
-  min-height: 50px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  border-radius: 50% !important; /* 改為 50% 確保完全圓形 */
-  display: flex !important;
-  align-items: center !important;
+  position: fixed;
+  bottom: 80px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%; /* 保持圓形 */
+  display: flex;
+  align-items: center;
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
-  background-color: color.adjust(#fc671a, $lightness: -10%) !important;
-  line-height: 1 !important;
-  transform: scale(1);
-  overflow: hidden !important; /* 確保內容不會溢出 */
+  background-color: color.adjust(#fc671a, $lightness: -10%);
+  line-height: 1;
+  transform: scale(1); // 初始值
+  overflow: hidden;
+  /* 移除固定 transition，以便由 enterActive 處理 */
 }
 
 .chatButton:hover {
@@ -169,51 +209,9 @@
   background: #7e7267;
   color: #333;
   transform-origin: bottom right;
+  z-index: 1000;
 }
 
-.chatWindowEnter {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.chatWindowEnterActive {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
-}
-
-.chatWindowExit {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.chatWindowExitActive {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 300ms, transform 300ms;
-}
-
-.chatButtonEnter {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-.chatButtonEnterActive {
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 300ms, transform 300ms;
-}
-
-.chatButtonExit {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.chatButtonExitActive {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: opacity 300ms, transform 300ms;
-}
 
 .mainChat {
   display: flex;
