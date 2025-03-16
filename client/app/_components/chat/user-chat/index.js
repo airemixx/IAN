@@ -139,9 +139,18 @@ export default function ChatWidget() {
     }
   }, [isOpen, scrollToBottom]);
 
+  // 修改 toggleChat 函數
   const toggleChat = () => {
-    setIsOpen(!isOpen)
-  }
+    if (!isOpen) {
+      // 先顯示聊天窗口
+      setIsOpen(true);
+      // 聊天窗口顯示後，滾動到底部
+      setTimeout(scrollToBottom, 500);
+    } else {
+      // 關閉聊天窗口
+      setIsOpen(false);
+    }
+  };
 
   // 顯示登入提示模態框的狀態和函數
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
@@ -455,7 +464,7 @@ export default function ChatWidget() {
     <div className={styles.chatWidgetContainer}>
       <CSSTransition
         in={isOpen}
-        timeout={300}
+        timeout={450}  // 增加總時間，包含延遲
         classNames={{
           enter: styles.chatWindowEnter,
           enterActive: styles.chatWindowEnterActive,
