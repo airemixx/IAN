@@ -1088,7 +1088,12 @@ function NestedReplyItem({
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "確認刪除",
-      cancelButtonText: "取消"
+      cancelButtonText: "取消",
+      customClass: {
+        popup: 'y-custom-popup',
+        confirmButton: 'btn-custom-confirm-delete',
+        cancelButton: 'btn-custom-cancel-delete'
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -1107,14 +1112,22 @@ function NestedReplyItem({
               title: "已刪除！",
               text: "留言已成功刪除。",
               icon: "success",
-              confirmButtonText: "確定"
+              confirmButtonText: "確定",
+              customClass: {
+                popup: 'y-custom-popup',
+                confirmButton: 'btn-custom-safe',
+              }
             });
           } else {
             CustomSwal.fire({
               title: "刪除失敗",
               text: data.message || "刪除留言時發生錯誤",
               icon: "error",
-              confirmButtonText: "確定"
+              confirmButtonText: "確定",
+              customClass: {
+                popup: 'y-custom-popup',
+                confirmButton: 'btn-custom-safe',
+              }
             });
           }
         } catch (err) {
