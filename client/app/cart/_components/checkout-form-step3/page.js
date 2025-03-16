@@ -129,12 +129,12 @@ export default function CheckoutFormStep3() {
             if (resData.status === "success") {
                 setResult(resData.data);
                 await LineInsertDB();
-                localStorage.removeItem('cart')
-                localStorage.removeItem('rent_cart')
-                localStorage.removeItem('shoppingCart')
-                localStorage.removeItem('cartItems')
-                localStorage.removeItem('buyerData')
-                localStorage.removeItem('discountMoney')
+                // localStorage.removeItem('cart')
+                // localStorage.removeItem('rent_cart')
+                // localStorage.removeItem('shoppingCart')
+                // localStorage.removeItem('cartItems')
+                // localStorage.removeItem('buyerData')
+                // localStorage.removeItem('discountMoney')
                 
                 window.dispatchEvent(new Event('cartUpdated'))
                 Swal.fire({
@@ -250,7 +250,7 @@ export default function CheckoutFormStep3() {
     };
 
     return (
-        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 mt-xl-5 pt-xl-1 mt-5 mt-sm-0">
+        <div className="d-flex flex-column align-items-center align-items-xl-start col-12 col-sm-10 col-md-8 col-lg-8 col-xl-5 col-xxl-5 mt-xl-5 pt-xl-1 mt-sm-5">
             <p className={`${styles['j-addressTitle']} text-start ps-3 mb-3`}>結帳</p>
 
             <div className={`${styles['addressDetail']} d-flex flex-column mb-3 ps-3`}>
