@@ -11,32 +11,32 @@
 }
 
 .chatButtonWrapper {
-  width: 56px;
-  height: 56px;
+  width: 55px;
+  height: 55px;
   position: relative; /* 添加相對定位 */
 }
 
 .chatButton {
-  position: fixed !important;
-  bottom: 80px !important;
-  right: 30px !important;
-  width: 56px !important;
-  height: 56px !important;
-  min-width: 50px !important;
-  min-height: 50px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  border-radius: 50% !important; /* 改為 50% 確保完全圓形 */
-  display: flex !important;
-  align-items: center !important;
+  position: fixed;
+  bottom: 80px;
+  right: 30px;
+  width: 55px;
+  height: 55px;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%; /* 保持圓形 */
+  display: flex;
+  align-items: center;
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
-  background-color: color.adjust(#6c6c6c, $lightness: -10%) !important;
-  line-height: 1 !important;
-  transform: scale(1);
-  overflow: hidden !important; /* 確保內容不會溢出 */
+  background-color: color.adjust(#686868, $lightness: -10%);
+  line-height: 1;
+  transform: scale(1); // 初始值
+  overflow: hidden;
+  /* 移除固定 transition，以便由 enterActive 處理 */
 }
 
 .chatButton:hover {
@@ -74,13 +74,22 @@
 
 .chatWindowEnter {
   opacity: 0;
-  transform: translateY(20px);
+  transform: scale(0.2);
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
 }
-
 .chatWindowEnterActive {
   opacity: 1;
-  transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
+  transform: scale(1);
+  border-radius: 15px;  // 聊天室的圓角
+  width: 390px;
+  height: 500px;
+  transition: opacity 300ms ease, 
+              transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              border-radius 300ms ease,
+              width 300ms ease,
+              height 300ms ease;
 }
 
 .chatWindowExit {
@@ -90,19 +99,28 @@
 
 .chatWindowExitActive {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 300ms, transform 300ms;
+  transform: scale(0.2) translateY(0) translateX(0);
+  border-radius: 50%;  // 從聊天室圓角轉換為按鈕圓形
+  width: 55px;        // 改為按鈕尺寸
+  height: 55px;
+  transition: opacity 300ms ease, 
+              transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              border-radius 300ms ease,
+              width 300ms ease,
+              height 300ms ease;
 }
 
 .chatButtonEnter {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0);
 }
 
 .chatButtonEnterActive {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 300ms ease, 
+              transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 300ms; // 延遲300ms等待聊天室退出動畫完成
 }
 
 .chatButtonExit {
@@ -112,8 +130,9 @@
 
 .chatButtonExitActive {
   opacity: 0;
-  transform: scale(0.8);
-  transition: opacity 300ms, transform 300ms;
+  transform: scale(0.3);
+  transition: opacity 300ms ease, 
+              transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 // 主聊天容器修改，使其支持側邊欄
