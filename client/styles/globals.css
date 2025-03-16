@@ -252,6 +252,13 @@ nav {
   border: 1px solid #7e7267;
 }
 
+@media screen and (max-width: 420px) {
+  .search-button{
+    padding: 0.4rem 1rem;
+    font-size: 14px;
+  }
+}
+
 /* 透明緩衝區 */
 .hover-gap {
   position: absolute;

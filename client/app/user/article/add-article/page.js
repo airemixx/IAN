@@ -92,6 +92,11 @@ export default function AddArticlePage() {
         icon: 'error',
         title: '錯誤',
         text: '請填寫所有必填欄位',
+        customClass: {
+          confirmButton: "btn-custom-confirm-OK",
+          popup: "y-custom-popup"
+        },
+        buttonsStyling: false
       })
       return
     }
@@ -138,12 +143,25 @@ export default function AddArticlePage() {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // token 來自 useAuth 的狀態
+            Authorization: `Bearer ${token}`,
           },
         }
       )
 
-      confirmClose()
+      // 文章成功發布後，顯示無按鈕、自動關閉的成功彈窗
+      Swal.fire({
+        icon: 'success',
+        title: '成功',
+        text: '文章已成功發布',
+        timer: 1000, // 2秒後自動關閉
+        timerProgressBar: true, // 顯示倒計時進度條
+        showConfirmButton: false, // 隱藏確認按鈕
+        customClass: {
+          popup: "y-custom-popup"
+        }
+      }).then(() => {
+        confirmClose()
+      })
     } catch (error) {
       Swal.fire({
         icon: 'error',

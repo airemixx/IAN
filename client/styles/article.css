@@ -67,29 +67,40 @@
 } */
 
 /* sweetalert */
-.y-swal2-popup {
+/* .y-swal2-popup {
   border-radius: 25px;
-}
+} */
+
+
 
 .btn-custom-confirm-delete {
-  background-color: #1e3c54;
-  border: none;
+  background-color: #d33;
   padding: 8px 20px;
   color: white;
   border-radius: 25px;
   text-align: center;
   margin-right: 15px;
-  border: 1px solid #1e3c5400;
+  border: 1px solid #1e3c5400 !important;
   transition: all 0.3s ease;
 }
 .btn-custom-confirm-delete:hover {
   background-color: #ffffff;
-  color: #1e3c54;
-  border: 1px solid #1e3c54;
+  color: #d33;
+  border: 1px solid #d33 !important;
+}
+
+.btn-custom-confirm-delete:focus,
+.btn-custom-cancel-delete:focus,
+.btn-custom-confirm-delete-2:focus,
+.btn-custom-cancel-delete-2:focus,
+.btn-custom-safe:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  /* border-color: transparent !important; */
 }
 
 .btn-custom-cancel-delete {
-  background-color: #d33;
+  background-color: #1e3c54;
   border: none;
   padding: 8px 16px;
   color: white;
@@ -100,8 +111,8 @@
 }
 .btn-custom-cancel-delete:hover {
   background-color: #ffffff;
-  color: #d33;
-  border: 1px solid #d33;
+  color: #1e3c54;
+  border: 1px solid #1e3c54;
 }
 
 .btn-custom-confirm-delete-2 {
@@ -121,7 +132,7 @@
 }
 
 .btn-custom-cancel-delete-2 {
-  background-color: #159c36;
+  background-color: #1e3c54;
   border: none;
   padding: 8px 16px;
   color: white;
@@ -133,9 +144,31 @@
 }
 .btn-custom-cancel-delete-2:hover {
   background-color: #ffffff;
-  color: #159c36;
-  border: 1px solid #159c36;
+  color: #1e3c54;
+  border: 1px solid #1e3c54;
 }
+
+.btn-custom-safe {
+  background-color: green;  /* 綠色背景 */
+  border: none;
+  padding: 8px 20px;
+  color: white;
+  border-radius: 25px;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-custom-safe:hover {
+  background-color: #ffffff;
+  color: green;
+  border: 1px solid green;
+}
+
+.y-custom-popup{
+  border-radius: 25px;
+}
+
 
 .y-aside {
   align-self: flex-start;
@@ -158,6 +191,13 @@
     justify-content: space-around;
   }
 }
+@media screen and (max-width: 1375px) {
+  .y-aside {
+    display: none;
+  }
+}
+
+
 
 @media screen and (max-width: 1155px) {
   .y-bg-list {
@@ -177,7 +217,57 @@
   }
 }
 
+@media screen and (max-width: 1200px) {
+  /* 讓content內容寬度變成100% */
+  .y-article-content {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+  }
 
+  /* content內部的section也應該是100% */
+  .y-article-content section {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* section內的內容和圖片區塊也應為100% */
+  .y-article-content section .y-content-text,
+  .y-article-content section .y-content-image {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* 為標題添加padding */
+  .y-article-content h1,
+  .y-article-content h2,
+  .y-article-content h3 {
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+  }
+  
+  /* 確保container在此寬度下有適當的padding */
+  .y-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  /* 麵包屑導航padding */
+  .y-breadcrumb {
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+  }
+
+  /* 頁面容器也需要調整 */
+  .y-page-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
 
 @media screen and (max-width: 390px) {
 

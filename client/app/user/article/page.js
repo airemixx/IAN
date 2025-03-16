@@ -126,18 +126,20 @@ export default function UserPage() {
       // 移除原本的 confirmButtonColor/cancelButtonColor
       customClass: {
         confirmButton: "btn-custom-confirm-delete", // 自訂確認按鈕
-        cancelButton: "btn-custom-cancel-delete"      // 自訂取消按鈕
+        cancelButton: "btn-custom-cancel-delete",      // 自訂取消按鈕
+        popup: "y-custom-popup"
       },
       buttonsStyling: false, // 關閉預設按鈕樣式
-      confirmButtonText: "是, 刪除它！",
+      confirmButtonText: "刪除",
       cancelButtonText: "取消"
     }).then((result) => {
       if (result.isConfirmed) {
         // 第二階段：再次確認，使用自訂樣式
         const swalWithCustomStyle = Swal.mixin({
           customClass: {
-            confirmButton: "btn btn-custom-confirm-delete-2",
-            cancelButton: "btn btn-custom-cancel-delete-2"
+            confirmButton: "btn-custom-confirm-delete-2",
+            cancelButton: "btn-custom-cancel-delete-2",
+            popup: "y-custom-popup"
           },
           buttonsStyling: false
         });
@@ -147,8 +149,8 @@ export default function UserPage() {
           text: "是否確定永久刪除？",
           icon: "warning",
           showCancelButton: true,
-          confirmButtonText: "是的, 刪除！",
-          cancelButtonText: "否, 取消！",
+          confirmButtonText: "刪除",
+          cancelButtonText: "取消",
           reverseButtons: true
         }).then((result) => {
           if (result.isConfirmed) {
@@ -159,11 +161,15 @@ export default function UserPage() {
               }
             })
               .then((res) => {
-                swalWithCustomStyle.fire(
-                  "已刪除！",
-                  "該文章已被刪除。",
-                  "success"
-                );
+                swalWithCustomStyle.fire({
+                  title: "已刪除！",
+                  text: "該文章已被刪除。",
+                  icon: "success",
+                  customClass: {
+                    confirmButton: "btn-custom-safe",  // 使用新的安全按鈕樣式
+                    popup: "y-custom-popup"
+                  }
+                });
                 // 同時更新兩個文章狀態
                 setArticles(prevArticles => prevArticles.filter(a => a.id !== articleId));
                 setAllArticles(prevAllArticles => prevAllArticles.map(a =>
@@ -180,10 +186,15 @@ export default function UserPage() {
                 );
               });
           } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithCustomStyle.fire(
-              "已取消",
-              "該文章依然安全！",
-            );
+            swalWithCustomStyle.fire({
+              title: "已取消",
+              text: "該文章依然安全！",
+              icon: "success",  // 添加成功圖標
+              customClass: {
+                confirmButton: "btn-custom-safe",  // 使用新的安全按鈕樣式
+                popup: "y-custom-popup"
+              }
+            });
           }
         });
       }

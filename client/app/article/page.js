@@ -231,28 +231,47 @@ export default function NewsPage() {
         {/* 搜尋表單 */}
         <SelectList onFilterChange={(newFilters) => setFilters(newFilters)} />
 
-        {/* 卡片區 */}
-        <div className="row">
-          {paginatedArticles.map((article) => (
-            <div key={article.id} className="col-12 col-md-6 col-lg-3">
-              <ListCard
-                article={article}
-                onTagClick={handleTagClick}
-                onAuthorClick={handleAuthorClick}  // 新增此 prop
-                searchTerm={searchTerm}
-              />
+        {/* 搜尋無結果訊息 */}
+        {hasSearch && articles && articles.length === 0 ? (
+          <div
+            style={{
+              textAlign: 'center',
+              margin: '100px auto',
+              color: '#777',
+              fontWeight: '500',
+              fontSize: '18px'
+            }}
+          >
+            <p>找不到關於「{filters.search || filters.author_name || ''}」的文章</p>
+          </div>
+        ) : (
+          <>
+            {/* 卡片區 */}
+            <div className="row">
+              {paginatedArticles.map((article) => (
+                <div key={article.id} className="col-12 col-md-6 col-lg-3">
+                  <ListCard
+                    article={article}
+                    onTagClick={handleTagClick}
+                    onAuthorClick={handleAuthorClick}
+                    searchTerm={searchTerm}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* 分頁區 */}
-        <div className="d-flex justify-content-center mb-5">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}  // 使用您已修改的 handlePageChange
-          />
-        </div>
+            {/* 分頁區 - 只有當有文章且總頁數大於1時才顯示 */}
+            {articles && articles.length > 0 && totalPages > 1 && (
+              <div className="d-flex justify-content-center mb-5">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            )}
+          </>
+        )}
       </section>
     </div>
   )

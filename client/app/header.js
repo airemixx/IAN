@@ -61,7 +61,7 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
       window.removeEventListener('cartUpdated', handleCartUpdate)
     }
   }, [])
-  
+
   const handleSearch = async (e) => {
     e.preventDefault()
     const keyword = inputRef.current.value.trim()
@@ -70,8 +70,8 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
     // 清除當前 URL 的查詢參數
     await router.replace('/article')
 
-    // 根據使用者輸入產生新的查詢參數
-    const query = `?search=${encodeURIComponent(keyword)}`
+    // 根據使用者輸入產生新的查詢參數，指定搜索範圍
+    const query = `?search=${encodeURIComponent(keyword)}&fields=title,subtitle,tag,user`
     const targetUrl = `/article${query}`
 
     router.push(targetUrl)
@@ -265,7 +265,7 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
                 <img src="/images/icon/search.svg" alt="" />
               </a>
               <div>
-              <UserMenu />
+                <UserMenu />
               </div>
               <Link href="/product/spec" className={isClient ? "compare-link" : "compare-link"}>
                 <img src="/images/icon/compare.svg" alt="Compare" />
@@ -287,7 +287,7 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
           style={{
             width: '100%',
             background: '#eaeaea',
-            padding: '1rem',
+            padding: '3rem 1rem 1rem 1rem',
             position: 'fixed', // 改為 fixed 定位
             top: '80px', // 設定與 header 底部的距離
             left: 0,
@@ -313,12 +313,12 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
               placeholder="搜尋關鍵字"
               style={{
                 flex: 3,
-                padding: '0.5rem 1rem',
+                padding: '0.4rem 1rem',
                 border: '1px solid #ccc',
                 borderRadius: '25px',
               }}
             />
-            <select
+            {/* <select
               ref={selectRef}
               defaultValue="全站搜尋"
               style={{
@@ -330,12 +330,12 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
                 background: '#fff',
               }}
             >
-              {/* <option value="全站搜尋">全站搜尋</option>
-              <option value="產品">產品</option> */}
+              <option value="全站搜尋">全站搜尋</option>
+              <option value="產品">產品</option>
               <option value="最新消息">最新消息</option>
-              {/* <option value="課程">課程</option>
-              <option value="租賃">租賃</option> */}
-            </select>
+              <option value="課程">課程</option>
+              <option value="租賃">租賃</option>
+            </select> */}
             <button className="search-button" onClick={handleSearch}>
               搜尋
             </button>
