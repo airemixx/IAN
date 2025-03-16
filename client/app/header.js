@@ -70,8 +70,8 @@ export default function Header({ searchOpen, setSearchOpen, isCartPage }) {
     // 清除當前 URL 的查詢參數
     await router.replace('/article')
 
-    // 根據使用者輸入產生新的查詢參數
-    const query = `?search=${encodeURIComponent(keyword)}`
+    // 根據使用者輸入產生新的查詢參數，指定搜索範圍
+    const query = `?search=${encodeURIComponent(keyword)}&fields=title,subtitle,tag,user`
     const targetUrl = `/article${query}`
 
     router.push(targetUrl)
