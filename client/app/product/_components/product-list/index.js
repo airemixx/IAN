@@ -57,7 +57,7 @@ export default function ProductList({ filters, sort }) {
         {currentProducts.length > 0 ? (
           currentProducts.map((product) => <ProductCard key={product.id} product={product} />)
         ) : (
-          <p className={styles.noProductText}>目前沒有商品</p>
+          <p className={styles.noProductText}>金額輸入錯誤</p>
         )}
       </div>
       {totalPages > 1 && (

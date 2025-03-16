@@ -118,7 +118,7 @@ export default function TitleShareFontSize({
             </div>
           )}
           <div className="ms-2">
-            <p className="mb-0 y-article-date">{formatDate(createdAt)}</p>
+            <p className={`mb-0 ${styles['y-article-date']}`}>{formatDate(createdAt)}</p>
           </div>
         </div>
       </div>

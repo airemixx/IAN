@@ -140,3 +140,77 @@
     color: #996a4e;
   }
 }
+
+/* 橫向滾動容器 */
+.scroll-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+
+  /* 隱藏滾動條但保持功能 */
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+}
+
+/* 卡片項目樣式 */
+.card-item {
+  flex: 0 0 auto;
+  margin-right: 15px;
+  transition: all 0.3s ease;
+
+  &:last-child {
+    margin-right: 5px;
+  }
+}
+
+/* 響應式設計 */
+@media (min-width: 992px) {
+  .scroll-view {
+    display: none;
+  }
+
+  .grid-view {
+    display: block;
+  }
+}
+
+@media (max-width: 991px) {
+  .y-recommends-area {
+    width: 100%;
+    padding: 0 15px;
+  }
+
+  .grid-view {
+    display: none;
+  }
+
+  .scroll-view {
+    display: block;
+  }
+
+  .card-item {
+    width: calc(50% - 15px); /* 顯示2張卡片 */
+  }
+}
+
+@media (max-width: 576px) {
+  .card-item {
+    width: calc(100% - 30px); /* 顯示1張卡片 */
+  }
+}

@@ -10,17 +10,21 @@ export default function ButtonGroup({ confirmClose, onAddArticle }) {
     // 直接呼叫 checkRequiredFields 函式
     const isValid = checkRequiredFields()
 
-    if (!isValid) {
-      // 取得未填寫的欄位名稱
-      const missingFields = getMissingFields()
+    // if (!isValid) {
+    //   // 取得未填寫的欄位名稱
+    //   const missingFields = getMissingFields()
 
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: `${missingFields.join('、')} 欄位尚未填寫!`,
-      })
-      return
-    }
+    //   // Swal.fire({
+    //   //   icon: 'error',
+    //   //   title: 'Oops...',
+    //   //   text: `${missingFields.join('、')} 欄位尚未填寫!`,
+    //   //   customClass: {
+    //   //     confirmButton: "btn-custom-confirm-OK", // 使用您的自訂樣式
+    //   //     popup: "y-custom-popup" // 自訂彈窗樣式
+    //   //   },
+    //   // })
+    //   // return
+    // }
 
     // 驗證通過後執行 onAddArticle
     onAddArticle()

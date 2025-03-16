@@ -14,6 +14,40 @@ import { jwtDecode } from 'jwt-decode' // 添加 jwtDecode 導入
 import { toast } from 'react-toastify' // 添加 toast 導入，用於錯誤訊息
 import Swal from 'sweetalert2'
 
+// 自定義時間格式化函數 - 放在import之後，組件定義之前
+const formatSimpleTimeAgo = (date) => {
+  try {
+    // 使用 date-fns 格式化時間
+    const fullText = formatDistanceToNow(date, { locale: zhTW, addSuffix: true });
+
+    // 移除「大約」前綴
+    let simplifiedText = fullText.replace(/大約|約|將近|超過|少於|不到/g, '');
+
+    // 碮保只顯示到「周」為單位
+    const timeUnits = ['分鐘', '小時', '天', '周'];
+    let found = false;
+
+    for (const unit of timeUnits) {
+      if (simplifiedText.includes(unit)) {
+        found = true;
+        break;
+      }
+    }
+
+    // 如果找不到這些單位，或者時間超過「周」，則顯示「x周前」
+    if (!found || simplifiedText.includes('月') || simplifiedText.includes('年')) {
+      // 計算周數（粗略計算）
+      const weeksDiff = Math.floor((new Date() - date) / (7 * 24 * 60 * 60 * 1000));
+      return `${weeksDiff > 0 ? weeksDiff : 1}周前`;
+    }
+
+    return simplifiedText;
+  } catch (error) {
+    console.error('時間格式化錯誤:', error);
+    return '未知時間';
+  }
+};
+
 // 將 CustomSwal 定義移到頂層，讓所有組件都能使用
 const CustomSwal = Swal.mixin({
   customClass: {
@@ -151,7 +185,7 @@ function ReplyItem({
   const [showNestedReplies, setShowNestedReplies] = useState(false)
   const [isNestedRepliesLoading, setIsNestedRepliesLoading] = useState(false)
   const [moreHover, setMoreHover] = useState(false)
-  const inputRef = useRef(null)
+  const replyInputRef = useRef(null)
 
   // 將本地 isEditing 狀態與全局編輯ID綁定
   const isEditing = currentEditingId === commentId;
@@ -245,10 +279,7 @@ function ReplyItem({
   }, [updatedTime, time, isEdited]);
 
   // 計算顯示時間
-  const timeAgo = formatDistanceToNow(new Date(time), {
-    locale: zhTW,
-    addSuffix: true
-  });
+  const timeAgo = formatSimpleTimeAgo(new Date(time));
   const formattedTime = updatedTime && !isNaN(new Date(updatedTime).getTime())
     ? format(new Date(updatedTime), 'yyyy/MM/dd HH:mm')
     : format(new Date(time), 'yyyy/MM/dd HH:mm');
@@ -492,9 +523,29 @@ function ReplyItem({
     });
   };
 
+  // 在 ReplyItem 組件中添加狀態來控制 IG 風格彈窗
+  const [showIgModal, setShowIgModal] = useState(false);
+
+  // 替換原有的 toggleMoreOptions 函數
   const toggleMoreOptions = (e) => {
-    e.stopPropagation()
-    setActiveMenuId(isMenuOpen ? null : menuKey)
+    e.stopPropagation();
+    setShowIgModal(true);
+  }
+
+  // 添加關閉彈窗的函數
+  const closeIgModal = () => {
+    setShowIgModal(false);
+  }
+
+  // 添加處理編輯和刪除的函數
+  const handleEditClick = () => {
+    handleEdit(commentId);
+    closeIgModal();
+  }
+
+  const handleDeleteClick = () => {
+    handleDelete(commentId);
+    closeIgModal();
   }
 
   useEffect(() => {
@@ -541,18 +592,26 @@ function ReplyItem({
   const showReplyInput = activeReplyId === commentId;
   const replyTo = currentReplyTo;
 
+  // 在 ReplyItem 組件中添加新的狀態變量
+  const [isCommentHovered, setIsCommentHovered] = useState(false);
+
+  // 修改主留言容器，添加commentHovered類名
   return (
     <>
       {showLoader ? (
         <ReplyItemLoader />
       ) : (
-        <div className={`d-flex ${styles['y-reply']} ${isEditing ? styles['editing-mode'] : ''}`}>
+        <div
+          className={`d-flex ${styles['y-reply']} ${isEditing ? styles['editing-mode'] : ''} ${isCommentHovered ? styles.commentHovered : ''}`}
+          onMouseEnter={() => setIsCommentHovered(true)}
+          onMouseLeave={() => setIsCommentHovered(false)}
+        >
           <div className={styles['y-reply-user-profile']}>
             <a href="#">
               <img src={userProfile} alt={userName} />
             </a>
           </div>
-          <div className="d-flex justify-content-between w-100 pe-2">
+          <div className="w-100">
             <div className={`mx-3 ${styles['y-reply-content']}`}>
               <a href="#" className="text-black text-decoration-none">
                 <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
@@ -619,8 +678,8 @@ function ReplyItem({
                   place="bottom"
                   style={{ backgroundColor: '#7E7267' }}
                 />
-                <div className="d-flex mb-like-reply">
-                  <button className="ms-sm-3" onClick={handleLike}>
+                <div className="d-flex mb-like-reply align-items-center">
+                  <button className="ms-sm-3 d-flex align-items-center" onClick={handleLike}>
                     <img
                       src={
                         isLiked
@@ -634,36 +693,51 @@ function ReplyItem({
                       }}
                     />
                     <span
-                      className={`${numVibrate ? styles.vibrate : ''}`}
+                      className={`${styles['like-counter']} ${numVibrate ? styles.vibrate : ''}`}
                       onAnimationEnd={() => setNumVibrate(false)}
-                      style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
                     >
                       {commentLikeCount}
                     </span>
                   </button>
                   <button
                     className={`d-flex align-items-center ms-sm-3 ${styles['y-btn-reply-in-reply']}`}
-                    onClick={onReplyButtonClick} // 修改這裡，使用新的處理函數
+                    onClick={onReplyButtonClick}
                   >
                     <img src="/images/article/reply-origin.svg" alt="Reply" />
                     <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
                   </button>
+
+                  {/* 只有留言發布者且滑鼠在留言上才顯示編輯選單 */}
+                  {effectiveUserId === commentUserId && (
+                    <div className={`${styles.moreBtnReply} ms-sm-3 d-flex align-items-center h-100`}
+                      onMouseEnter={() => setMoreHover(true)}
+                      onMouseLeave={() => setMoreHover(false)}
+                    >
+                      <button className={`${styles['more-btn']} d-flex align-items-center justify-content-center`} onClick={toggleMoreOptions}>
+                        <img
+                          src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
+                          alt="More"
+                          className="my-auto"
+                        />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
               {showReplyInput && (
                 <div
-                  ref={inputRef}
+                  ref={replyInputRef} // 添加這個 ref
                   id={`reply-input-${commentId}`}
-                  className={styles['fade-in']}
-                  style={{ transition: 'opacity 0.3s', width: '850px' }}
+                  className={`${styles['fade-in']} ${styles['nested-reply-input-container']}`}
+                  style={{ transition: 'opacity 0.3s' }}
                 >
                   <ReplyInput
                     articleId={articleId}
                     parentId={commentId}
                     onCommentSubmitted={(newNestedReply) => handleNestedReplySubmitted(commentId, newNestedReply)}
                     replyTo={replyTo}
-                    isAuthenticated={isAuthenticated} // 已在留言區內，所以一定是登入的
-                    showAuthModal={showAuthModal} // 在此環境下不需要真正調用，但需要提供一個空函數
+                    isAuthenticated={isAuthenticated}
+                    showAuthModal={showAuthModal}
                   />
                 </div>
               )}
@@ -718,54 +792,31 @@ function ReplyItem({
                 </>
               )}
             </div>
-            {/* 只有留言發布者才能看到編輯選單 */}
-            {effectiveUserId === commentUserId && (
-              <div className={`${styles.moreBtnReply}`}
-                onMouseEnter={() => setMoreHover(true)}
-                onMouseLeave={() => setMoreHover(false)}
-              >
-                <button className={styles['more-btn']} onClick={toggleMoreOptions}>
-                  <img
-                    src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
-                    alt=""
-                  />
-                </button>
-                <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
-                  <div
-                    className={styles.moreOption}
-                    onClick={() => handleEdit(commentId)}
-                  >
-                    <img
-                      src="/images/article/edit-origin.svg"
-                      alt="編輯原圖"
-                      className={styles.iconOriginal}
-                    />
-                    <img
-                      src="/images/article/edit-hover.svg"
-                      alt="編輯 hover 圖"
-                      className={styles.iconHover}
-                    />
-                    編輯
-                  </div>
-                  <div
-                    className={styles.moreOptionDelete}
-                    onClick={() => handleDelete(commentId)}
-                  >
-                    <img
-                      src="/images/article/delete-origin.svg"
-                      alt="刪除原圖"
-                      className={styles.iconOriginalDelete}
-                    />
-                    <img
-                      src="/images/article/delete-hover.svg"
-                      alt="刪除 hover 圖"
-                      className={styles.iconHoverDelete}
-                    />
-                    刪除
-                  </div>
-                </div>
-              </div>
-            )}
+          </div>
+        </div>
+      )}
+      {showIgModal && (
+        <div className={styles.igModalOverlay} onClick={closeIgModal}>
+          <div className={styles.igModalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.igModalOption} onClick={handleEditClick}>
+              <img
+                src="/images/article/edit-origin.svg"
+                alt="編輯"
+                style={{ marginRight: '10px' }}
+              />
+              編輯留言
+            </div>
+            <div className={`${styles.igModalOption} ${styles.igModalDanger}`} onClick={handleDeleteClick}>
+              <img
+                src="/images/article/delete-origin.svg"
+                alt="刪除"
+                style={{ marginRight: '10px' }}
+              />
+              刪除留言
+            </div>
+            <div className={`${styles.igModalOption} ${styles.igModalCancel}`} onClick={closeIgModal}>
+              取消
+            </div>
           </div>
         </div>
       )}
@@ -801,10 +852,7 @@ function NestedReplyItem({
   const parsedTime = new Date(props.time)
   const validTime = isNaN(parsedTime.getTime()) ? new Date() : parsedTime
 
-  const timeAgo = formatDistanceToNow(validTime, {
-    locale: zhTW,
-    addSuffix: true,
-  })
+  const timeAgo = formatSimpleTimeAgo(validTime);
   const formattedTime = format(validTime, 'yyyy/MM/dd HH:mm')
 
   // 定義選單識別字串
@@ -840,11 +888,6 @@ function NestedReplyItem({
     : isHovered
       ? '/images/article/sended-hover.svg'
       : '/images/article/sended-black.svg';
-
-  const toggleMoreOptions = (e) => {
-    e.stopPropagation()
-    setActiveMenuId(isMenuOpen ? null : menuKey)
-  }
 
   const [localToken, setLocalToken] = useState(null)
   const [localUserId, setLocalUserId] = useState(null)
@@ -1045,7 +1088,12 @@ function NestedReplyItem({
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "確認刪除",
-      cancelButtonText: "取消"
+      cancelButtonText: "取消",
+      customClass: {
+        popup: 'y-custom-popup',
+        confirmButton: 'btn-custom-confirm-delete',
+        cancelButton: 'btn-custom-cancel-delete'
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -1064,14 +1112,22 @@ function NestedReplyItem({
               title: "已刪除！",
               text: "留言已成功刪除。",
               icon: "success",
-              confirmButtonText: "確定"
+              confirmButtonText: "確定",
+              customClass: {
+                popup: 'y-custom-popup',
+                confirmButton: 'btn-custom-safe',
+              }
             });
           } else {
             CustomSwal.fire({
               title: "刪除失敗",
               text: data.message || "刪除留言時發生錯誤",
               icon: "error",
-              confirmButtonText: "確定"
+              confirmButtonText: "確定",
+              customClass: {
+                popup: 'y-custom-popup',
+                confirmButton: 'btn-custom-safe',
+              }
             });
           }
         } catch (err) {
@@ -1087,14 +1143,47 @@ function NestedReplyItem({
     });
   };
 
+  // 在 NestedReplyItem 組件中添加新的狀態變量
+  const [isCommentHovered, setIsCommentHovered] = useState(false);
+
+  // 在 NestedReplyItem 組件中添加狀態
+  const [showIgModal, setShowIgModal] = useState(false);
+
+  // 替換原有的 toggleMoreOptions 函數
+  const toggleMoreOptions = (e) => {
+    e.stopPropagation();
+    setShowIgModal(true);
+  }
+
+  // 添加關閉彈窗的函數
+  const closeIgModal = () => {
+    setShowIgModal(false);
+  }
+
+  // 添加處理編輯和刪除的函數
+  const handleEditClick = () => {
+    handleEdit(props.commentId);
+    closeIgModal();
+  }
+
+  const handleDeleteClick = () => {
+    handleDelete(props.commentId);
+    closeIgModal();
+  }
+
+  // 修改嵌套留言容器，添加commentHovered類名
   return (
-    <div className="d-flex">
+    <div
+      className={`d-flex ${isCommentHovered ? styles.commentHovered : ''}`}
+      onMouseEnter={() => setIsCommentHovered(true)}
+      onMouseLeave={() => setIsCommentHovered(false)}
+    >
       <div className={styles['y-reply-user-profile']}>
         <a href="#">
           <img src={props.userProfile} alt={userName} />
         </a>
       </div>
-      <div className="d-flex justify-content-between w-100 mx-3">
+      <div className="w-100 mx-3">
         <div className={` ${styles['y-reply-content-nested-out']}`}>
           <a href="#" className="text-black text-decoration-none">
             <h6 className={`mt-2 ${styles['y-reply-user-name']}`}>{userName}</h6>
@@ -1151,6 +1240,7 @@ function NestedReplyItem({
                   key={`${props.commentId}-media-${index}`}
                   media_type={type}
                   media_url={url}
+                  isNested={true}
                 />
               );
             });
@@ -1169,8 +1259,8 @@ function NestedReplyItem({
               place="bottom"
               style={{ backgroundColor: '#7E7267' }}
             />
-            <div className="d-flex mb-like-reply">
-              <button className="ms-sm-3" onClick={handleLike}>
+            <div className="d-flex mb-like-reply align-items-center">
+              <button className="ms-sm-3 d-flex align-items-center" onClick={handleLike}>
                 <img
                   src={
                     isLiked
@@ -1184,9 +1274,8 @@ function NestedReplyItem({
                   }}
                 />
                 <span
-                  className={`${numVibrate ? styles.vibrate : ''}`}
+                  className={`${styles['like-counter']} ${numVibrate ? styles.vibrate : ''}`}
                   onAnimationEnd={() => setNumVibrate(false)}
-                  style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}
                 >
                   {commentLikeCount}
                 </span>
@@ -1198,55 +1287,51 @@ function NestedReplyItem({
                 <img src="/images/article/reply-origin.svg" alt="Reply" />
                 <span className={`ms-1 ${styles['reply-text']}`}>回覆</span>
               </button>
+
+              {/* 只有留言發布者才能看到編輯選單 - 移除isCommentHovered條件 */}
+              {effectiveUserId === commentUserId && (
+                <div className={`${styles.moreBtnReply} ms-sm-3 d-flex align-items-center h-100`}
+                  onMouseEnter={() => setMoreHover(true)}
+                  onMouseLeave={() => setMoreHover(false)}
+                >
+                  <button className={`${styles['more-btn']} d-flex align-items-center justify-content-center`} onClick={toggleMoreOptions}>
+                    <img
+                      src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
+                      alt="More"
+                      className="my-auto"
+                    />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        {/* 只有留言發布者才能看到編輯選單 */}
-        {effectiveUserId === commentUserId && (
-          <div className={`${styles.moreBtnReply}`}>
-            <button className={styles['more-btn']} onClick={toggleMoreOptions}>
+      </div>
+      {showIgModal && (
+        <div className={styles.igModalOverlay} onClick={closeIgModal}>
+          <div className={styles.igModalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.igModalOption} onClick={handleEditClick}>
               <img
-                src={moreHover ? '/images/article/more-hover.svg' : '/images/article/more-origin.svg'}
-                alt="More"
+                src="/images/article/edit-origin.svg"
+                alt="編輯"
+                style={{ marginRight: '10px' }}
               />
-            </button>
-            <div className={`${styles.moreOptions} ${isMenuOpen ? styles.show : ''}`}>
-              <div
-                className={styles.moreOption}
-                onClick={() => handleEdit(props.commentId)}
-              >
-                <img
-                  src="/images/article/edit-origin.svg"
-                  alt="編輯原圖"
-                  className={styles.iconOriginal}
-                />
-                <img
-                  src="/images/article/edit-hover.svg"
-                  alt="編輯 hover 圖"
-                  className={styles.iconHover}
-                />
-                編輯
-              </div>
-              <div
-                className={styles.moreOptionDelete}
-                onClick={() => handleDelete(props.commentId)}
-              >
-                <img
-                  src="/images/article/delete-origin.svg"
-                  alt="刪除原圖"
-                  className={styles.iconOriginalDelete}
-                />
-                <img
-                  src="/images/article/delete-hover.svg"
-                  alt="刪除 hover 圖"
-                  className={styles.iconHoverDelete}
-                />
-                刪除
-              </div>
+              編輯留言
+            </div>
+            <div className={`${styles.igModalOption} ${styles.igModalDanger}`} onClick={handleDeleteClick}>
+              <img
+                src="/images/article/delete-origin.svg"
+                alt="刪除"
+                style={{ marginRight: '10px' }}
+              />
+              刪除留言
+            </div>
+            <div className={`${styles.igModalOption} ${styles.igModalCancel}`} onClick={closeIgModal}>
+              取消
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -1263,6 +1348,8 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
   const [currentEditingId, setCurrentEditingId] = useState(null)
   const [activeReplyId, setActiveReplyId] = useState(null) // 新增
   const [currentReplyTo, setCurrentReplyTo] = useState('') // 新增
+  // 添加這個參考引用來跟踪輸入框元素
+  const replyInputRef = useRef(null);
 
   const toggleComments = () => setIsCollapsed((prev) => !prev)
 
@@ -1363,16 +1450,52 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
 
   // 新增：統一處理回覆框打開關閉的函數
   const handleReplyClick = (commentId, replyToName) => {
-    // 如果點擊的是當前已打開的回覆框，則關閉它
+    // 如果點擊的是當前已打開的輸入框對應的按鈕，則關閉它
     if (activeReplyId === commentId) {
       setActiveReplyId(null);
       setCurrentReplyTo('');
     } else {
-      // 否則打開新的回覆框，關閉之前的
+      // 否則，打開該輸入框
       setActiveReplyId(commentId);
       setCurrentReplyTo(replyToName ? `@${replyToName} ` : '');
+
+      // 設置 ref 到當前活動的輸入框
+      setTimeout(() => {
+        const inputElement = document.getElementById(`reply-input-${commentId}`);
+        if (inputElement) {
+          replyInputRef.current = inputElement;
+        }
+      }, 0);
     }
   };
+
+  // 在 handleReplyClick 函數之後添加以下 useEffect
+  useEffect(() => {
+    // 只有當有活動輸入框時才添加監聽器
+    if (activeReplyId) {
+      // 創建點擊處理函數
+      const handleOutsideClick = (e) => {
+        // 如果點擊事件發生在輸入框外部
+        if (replyInputRef.current && !replyInputRef.current.contains(e.target)) {
+          // 檢查點擊的元素是否是回覆按鈕（避免點擊回覆按鈕時立即關閉）
+          const isReplyButton = e.target.closest(`.${styles['y-btn-reply-in-reply']}`);
+          if (!isReplyButton) {
+            // 關閉輸入框
+            setActiveReplyId(null);
+            setCurrentReplyTo('');
+          }
+        }
+      };
+
+      // 添加點擊事件監聽器
+      document.addEventListener('mousedown', handleOutsideClick);
+
+      // 清理函數
+      return () => {
+        document.removeEventListener('mousedown', handleOutsideClick);
+      };
+    }
+  }, [activeReplyId]); // 依賴於 activeReplyId
 
   return (
     <div>
@@ -1386,17 +1509,15 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
       {
         !isCollapsed && (
           <>
-            <div className={`${styles['y-sort-dropdown']} my-4`}>
+            <div className={styles['y-sort-dropdown']}>
               <select
-                id="sort-comments"
-                name="sort-comments"
-                className="form-select"
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
+                className="form-select"
               >
-                <option value="1">由新到舊</option>
-                <option value="2">由舊到新</option>
-                <option value="3">熱門留言</option>
+                <option value="1">最新發佈</option>
+                <option value="2">最早發佈</option>
+                <option value="3">按讚數量</option>
               </select>
             </div>
             <div className="pt-3">
