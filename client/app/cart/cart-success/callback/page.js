@@ -66,11 +66,11 @@ export default function ECPayCallback() {
         }
       };
       saveOrderToDB();
-      const timer = setTimeout(() => {
-        window.location.href = "/"; // 替換成你的目標頁面 URL
-      }, 3000);
+      // const timer = setTimeout(() => {
+      //   window.location.href = "/"; // 替換成你的目標頁面 URL
+      // }, 3000);
 
-      return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
+      // return () => clearTimeout(timer); // 清除計時器，避免潛在錯誤
     }
   }, [decoded, searchParams]);
 
@@ -88,8 +88,21 @@ export default function ECPayCallback() {
       <p>回應訊息: {searchParams?.get('RtnMsg')}</p> */}
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="container text-center p-4">
-          <div className="d-flex align-items-center justify-content-center mb-3">
+          <div className="d-none d-sm-flex align-items-center justify-content-center mb-3">
             <CheckCircle className="text-success me-5" size={100} />
+            <div>
+              <h2>謝謝你! 你的訂單已成立</h2>
+              <p className="fw-bold">訂單號碼: {searchParams?.get('MerchantTradeNo')}</p>
+              <br />
+              <p>交易金額: {searchParams?.get('TradeAmt')}元</p>
+              <p>交易日期: {searchParams?.get('TradeDate')}</p>
+              <p>付款日期: {searchParams?.get('PaymentDate')}</p>
+              <span>訂單確認電郵已發到您的電子郵箱:</span>
+              <p className="fw-bold">{decoded?.mail}</p>
+            </div>
+          </div>
+          <div className="d-flex d-sm-none d-block align-items-center justify-content-center mb-3 flex-column">
+            <CheckCircle className="text-success mb-3" size={100} />
             <div>
               <h2>謝謝你! 你的訂單已成立</h2>
               <p className="fw-bold">訂單號碼: {searchParams?.get('MerchantTradeNo')}</p>

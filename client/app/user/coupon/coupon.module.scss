@@ -57,7 +57,12 @@
 
 // 響應式設計
 .JcpEndDate {
-  bottom: 7%;
-  left: 38%;
+  bottom: 12%;
+  left: 61%;
+  transform: translateX(-50%);
   color: #fff;
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  white-space: nowrap;
 }
