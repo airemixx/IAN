@@ -18,16 +18,16 @@ export default function UserMenu() {
   // 讀取 `localStorage` 並解析 JWT
   const fetchUserData = () => {
     const token = localStorage.getItem('loginWithToken');
-  
+
     if (!token) {
       setUser(null);
       return;
     }
-  
+
     try {
       const decoded = jwtDecode(token);
       console.log(decoded);
-  
+
       // Check if the token is expired
       const expirationTime = decoded.exp * 1000;
       if (Date.now() > expirationTime) {
@@ -35,7 +35,7 @@ export default function UserMenu() {
         setUser(null);
         return;
       }
-  
+
       setUser({
         id: decoded.id,
         account: decoded.account,
@@ -92,7 +92,8 @@ export default function UserMenu() {
       cancelButtonText: "取消"
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("loginWithToken");
+        localStorage.clear()
+        window.dispatchEvent(new Event('cartUpdated'))
         setUser(null);
         Swal.fire({
           title: "登出成功！",
@@ -109,17 +110,17 @@ export default function UserMenu() {
   return (
     <div className={styles.container}>
       {/* 使用者選單 (滑鼠懸停觸發) */}
-      <div 
-        className={styles.userMenu} 
+      <div
+        className={styles.userMenu}
         ref={menuRef}
         onMouseEnter={handleMouseEnter}  // 滑鼠移入打開選單
         onMouseLeave={handleMouseLeave}  // 滑鼠移出時延遲關閉選單
       >
-      
+
 
         <Link href="/user">
           <Image src={"/images/icon/user.svg"} alt="User Icon" width={24} height={24} />
-          </Link>
+        </Link>
 
         {/* 下拉選單 */}
         {menuOpen && (

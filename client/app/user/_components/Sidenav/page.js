@@ -45,6 +45,7 @@ export default function Sidenav() {
       if (result.status !== "success") throw new Error(result.message);
 
       localStorage.clear();
+      window.dispatchEvent(new Event('cartUpdated'))
       setToken(null);
       setUser(null);
       router.push("/login");
