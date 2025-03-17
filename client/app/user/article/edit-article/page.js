@@ -21,6 +21,7 @@ export default function EditArticlePage() {
   const [articleData, setArticleData] = useState(null)
   const [hashtags, setHashtags] = useState([])
   const [editorReady, setEditorReady] = useState(false) // 新增: 監控編輯器狀態
+  const [currentImagePath, setCurrentImagePath] = useState('');
   const imageUpdateRef = useRef(null)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -63,6 +64,11 @@ export default function EditArticlePage() {
         // 如果有 hashtags，更新 state
         if (article.hashtags) {
           setHashtags(article.hashtags)
+        }
+
+        // 設置初始圖片路徑
+        if (article.image_path) {
+          setCurrentImagePath(article.image_path);
         }
 
         // 填充表單
@@ -115,7 +121,7 @@ export default function EditArticlePage() {
           console.log('編輯器實例尚未準備好，等待下次嘗試');
         }
       } catch (error) {
-        console.error('設置編輯器內容時出錯:', error);
+        // console.error('設置編輯器內容時出錯:', error);
       }
     }
   }, [editorReady, articleData]);
@@ -125,6 +131,7 @@ export default function EditArticlePage() {
   }, [router])
 
   const handleUpdateArticle = useCallback(async () => {
+    // 先檢查必填欄位
     const allFilled = checkRequiredFields()
     if (!allFilled) {
       setHasError(true)
@@ -137,42 +144,55 @@ export default function EditArticlePage() {
     }
 
     try {
+      // 獲取必要表單元素
       const categorySelect = document.querySelector('select[name="文章分類"]')
       const titleInput = document.querySelector('input[placeholder="標題 (必填)"]')
       const subtitleInput = document.querySelector('input[placeholder="副標題"]')
-      const imagePathInput = document.querySelector('#imagePath')
-      const editorInstance = window.editorInstance
-      const content = editorInstance ? editorInstance.html.get() : ''
+      
+      // 降低檢查嚴格度
+      if (!categorySelect || !titleInput) {
+        console.error('找不到必要的表單元素:', 
+          !categorySelect ? '分類選擇器缺失' : '', 
+          !titleInput ? '標題輸入框缺失' : ''
+        );
+        Swal.fire({
+          icon: 'error',
+          title: '表單錯誤',
+          text: '無法找到必要表單欄位，請重新整理頁面後再試',
+        })
+        return
+      }
 
-      const hashtagEls = document.querySelectorAll('#hashtag-preview .badge')
+      // 使用編輯器中的內容
+      const content = window.editorInstance?.html?.get() || ''
+
+      // 獲取標籤
+      const hashtagEls = document.querySelectorAll('#hashtag-preview .badge') || []
       const updatedHashtags = Array.from(hashtagEls).map((el) =>
         el.textContent.replace(/×$/, '')
       )
 
-      // 比較原始和更新後的 hashtags
-      const originalHashtags = articleData?.hashtags || []
-      const removedHashtags = originalHashtags.filter(
-        tag => !updatedHashtags.includes(tag)
-      )
-
+      // 重要：使用 React 狀態中的圖片路徑，而不是嘗試從 DOM 獲取
+      console.log('使用圖片路徑:', currentImagePath);
+      
+      // 發送請求
       await axios.put(`http://localhost:8000/api/articles/${articleId}`, {
         category: categorySelect.value,
         title: titleInput.value.trim(),
-        subtitle: titleInput.value.trim(),
+        subtitle: subtitleInput ? subtitleInput.value.trim() : '',
         content,
-        image_path: imagePathInput.value.trim(),
+        image_path: currentImagePath, // 使用狀態變數
         hashtags: updatedHashtags,
-        removedHashtags, // 傳送被刪除的 hashtags
+        removedHashtags: [],
       })
 
-      // 修改成功彈窗 - 自動關閉無按鈕版本
+      // 顯示成功訊息
       Swal.fire({
         icon: 'success',
         title: '更新成功',
         text: '文章已成功更新',
-        timer: 1000, // 1秒後自動關閉
-        // timerProgressBar: true, // 顯示倒計時進度條
-        showConfirmButton: false, // 隱藏確認按鈕
+        timer: 1000,
+        showConfirmButton: false,
         customClass: {
           popup: "y-custom-popup"
         }
@@ -180,6 +200,7 @@ export default function EditArticlePage() {
         confirmClose()
       })
     } catch (error) {
+      console.error('更新文章時發生錯誤:', error)
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -190,9 +211,8 @@ export default function EditArticlePage() {
         },
         buttonsStyling: false
       })
-      console.error('Error updating article:', error)
     }
-  }, [articleId, confirmClose, articleData])
+  }, [articleId, confirmClose, articleData, currentImagePath]) // 確保添加 currentImagePath 作為依賴
 
   return (
     <>
@@ -207,10 +227,14 @@ export default function EditArticlePage() {
                 ref={imageUpdateRef}
                 hasError={hasError}
                 initialImagePath={articleData?.image_path}
+                onImagePathChange={setCurrentImagePath} // 添加回調
               />
             </div>
             <div className="my-4">
-              <FroalaEditor initialContent={articleData?.content} />
+              <FroalaEditor 
+                initialContent={articleData?.content} 
+                key={articleId || 'default-key'}
+              />
             </div>
             <div className="my-4">
               <EditHashtagInput
