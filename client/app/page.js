@@ -6,7 +6,7 @@ import SliderIndex from './_components/slider'
 import ArticleCardIndex from './_components/article-card'
 import ProductCardIndex from './_components/product-card'
 import CoursesCardIndex2 from './_components/courses-card2'
-// import Chat from './_components/chat'
+import Chat from './_components/chat'
 import CouponButton from './_components/getCoupon/page'
 
 // 定義各區域的背景顏色
@@ -182,7 +182,7 @@ export default function Home() {
       <div ref={courseRef} >
         <CoursesCardIndex2 />
       </div>
-      {/* <Chat /> */}
+      <Chat />
     </main>
   )
 }
