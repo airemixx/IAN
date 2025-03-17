@@ -112,6 +112,12 @@ export default function ChatWidget() {
   }, []);
 
   useEffect(() => {
+    if (isOpen && messages.some(msg => !msg.read)) {
+      markAsRead(); 
+    }
+  }, [messages]);
+
+  useEffect(() => {
     const chatBody = chatBodyRef.current;
     if (chatBody) {
       chatBody.addEventListener('scroll', handleScroll);
@@ -139,9 +145,18 @@ export default function ChatWidget() {
     }
   }, [isOpen, scrollToBottom]);
 
+  // 修改 toggleChat 函數
   const toggleChat = () => {
-    setIsOpen(!isOpen)
-  }
+    if (!isOpen) {
+      // 先顯示聊天窗口
+      setIsOpen(true);
+      // 聊天窗口顯示後，滾動到底部
+      setTimeout(scrollToBottom, 500);
+    } else {
+      // 關閉聊天窗口
+      setIsOpen(false);
+    }
+  };
 
   // 顯示登入提示模態框的狀態和函數
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
@@ -390,25 +405,21 @@ export default function ChatWidget() {
 
   useEffect(() => {
     if (!socketContext || !socketContext.socket) return;
-
-    // 直接監聽 messages_read 事件
-    socketContext.socket.on('messages_read', (messageIds) => {
-      console.log('收到訊息已讀更新(user端):', messageIds);
-
-      // 強制更新UI
+  
+    const handleMessagesRead = (payload) => {
+      console.log('收到訊息已讀更新(user端):', payload);
+      // 統一取得 messageIds (如果 payload 是陣列，直接使用；如果是物件則取 payload.messageIds)
+      const messageIds = Array.isArray(payload) ? payload : payload.messageIds;
+      if (!messageIds) return;
       setMessages(prevMessages => prevMessages.map(msg =>
-        Array.isArray(messageIds) && messageIds.includes(msg.id)
-          ? { ...msg, read: true }
-          : (messageIds.messageIds && messageIds.messageIds.includes(msg.id))
-            ? { ...msg, read: true }
-            : msg
+        messageIds.includes(msg.id) ? { ...msg, read: true } : msg
       ));
-    });
-
+    };
+  
+    socketContext.socket.on('messages_read', handleMessagesRead);
+  
     return () => {
-      if (socketContext.socket) {
-        socketContext.socket.off('messages_read');
-      }
+      socketContext.socket.off('messages_read', handleMessagesRead);
     };
   }, [socketContext, setMessages]);
 
@@ -416,9 +427,10 @@ export default function ChatWidget() {
 
   // 在聊天窗口打開時自動標記已讀
   useEffect(() => {
-    if (isOpen && messages.length > 0 && markAsRead) {
-      // 用戶打開聊天視窗時，標記所有客服訊息為已讀
-      markAsRead(); // 用戶端不需要指定 userId
+    if (isOpen && messages.some(msg => !msg.read)) {
+      setTimeout(() => {
+        markAsRead(); // 此函式會發送 socket.emit('mark_as_read', { messageIds, userId })
+      }, 300);
     }
   }, [isOpen, messages, markAsRead]);
 
@@ -455,7 +467,7 @@ export default function ChatWidget() {
     <div className={styles.chatWidgetContainer}>
       <CSSTransition
         in={isOpen}
-        timeout={300}
+        timeout={450}  // 增加總時間，包含延遲
         classNames={{
           enter: styles.chatWindowEnter,
           enterActive: styles.chatWindowEnterActive,
