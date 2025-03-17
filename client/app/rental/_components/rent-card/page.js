@@ -21,7 +21,7 @@ export default function RentCard({ rental, shouldAnimate }) {
       }}
     >
       <div
-        className="k-card position-relative w-100 border rounded-1 overflow-hidden"
+        className="k-card position-relative w-100 h-100 border rounded-1 overflow-hidden"
         style={{ cursor: 'pointer' }}
         onClick={() => router.push(`/rental/${rental.id}`)} // ✅ 點擊後導向 [id] 頁面
         onMouseEnter={() => setIsHovered(true)}
@@ -54,7 +54,7 @@ export default function RentCard({ rental, shouldAnimate }) {
             alt={rental.name}
           />
         </div>
-        <div className="pt-0 pe-3 pb-2 ps-4">
+        <div className="pt-0 pe-3 pb-2 ps-4 k-card-content">
           <h3 className="fs-5 fw-bold">
             {rental.brand} {rental.name}
           </h3>

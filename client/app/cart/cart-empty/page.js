@@ -54,7 +54,7 @@ export default function CartEmptyPage() {
                             <Link href={"/product"} className={`${styles['j-linkCamera']} text-center`}>尋找我的相機</Link>
                         </div>
                     </div>
-                    <div className={`${styles['j-emptyShoppingImg']} d-sm-none d-block col-6 me-4 mb-5`}>
+                    <div className={`${styles['j-emptyShoppingImg']} d-sm-none d-block col-6 me-4 `}>
                         <img src="/images/cart/image2.jpg" alt="" className="object-fit-contain"/>
                         <div className={`d-flex flex-column ${styles['j-emptyShoppingTitle']} position-absolute`}>
                             <span className={`mb-2 ${styles['j-AllcameraTitle']} ${styles['j-publicFont']}`}>所有相機</span>

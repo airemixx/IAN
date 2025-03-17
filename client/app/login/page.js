@@ -110,7 +110,7 @@ export default function loginPage() {
 
           <div className={`row justify-content-center ${styles.marginTop}`}>
             {/* 左側 - 建立帳戶 */}
-            <div className={`col-lg-6 ${styles.box} ${styles.column} me-4`}>
+            <div className={`col-lg-6 col-md-10 ${styles.box} ${styles.column} `}>
               <div className={styles.box1}>
                 <h5>我沒有帳戶</h5>
                 <h6>建立帳戶，享受個人化的購物體驗。</h6>
@@ -136,7 +136,7 @@ export default function loginPage() {
             </div>
 
             {/* 右側 - 登入帳戶 */}
-            <div className={`col-lg-6 ${styles.box} ${styles.column} me-4`}>
+            <div className={`col-lg-6 col-md-10 ${styles.box} ${styles.column}`}>
               <form onSubmit={handleLogin}>
                 <div className={styles.box1}>
                   <h5>我已擁有帳戶</h5>
