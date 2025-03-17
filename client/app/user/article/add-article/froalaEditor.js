@@ -81,7 +81,28 @@ export default function FroalaEditorWrapper({ initialContent }) {
           imageUploadURL: '/api/froala-upload?type=image',
           videoUploadURL: '/api/froala-upload?type=video',
           fileUploadURL: '/api/froala-upload?type=file',
+          // 添加以下配置確保樣式優先保留
+          htmlAllowedStyles: ['.*'], // 允許所有 CSS 樣式
+          htmlAllowedAttrs: ['.*'], // 允許所有 HTML 屬性
+          htmlUntouched: true, // 保留原始 HTML 格式
+          styleManagerAllowClasses: true, // 允許所有 CSS 類
+          // 確保對齊樣式被保留
+          htmlDoNotWrapTags: ['br', 'img', 'hr'],
           events: {
+            initialized: function () {
+              console.log('Froala Editor 初始化完成，設定全局實例');
+              window.editorInstance = this;
+              this.el.style.backgroundColor = 'transparent';
+              
+              // 確保初始內容會被設定
+              if (initialContent) {
+                console.log('設定初始內容：', initialContent.substring(0, 50) + '...');
+                // 使用小延遲確保編輯器已經完全初始化
+                setTimeout(() => {
+                  this.html.set(initialContent);
+                }, 200);
+              }
+            },
             contentChanged: function () {
               // 取得編輯器內容
               const content = this.html.get()
@@ -112,6 +133,11 @@ export default function FroalaEditorWrapper({ initialContent }) {
               this.el.style.backgroundColor = 'transparent'
               console.log('Froala Editor 初始化完成');
               window.editorInstance = this;
+
+              // 新增: 注入高優先級樣式
+              const cssOverride = document.createElement('style');
+              cssOverride.textContent = '.fr-view [style*="text-align"] { text-align: inherit !important; }';
+              document.head.appendChild(cssOverride);
 
               // 如果提供了初始內容，設置它
               if (initialContent) {

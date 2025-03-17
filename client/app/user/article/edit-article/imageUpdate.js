@@ -9,8 +9,9 @@ import React, {
 } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import styles from '../add-article/AddArticleModal.module.scss'
+import axios from 'axios'
 
-const ImageUpdate = forwardRef(({ hasError, initialImagePath = '' }, ref) => {
+const ImageUpdate = forwardRef(({ hasError, initialImagePath = '', onImagePathChange }, ref) => {
   // 如果 initialImagePath 存在，預設選擇輸入圖片路徑
   const [imageSource, setImageSource] = useState(initialImagePath ? 'path' : 'local')
   const [localPreview, setLocalPreview] = useState(null)
@@ -94,6 +95,7 @@ const ImageUpdate = forwardRef(({ hasError, initialImagePath = '' }, ref) => {
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       previewImage(e.target.files[0])
+      handleImageUpload(e) // 新增：處理圖片上傳
     }
   }
 
@@ -124,6 +126,35 @@ const ImageUpdate = forwardRef(({ hasError, initialImagePath = '' }, ref) => {
         ? '1px solid rgb(200, 57, 31)'
         : '',
   }
+
+  // 在處理上傳圖片函數中
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('folder', 'article'); // 指定存放到 article 資料夾
+    
+    try {
+      // 上傳到 public/images/article 資料夾
+      const response = await axios.post('/api/upload-to-public', formData);
+      const imageUrl = response.data.imageUrl; // 應返回如 /images/article/filename.jpg
+      
+      // 更新狀態
+      setImagePath(imageUrl);
+      
+      // 立即通知父組件路徑已更改
+      if (onImagePathChange) {
+        onImagePathChange(imageUrl);
+      }
+      
+      // 顯示預覽
+      setLocalPreview(URL.createObjectURL(file));
+    } catch (error) {
+      console.error('上傳失敗:', error);
+    }
+  };
 
   return (
     <>
@@ -237,6 +268,6 @@ const ImageUpdate = forwardRef(({ hasError, initialImagePath = '' }, ref) => {
   )
 })
 
-ImageUpdate.displayName = 'ImageUpdate'
+ImageUpdate.displayName = 'ImageUpdate' // 增加 displayName 幫助調試
 
 export default ImageUpdate
