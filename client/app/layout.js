@@ -17,6 +17,7 @@ import { IoIosArrowUp } from 'react-icons/io'
 import dynamic from "next/dynamic";
 import { SocketProvider } from './_components/chat/context/socketContext';
 import ScrollTopButton from "@/app/_components/top-btn/page.js"
+import Chat from "./_components/chat"
 const Loading = dynamic(() => import("@/app/_components/loading/page.js"), { ssr: false });
 
 const notoSansTC = Noto_Sans_TC({
@@ -142,6 +143,7 @@ export default function RootLayout({ children }) {
           </div>
         )}
         < ScrollTopButton />
+        <Chat />
       </body>
     </html>
   )
