@@ -37,7 +37,7 @@ export default function CartEmptyPage() {
     return (
         <div className={`${styles['j-page-wrapper']}`}>
             {isCartEmpty ? <div className={"container d-xs-flex flex-sm-column pt-5"}>
-                <div className={`${styles['j-shoppingCartTitleBox']} mb-5 row justify-content-center mt-5 pt-5`}>
+                <div className={`${styles['j-shoppingCartTitleBox']} mb-5 row justify-content-center mt-5 pt-sm-5`}>
                     <div className="col-12 text-center">
                         <h1 className={`${styles['j-shoppingCartTitle']} m-0 `}>我的購物車</h1>
                     </div>
