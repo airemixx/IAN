@@ -17,7 +17,7 @@
 .back-btn {
   margin: 0rem 0 2rem 0;
   margin-left: 16px;
-  button{
+  button {
     border: none;
     background: none;
     font-size: 1rem;
@@ -184,3 +184,8 @@
   }
 }
 
+@media screen and (max-width: 567px) {
+  .modal-body {
+    padding-top: 0 !important;
+  }
+}

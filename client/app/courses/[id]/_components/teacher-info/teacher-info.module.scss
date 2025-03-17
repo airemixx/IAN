@@ -79,7 +79,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  p{
+  p {
     color: var(--black);
   }
 }
@@ -240,7 +240,6 @@
   }
 }
 
-
 .hr-line {
   margin: 2rem 0;
 }
@@ -363,6 +362,9 @@
 }
 
 @media screen and (max-width: 567px) {
+  .modal-body {
+    padding-top: 0 !important;
+  }
   .title-block {
     display: none;
   }
