@@ -20,11 +20,11 @@ export default function PopularTeacher() {
         if (!res.ok) throw new Error('無法獲取講師資料')
 
         const data = await res.json()
-        console.log('📌 取得的講師資料:', data) // ✅ 確保 API 回傳的資料正確
+        // console.log('📌 取得的講師資料:', data) 
 
         setTopTeachers(data.slice(0, 4)) // 取前 4 名
       } catch (error) {
-        console.error('❌ 無法獲取熱門講師:', error)
+        // console.error('❌ 無法獲取熱門講師:', error)
       }
     }
 
@@ -43,11 +43,11 @@ export default function PopularTeacher() {
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
         const data = await res.json();
-        console.log("📌 選擇的講師資料:", data);
+        // console.log("📌 選擇的講師資料:", data);
         setSelectedTeacher(data);
         setIsModalOpen(true);
       } catch (error) {
-        console.error("❌ 獲取講師資料失敗:", error);
+        // console.error("❌ 獲取講師資料失敗:", error);
       }
     }
   };

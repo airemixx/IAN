@@ -29,16 +29,16 @@ export default function TeacherInfo({ teacherId }) {
   useEffect(() => {
     if (!teacherId) return;
 
-    console.log("開始請求 API:", `http://localhost:8000/api/teachers/${teacherId}`);
+    // console.log("開始請求 API:", `http://localhost:8000/api/teachers/${teacherId}`);
 
     fetch(`http://localhost:8000/api/teachers/${teacherId}`)
       .then((res) => {
-        console.log("API 回應狀態:", res.status);
+        // console.log("API 回應狀態:", res.status);
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         return res.json();
       })
       .then((data) => {
-        console.log("API 回傳資料:", data);
+        // console.log("API 回傳資料:", data);
         setTeacher(data);
         setTeacherData({
           user_id: data.user_id,
@@ -73,7 +73,7 @@ export default function TeacherInfo({ teacherId }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  console.log("📌 TeacherInfo 接收到的 teacherId:", teacherId);
+  // console.log("📌 TeacherInfo 接收到的 teacherId:", teacherId);
   if (loading) return <p></p>;
   if (!teacher) return <p>無法找到講師資料</p>;
 

@@ -79,7 +79,7 @@ export default function TeacherEdit() {
         ? data.image_url // **確保 API 已回傳完整網址**
         : `http://localhost:8000${data.image_url}` // **如果是相對路徑，加上 8000 埠口**
 
-      console.log('✅ 頭像上傳成功，URL:', imageUrl)
+      // console.log('✅ 頭像上傳成功，URL:', imageUrl)
 
       // **即時更新圖片預覽**
       setPreviewImg(imageUrl)

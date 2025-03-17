@@ -26,7 +26,7 @@ const editorConfig = {
             )
 
             const data = await response.json()
-            console.log('✅ 圖片上傳成功，URL:', data.url)
+            // console.log('✅ 圖片上傳成功，URL:', data.url)
             return { default: `http://localhost:8000${data.url}` }
           },
         }
@@ -84,7 +84,7 @@ export default function CourseEdit() {
   ) // ✅ 預設圖片
 
   const courseId = searchParams.get('id')
-  console.log('🔍 取得的 `courseId`:', courseId)
+  // console.log('🔍 取得的 `courseId`:', courseId)
 
   const [course, setCourse] = useState({
     title: '',
@@ -134,10 +134,10 @@ export default function CourseEdit() {
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
-      console.log('✅ 嘗試開啟檔案選擇視窗...')
+      // console.log('✅ 嘗試開啟檔案選擇視窗...')
       fileInputRef.current.click()
     } else {
-      console.log('❌ fileInputRef.current 為 null，請檢查 `ref` 是否正確綁定')
+      // console.log('❌ fileInputRef.current 為 null，請檢查 `ref` 是否正確綁定')
     }
   }
 
@@ -170,7 +170,7 @@ export default function CourseEdit() {
       }
   
       const imageUrl = `http://localhost:8000${data.url}`;
-      console.log("✅ 圖片上傳成功，URL:", imageUrl);
+      // console.log("✅ 圖片上傳成功，URL:", imageUrl);
   
       // ✅ 更新圖片預覽
       setPreviewImg(imageUrl);
@@ -189,7 +189,7 @@ export default function CourseEdit() {
 
   const handleEditorChange = (event, editor) => {
     const data = editor.getData()
-    console.log('編輯器內容變更:', data) 
+    // console.log('編輯器內容變更:', data) 
     setCourse((prev) => ({ ...prev, content: data }))
   }
 
@@ -201,7 +201,7 @@ export default function CourseEdit() {
     }
   
     const apiUrl = `http://localhost:8000/api/courses/${courseId}`;
-    console.log("🚀 發送 `PUT` 請求到:", apiUrl);
+    // console.log("🚀 發送 `PUT` 請求到:", apiUrl);
   
     try {
       const res = await fetch(apiUrl, {
@@ -213,7 +213,7 @@ export default function CourseEdit() {
         body: JSON.stringify({ ...course, status }),
       });
   
-      console.log("🔍 API 回應狀態:", res.status);
+      // console.log("🔍 API 回應狀態:", res.status);
   
       if (!res.ok) {
         const errorText = await res.text(); // 讀取錯誤訊息
@@ -221,7 +221,7 @@ export default function CourseEdit() {
         throw new Error(`❌ API 錯誤: ${res.status}`);
       }
   
-      console.log("✅ 課程更新成功！");
+      // console.log("✅ 課程更新成功！");
       router.push("/teacher");
     } catch (error) {
       console.error("❌ 更新課程失敗:", error);

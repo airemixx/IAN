@@ -16,7 +16,7 @@ export default function FavoriteButtonG({ courseId, className }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('loginWithToken')
-      console.log('🔑 取得 token:', storedToken)
+      // console.log('🔑 取得 token:', storedToken)
       setToken(storedToken)
     }
   }, [])
@@ -40,10 +40,10 @@ export default function FavoriteButtonG({ courseId, className }) {
           if (!res.ok) throw new Error('無法取得收藏狀態')
   
           const data = await res.json()
-          console.log('✅ API 回傳收藏狀態:', data)
+          // console.log('✅ API 回傳收藏狀態:', data)
           toggleFavorite(courseId, data.isFavorite)
         } catch (error) {
-          console.error('❌ 無法確認收藏狀態:', error)
+          // console.error('❌ 無法確認收藏狀態:', error)
         }
       }
   
@@ -73,7 +73,7 @@ export default function FavoriteButtonG({ courseId, className }) {
         url = `http://localhost:8000/api/courses/collection/${courseId}`
       }
 
-      console.log('📌 送出的請求:', method, url)
+      // console.log('📌 送出的請求:', method, url)
 
       const res = await fetch(url, {
         method,

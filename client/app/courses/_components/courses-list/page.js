@@ -71,7 +71,7 @@ export default function CourseList({ courses }) {
       // ✅ 確保 `favorites` 會更新
       fetchFavorites(storedToken).then((favSet) => {
         setFavorites(favSet);
-        console.log("📌 更新收藏列表:", favSet);
+        // console.log("📌 更新收藏列表:", favSet);
       });
     }
   }, []);
@@ -123,7 +123,7 @@ export default function CourseList({ courses }) {
         if (isFavorited) updatedFavorites.delete(Number(courseId));
         else updatedFavorites.add(Number(courseId));
 
-        console.log("📌 收藏狀態更新:", updatedFavorites);
+        // console.log("📌 收藏狀態更新:", updatedFavorites);
         return updatedFavorites;
       });
 

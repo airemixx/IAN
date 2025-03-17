@@ -5,7 +5,7 @@ import authenticate from '../middlewares.js'
 const router = express.Router()
 
 router.get("/collection", authenticate, async (req, res) => {
-  console.log("✅ 收到 /api/courses/collection 請求");
+  // console.log("✅ 收到 /api/courses/collection 請求");
   try {
     if (!req.userId) {
       return res.status(401).json({ message: "未授權，請先登入" });
@@ -30,7 +30,7 @@ router.get("/collection", authenticate, async (req, res) => {
       [userId]
     );
 
-    console.log("🔍 查詢結果:", favorites);
+    // console.log("🔍 查詢結果:", favorites);
 
     if (!favorites || favorites.length === 0) {
       return res.json({ favorites: [] }); // ✅ 修改：回傳空陣列，而不是 `404`
@@ -213,10 +213,10 @@ router.put('/:id', authenticate, async (req, res) => {
       [courseId, userId]
     )
 
-    console.log('📌 查詢結果:', existingCourse)
+    // console.log('📌 查詢結果:', existingCourse)
 
     if (existingCourse.length === 0) {
-      console.log('❌ 找不到課程或無權限:', { courseId, userId })
+      // console.log('❌ 找不到課程或無權限:', { courseId, userId })
       return res.status(404).json({ error: '❌ 找不到該課程或權限不足' })
     }
 
@@ -343,8 +343,8 @@ router.get('/collection/:courseId', authenticate, async (req, res) => {
 // 新增收藏
 router.post('/collection', authenticate, async (req, res) => {
   try {
-    console.log("🔍 接收的 `req.body`:", req.body);
-    console.log("🔍 req.user:", req.user);
+    // console.log("🔍 接收的 `req.body`:", req.body);
+    // console.log("🔍 req.user:", req.user);
 
     if (!req.user || !req.user.id) {
       console.error("❌ req.user.id 未定義");
@@ -360,7 +360,7 @@ router.post('/collection', authenticate, async (req, res) => {
       return res.status(400).json({ message: "請提供有效的 course_id" });
     }
 
-    console.log(`✅ 新增收藏 - 用戶 ID: ${userId}, 課程 ID: ${course_id}`);
+    // console.log(`✅ 新增收藏 - 用戶 ID: ${userId}, 課程 ID: ${course_id}`);
 
     const [result] = await pool.query(
       'INSERT INTO collection (user_id, course_id) VALUES (?, ?)',
@@ -405,7 +405,7 @@ router.delete('/collection/:courseId', authenticate, async (req, res) => {
       [userId, courseId]
     );
 
-    console.log("✅ 刪除成功，影響行數:", result.affectedRows);
+    // console.log("✅ 刪除成功，影響行數:", result.affectedRows);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "找不到對應的收藏紀錄" });
@@ -419,7 +419,7 @@ router.delete('/collection/:courseId', authenticate, async (req, res) => {
 });
 
 router.delete("/:courseId/delete", async (req, res) => {
-  console.log(`📡 收到刪除請求: /api/courses/${req.params.courseId}/delete`);
+  // console.log(`📡 收到刪除請求: /api/courses/${req.params.courseId}/delete`);
   const { courseId } = req.params;
 
   try {
@@ -438,7 +438,7 @@ router.delete("/:courseId/delete", async (req, res) => {
       return res.status(404).json({ message: "找不到課程，刪除失敗" });
     }
 
-    console.log(`✅ 課程 ${courseId} 已標記為刪除`);
+    // console.log(`✅ 課程 ${courseId} 已標記為刪除`);
     res.json({ message: "課程已標記為刪除", courseId });
 
   } catch (error) {
@@ -452,7 +452,7 @@ router.patch("/:courseId/status", authenticate, async (req, res) => {
   const { status } = req.body; // 從前端取得新狀態（published / draft）
 
   try {
-    console.log(`🔄 更新課程 ${courseId} 狀態為 ${status}`);
+    // console.log(`🔄 更新課程 ${courseId} 狀態為 ${status}`);
 
     const updateSql = `UPDATE courses SET status = ? WHERE id = ?`;
     const [result] = await pool.query(updateSql, [status, courseId]);
