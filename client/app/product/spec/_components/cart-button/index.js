@@ -41,7 +41,7 @@ export default function CartButton({ product }) {
       position: 'top-right',
       autoClose: 1500,
       icon: <MdShoppingCart size={30} color="green" />,
-      className: styles.toastCustom,g
+      className: styles.toastCustom,
     })
   }
 
