@@ -49,7 +49,7 @@ export default function cartPageThree() {
         <div className="container">
           <div className={`${styles['j-heightspace']}`}></div>
           <div className="row d-flex justify-content-center">
-            <div className={`${styles['j-shoppingCartBox']} justify-content-center col-12 col-sm-10 col-md-9 col-lg-7 col-xl-5 col-xxl-5`}>
+            <div className={`${styles['j-shoppingCartBox']} justify-content-center col col-sm-10 col-md-9 col-lg-7 col-xl-5 col-xxl-5 ps-0 pe-0 ps-xl-2 pe-xl-3`}>
               <div className={`${styles['j-cartItemsBox']} d-none d-sm-block p-0 d-flex flex-grow-1 flex-column gap-3`}>
                 <div className={`mt-2 mb-sm-5 ${styles['j-itemBox']}`}>
                   {cartProduct.length != 0 ? <h3 className={`${styles['j-cartTitle']} mb-0 ps-3 pt-2 pb-2`}>相機</h3> : ''}
