@@ -31,7 +31,7 @@ export default function MenuToggle() {
     { text: '產品系列', path: '/product' },
     { text: '租借服務', path: '/rental' },
     { text: '影像學院', path: '/courses' },
-    { text: '影像誌', path: '/article' },
+    { text: '影像日誌', path: '/article' },
   ]
 
   // 選單動畫變量
