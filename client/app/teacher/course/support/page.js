@@ -110,7 +110,7 @@ export default function SupportChat() {
   }
 
   const handleChatSelect = (chat) => {
-    console.log('🟢 選擇的聊天室:', chat)
+    // console.log('🟢 選擇的聊天室:', chat)
 
     if (!chat || !chat.id) {
       console.warn('⚠️ 選擇的聊天室無效')
@@ -141,7 +141,7 @@ export default function SupportChat() {
         return
       }
 
-      console.log(`📡 正在請求對話 ${chatId} 的所有訊息...`)
+      // console.log(`📡 正在請求對話 ${chatId} 的所有訊息...`)
       const res = await fetch(
         `http://localhost:8000/api/support/messages/${chatId}`,
         {
@@ -156,11 +156,11 @@ export default function SupportChat() {
       if (!res.ok) throw new Error(`無法取得歷史訊息 (錯誤碼: ${res.status})`)
 
       const data = await res.json()
-      console.log(`✅ 取得 chat_id ${chatId} 的歷史訊息:`, data)
+      // console.log(`✅ 取得 chat_id ${chatId} 的歷史訊息:`, data)
 
       // 若沒有任何訊息，就自動發送歡迎訊息
       if (data.length === 0) {
-        console.log('該聊天室沒有訊息，自動發送歡迎訊息...')
+        // console.log('該聊天室沒有訊息，自動發送歡迎訊息...')
         await sendWelcomeMessage(chatId)
         // 也可以選擇重新載入訊息列表
         // fetchMessages(chatId);
@@ -197,7 +197,7 @@ export default function SupportChat() {
       const decoded = parseJwt(token)
       if (decoded?.id) {
         setUserId(decoded.id)
-        console.log('✅ 設定 userId:', decoded.id)
+        // console.log('✅ 設定 userId:', decoded.id)
       }
     }
   }, [])
@@ -217,15 +217,15 @@ export default function SupportChat() {
   }, [])
 
   useEffect(() => {
-    console.log("嘗試建立 socket 連線...");
+    // console.log("嘗試建立 socket 連線...");
     const newSocket = io("http://localhost:8000");
-    console.log("建立 socket 成功:", newSocket.id);
+    // console.log("建立 socket 成功:", newSocket.id);
 
     setSocket(newSocket);
 
     // 組件卸載時斷開連線
     return () => {
-      console.log("斷開 socket 連線:", newSocket.id);
+      // console.log("斷開 socket 連線:", newSocket.id);
       newSocket.disconnect();
     };
   }, []);
@@ -252,7 +252,7 @@ export default function SupportChat() {
     if (!socket) return;
 
     const handleConversationUpdated = (data) => {
-      console.log("📡 收到 conversationUpdated 事件:", data);
+      // console.log("📡 收到 conversationUpdated 事件:", data);
 
       setConversations((prevConversations) => {
         const updatedConversations = prevConversations.map((conv) =>
@@ -266,7 +266,7 @@ export default function SupportChat() {
             : conv
         );
 
-        console.log("📊 更新後的 conversations:", updatedConversations);
+        // console.log("📊 更新後的 conversations:", updatedConversations);
         return updatedConversations;
       });
 
@@ -323,7 +323,7 @@ export default function SupportChat() {
       const data = await res.json()
       if (!res.ok) throw new Error(`API 回應錯誤: ${data.error}`)
 
-      console.log('✅ 歡迎訊息成功送出:', data)
+      // console.log('✅ 歡迎訊息成功送出:', data)
 
       // 移除直接更新 UI 的部分，讓 socket 廣播來處理更新
       // setMessages([{ chatId: chatId, sender_id: "admin", text: welcomeMessage }]);
@@ -356,7 +356,7 @@ export default function SupportChat() {
       const data = await res.json()
       if (!res.ok) throw new Error(`API 回應錯誤: ${data.error}`)
 
-      console.log('✅ 成功建立新聊天室:', data)
+      // console.log('✅ 成功建立新聊天室:', data)
 
       // 設置當前聊天室
       setSelectedChat({ id: data.id })
@@ -388,13 +388,13 @@ export default function SupportChat() {
       if (!res.ok) throw new Error(`無法載入對話列表 (錯誤碼: ${res.status})`)
 
       let data = await res.json()
-      console.log('✅ 取得對話列表:', data)
+      // console.log('✅ 取得對話列表:', data)
 
       if (data.length > 0) {
         // 根據 `updated_at` 排序，選擇最新的聊天室
         const sortedConversations = data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
 
-        console.log('🟢 排序後的聊天室:', sortedConversations)
+        // console.log('🟢 排序後的聊天室:', sortedConversations)
 
         setConversations(sortedConversations)
 
@@ -413,7 +413,7 @@ export default function SupportChat() {
 
         // 如果是老師且沒有聊天室，則建立新聊天室
         if (userRole === 'teacher') {
-          console.log('🟠 老師沒有聊天室，建立新聊天室...')
+          // console.log('🟠 老師沒有聊天室，建立新聊天室...')
           createNewChatForTeacher()
         }
       }
@@ -444,7 +444,7 @@ export default function SupportChat() {
     if (text) formData.append("text", text);
     if (file) formData.append("upload", file);
 
-    console.log("📩 準備發送訊息:", { text, file });
+    // console.log("📩 準備發送訊息:", { text, file });
 
     try {
       const res = await fetch("http://localhost:8000/api/support/messages", {
@@ -458,7 +458,7 @@ export default function SupportChat() {
       const data = await res.json();
       if (!res.ok) throw new Error(`API 回應錯誤: ${data.error}`);
 
-      console.log("✅ 訊息成功送出:", data);
+      // console.log("✅ 訊息成功送出:", data);
 
       if (!selectedChat?.id && data.chatId) {
         setSelectedChat({ id: data.chatId });

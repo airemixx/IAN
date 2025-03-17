@@ -129,6 +129,12 @@
 .subPrice,.totalPrice,.discountPrice{
   color: #e58e41;
 }
+
+.j-ifCouponUse{
+  display: flex;
+  gap: 8px;
+}
+
 @media (max-width: 996px) {
   .j-payStep {
     margin-top: 0;

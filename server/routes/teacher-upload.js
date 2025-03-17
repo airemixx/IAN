@@ -14,9 +14,9 @@ const storage = multer.diskStorage({
     try {
       await fs.access(uploadDir);
     } catch {
-      console.log("📂 目錄不存在，嘗試創建...");
+      // console.log("📂 目錄不存在，嘗試創建...");
       await fs.mkdir(uploadDir, { recursive: true });
-      console.log("✅ 目錄創建成功:", uploadDir);
+      // console.log("✅ 目錄創建成功:", uploadDir);
     }
     cb(null, uploadDir);
   },
@@ -53,7 +53,7 @@ router.post("/", authenticate, upload.single("upload"), async (req, res) => {
       return res.status(404).json({ error: "❌ 找不到講師，無法更新頭像" });
     }
 
-    console.log(`✅ 老師頭像更新成功: ${imageUrl}`);
+    // console.log(`✅ 老師頭像更新成功: ${imageUrl}`);
     res.json({ message: "✅ 老師頭像更新成功！", image_url: imageUrl }); // ✅ 確保正確回傳
   } catch (error) {
     console.error("❌ 更新老師頭像失敗:", error);

@@ -37,26 +37,26 @@ export default function CourseDetailPage() {
     const fetchCourse = async () => {
       try {
         const API_URL = `http://localhost:8000/api/courses/${id}`
-        console.log('發送 API 請求:', API_URL)
+        // console.log('發送 API 請求:', API_URL)
 
         const res = await fetch(API_URL)
-        console.log('API 回應狀態:', res.status)
+        // console.log('API 回應狀態:', res.status)
 
         if (!res.ok)
           throw new Error(`錯誤: ${res.statusText} (狀態碼: ${res.status})`)
 
         const data = await res.json()
-        console.log('API 回傳資料:', data)
+        // console.log('API 回傳資料:', data)
 
         setCourse(data) // 如果 API 回傳的是陣列，請改成 data[0]
       } catch (err) {
-        console.error('載入課程失敗:', err.message)
+        // console.error('載入課程失敗:', err.message)
         setError(err.message)
       } finally {
         setLoading(false)
       }
     }
-    console.log('取得的課程資料:', course)
+    // console.log('取得的課程資料:', course)
 
     fetchCourse()
   }, [id]) // 監聽 ID 變化

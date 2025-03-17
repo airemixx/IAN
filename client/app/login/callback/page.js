@@ -15,14 +15,14 @@ export default function Callback() {
       if (!code) return;
 
       try {
-        console.log("LINE 授權碼:", code);
+        // console.log("LINE 授權碼:", code);
 
         // 1️⃣ 先發送 `code` 到後端，讓後端換取 `access_token`
         const backendResponse = await axios.post("http://localhost:8000/api/auth/line", {
           code,
         });
 
-        console.log("後端回應:", backendResponse.data);
+        // console.log("後端回應:", backendResponse.data);
         const { token, user } = backendResponse.data.data;
 
         // 2️⃣ 儲存 Token

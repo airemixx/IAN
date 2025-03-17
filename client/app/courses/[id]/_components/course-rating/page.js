@@ -72,10 +72,10 @@ export default function CourseRating() {
               behavior: 'smooth',
             })
 
-            console.log(
-              `✅ 滾動後 modalContent.scrollTop:`,
-              modalContent.scrollTop
-            )
+            // console.log(
+            //   `✅ 滾動後 modalContent.scrollTop:`,
+            //   modalContent.scrollTop
+            // )
           } else if (attempts < 5) {
             console.warn(`⚠️ 找不到評論，嘗試重新滾動 #${attempts + 1}`)
             tryScroll(attempts + 1)
