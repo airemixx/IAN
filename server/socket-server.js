@@ -112,6 +112,38 @@ io.on('connection', (socket) => {
       adminSockets.set(socket.userId, socket.id);
       console.log(`管理員 ${socket.userId} (${socket.userName}) 已連接`);
 
+      // 新增：確認是否有之前選擇的用戶
+      socket.on('reconnect_selected_user', (selectedUserId) => {
+        if (selectedUserId) {
+          // 重新設置管理員正在查看的用戶
+          adminViewingUsers.set(socket.userId, selectedUserId);
+          console.log(`管理員 ${socket.userId} 重新連接後繼續查看用戶 ${selectedUserId}`);
+
+          // 標記該用戶的所有未讀消息為已讀
+          const chatHistory = userChats.get(selectedUserId) || [];
+          let updated = false;
+
+          for (const msg of chatHistory) {
+            if (!msg.read && msg.sender === 'user') {
+              msg.read = true;
+              updated = true;
+            }
+          }
+
+          if (updated) {
+            const readMessageIds = chatHistory
+              .filter(msg => msg.read && msg.sender === 'user')
+              .map(msg => msg.id);
+
+            // 通知用戶端更新已讀狀態
+            const userSocketId = connectedUsers.get(selectedUserId);
+            if (userSocketId) {
+              io.to(userSocketId).emit('messages_read', { messageIds: readMessageIds });
+            }
+          }
+        }
+      });
+
       // 向管理員發送當前所有活躍的用戶清單
       const activeUsers = [];
       for (const [userId, messages] of userChats.entries()) {
@@ -270,10 +302,12 @@ io.on('connection', (socket) => {
     if (!socket.isAdmin) {
       // 檢查是否有管理員正在查看此用戶的聊天室
       let isBeingViewed = false;
+      let viewingAdmins = []; // 添加這行來追蹤正在查看的管理員
+
       for (const [adminId, viewingUserId] of adminViewingUsers.entries()) {
         if (viewingUserId === socket.userId) {
           isBeingViewed = true;
-          break;
+          viewingAdmins.push(adminId); // 記錄正在查看的管理員
         }
       }
 
@@ -286,6 +320,28 @@ io.on('connection', (socket) => {
       // 設置消息已讀狀態
       messageObject.read = isBeingViewed;
       userChatHistory.push(messageObject);
+
+      // 這裡是新增的關鍵代碼：如果消息被標記為已讀，立即通知用戶端
+      if (isBeingViewed) {
+        // 發送已讀通知給用戶
+        const userSocketId = connectedUsers.get(socket.userId);
+        if (userSocketId) {
+          io.to(userSocketId).emit('messages_read', {
+            messageIds: [messageObject.id]
+          });
+        }
+
+        // 同時通知管理員更新未讀狀態（防止介面未更新）
+        for (const adminId of viewingAdmins) {
+          const adminSocketId = adminSockets.get(adminId);
+          if (adminSocketId) {
+            io.to(adminSocketId).emit('messages_read', {
+              messageIds: [messageObject.id],
+              userId: socket.userId
+            });
+          }
+        }
+      }
 
       // 構造清晰的最新消息信息
       const lastMessageInfo = {
@@ -358,6 +414,29 @@ io.on('connection', (socket) => {
         };
         io.to(adminSocketId).emit('update_user_last_message', messageUpdateData);
       }
+
+      // 關鍵：當管理員正在查看該用戶時，立即通知用戶端該訊息已讀
+      if (isBeingViewed) {
+        // 發送已讀通知給用戶
+        const userSocketId = connectedUsers.get(socket.userId);
+        console.log(`用戶 ${socket.userId} 發送訊息時，管理員在線，立即標記已讀`);
+        if (userSocketId) {
+          io.to(userSocketId).emit('messages_read', {
+            messageIds: [messageObject.id]
+          });
+        }
+
+        // 同時通知管理員更新未讀狀態（防止介面未更新）
+        for (const adminId of viewingAdmins) {
+          const adminSocketId = adminSockets.get(adminId);
+          if (adminSocketId) {
+            io.to(adminSocketId).emit('messages_read', {
+              messageIds: [messageObject.id],
+              userId: socket.userId
+            });
+          }
+        }
+      }
     } else {
       // 管理員發送消息 - 發送給特定用戶
       if (!to) {
@@ -388,32 +467,32 @@ io.on('connection', (socket) => {
   socket.on('mark_as_read', (data) => {
     const { messageIds, userId } = data;
     const currentUserId = socket.userId;
-  
+
     if (!currentUserId) {
       socket.emit('error', { message: '未認證，請先登入' });
       return;
     }
-  
+
     // 對應的聊天記錄
     const chatHistory = socket.isAdmin ?
       (userId ? userChats.get(userId) : null) :
       userChats.get(currentUserId);
-  
+
     if (!chatHistory) return;
-  
+
     // 更新已讀狀態 - 確保更新正確的訊息
     let wasUpdated = false;
     for (const message of chatHistory) {
       const shouldMark = socket.isAdmin
         ? (messageIds.includes(message.id) && !message.read && message.sender === 'user')
         : (messageIds.includes(message.id) && !message.read && message.sender === 'agent');
-  
+
       if (shouldMark) {
         message.read = true;
         wasUpdated = true;
       }
     }
-  
+
     // 只有在實際更新了消息時才發送通知
     if (wasUpdated) {
       if (socket.isAdmin) {
@@ -424,7 +503,7 @@ io.on('connection', (socket) => {
           // 發送完整聊天紀錄給 user
           io.to(userSocketId).emit('chat_history', chatHistory);
         }
-        
+
         // 通知所有管理員更新未讀計數
         const unreadCount = chatHistory.filter(m => !m.read && m.sender === 'user').length;
         for (const adminSocketId of adminSockets.values()) {
@@ -433,11 +512,11 @@ io.on('connection', (socket) => {
             unreadCount
           });
         }
-        
+
         // **新加入**：通知當前 admin 自己更新已讀及聊天紀錄
         socket.emit('messages_read', messageIds);
         socket.emit('chat_history', chatHistory);
-        
+
       } else {
         // 用戶標記，通知所有管理員
         for (const [adminId, adminSocketId] of adminSockets.entries()) {
@@ -451,7 +530,7 @@ io.on('connection', (socket) => {
           });
           io.to(adminSocketId).emit('chat_history', chatHistory);
         }
-    
+
         // 通知當前用戶更新已讀及完整聊天紀錄
         socket.emit('messages_read', messageIds);
         socket.emit('chat_history', chatHistory);
@@ -509,12 +588,12 @@ io.on('connection', (socket) => {
   // 管理員選擇聊天的用戶
   socket.on('select_user', (userId) => {
     if (!socket.isAdmin) return;
-  
+
     socket.currentChatUser = userId;
     adminViewingUsers.set(socket.userId, userId);
-  
+
     const chatHistory = userChats.get(userId) || [];
-  
+
     // 實際標記未讀為已讀
     let updated = false;
     for (const msg of chatHistory) {
@@ -523,23 +602,23 @@ io.on('connection', (socket) => {
         updated = true;
       }
     }
-  
+
     if (updated) {
       // 取得已讀的 messageIds
       const readMessageIds = chatHistory
         .filter(msg => msg.read && msg.sender === 'user')
         .map(msg => msg.id)
-      
+
       // 發送標準格式的 payload (物件包含 messageIds)
       const userSocketId = connectedUsers.get(userId);
       if (userSocketId) {
         io.to(userSocketId).emit('messages_read', { messageIds: readMessageIds });
-        
+
         // 同時發送更新後的聊天記錄
         io.to(userSocketId).emit('chat_history', chatHistory);
       }
     }
-  
+
     socket.emit('chat_history', chatHistory);
   });
 
@@ -562,8 +641,9 @@ io.on('connection', (socket) => {
 
     if (socket.isAdmin) {
       // 管理員斷開連接
+      adminViewingUsers.delete(socket.userId);
       adminSockets.delete(userId);
-      console.log(`管理員 ${userId} 已斷開連接`);
+      console.log(`管理員 ${userId} 已斷開連接，清除查看狀態`);
     } else if (userId) {
       // 普通用戶斷開連接
       connectedUsers.delete(userId);
@@ -614,6 +694,19 @@ io.on('connection', (socket) => {
 
       socket.emit('active_users', activeUsers);
     }
+  });
+
+
+  // 增加調試輸出，確認 adminViewingUsers 狀態
+  socket.on('send_message', async (data) => {
+    // 在接收用戶訊息時，印出所有管理員正在查看的狀態
+    if (!socket.isAdmin) {
+      console.log(`用戶 ${socket.userId} 發送訊息，檢查管理員查看狀態：`);
+      for (const [adminId, viewingUserId] of adminViewingUsers.entries()) {
+        console.log(`管理員 ${adminId} 正在查看 ${viewingUserId}`);
+      }
+    }
+
   });
 });
 

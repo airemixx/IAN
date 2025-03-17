@@ -134,6 +134,7 @@ export default function ChatWidget() {
   // 使用 Socket 上下文
   const socketContext = useSocket();
 
+
   // 創建一個強制更新機制
   const [updateCounter, setUpdateCounter] = useState(0);
   const forceUpdate = useCallback(() => setUpdateCounter(c => c + 1), []);
@@ -156,6 +157,16 @@ export default function ChatWidget() {
 
   // 使用本地狀態存儲用戶列表
   const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    if (socket && isConnected && activeUserId) {
+      console.log('Socket 重新連接，恢復選擇的用戶:', activeUserId);
+      socket.emit('reconnect_selected_user', activeUserId);
+
+      // 同時也請求最新的聊天記錄
+      socketSelectUser(activeUserId);
+    }
+  }, [socket, isConnected]);
 
   // 修改 useEffect 中的用戶列表更新邏輯
   useEffect(() => {
@@ -331,7 +342,7 @@ export default function ChatWidget() {
     }
     setIsOpen(!isOpen);
   }
-  
+
 
   const handleSelectUser = (userId) => {
     console.log("handleSelectUser - 傳入的 userId:", userId);
@@ -342,11 +353,11 @@ export default function ChatWidget() {
     setActiveUserId(userId);
     console.log("handleSelectUser - 更新後的 activeUserId:", userId);
     setIsMenuOpen(false);
-    
+
     // 若有未讀消息則觸發標記已讀
     const unreadMessages = messages.filter(msg => !msg.read && msg.sender === 'user');
     const messageIds = unreadMessages.map(msg => msg.id);
-    if(messageIds.length > 0) {
+    if (messageIds.length > 0) {
       setTimeout(() => {
         console.log("markAsRead - 傳入參數:", { messageIds, userId });
         markAsRead({ messageIds, userId });
@@ -679,18 +690,17 @@ export default function ChatWidget() {
   }, [messages]);
 
 
-  // 在 useEffect 中修改 socket 事件監聽
+  // 合併兩個重複的 useEffect
   useEffect(() => {
     if (!socket) return;
 
-    // 修改消息接收處理邏輯
     const handleReceiveMessage = (message) => {
       console.log('收到新消息:', message);
 
       // 進階調試
       console.log(`檢查消息: message.userId=${message.userId}, activeUserId=${activeUserId}, 匹配=${message.userId === activeUserId}`);
 
-      // 增強消息過濾 - 確保消息屬於當前用戶
+      // 當收到新訊息，且是來自目前正在查看的用戶
       if (message.userId === activeUserId) {
         // 在添加消息前檢查是否已存在相同 ID 的消息
         setSocketMessages(prev => {
@@ -705,38 +715,37 @@ export default function ChatWidget() {
           return [...prev, message];
         });
 
-        // 如果是新消息，立即標記為已讀
+        // 如果是新消息且未讀，立即標記為已讀
         if (!message.read && message.sender === 'user') {
-          socket.emit('mark_as_read', {
+          console.log('管理員正在查看該用戶，立即標記訊息為已讀');
+          markAsRead({
             messageIds: [message.id],
             userId: activeUserId
           });
         }
       } else {
-        // 如果不是當前用戶的消息，只在控制台記錄，不添加到聊天窗口
+        // 如果不是當前用戶的消息，只在控制台記錄
         console.log(`消息被過濾: 來自用戶 ${message.userId}，當前查看的是 ${activeUserId}`);
       }
     };
 
-    // 註冊事件監聽
     socket.on('receive_message', handleReceiveMessage);
 
     return () => {
       socket.off('receive_message', handleReceiveMessage);
     };
-  }, [socket, activeUserId, setSocketMessages]); // 記得也在依賴陣列中添加 setSocketMessages
-
+  }, [socket, activeUserId, setSocketMessages, markAsRead]);
 
   useEffect(() => {
     if (!socket) return;
-  
+
     const handleChatHistory = (chatHistory) => {
       console.log('收到 chat_history 更新:', chatHistory);
       setSocketMessages(chatHistory);
     };
-  
+
     socket.on('chat_history', handleChatHistory);
-  
+
     return () => {
       socket.off('chat_history', handleChatHistory);
     };
@@ -744,7 +753,7 @@ export default function ChatWidget() {
 
   useEffect(() => {
     if (!socket) return;
-    
+
     const handleMessagesRead = (payload) => {
       console.log('管理員收到 messages_read 更新:', payload);
       const messageIds = Array.isArray(payload) ? payload : payload.messageIds;
@@ -753,12 +762,77 @@ export default function ChatWidget() {
         messageIds.includes(msg.id) ? { ...msg, read: true } : msg
       ));
     };
-  
+
     socket.on('messages_read', handleMessagesRead);
     return () => {
       socket.off('messages_read', handleMessagesRead);
     };
   }, [socket, setSocketMessages]);
+
+  // useEffect(() => {
+  //   // 如果有未讀消息且目前正在檢視該用戶，自動標記為已讀
+  //   if (isOpen && activeUserId && messages && messages.length > 0) {
+  //     const unreadMessages = messages.filter(msg =>
+  //       !msg.read && msg.sender === 'user'
+  //     );
+
+  //     if (unreadMessages.length > 0) {
+  //       const messageIds = unreadMessages.map(msg => msg.id);
+  //       console.log('主動標記訊息已讀:', messageIds);
+  //       markAsRead({ messageIds, userId: activeUserId });
+  //     }
+  //   }
+  // }, [messages, isOpen, activeUserId]);
+
+  // useEffect(() => {
+  //   if (isOpen && activeUserId && messages && messages.length > 0) {
+  //     // 找出所有來自用戶且尚未標記為已讀的訊息
+  //     const unreadMessages = messages.filter(msg => !msg.read && msg.sender === 'user');
+  //     if (unreadMessages.length > 0) {
+  //       const messageIds = unreadMessages.map(msg => msg.id);
+  //       console.log('自動標記訊息為已讀:', messageIds);
+  //       markAsRead({ messageIds, userId: activeUserId });
+  //     }
+  //   }
+  // }, [messages, isOpen, activeUserId]);
+
+  useEffect(() => {
+    if (isOpen && activeUserId) {
+      // 過濾所有來自 user 且未讀的訊息
+      const unreadMessages = messages.filter(msg => msg.sender === 'user' && !msg.read);
+      if (unreadMessages.length > 0) {
+        const messageIds = unreadMessages.map(msg => msg.id);
+        console.log('即時標記訊息為已讀:', messageIds, "時間:", new Date().toLocaleTimeString());
+        markAsRead({ messageIds, userId: activeUserId });
+      }
+    }
+  }, [messages, isOpen, activeUserId, markAsRead]);
+
+  // 新增一個專門監聽新訊息的 useEffect
+  useEffect(() => {
+    if (!socket) return;
+    
+    const handleNewMessage = (message) => {
+      console.log('收到新訊息:', message);
+      // 如果是來自當前選擇用戶的未讀訊息
+      if (activeUserId === message.userId && message.sender === 'user' && !message.read) {
+        console.log('立即標記新訊息為已讀:', message.id);
+        // 立即標記為已讀
+        setTimeout(() => {
+          markAsRead({
+            messageIds: [message.id],
+            userId: activeUserId
+          });
+        }, 100);
+      }
+    };
+    
+    socket.on('receive_message', handleNewMessage);
+    
+    return () => {
+      socket.off('receive_message', handleNewMessage);
+    };
+  }, [socket, activeUserId, markAsRead]);
 
   return (
     <div className={styles.chatWidgetContainer}>
