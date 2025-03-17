@@ -21,7 +21,7 @@ export default function CoursesCategory({ selectedCategory, setSelectedCategory 
         if (!res.ok) throw new Error(`HTTP 錯誤！狀態碼：${res.status}`);
 
         const data = await res.json();
-        console.log('📢 取得的分類資料:', data);
+        // console.log('📢 取得的分類資料:', data);
 
         // ✅ 過濾掉空白分類
         const filteredData = data.filter(category => category.name.trim() !== '');
@@ -57,7 +57,7 @@ export default function CoursesCategory({ selectedCategory, setSelectedCategory 
             key={category.name}
             className={`${styles['category-list']} ${selectedCategory === category.name ? styles['active'] : ''}`}
             onClick={() => {
-              console.log('🛠 設定分類:', category.name)
+              // console.log('🛠 設定分類:', category.name)
 
               // ✅ 更新 URL 讓 `useSearchParams` 監聽
               router.push(`/courses?category=${encodeURIComponent(category.name)}`, { scroll: false })

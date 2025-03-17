@@ -17,20 +17,20 @@ export default function RelatedCourses({ course }) {
     const fetchRelatedCourses = async () => {
       try {
         const API_URL = `http://localhost:8000/api/courses/related/${course.category}`
-        console.log('🚀 發送 API 請求:', API_URL)
+        // console.log('🚀 發送 API 請求:', API_URL)
 
         const res = await fetch(API_URL)
         if (!res.ok) throw new Error(`❌ API 錯誤: ${res.statusText}`)
 
         let data = await res.json()
-        console.log('✅ API 回傳相關課程:', data)
+        // console.log('✅ API 回傳相關課程:', data)
 
     
         data = data.filter(relatedCourse => relatedCourse.id !== course.id)
 
         setRelatedCourses(data.slice(0, 4))
       } catch (error) {
-        console.error('❌ 獲取相關課程失敗:', error)
+        // console.error('❌ 獲取相關課程失敗:', error)
       } finally {
         setLoading(false)
       }

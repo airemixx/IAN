@@ -13,7 +13,7 @@ export default function TeacherCoursesList({ courses }) {
 
   // Debug: 確認 `courses` 是否正確傳遞
   useEffect(() => {
-    console.log('📌 TeacherCoursesList 取得的 courses:', teacherCourses)
+    // console.log('📌 TeacherCoursesList 取得的 courses:', teacherCourses)
   }, [teacherCourses])
 
   return (

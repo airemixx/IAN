@@ -12,7 +12,7 @@ const router = express.Router();
 // ✅ 取得所有對話列表
 router.get("/conversations", authenticate, async (req, res) => {
   try {
-    console.log("🔍 `req.user`: ", req.user);
+    // console.log("🔍 `req.user`: ", req.user);
 
     if (!req.user) {
       return res.status(401).json({ error: "未授權，請重新登入" });
@@ -23,7 +23,7 @@ router.get("/conversations", authenticate, async (req, res) => {
 
     if (req.user.level === 88) {
       // ✅ 管理員可以獲取所有對話
-      console.log("✅ 管理員登入，查詢所有對話");
+      // console.log("✅ 管理員登入，查詢所有對話");
       query = `
         SELECT 
           c.id, 
@@ -36,7 +36,7 @@ router.get("/conversations", authenticate, async (req, res) => {
       `;
     } else {
       // ✅ 老師只能獲取「自己的對話」
-      console.log(`✅ 老師 (${req.user.id}) 登入，查詢自己的對話`);
+      // console.log(`✅ 老師 (${req.user.id}) 登入，查詢自己的對話`);
       query = `
         SELECT 
           c.id, 
@@ -51,9 +51,9 @@ router.get("/conversations", authenticate, async (req, res) => {
       params = [req.user.id];
     }
 
-    console.log("🔍 執行 SQL:", query);
+    // console.log("🔍 執行 SQL:", query);
     const [rows] = await pool.query(query, params);
-    console.log("✅ 取得對話列表:", rows);
+    // console.log("✅ 取得對話列表:", rows);
 
     if (rows.length === 0 && req.user.level !== 88) {
       console.warn(`⚠️ 老師 (${req.user.id}) 沒有對話，建立新對話...`);
@@ -63,7 +63,7 @@ router.get("/conversations", authenticate, async (req, res) => {
       const [result] = await pool.query(insertQuery, [req.user.id]);
 
       if (result.affectedRows > 0) {
-        console.log("✅ 成功建立新對話");
+        // console.log("✅ 成功建立新對話");
         const newChat = {
           id: result.insertId,
           user_name: req.user.name,
@@ -113,7 +113,7 @@ router.get("/messages/:chatId", authenticate, async (req, res) => {
 
     const [messages] = await pool.query(query, [chatId]);
 
-    console.log(`✅ 取得 chat_id ${chatId} 的歷史訊息:`, messages);
+    // console.log(`✅ 取得 chat_id ${chatId} 的歷史訊息:`, messages);
 
     res.json(messages);
   } catch (error) {
@@ -160,7 +160,7 @@ const upload = multer({ storage, fileFilter });
 
 router.post("/messages", authenticate, upload.single("upload"), async (req, res) => {
   try {
-    console.log("📩 伺服器收到請求:", req.body, req.file);
+    // console.log("📩 伺服器收到請求:", req.body, req.file);
 
     let { chatId, text, is_bot } = req.body;
     let senderId = req.user.id;
@@ -180,7 +180,7 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
       messageType = "image";
       const filePath = `/uploads/images/chat-messages/${req.file.filename}`;
       messageContent = `http://localhost:8000${filePath}`; // 🔹 加上完整 URL
-      console.log("📂 圖片已成功上傳:", messageContent);
+      // console.log("📂 圖片已成功上傳:", messageContent);
     }
 
     if (!messageContent && !req.file) {
@@ -189,7 +189,7 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
 
     // ✅ 如果 `chatId` 為空，創建新對話
     if (!chatId) {
-      console.log("🔄 `chatId` 為空，創建新對話...");
+      // console.log("🔄 `chatId` 為空，創建新對話...");
       const [newChat] = await pool.query(
         "INSERT INTO conversations (user_id, last_message) VALUES (?, ?)",
         [senderId, messageContent]
@@ -199,9 +199,9 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
         return res.status(500).json({ error: "無法創建新對話" });
       }
       chatId = newChat.insertId;
-      console.log("🆕 創建新對話 `chatId`:", chatId);
+      // console.log("🆕 創建新對話 `chatId`:", chatId);
     } else {
-      console.log("🔍 檢查 `chatId` 是否存在:", chatId);
+      // console.log("🔍 檢查 `chatId` 是否存在:", chatId);
       const [existingChat] = await pool.query("SELECT id FROM conversations WHERE id = ?", [chatId]);
 
       if (existingChat.length === 0) {
@@ -210,7 +210,7 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
     }
 
     // ✅ 存入訊息
-    console.log("💾 插入訊息:", { chatId, senderId, messageType, messageContent });
+    // console.log("💾 插入訊息:", { chatId, senderId, messageType, messageContent });
     await pool.query(
       "INSERT INTO messages (chat_id, sender_id, text, type) VALUES (?, ?, ?, ?)",
       [chatId, senderId, messageContent, messageType]
@@ -226,7 +226,7 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
     const [updatedRows] = await pool.query("SELECT updated_at FROM conversations WHERE id = ?", [chatId]);
     const updated_at = updatedRows.length > 0 ? updatedRows[0].updated_at : new Date();
 
-    console.log("✅ 訊息成功存入資料庫");
+    // console.log("✅ 訊息成功存入資料庫");
 
     // ✅ 取得發送者資訊
     let user_avatar = null;
@@ -251,14 +251,14 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
         user_avatar,
         sender_name,
       });
-      console.log("📡 廣播 newMessage 事件:", { chatId, sender_id: senderId, text: messageContent });
+      // console.log("📡 廣播 newMessage 事件:", { chatId, sender_id: senderId, text: messageContent });
 
       io.emit("conversationUpdated", {
         chatId,
         lastMessage: messageContent,
         updated_at: updated_at,
       });
-      console.log("📡 廣播 conversationUpdated 事件:", { chatId, lastMessage: messageContent, updated_at });
+      // console.log("📡 廣播 conversationUpdated 事件:", { chatId, lastMessage: messageContent, updated_at });
     } else {
       console.warn("❌ 無法取得 io 實例");
     }

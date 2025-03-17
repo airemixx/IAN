@@ -27,7 +27,7 @@ const editorConfig = {
             )
 
             const data = await response.json()
-            console.log('✅ 圖片上傳成功，URL:', data.url)
+            // console.log('✅ 圖片上傳成功，URL:', data.url)
             return { default: `http://localhost:8000${data.url}` }
           },
         }
@@ -117,7 +117,7 @@ export default function CourseCreate() {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) {
-      console.log('❌ 沒有選擇任何檔案')
+      // console.log('❌ 沒有選擇任何檔案')
       return
     }
 
@@ -141,7 +141,7 @@ export default function CourseCreate() {
       const data = await response.json()
       const fullUrl = `http://localhost:8000${data.url}` // ✅ 修正 URL
 
-      console.log('✅ 圖片上傳成功，URL:', fullUrl)
+      // console.log('✅ 圖片上傳成功，URL:', fullUrl)
 
       // **即時更新圖片預覽**
       setCourse((prev) => ({ ...prev, image_url: fullUrl }))
@@ -157,7 +157,7 @@ export default function CourseCreate() {
     setLoading(true);
   
     const apiUrl = 'http://localhost:8000/api/courses';
-    console.log('🚀 發送 `POST` 請求到:', apiUrl);
+    // console.log('🚀 發送 `POST` 請求到:', apiUrl);
   
     try {
       const res = await fetch(apiUrl, {
@@ -169,9 +169,9 @@ export default function CourseCreate() {
         body: JSON.stringify({ ...course, status }),
       });
   
-      console.log('🔍 API 回應狀態:', res.status);
+      // console.log('🔍 API 回應狀態:', res.status);
       const data = await res.json();
-      console.log('🔍 API 回應資料:', data);
+      // console.log('🔍 API 回應資料:', data);
   
       if (!res.ok) {
         console.error('❌ API 錯誤:', data);
@@ -182,7 +182,7 @@ export default function CourseCreate() {
         throw new Error('❌ API 沒有回傳 `courseId`，可能 SQL 沒寫入');
       }
   
-      console.log('✅ 課程新增成功！');
+      // console.log('✅ 課程新增成功！');
       router.push('/teacher');
     } catch (error) {
       console.error('❌ 新增課程失敗:', error);

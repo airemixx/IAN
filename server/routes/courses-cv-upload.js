@@ -13,11 +13,11 @@ const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
       await fs.access(uploadDir); // 確保目錄可讀取
-      console.log("✅ 目錄已存在:", uploadDir);
+      // console.log("✅ 目錄已存在:", uploadDir);
     } catch {
-      console.log("📂 目錄不存在，嘗試創建...");
+      // console.log("📂 目錄不存在，嘗試創建...");
       await fs.mkdir(uploadDir, { recursive: true });
-      console.log("✅ 目錄創建成功:", uploadDir);
+      // console.log("✅ 目錄創建成功:", uploadDir);
     }
     cb(null, uploadDir);
   },
@@ -39,7 +39,7 @@ router.post("/", upload.single("upload"), (req, res) => {
     return res.status(400).json({ message: "上傳失敗" });
   }
 
-  console.log("📂 檔案存入:", req.file.path); 
+  // console.log("📂 檔案存入:", req.file.path); 
 
   const fileUrl = `/uploads/images/course-cover/${req.file.filename}`;
   res.status(200).json({ url: fileUrl });

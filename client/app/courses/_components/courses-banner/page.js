@@ -21,7 +21,7 @@ export default function CoursesBanner({ courses }) {
   if (featuredCourses.length === 0) return <p className="text-warning">目前沒有精選課程</p>
 
   const handleAnimationComplete = () => {
-    console.log('Animation completed!');
+    // console.log('Animation completed!');
   };
 
   return (

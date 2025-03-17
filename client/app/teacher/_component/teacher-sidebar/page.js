@@ -26,7 +26,7 @@ export default function TeacherSidebar() {
 
   const appKey = 'loginWithToken'
 
-  console.log('🔍 Current pathname:', pathname)
+  // console.log('🔍 Current pathname:', pathname)
 
   // 監聽 `teacher` 變化，確保 Sidebar 更新
   useEffect(() => {

@@ -25,12 +25,12 @@ export default function CourseManagement() {
       try {
         const token = localStorage.getItem('loginWithToken');
         if (!token) {
-          console.log('⛔️ 沒有 Token，跳轉登入頁面');
+          // console.log('⛔️ 沒有 Token，跳轉登入頁面');
           router.push('/login');
           return;
         }
   
-        console.log('📡 正在發送請求取得使用者資訊...');
+        // console.log('📡 正在發送請求取得使用者資訊...');
         const userRes = await fetch('http://localhost:8000/api/teachers/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -38,11 +38,11 @@ export default function CourseManagement() {
         if (!userRes.ok) throw new Error(`API 錯誤: ${userRes.status}`);
   
         const userData = await userRes.json();
-        console.log('✅ 取得使用者資訊:', userData);
+        // console.log('✅ 取得使用者資訊:', userData);
   
         // **確保 `level` 有值，預設為 0 (一般會員)**
         const userLevel = userData.level ?? 0; // 如果 `level` 為 `null` 或 `undefined`，預設為 0
-        console.log(`📌 使用者 Level: ${userLevel}`);
+        // console.log(`📌 使用者 Level: ${userLevel}`);
   
         // **儲存 `userRole` 到 localStorage**
         const userRole =
@@ -51,7 +51,7 @@ export default function CourseManagement() {
           "user"; // 🚀 預設為一般會員
   
         localStorage.setItem("userRole", userRole);
-        console.log("📌 `userRole` 已存入 localStorage:", userRole);
+        // console.log("📌 `userRole` 已存入 localStorage:", userRole);
   
         setUser({
           name: userData.teacher_name || userData.name || "未命名",
@@ -87,7 +87,7 @@ export default function CourseManagement() {
         if (user.level === 1) {
           coursesUrl = "http://localhost:8000/api/teachers/me/courses";
         } else if (user.level === 88) {
-          console.log("🔹 管理員登入");
+          // console.log("🔹 管理員登入");
           coursesUrl = "http://localhost:8000/api/teachers/admin/courses";
         } else {
           console.warn("⚠️ 無權限訪問，跳轉到 /");
@@ -95,7 +95,7 @@ export default function CourseManagement() {
           return;
         }
 
-        console.log("📡 正在發送請求到:", coursesUrl);
+        // console.log("📡 正在發送請求到:", coursesUrl);
         const coursesRes = await fetch(coursesUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -103,7 +103,7 @@ export default function CourseManagement() {
         if (!coursesRes.ok) throw new Error(`API 錯誤: ${coursesRes.status}`);
 
         const coursesData = await coursesRes.json();
-        console.log("✅ 取得課程資料:", coursesData);
+        // console.log("✅ 取得課程資料:", coursesData);
 
         // **這裡確保 coursesData 是陣列**
         if (!Array.isArray(coursesData)) {
@@ -123,7 +123,7 @@ export default function CourseManagement() {
 
 
   useEffect(() => {
-    console.log('📌 目前的 courses:', courses);
+    // console.log('📌 目前的 courses:', courses);
     if (courses.length > 0) {
       setCurrentPage(1);
     }
@@ -223,7 +223,7 @@ export default function CourseManagement() {
         confirmButtonColor: "#143146",
       });
 
-      console.log(`📌 課程 ${courseId} 狀態已更新為 ${newStatus}`);
+      // console.log(`📌 課程 ${courseId} 狀態已更新為 ${newStatus}`);
     } catch (error) {
       console.error("❌ 狀態更新失敗:", error);
 
