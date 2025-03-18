@@ -74,12 +74,20 @@ export default function ButtonGroup({ confirmClose, onAddArticle }) {
     return missingFields
   }
 
+  // 使用自定義樣式來確保按鈕等比例縮小
+  const buttonStyle = {
+    transform: window.innerWidth <= 576 ? 'scale(0.9)' : 'scale(1)',
+    transformOrigin: 'right',
+    margin: window.innerWidth <= 576 ? '0 4px' : '0 8px'
+  };
+
   return (
     <div className="my-4 d-flex justify-content-end">
       <button
         type="button"
-        className={`mx-3 btn y-btn-add ${styles['y-btn-add']}`}
+        className={`btn y-btn-add ${styles['y-btn-add']}`}
         onClick={onAddArticle}
+        style={buttonStyle}
       >
         新增
       </button>
@@ -87,6 +95,7 @@ export default function ButtonGroup({ confirmClose, onAddArticle }) {
         type="button"
         onClick={confirmClose}
         className={`btn btn-danger ${styles['y-btn-cancel']} allowed-close`}
+        style={buttonStyle}
       >
         取消
       </button>

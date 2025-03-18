@@ -87,7 +87,7 @@ const HashtagInput = forwardRef((props, ref) => {
       </label>
       <input
         type="text"
-        className={`form-control ${styles['form-control']}`}
+        className={`form-control ${styles['form-control']} ${styles['hashtag-responsive-input']}`}
         id="hashtag-input"
         placeholder="請輸入 hashtag，必須以 # 起頭，按 Enter 新增"
         value={hashtagInput}
