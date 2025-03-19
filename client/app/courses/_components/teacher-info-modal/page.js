@@ -4,6 +4,7 @@ import styles from './teacher-info-modal.module.scss'
 import { FaGlobe, FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa'
 import TeacherCoursesList from '../../[id]/_components/teacher-courses-list/page'
 import 'hover.css'
+import Link from "next/link";
 
 export default function TeacherInfoModal({ teacher, onClose }) {
   return (
@@ -80,8 +81,10 @@ export default function TeacherInfoModal({ teacher, onClose }) {
                 </p>
               </li>
               <li className={styles['data-item']}>
-                <img src="/images/icon/article-icon-w.svg" alt="" />
-                <p>{teacher.articleCount?.toLocaleString() || '0'} 篇文章</p>
+                <Link href={`/article?user_id=${teacher.user_id}&author_name=${encodeURIComponent(teacher.author_name)}`} className={styles['link-wrapper']}>
+                  <img src="/images/icon/article-icon-w.svg" alt="" />
+                  <p>{teacher.articleCount?.toLocaleString() || "0"} 篇文章</p>
+                </Link>
               </li>
               <li className={styles['data-item']}>
                 <img src="/images/icon/student-icon-w.svg" alt="" />

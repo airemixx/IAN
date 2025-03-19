@@ -93,7 +93,7 @@ export default function RootLayout({ children }) {
 
 
   // 老師頁面不用layout
-  const isExcluded = useMemo(() => pathname.includes('/teacher'), [pathname]);
+  const isExcluded = useMemo(() => pathname.startsWith('/teacher'), [pathname]);
 
   //loading
   useEffect(() => {

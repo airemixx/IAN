@@ -75,6 +75,11 @@
   padding: 0;
 }
 
+.link-wrapper{
+  display: flex;
+  gap: 10px;
+}
+
 .data-item {
   display: flex;
   align-items: center;

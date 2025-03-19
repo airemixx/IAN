@@ -102,7 +102,7 @@ export default function TeacherInfo({ teacherId }) {
             </li>
             <li className={styles['data-item']}>
               <Link href={`/article?user_id=${teacher.user_id}&author_name=${encodeURIComponent(teacher.author_name)}`} className={styles['link-wrapper']}>
-                <img src="/images/icon/article-icon.svg" alt="" />
+                <img src="/images/icon/article-icon-w.svg" alt="" />
                 <p>{teacher.articleCount?.toLocaleString() || "0"} 篇文章</p>
               </Link>
             </li>
