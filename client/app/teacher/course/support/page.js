@@ -423,7 +423,6 @@ export default function SupportChat() {
   }
 
   // 🔹 發送訊息到資料庫
-  // 🔹 發送訊息到資料庫
   const sendMessageToDatabase = async (text, file) => {
     const token = localStorage.getItem("loginWithToken");
     if (!token) {

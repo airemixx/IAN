@@ -89,7 +89,7 @@ export default function CoursesFilter({ courses, setFilteredCourses }) {
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleSearch()
-              }
+              }             
             }}
           />
           <button

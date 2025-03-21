@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon ./bin/www",
     "socket": "node socket-server.js",
-    "dev:socket": "nodemon socket-server.js"
+    "dev:socket": "nodemon socket-server.js",
+    "build": "next build"
   },
   "keywords": [],
   "author": "",
