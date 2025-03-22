@@ -254,39 +254,41 @@
 }
 
 /* 修正按鈕樣式 - 使用全局選擇器 */
-:global(.d-flex .action-btn) {
-  @media (max-width: 768px) {
-    padding: 4px !important;
-    margin-right: 8px !important;
+:global {
+  .d-flex .action-btn {
+    @media (max-width: 768px) {
+      padding: 4px !important;
+      margin-right: 8px !important;
 
-    img {
-      width: 22px !important;
-      height: 22px !important;
+      img {
+        width: 22px !important;
+        height: 22px !important;
+      }
     }
-  }
 
-  @media (max-width: 576px) {
-    padding: 3px !important;
-    margin-right: 12px !important;
+    @media (max-width: 576px) {
+      padding: 3px !important;
+      margin-right: 12px !important;
 
-    img {
-      width: 20px !important;
-      height: 20px !important;
+      img {
+        width: 20px !important;
+        height: 20px !important;
+      }
     }
-  }
 
-  @media (max-width: 420px) {
-    padding: 2px !important;
-    margin-right: 15px !important;
+    @media (max-width: 420px) {
+      padding: 2px !important;
+      margin-right: 15px !important;
 
-    img {
-      width: 18px !important;
-      height: 18px !important;
+      img {
+        width: 18px !important;
+        height: 18px !important;
+      }
     }
-  }
 
-  &:last-child {
-    margin-right: 0 !important;
+    &:last-child {
+      margin-right: 0 !important;
+    }
   }
 }
 
@@ -306,38 +308,40 @@
 }
 
 /* 直接作用於按鈕元素，不依賴類名 */
-:global(.y-comment-area-icons .d-flex button) {
-  @media (max-width: 768px) {
-    padding: 4px !important;
-    margin-right: 8px !important;
+:global {
+  .y-comment-area-icons .d-flex button {
+    @media (max-width: 768px) {
+      padding: 4px !important;
+      margin-right: 8px !important;
 
-    img {
-      width: 22px !important;
-      height: 22px !important;
+      img {
+        width: 22px !important;
+        height: 22px !important;
+      }
     }
-  }
 
-  @media (max-width: 576px) {
-    padding: 3px !important;
-    margin-right: 12px !important;
+    @media (max-width: 576px) {
+      padding: 3px !important;
+      margin-right: 12px !important;
 
-    img {
-      width: 20px !important;
-      height: 20px !important;
+      img {
+        width: 20px !important;
+        height: 20px !important;
+      }
     }
-  }
 
-  @media (max-width: 420px) {
-    padding: 2px !important;
-    margin-right: 15px !important;
+    @media (max-width: 420px) {
+      padding: 2px !important;
+      margin-right: 15px !important;
 
-    img {
-      width: 18px !important;
-      height: 18px !important;
+      img {
+        width: 18px !important;
+        height: 18px !important;
+      }
     }
-  }
 
-  &:last-child {
-    margin-right: 0 !important;
+    &:last-child {
+      margin-right: 0 !important;
+    }
   }
 }

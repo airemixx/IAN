@@ -21,7 +21,7 @@ const Loading = dynamic(() => import("@/app/_components/loading/page.js"), { ssr
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin', 'chinese-traditional'],
+  subsets: ['latin'],
   display: 'swap',
 })
 const inter = Inter({

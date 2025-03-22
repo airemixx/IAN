@@ -253,7 +253,7 @@ nav {
 }
 
 @media screen and (max-width: 420px) {
-  .search-button{
+  .search-button {
     padding: 0.4rem 1rem;
     font-size: 14px;
   }
@@ -458,27 +458,27 @@ footer-title {
 /* --- 滾輪樣式 --- */
 
 /* 整體滾動條 */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
-}
+} */
 
 /* 滾動條背景 */
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
   background: var(--gray--50);
   padding: 0 5px;
-}
+} */
 
 /* 滑塊（拖動的部分） */
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
   background: var(--gray--200);
   border-radius: 10px;
-}
+} */
 
 /* 滑塊懸停效果 */
-::-webkit-scrollbar-thumb:hover {
+/* ::-webkit-scrollbar-thumb:hover {
   background: var(--gray--300);
-}
+} */
 
 /* ::-webkit-scrollbar-button:vertical:decrement {
   background: var(--gray--50);
@@ -739,4 +739,16 @@ footer-title {
   font-size: 18px;
   font-weight: bold;
   color: var(--primary-color);
+}
+
+.ck.ck-toolbar {
+  border-radius: 20px 20px 0 0 !important; /* ✅ 讓工具列的上方圓角生效 */
+  background-color: var(--secondary-color-med) !important;
+}
+
+.ck-rounded-corners .ck.ck-editor__main > .ck-editor__editable,
+.ck.ck-editor__main > .ck-editor__editable.ck-rounded-corners {
+  border-radius: 0 0 20px 20px !important; /* ✅ 讓邊角變圓 */
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }

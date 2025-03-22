@@ -98,10 +98,12 @@
   }
 
   /* 調整包含選項和清除按鈕的父容器 */
-  :global(.d-flex.justify-content-between.y-selection) {
-    flex-direction: column;
-    width: 100%;
-    align-items: center; /* 添加這行來中央對齊所有子元素 */
+  :global {
+    .d-flex.justify-content-between.y-selection {
+      flex-direction: column;
+      width: 100%;
+      align-items: center; /* 添加這行來中央對齊所有子元素 */
+    }
   }
 }
 

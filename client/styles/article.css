@@ -1,10 +1,10 @@
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 0;
 }
 ::-webkit-scrollbar-thumb {
   background-color: #7e726700;
   border-radius: 50%;
-}
+} */
 
 .y-bg-list {
   background-color: #f5f5f5;

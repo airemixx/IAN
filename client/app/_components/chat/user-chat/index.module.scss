@@ -725,11 +725,11 @@
     object-fit: cover;
 
     // 添加這一行確保影片預覽有控制條
-    &::-webkit-media-controls {
-      display: flex !important;
-      visibility: visible;
-      opacity: 1 !important;
-    }
+    // &::-webkit-media-controls {
+    //   display: flex !important;
+    //   visibility: visible;
+    //   opacity: 1 !important;
+    // }
   }
 
   // 為影片預覽項目特別設定
@@ -755,10 +755,10 @@
   background-color: #000; // 黑色背景，填充影片外的空間
 
   // 確保控制條可見
-  &::-webkit-media-controls {
-    opacity: 1;
-    visibility: visible;
-  }
+  // &::-webkit-media-controls {
+  //   opacity: 1;
+  //   visibility: visible;
+  // }
 }
 
 // 圖片查看器樣式

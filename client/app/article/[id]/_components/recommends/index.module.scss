@@ -153,19 +153,19 @@
   /* 隱藏滾動條但保持功能 */
   scrollbar-width: thin;
   -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
+  // &::-webkit-scrollbar {
+  //   height: 4px;
+  // }
 
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-  }
+  // &::-webkit-scrollbar-track {
+  //   background: #f1f1f1;
+  //   border-radius: 10px;
+  // }
 
-  &::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-  }
+  // &::-webkit-scrollbar-thumb {
+  //   background: #888;
+  //   border-radius: 10px;
+  // }
 }
 
 /* 卡片項目樣式 */

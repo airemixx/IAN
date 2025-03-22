@@ -183,17 +183,17 @@
   overflow-y: auto !important; /* ✅ 確保內容超出時可以滾動 */
 }
 
-:global(.ck.ck-toolbar) {
-  border-radius: 20px 20px 0 0 !important; /* ✅ 讓工具列的上方圓角生效 */
-  background-color: var(--secondary-color-med) !important;
-}
+// :global{.ck.ck-toolbar{
+//   border-radius: 20px 20px 0 0 !important; /* ✅ 讓工具列的上方圓角生效 */
+//   background-color: var(--secondary-color-med) !important;
+// }}
 
-:global(.ck-rounded-corners .ck.ck-editor__main > .ck-editor__editable),
-:global(.ck.ck-editor__main > .ck-editor__editable.ck-rounded-corners) {
-  border-radius: 0 0 20px 20px !important; /* ✅ 讓邊角變圓 */
-  border-top-left-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-}
+// :global(.ck-rounded-corners .ck.ck-editor__main > .ck-editor__editable),
+// :global(.ck.ck-editor__main > .ck-editor__editable.ck-rounded-corners) {
+//   border-radius: 0 0 20px 20px !important; /* ✅ 讓邊角變圓 */
+//   border-top-left-radius: 0 !important;
+//   border-top-right-radius: 0 !important;
+// }
 
 .save-btn {
   border: none;
