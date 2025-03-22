@@ -27,10 +27,12 @@
   color: var(--primary-color);
 }
 
-:global(.e-breadcrumb-item) + :global(.e-breadcrumb-item)::before {
-  content: '';
-  color: var(--line-color-gray);
-  padding: 0 0.5rem;
+:global {
+  .e-breadcrumb-item + .e-breadcrumb-item::before {
+    content: '';
+    color: var(--line-color-gray);
+    padding: 0 0.5rem;
+  }
 }
 
 @media screen and (max-width: 1200px) {

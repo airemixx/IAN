@@ -1,40 +1,40 @@
-.authModal {
-  :global(.modal-content) {
-    border-radius: 25px;
-    border: none;
-    // box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
-  }
+// .authModal {
+:global(.modal-content) {
+  border-radius: 25px;
+  border: none;
+  // box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+}
 
-  :global(.modal-header) {
-    border-bottom: 1px solid #f0f0f000;
-    padding: 1rem 1.5rem;
-  }
+:global(.modal-header) {
+  border-bottom: 1px solid #f0f0f000;
+  padding: 1rem 1.5rem;
+}
 
-  :global(.modal-body) {
-    padding: 2rem 2rem 3rem 2rem;
-  }
+:global(.modal-body) {
+  padding: 2rem 2rem 3rem 2rem;
+}
 
-  :global(.btn-primary) {
-    background-color: #1e3c54;
-    border-radius: 25px;
-    &:hover {
-      background-color: #ffffff;
-      border: 1px solid #1e3c54;
-      color: #1e3c54;
-    }
-  }
-
-  :global(.btn-outline-primary) {
+:global(.btn-primary) {
+  background-color: #1e3c54;
+  border-radius: 25px;
+  &:hover {
+    background-color: #ffffff;
+    border: 1px solid #1e3c54;
     color: #1e3c54;
-    border-color: #1e3c54;
-    border-radius: 25px;
-
-    &:hover {
-      background-color: #1e3c54;
-      color: white;
-    }
   }
 }
+
+:global(.btn-outline-primary) {
+  color: #1e3c54;
+  border-color: #1e3c54;
+  border-radius: 25px;
+
+  &:hover {
+    background-color: #1e3c54;
+    color: white;
+  }
+}
+// }
 
 .leftSide {
   padding: 1rem;

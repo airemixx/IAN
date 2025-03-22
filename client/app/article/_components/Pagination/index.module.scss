@@ -96,12 +96,10 @@
 }
 
 // 如果使用 Bootstrap 的 active class，也可以全域覆蓋
-:global {
-  .page-item.active .page-link {
-    border-bottom: 2px solid black !important;
-    background-color: transparent !important;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-  }
+:global(.page-item.active .page-link) {
+  border-bottom: 2px solid black !important;
+  background-color: transparent !important;
+  border-top: none;
+  border-left: none;
+  border-right: none;
 }

@@ -124,15 +124,15 @@
   }
   
   /* 取消左右欄位的外邊距 */
-  :global(.left.me-4) {
-    margin-right: 0 !important;
-    width: 48%;
-  }
+  // :global(.left.me-4) {
+  //   margin-right: 0 !important;
+  //   width: 48%;
+  // }
   
-  :global(.right.ms-4) {
-    margin-left: 0 !important;
-    width: 48%;
-  }
+  // :global(.right.ms-4) {
+  //   margin-left: 0 !important;
+  //   width: 48%;
+  // }
   
   .article-card-1-image img {
     max-width: 100%;
