@@ -878,3 +878,111 @@ footer-title {
     align-items: center;
   }
 }
+
+.modal-header {
+  border-bottom: 1px solid #f0f0f000;
+  padding: 1rem 1.5rem;
+}
+
+.modal-body {
+  padding: 2rem 2rem 3rem 2rem;
+}
+
+.btn-primary {
+  background-color: #1e3c54;
+  border-radius: 25px;
+  &:hover {
+    background-color: #ffffff;
+    border: 1px solid #1e3c54;
+    color: #1e3c54;
+  }
+}
+
+.btn-outline-primary {
+  color: #1e3c54;
+  border-color: #1e3c54;
+  border-radius: 25px;
+
+  &:hover {
+    background-color: #1e3c54;
+    color: white;
+  }
+}
+
+.y-comment-area-icons .d-flex button {
+  @media (max-width: 768px) {
+    padding: 4px !important;
+    margin-right: 8px !important;
+
+    img {
+      width: 22px !important;
+      height: 22px !important;
+    }
+  }
+
+  @media (max-width: 576px) {
+    padding: 3px !important;
+    margin-right: 12px !important;
+
+    img {
+      width: 20px !important;
+      height: 20px !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    padding: 2px !important;
+    margin-right: 15px !important;
+
+    img {
+      width: 18px !important;
+      height: 18px !important;
+    }
+  }
+
+  &:last-child {
+    margin-right: 0 !important;
+  }
+}
+
+.swiper-pagination {
+  position: relative !important;
+  margin-top: 10px !important;
+}
+
+.ck.ck-toolbar {
+  border-radius: 20px 20px 0 0 !important; /* ✅ 讓工具列的上方圓角生效 */
+  background-color: var(--secondary-color-med) !important;
+}
+
+.ck-rounded-corners .ck.ck-editor__main > .ck-editor__editable,
+.ck.ck-editor__main > .ck-editor__editable.ck-rounded-corners {
+  border-radius: 0 0 20px 20px !important; /* ✅ 讓邊角變圓 */
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.btn-custom-confirm-OK {
+  border-radius: 25px;
+  background-color: green;
+  color: white !important;
+  border: 1px solid green;
+  padding: 8px 16px;
+  &:hover {
+    background-color: #ffffff !important;
+    color: green !important;
+    border: 1px solid green;
+  }
+}
+
+.y-custom-popup {
+  border-radius: 25px;
+  padding: 20px;
+}
+
+body.swal2-shown {
+  padding: 0 !important;
+}
+body.swal2-shown {
+  overflow: visible !important; /* 禁止滾動 */
+}

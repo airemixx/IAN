@@ -25,10 +25,10 @@
     transform 0.3s ease; // 平滑過渡效果
 }
 
-body.swal2-shown {
+.body.swal2-shown {
   padding: 0 !important;
 }
-body.swal2-shown {
+.body.swal2-shown {
   overflow: visible !important; /* 禁止滾動 */
 }
 
