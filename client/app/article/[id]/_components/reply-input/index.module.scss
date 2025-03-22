@@ -254,8 +254,8 @@
 }
 
 /* 修正按鈕樣式 - 使用全局選擇器 */
-:global {
-  .d-flex .action-btn {
+.y-comment-action {
+  :global(.d-flex .action-btn) {
     @media (max-width: 768px) {
       padding: 4px !important;
       margin-right: 8px !important;

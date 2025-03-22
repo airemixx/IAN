@@ -1,8 +1,9 @@
 // .authModal {
-:global(.modal-content) {
-  border-radius: 25px;
-  border: none;
-  // box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+:global {
+  .modal-content {
+    border-radius: 25px;
+    border: none;
+  }
 }
 
 :global(.modal-header) {
