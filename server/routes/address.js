@@ -4,11 +4,11 @@ import pool from '../db.js'
 
 const router = express.Router()
 
-// const corsOptions = {
-//     origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
-//     credentials: true,
-//     allowedHeaders: ["Authorization", "Content-Type"],
-// };
+const corsOptions = {
+    origin: ['http://localhost:3000' ,'https://lenstudio.vercel.app/'], // 允許來自 http://localhost:3000 的請求
+    credentials: true,
+    allowedHeaders: ["Authorization", "Content-Type"],
+};
 
 router.use(cors(corsOptions)); // 使用 cors 中間件
 
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
         // 插入資料
         const [result] = await pool.execute(
             `SELECT ad.address, u.name FROM addresses ad inner Join  users u on u.id = ad.user_id WHERE user_id = ?;
-         `,[userId]
+         `, [userId]
         );
         console.log(result);
         res.status(200).json({ success: true, message: "ˇ地址獲取成功", result });

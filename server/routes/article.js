@@ -10,11 +10,11 @@ import checkToken from '../middlewares.js'
 //   database: 'lenstudio',
 // })
 
-// //cors設定
-// const corsOptions = {
-//   origin: ['http://localhost:3000', 'http://localhost:5000'],
-//   credentials: true,
-// }
+//cors設定
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:5000','https://lenstudio.vercel.app/'],
+  credentials: true,
+}
 
 const router = Router()
 router.use(cors(corsOptions))

@@ -5,7 +5,7 @@ import pool from '../db.js';
 const router = express.Router();
 
 const corsOptions = {
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000','https://lenstudio.vercel.app/'],
     credentials: true,
     allowedHeaders: ["Authorization", "Content-Type"],
 };
