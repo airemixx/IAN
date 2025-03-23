@@ -30,7 +30,7 @@ const inter = Inter({
 })
 
 export const metadata = {
-  title: 'LENSTUDIO | 紀錄每刻光影',
+  title: 'LENSTUDIO | 紀錄每一刻光影',
   description: '讓靈感自由成像，從一台好相機開始',
 }
 
