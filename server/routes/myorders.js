@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 const portNum = 3005;
 
-const whiteList = ["http://localhost:5500", "http://localhost:8000", "http://localhost:3000"];
+const whiteList = ["http://localhost:5500", "http://localhost:8000", "http://localhost:3000",'https://lenstudio.vercel.app'];
 const corsOptions = {
   credentials: true,
   origin(origin, callback) {

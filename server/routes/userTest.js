@@ -5,7 +5,7 @@ import core from 'cors'
 import jwt from 'jsonwebtoken'
 
 const upload = multer();
-const whiteList = ['http://localhost:5500', 'http://localhost:3000']
+const whiteList = ['http://localhost:5500', 'http://localhost:3000','https://lenstudio.vercel.app']
 const corsOptions = {
   credentials: true,
   origin(origin, callback){
