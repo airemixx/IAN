@@ -6,24 +6,24 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-try {
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  console.log("Token 解析成功:", decoded);
-} catch (error) {
-  console.error("Token 驗證失敗:", error);
-}
+// try {
+//   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+//   console.log("Token 解析成功:", decoded);
+// } catch (error) {
+//   console.error("Token 驗證失敗:", error);
+// }
 
 const router = express.Router();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "admin",
-  password: process.env.DB_PASSWORD || "12345",
-  database: process.env.DB_DATABASE || "lenstudio",
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// const pool = mysql.createPool({
+//   host: process.env.DB_HOST || "localhost",
+//   user: process.env.DB_USER || "admin",
+//   password: process.env.DB_PASSWORD || "12345",
+//   database: process.env.DB_DATABASE || "lenstudio",
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   queueLimit: 0
+// });
 
 //cors設定
 const corsOptions = {
