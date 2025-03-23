@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { Noto_Sans_TC, Inter } from 'next/font/google'
 import '@/styles/ck-custom.css'
@@ -17,6 +17,8 @@ import { IoIosArrowUp } from 'react-icons/io'
 import dynamic from "next/dynamic";
 import { SocketProvider } from './_components/chat/context/socketContext';
 import ScrollTopButton from "@/app/_components/top-btn/page.js"
+import CustomHead from '@/app/head'
+
 const Loading = dynamic(() => import("@/app/_components/loading/page.js"), { ssr: false });
 
 const notoSansTC = Noto_Sans_TC({
@@ -29,10 +31,6 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
-export const metadata = {
-  title: 'LENSTUDIO | 紀錄每一刻光影',
-  description: '讓靈感自由成像，從一台好相機開始',
-}
 
 export default function RootLayout({ children }) {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -110,8 +108,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
       <body>
+      <CustomHead />
         {isExcluded ? (
-
           <main>{isLoading ? <Loading /> : children}</main>
         ) : (
 
