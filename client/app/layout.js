@@ -29,10 +29,7 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
-export const metadata = {
-  title: 'LENSTUDIO | 紀錄每一刻光影',
-  description: '讓靈感自由成像，從一台好相機開始',
-}
+
 
 export default function RootLayout({ children }) {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -109,6 +106,10 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="zh-TW" className={`${notoSansTC.className} ${inter.className}`}>
+      <Head>
+        <title>LENSTUDIO | 紀錄每一刻光影</title>
+        <meta name="description" content="讓靈感自由成像，從一台好相機開始" />
+      </Head>
       <body>
         {isExcluded ? (
 
