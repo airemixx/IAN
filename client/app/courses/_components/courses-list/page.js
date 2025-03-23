@@ -50,7 +50,7 @@ export default function CourseList({ courses }) {
   useEffect(() => {
     const fetchPopularCourses = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/courses?sort=popular");
+        const res = await fetch("https://lenstudio.onrender.com/api/courses?sort=popular");
         if (!res.ok) throw new Error(`HTTP 錯誤！狀態碼：${res.status}`);
 
         const data = await res.json();
@@ -79,7 +79,7 @@ export default function CourseList({ courses }) {
 
   const fetchFavorites = async (token) => {
     try {
-      const res = await fetch("http://localhost:8000/api/courses/collection", {
+      const res = await fetch("https://lenstudio.onrender.com/api/courses/collection", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -107,8 +107,8 @@ export default function CourseList({ courses }) {
     try {
       const isFavorited = favorites.has(courseId);
       const method = isFavorited ? "DELETE" : "POST";
-      let url = "http://localhost:8000/api/courses/collection";
-      if (method === "DELETE") url = `http://localhost:8000/api/courses/collection/${courseId}`;
+      let url = "https://lenstudio.onrender.com/api/courses/collection";
+      if (method === "DELETE") url = `https://lenstudio.onrender.com/api/courses/collection/${courseId}`;
 
       const res = await fetch(url, {
         method,

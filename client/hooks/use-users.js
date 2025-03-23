@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/users")
+    fetch("https://lenstudio.onrender.com/api/users")
       .then((res) => res.json())
       .then((data) => {
         setUsers(data);
@@ -26,7 +26,7 @@ export const UserProvider = ({ children }) => {
   // 取得單筆使用者資料
   const fetchUserById = (userId) => {
     setLoading(true);
-    fetch(`http://localhost:8000/api/users/${userId}`)
+    fetch(`https://lenstudio.onrender.com/api/users/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         setUser(data);

@@ -77,7 +77,7 @@ export default function SupportChat() {
         is_bot: true,
       }
 
-      const res = await fetch('http://localhost:8000/api/support/messages', {
+      const res = await fetch('https://lenstudio.onrender.com/api/support/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ export default function SupportChat() {
 
       // console.log(`📡 正在請求對話 ${chatId} 的所有訊息...`)
       const res = await fetch(
-        `http://localhost:8000/api/support/messages/${chatId}`,
+        `https://lenstudio.onrender.com/api/support/messages/${chatId}`,
         {
           method: 'GET',
           headers: {
@@ -311,7 +311,7 @@ export default function SupportChat() {
         is_bot: true, // 標記為自動訊息
       }
 
-      const res = await fetch('http://localhost:8000/api/support/messages', {
+      const res = await fetch('https://lenstudio.onrender.com/api/support/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -342,7 +342,7 @@ export default function SupportChat() {
     try {
       // 建立新聊天室
       const res = await fetch(
-        'http://localhost:8000/api/support/conversations',
+        'https://lenstudio.onrender.com/api/support/conversations',
         {
           method: 'POST',
           headers: {
@@ -375,7 +375,7 @@ export default function SupportChat() {
     try {
       const token = localStorage.getItem('loginWithToken')
       const res = await fetch(
-        'http://localhost:8000/api/support/conversations',
+        'https://lenstudio.onrender.com/api/support/conversations',
         {
           method: 'GET',
           headers: {
@@ -446,7 +446,7 @@ export default function SupportChat() {
     // console.log("📩 準備發送訊息:", { text, file });
 
     try {
-      const res = await fetch("http://localhost:8000/api/support/messages", {
+      const res = await fetch("https://lenstudio.onrender.com/api/support/messages", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -15,7 +15,7 @@ export default function UserPage() {
 
     useEffect(() => {
         if (token) {
-            axios.get('http://localhost:8000/api/myorders/order', {
+            axios.get('https://lenstudio.onrender.com/api/myorders/order', {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(response => setOrders(response.data.orders))
@@ -54,7 +54,7 @@ export default function UserPage() {
                                         <h6 className={styles.orderNumber}>訂單號碼: {order.order_code}</h6>
                                     </div>
                                     <div className="d-flex justify-content-end w-100">
-                                    <h5 className={styles.orderStatus}>{order.status || '備貨中'}</h5>
+                                        <h5 className={styles.orderStatus}>{order.status || '備貨中'}</h5>
                                     </div>
                                     {/* ✅ 使用 React Icons 來顯示箭頭 */}
                                     <span className={`ms-3 ${styles.toggleIcon}`}>
@@ -96,7 +96,7 @@ export default function UserPage() {
                                                                 <h6 className={`mt-3 ${styles.productBrand}`}>{rental.brand || '無'}</h6>
                                                                 <h5>{rental.name}</h5>
                                                                 <span>價格 : {new Intl.NumberFormat('zh-TW').format(rental.rent_fee)}
-                                                                ，每日租金{new Intl.NumberFormat('zh-TW').format(rental.fee)}/天</span>
+                                                                    ，每日租金{new Intl.NumberFormat('zh-TW').format(rental.fee)}/天</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -125,8 +125,8 @@ export default function UserPage() {
                                     </div>
                                 )}
                                 <div className='d-flex justify-content-between mt-3'>
-                                <h6 className={styles.orderDiscount}>折扣金額:${new Intl.NumberFormat('zh-TW').format(order.discount_money || 0)}</h6>
-                                <h5 className={styles.orderTotal}>訂單金額 : ${new Intl.NumberFormat('zh-TW').format(order.total || 0)}</h5>
+                                    <h6 className={styles.orderDiscount}>折扣金額:${new Intl.NumberFormat('zh-TW').format(order.discount_money || 0)}</h6>
+                                    <h5 className={styles.orderTotal}>訂單金額 : ${new Intl.NumberFormat('zh-TW').format(order.total || 0)}</h5>
                                 </div>
                             </div>
                         ))

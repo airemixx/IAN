@@ -18,7 +18,7 @@ const editorConfig = {
             formData.append('upload', file)
 
             const response = await fetch(
-              'http://localhost:8000/api/course-ct-upload',
+              'https://lenstudio.onrender.com/api/course-ct-upload',
               {
                 method: 'POST',
                 body: formData,
@@ -144,34 +144,34 @@ export default function CourseEdit() {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     const formData = new FormData();
     formData.append("upload", file);
-  
+
     try {
       const response = await fetch(
-        "http://localhost:8000/api/course-cv-upload",
+        "https://lenstudio.onrender.com/api/course-cv-upload",
         {
           method: "POST",
           body: formData,
         }
       );
-  
+
       // 🔹 確保 `Content-Type` 是 `application/json`
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         throw new Error("❌ API 沒回傳 JSON，可能是 404/500 錯誤");
       }
-  
+
       // ✅ 解析 JSON
       const data = await response.json();
       if (!data.url) {
         throw new Error("❌ API 回傳無效的圖片 URL");
       }
-  
+
       const imageUrl = `http://localhost:8000${data.url}`;
       // console.log("✅ 圖片上傳成功，URL:", imageUrl);
-  
+
       // ✅ 更新圖片預覽
       setPreviewImg(imageUrl);
       setCourse((prev) => ({ ...prev, image_url: imageUrl }));
@@ -180,7 +180,7 @@ export default function CourseEdit() {
       alert(error.message); // 🔴 顯示錯誤訊息
     }
   };
-  
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -199,10 +199,10 @@ export default function CourseEdit() {
       console.error("❌ `courseId` 無效！");
       return;
     }
-  
-    const apiUrl = `http://localhost:8000/api/courses/${courseId}`;
+
+    const apiUrl = `https://lenstudio.onrender.com/api/courses/${courseId}`;
     // console.log("🚀 發送 `PUT` 請求到:", apiUrl);
-  
+
     try {
       const res = await fetch(apiUrl, {
         method: "PUT",
@@ -212,23 +212,23 @@ export default function CourseEdit() {
         },
         body: JSON.stringify({ ...course, status }),
       });
-  
+
       // console.log("🔍 API 回應狀態:", res.status);
-  
+
       if (!res.ok) {
         const errorText = await res.text(); // 讀取錯誤訊息
         console.error("❌ API 錯誤:", errorText);
         throw new Error(`❌ API 錯誤: ${res.status}`);
       }
-  
+
       // console.log("✅ 課程更新成功！");
       router.push("/teacher");
     } catch (error) {
       console.error("❌ 更新課程失敗:", error);
     }
   };
-  
-  
+
+
 
   if (loading) return <p></p>
   if (error) return <p className="text-danger">{error}</p>

@@ -13,7 +13,7 @@ export default function CheckoutFormStep1({ slItem }) {
   const [token, setToken] = useState(null);
   const [decoded, setDecoded] = useState(null);
   const [price, setPrice] = useState(0);
-  const [discount, setDiscount] = useState(0); 
+  const [discount, setDiscount] = useState(0);
   const router = useRouter();
   const [show, setShow] = useState(false);
   const [checkState, setCheckState] = useState(false);
@@ -26,7 +26,7 @@ export default function CheckoutFormStep1({ slItem }) {
     if (typeof window !== "undefined") {
       const storedToken = localStorage.getItem("loginWithToken");
       setToken(storedToken);
-      
+
       if (storedToken) {
         try {
           const decodedToken = jwtDecode(storedToken);
@@ -88,9 +88,9 @@ export default function CheckoutFormStep1({ slItem }) {
 
   async function fetchCoupon() {
     if (!decoded) return;
-    
+
     try {
-      const response = await fetch(`http://localhost:8000/api/coupon?id=${decoded.id}`, {
+      const response = await fetch(`https://lenstudio.onrender.com/api/coupon?id=${decoded.id}`, {
         method: "GET",
       });
 
@@ -185,7 +185,7 @@ export default function CheckoutFormStep1({ slItem }) {
                   >
                     <img src={`/images/cart/${coupon.img}`} alt="" className="img-fluid" />
                     <span className={`position-absolute ${styles["j-cpEndDate"]}`}>
-                      {moment(coupon.created_at).add(5,"days").format("YYYY-MM-DD HH:mm:ss")}
+                      {moment(coupon.created_at).add(5, "days").format("YYYY-MM-DD HH:mm:ss")}
                     </span>
                     <span className={`${styles['j-cpName']}`}>{coupon.cpName}</span>
                   </div>

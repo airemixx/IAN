@@ -62,7 +62,7 @@ export default function TeacherEdit() {
     formData.append('upload', file)
 
     try {
-      const response = await fetch('http://localhost:8000/api/teacher-upload', {
+      const response = await fetch('https://lenstudio.onrender.com/api/teacher-upload', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('loginWithToken')}`,
@@ -102,7 +102,7 @@ export default function TeacherEdit() {
     setLoading(true)
 
     try {
-      const res = await fetch('http://localhost:8000/api/teachers/me', {
+      const res = await fetch('https://lenstudio.onrender.com/api/teachers/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

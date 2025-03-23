@@ -17,7 +17,7 @@ export default function Coupon() {
 
   const fetchCoupons = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/myorders/coupon", {
+      const response = await fetch("https://lenstudio.onrender.com/api/myorders/coupon", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -42,7 +42,7 @@ export default function Coupon() {
 
         {/* 主要內容區 */}
         <div className="col-md-8 col-lg-9 py-4">
-      <h1 className={`mb-4 ${styles.h1}`}>我的優惠券</h1>
+          <h1 className={`mb-4 ${styles.h1}`}>我的優惠券</h1>
 
           {/* 相機 & 課程分類 */}
           {[

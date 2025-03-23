@@ -57,7 +57,7 @@ export default function EditArticlePage() {
   useEffect(() => {
     const fetchArticleData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/articles/${articleId}`)
+        const response = await axios.get(`https://lenstudio.onrender.com/api/articles/${articleId}`)
         const article = response.data.data
         setArticleData(article)
 
@@ -148,11 +148,11 @@ export default function EditArticlePage() {
       const categorySelect = document.querySelector('select[name="文章分類"]')
       const titleInput = document.querySelector('input[placeholder="標題 (必填)"]')
       const subtitleInput = document.querySelector('input[placeholder="副標題"]')
-      
+
       // 降低檢查嚴格度
       if (!categorySelect || !titleInput) {
-        console.error('找不到必要的表單元素:', 
-          !categorySelect ? '分類選擇器缺失' : '', 
+        console.error('找不到必要的表單元素:',
+          !categorySelect ? '分類選擇器缺失' : '',
           !titleInput ? '標題輸入框缺失' : ''
         );
         Swal.fire({
@@ -174,9 +174,9 @@ export default function EditArticlePage() {
 
       // 重要：使用 React 狀態中的圖片路徑，而不是嘗試從 DOM 獲取
       console.log('使用圖片路徑:', currentImagePath);
-      
+
       // 發送請求
-      await axios.put(`http://localhost:8000/api/articles/${articleId}`, {
+      await axios.put(`https://lenstudio.onrender.com/api/articles/${articleId}`, {
         category: categorySelect.value,
         title: titleInput.value.trim(),
         subtitle: subtitleInput ? subtitleInput.value.trim() : '',
@@ -231,8 +231,8 @@ export default function EditArticlePage() {
               />
             </div>
             <div className="my-4">
-              <FroalaEditor 
-                initialContent={articleData?.content} 
+              <FroalaEditor
+                initialContent={articleData?.content}
                 key={articleId || 'default-key'}
               />
             </div>

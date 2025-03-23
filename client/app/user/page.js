@@ -76,7 +76,7 @@ export default function UserPage(props) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/users/users/me`, {
+      const response = await fetch(`https://lenstudio.onrender.com/api/users/users/me`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -123,14 +123,14 @@ export default function UserPage(props) {
     formData.append("account", user.account);
 
     try {
-      const response = await fetch("http://localhost:8000/api/users/upload", {
+      const response = await fetch("https://lenstudio.onrender.com/api/users/upload", {
         method: "POST",
         body: formData,
       });
 
       const result = await response.json();
       if (result.status !== "success") throw new Error(result.message);
-      
+
 
       // 更新 `user.head`，讓前端立即顯示新頭像
       setUser({ ...user, head: result.imageUrl });
@@ -147,7 +147,7 @@ export default function UserPage(props) {
 
       // 重新獲取使用者資訊**
       await fetchUserData();
-      
+
     } catch (error) {
       console.error("圖片上傳失敗:", error);
       alert("圖片上傳失敗，請稍後再試");
@@ -161,7 +161,7 @@ export default function UserPage(props) {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/users/${user.account}`,
+        `https://lenstudio.onrender.com/api/users/${user.account}`,
         {
           method: 'PUT',
           headers: {
@@ -235,7 +235,7 @@ export default function UserPage(props) {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/users/addresses/me', {
+      const response = await fetch('https://lenstudio.onrender.com/api/users/addresses/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -266,7 +266,7 @@ export default function UserPage(props) {
     // 初始取得地址列表
     React.useEffect(() => {
       const fetchAddresses = async () => {
-        const response = await fetch('http://localhost:8000/api/users/addresses');
+        const response = await fetch('https://lenstudio.onrender.com/api/users/addresses');
         const result = await response.json();
         if (result.status === 'success') {
           setAddresses(result.data);
@@ -281,8 +281,8 @@ export default function UserPage(props) {
     <div>
       <div className={`container py-4`}>
         <div className={`row ${styles.marginTop}`}>
-        <div className="col-md-3 py-4 row">
-          <Sidenav />
+          <div className="col-md-3 py-4 row">
+            <Sidenav />
           </div>
           {/* 主要內容區 */}
           <div className="col-md-9 py-4">
@@ -309,15 +309,15 @@ export default function UserPage(props) {
                   <form onSubmit={handleUpdate}>
                     <div className="d-flex flex-column align-items-center ">
                       <div className="avatar-container mb-3" onClick={() => document.getElementById("fileInput").click()} style={{ cursor: "pointer" }}>
-                      <div className={styles.width1} >
-                        <img
-                          id="avatar"
-                          src={user.head ? user.head : "/uploads/users.webp"} // ✅ 使用相對路徑
-                          alt="大頭貼"
-                          className="rounded-circle border border-gray-300"
-                          style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                        />
-                        <label htmlFor="fileInput" className={styles.mdEdit}><MdEdit /></label>
+                        <div className={styles.width1} >
+                          <img
+                            id="avatar"
+                            src={user.head ? user.head : "/uploads/users.webp"} // ✅ 使用相對路徑
+                            alt="大頭貼"
+                            className="rounded-circle border border-gray-300"
+                            style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                          />
+                          <label htmlFor="fileInput" className={styles.mdEdit}><MdEdit /></label>
                         </div>
                       </div>
                       <div className="mb-3 ">
@@ -328,7 +328,7 @@ export default function UserPage(props) {
                           accept="image/*"
                           onChange={handleImageUpload}
                         />
-                        
+
                       </div>
                     </div>
                     <div className="mb-3">

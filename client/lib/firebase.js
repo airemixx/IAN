@@ -18,39 +18,39 @@ const googleProvider = new GoogleAuthProvider();
 
 // ✅ Google 登入方法
 export const signInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      console.log("🔥 Firebase 使用者資訊:", user);
-  
-      const idToken = await user.getIdToken();
-      const email = user.email || "no-email@gmail.com"; // 防止 email 為空
-      const name = user.displayName;
-      const picture = user.photoURL;
-  
-      // ✅ 發送請求到後端
-      const response = await fetch("http://localhost:8000/api/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: idToken, email, name, picture }),
-      });
-  
-      if (!response.ok) throw new Error("後端驗證失敗");
-  
-      const data = await response.json();
-      console.log("✅ 後端回應:", data);
-  
-      // ✅ 確保 account 存到 localStorage
-      localStorage.setItem("loginWithToken", data.data.token);
-      // localStorage.setItem("account", data.data.user.account);
-      localStorage.setItem("profilePic", picture);
-  
-      return data.user;
-    } catch (error) {
-      console.error("❌ Google 登入錯誤:", error);
-      throw error;
-    }
-  };
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    console.log("🔥 Firebase 使用者資訊:", user);
+
+    const idToken = await user.getIdToken();
+    const email = user.email || "no-email@gmail.com"; // 防止 email 為空
+    const name = user.displayName;
+    const picture = user.photoURL;
+
+    // ✅ 發送請求到後端
+    const response = await fetch("https://lenstudio.onrender.com/api/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: idToken, email, name, picture }),
+    });
+
+    if (!response.ok) throw new Error("後端驗證失敗");
+
+    const data = await response.json();
+    console.log("✅ 後端回應:", data);
+
+    // ✅ 確保 account 存到 localStorage
+    localStorage.setItem("loginWithToken", data.data.token);
+    // localStorage.setItem("account", data.data.user.account);
+    localStorage.setItem("profilePic", picture);
+
+    return data.user;
+  } catch (error) {
+    console.error("❌ Google 登入錯誤:", error);
+    throw error;
+  }
+};
 
 // ✅ 登出方法
 export const logout = async () => {

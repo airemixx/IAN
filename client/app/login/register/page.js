@@ -66,7 +66,7 @@ export default function RegisterPage() {
         formDataToSend.append('avatar', formData.avatar);
       }
 
-      const response = await fetch('http://localhost:8000/api/users', {
+      const response = await fetch('https://lenstudio.onrender.com/api/users', {
         method: 'POST',
         body: formDataToSend,
       });
@@ -124,15 +124,15 @@ export default function RegisterPage() {
               onClick={() => document.getElementById("fileInput").click()}
               style={{ cursor: "pointer" }}
             >
-            <div className={styles.width1} >
-              <img
-                id="avatar"
-                src={avatarPreview}
-                alt="大頭貼"
-                className={`${styles.avatar} rounded-circle border border-gray-300`}
-                style={{ width: "100px", height: "100px", objectFit: "cover" }}
-              />
-              <label htmlFor="fileInput" className={styles.mdEdit}><MdEdit /></label>
+              <div className={styles.width1} >
+                <img
+                  id="avatar"
+                  src={avatarPreview}
+                  alt="大頭貼"
+                  className={`${styles.avatar} rounded-circle border border-gray-300`}
+                  style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                />
+                <label htmlFor="fileInput" className={styles.mdEdit}><MdEdit /></label>
               </div>
             </div>
 

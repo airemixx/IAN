@@ -20,7 +20,7 @@ export default function RentFilter({ onFilterChange }) {
   }, [equipmentOptions])
   // 📌 從後端 API 獲取篩選選項
   useEffect(() => {
-    fetch('http://localhost:8000/api/rental-master')
+    fetch('https://lenstudio.onrender.com/api/rental-master')
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

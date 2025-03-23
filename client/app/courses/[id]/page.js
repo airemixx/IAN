@@ -21,11 +21,11 @@ export default function CourseDetailPage() {
   useEffect(() => {
     if (window.location.hash === "#course-rating" || window.location.hash === "#teacher-info") {
       setTimeout(() => {
-        const targetSection = document.getElementById(window.location.hash.substring(1)); 
+        const targetSection = document.getElementById(window.location.hash.substring(1));
         if (targetSection) {
           targetSection.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-      }, 300); 
+      }, 300);
     }
   }, []);
 
@@ -36,7 +36,7 @@ export default function CourseDetailPage() {
 
     const fetchCourse = async () => {
       try {
-        const API_URL = `http://localhost:8000/api/courses/${id}`
+        const API_URL = `https://lenstudio.onrender.com/api/courses/${id}`
         // console.log('發送 API 請求:', API_URL)
 
         const res = await fetch(API_URL)

@@ -41,7 +41,7 @@ export default function ECPayCallback() {
 
           console.log("送出訂單資料:", orderData);
 
-          const response = await fetch('http://localhost:8000/api/orders', {
+          const response = await fetch('https://lenstudio.onrender.com/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData),
@@ -78,7 +78,7 @@ export default function ECPayCallback() {
 
   return (
     <>
-     {/* <p>以下為回傳資料:</p>
+      {/* <p>以下為回傳資料:</p>
       <p>交易編號: {searchParams?.get('MerchantTradeNo')}</p>
       <p>交易金額: {searchParams?.get('TradeAmt')}</p>
       <p>交易日期: {searchParams?.get('TradeDate')}</p>

@@ -172,7 +172,7 @@ export default function ReplyInput({ articleId, parentId, onCommentSubmitted, re
         }
       }
 
-      const response = await fetch('http://localhost:8000/api/comments', {
+      const response = await fetch('https://lenstudio.onrender.com/api/comments', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -452,7 +452,7 @@ export function NestedReplyInput({ articleId, parentId, onCommentSubmitted, isAu
 
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/comments',
+        'https://lenstudio.onrender.com/api/comments',
         formData,
         {
           withCredentials: true,

@@ -267,7 +267,7 @@ export default function ChatWidget() {
       formData.append('file', fileObj.file); // 添加文件
 
       // 發送到服務器
-      const response = await fetch('http://localhost:8000/api/uploads', {
+      const response = await fetch('https://lenstudio.onrender.com/api/uploads', {
         method: 'POST',
         body: formData,
       });

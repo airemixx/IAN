@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     // 從後端 API 獲取推薦課程
-    const response = await fetch('http://localhost:8000/api/courses?sort=popular', {
+    const response = await fetch('https://lenstudio.onrender.com/api/courses?sort=popular', {
       cache: 'no-store',
     });
 

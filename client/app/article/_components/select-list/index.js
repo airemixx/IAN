@@ -86,7 +86,7 @@ export default function SelectList({ onFilterChange }) {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:8000/api/articles/categories',
+          'https://lenstudio.onrender.com/api/articles/categories',
           {
             signal: controller.signal,
           }
@@ -108,7 +108,7 @@ export default function SelectList({ onFilterChange }) {
     const fetchYears = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:8000/api/articles/years',
+          'https://lenstudio.onrender.com/api/articles/years',
           {
             signal: controller.signal,
           }

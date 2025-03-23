@@ -13,7 +13,7 @@ export default function RelatedProducts({ brandId, currentId }) {
   useEffect(() => {
     if (!brandId || !currentId) return;
 
-    fetch(`http://localhost:8000/api/product/related/${brandId}/${currentId}`)
+    fetch(`https://lenstudio.onrender.com/api/product/related/${brandId}/${currentId}`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch((error) => console.error("錯誤:", error));
@@ -55,7 +55,7 @@ export default function RelatedProducts({ brandId, currentId }) {
                     <div className="card">
                       <img src={product.image} className={`${styles.cardimgTop}`} alt={product.name} />
                       <div className="card-body text-center">
-                      <h5 className={styles.cardTitle}>{product.name}</h5>
+                        <h5 className={styles.cardTitle}>{product.name}</h5>
                         <p className={styles.cardText}>NT$ {product.price.toLocaleString()}</p>
                       </div>
                     </div>

@@ -5,7 +5,7 @@ export const isDev = env === 'development'
 
 // 本機環境
 const local = {
-    apiURL: 'http://localhost:8000/api',
+    apiURL: 'https://lenstudio.onrender.com/api',
 }
-  
+
 export const apiURL = isDev ? local.apiURL : production.apiURL

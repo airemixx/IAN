@@ -19,7 +19,7 @@ const editorConfig = {
             formData.append('upload', file)
 
             const response = await fetch(
-              'http://localhost:8000/api/course-ct-upload',
+              'https://lenstudio.onrender.com/api/course-ct-upload',
               {
                 method: 'POST',
                 body: formData,
@@ -126,7 +126,7 @@ export default function CourseCreate() {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/course-cv-upload',
+        'https://lenstudio.onrender.com/api/course-cv-upload',
         {
           method: 'POST',
           body: formData,
@@ -155,10 +155,10 @@ export default function CourseCreate() {
   const handleSubmit = async (e, status) => {
     e.preventDefault();
     setLoading(true);
-  
-    const apiUrl = 'http://localhost:8000/api/courses';
+
+    const apiUrl = 'https://lenstudio.onrender.com/api/courses';
     // console.log('🚀 發送 `POST` 請求到:', apiUrl);
-  
+
     try {
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -168,20 +168,20 @@ export default function CourseCreate() {
         },
         body: JSON.stringify({ ...course, status }),
       });
-  
+
       // console.log('🔍 API 回應狀態:', res.status);
       const data = await res.json();
       // console.log('🔍 API 回應資料:', data);
-  
+
       if (!res.ok) {
         console.error('❌ API 錯誤:', data);
         throw new Error(`❌ API 錯誤: ${res.status}`);
       }
-  
+
       if (!data.courseId) {
         throw new Error('❌ API 沒有回傳 `courseId`，可能 SQL 沒寫入');
       }
-  
+
       // console.log('✅ 課程新增成功！');
       router.push('/teacher');
     } catch (error) {
@@ -190,7 +190,7 @@ export default function CourseCreate() {
       setLoading(false);
     }
   };
-  
+
 
   // ✅ `loading` 時顯示「課程新增中...」
   if (loading) return <p className="text-center">⏳ 課程新增中...</p>

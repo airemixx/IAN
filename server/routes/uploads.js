@@ -30,10 +30,10 @@ router.post('/', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ status: 'error', message: '沒有檔案' });
   }
-  
+
   // 返回可公開訪問的 URL
-  const publicUrl = `http://localhost:8000/uploads/chat/${req.file.filename}`;
-  
+  const publicUrl = `https://lenstudio.onrender.com/uploads/chat/${req.file.filename}`;
+
   res.json({
     status: 'success',
     file: {

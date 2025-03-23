@@ -26,7 +26,7 @@ export default function loginPage() {
         setToken(savedToken)
         setUser(decodedUser)
         if (decodedUser) {
-          router.replace('/user'); 
+          router.replace('/user');
         }
       } catch (error) {
         console.error('Token 解碼失敗', error)
@@ -39,28 +39,28 @@ export default function loginPage() {
   // 登入處理，根據 level 導向不同頁面
   const handleLogin = async (e) => {
     e.preventDefault();
-    const API = "http://localhost:8000/api/users/login";
-  
+    const API = "https://lenstudio.onrender.com/api/users/login";
+
     try {
       const res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ account, password }),
       });
-  
+
       const result = await res.json();
-  
+
       if (result.status !== "success") {
         throw new Error(result.message);
       }
-  
+
       // ✅ 登入成功
       const newToken = result.data.token;
       localStorage.setItem(appKey, newToken);
       const userData = jwtDecode(newToken);
       setToken(newToken);
       setUser(userData);
-  
+
       Swal.fire({
         icon: "success",
         title: "登入成功",
@@ -87,7 +87,7 @@ export default function loginPage() {
       });
     }
   };
-  
+
   if (loading) {
     return (
       <div className="text-center mt-5">

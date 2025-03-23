@@ -17,7 +17,7 @@ export default function ForgotPassword() {
   const handleSendOTP = async () => {
     setLoading(true);
     try {
-      await axios.post('http://localhost:8000/api/forgot/send-otp', { email });
+      await axios.post('https://lenstudio.onrender.com/api/forgot/send-otp', { email });
       setStep(2);
       Swal.fire('成功！', 'OTP 驗證碼已發送至您的電子郵件', 'success');
     } catch (error) {
@@ -30,11 +30,11 @@ export default function ForgotPassword() {
   const handleVerifyOTP = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/api/forgot/verify-otp', {
+      const response = await axios.post('https://lenstudio.onrender.com/api/forgot/verify-otp', {
         email,
         otp
       });
-      
+
       if (response.data.success) {
         setOtpVerified(true);
         setStep(3);
@@ -57,7 +57,7 @@ export default function ForgotPassword() {
 
     setLoading(true);
     try {
-      await axios.post('http://localhost:8000/api/forgot/reset-password', {
+      await axios.post('https://lenstudio.onrender.com/api/forgot/reset-password', {
         account: email,
         newPassword
       });

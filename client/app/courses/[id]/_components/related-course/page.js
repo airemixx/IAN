@@ -12,11 +12,11 @@ export default function RelatedCourses({ course }) {
   const [isFavorite, setIsFavorite] = useState(false)
 
   useEffect(() => {
-    if (!course || !course.category || !course.id) return 
+    if (!course || !course.category || !course.id) return
 
     const fetchRelatedCourses = async () => {
       try {
-        const API_URL = `http://localhost:8000/api/courses/related/${course.category}`
+        const API_URL = `https://lenstudio.onrender.com/api/courses/related/${course.category}`
         // console.log('🚀 發送 API 請求:', API_URL)
 
         const res = await fetch(API_URL)
@@ -25,7 +25,7 @@ export default function RelatedCourses({ course }) {
         let data = await res.json()
         // console.log('✅ API 回傳相關課程:', data)
 
-    
+
         data = data.filter(relatedCourse => relatedCourse.id !== course.id)
 
         setRelatedCourses(data.slice(0, 4))
@@ -37,7 +37,7 @@ export default function RelatedCourses({ course }) {
     }
 
     fetchRelatedCourses()
-  }, [course.category, course.id]) 
+  }, [course.category, course.id])
 
   if (loading) return <p></p>
   if (relatedCourses.length === 0) return <p>沒有找到相關課程</p>

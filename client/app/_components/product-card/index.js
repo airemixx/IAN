@@ -18,7 +18,7 @@ export default function ProductCardIndex() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch('http://localhost:8000/api/product')
+        const res = await fetch('https://lenstudio.onrender.com/api/product')
         if (!res.ok) throw new Error("API 請求失敗")
 
         const data = await res.json()

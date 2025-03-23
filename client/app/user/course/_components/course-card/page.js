@@ -19,7 +19,7 @@ export default function RentCard() {
       return;
     }
 
-    fetch("http://localhost:8000/api/myorders/course", {
+    fetch("https://lenstudio.onrender.com/api/myorders/course", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -61,12 +61,12 @@ export default function RentCard() {
 
   return (
     <div className="col-md-8 col-lg-9 py-4">
-          <h1 className={`mb-4 ${styles.h1}`}>我的課程</h1>
-          <div className="row g-4">
-            {/* 課程卡片 1 */}
-            {courses.length > 0 ? (
-              courses.map((course) => (
-                <div className="col-sm-6 col-lg-5" key={course.course_order_id}>
+      <h1 className={`mb-4 ${styles.h1}`}>我的課程</h1>
+      <div className="row g-4">
+        {/* 課程卡片 1 */}
+        {courses.length > 0 ? (
+          courses.map((course) => (
+            <div className="col-sm-6 col-lg-5" key={course.course_order_id}>
               <div className={styles.courseCard}>
                 <img
                   src={course.course_image || '/images/default-course.jpg'}
@@ -80,10 +80,10 @@ export default function RentCard() {
                 </div>
               </div>
             </div>
-            ))
-            ) : (<div className="col-12 text-center">目前沒有課程</div>)}
-            
-          </div>
-        </div>
+          ))
+        ) : (<div className="col-12 text-center">目前沒有課程</div>)}
+
+      </div>
+    </div>
   );
 }

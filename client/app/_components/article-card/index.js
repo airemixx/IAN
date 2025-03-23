@@ -87,7 +87,7 @@ const ArticleHomeContainer = () => {
     const fetchLatestArticles = async () => {
       try {
         // 獲取最新的5篇文章
-        const response = await axios.get("http://localhost:8000/api/articles/latest?limit=5");
+        const response = await axios.get("https://lenstudio.onrender.com/api/articles/latest?limit=5");
         if (response.data && response.data.data) {
           setArticles(response.data.data);
         }

@@ -26,7 +26,7 @@ export default function FavoriteButton({ courseId }) {
       const checkFavoriteStatus = async () => {
         try {
           const res = await fetch(
-            `http://localhost:8000/api/courses/collection/${courseId}`,
+            `https://lenstudio.onrender.com/api/courses/collection/${courseId}`,
             {
               method: 'GET',
               headers: {
@@ -35,9 +35,9 @@ export default function FavoriteButton({ courseId }) {
               },
             }
           )
-  
+
           if (!res.ok) throw new Error('無法取得收藏狀態')
-  
+
           const data = await res.json()
           console.log('✅ API 回傳收藏狀態:', data)
           toggleFavorite(courseId, data.isFavorite)
@@ -45,11 +45,11 @@ export default function FavoriteButton({ courseId }) {
           console.error('❌ 無法確認收藏狀態:', error)
         }
       }
-  
+
       checkFavoriteStatus()
     }
-  }, [courseId, token]) 
-  
+  }, [courseId, token])
+
 
   // ✅ 避免影響 `Link`
   const handleFavoriteClick = (e) => {
@@ -67,17 +67,17 @@ export default function FavoriteButton({ courseId }) {
       });
       return;
     }
-  
+
     try {
       const method = isFavorite ? "DELETE" : "POST";
-      let url = "http://localhost:8000/api/courses/collection";
-  
+      let url = "https://lenstudio.onrender.com/api/courses/collection";
+
       if (method === "DELETE") {
-        url = `http://localhost:8000/api/courses/collection/${courseId}`; // ✅ 確保 DELETE 傳入 courseId
+        url = `https://lenstudio.onrender.com/api/courses/collection/${courseId}`; // ✅ 確保 DELETE 傳入 courseId
       }
-  
+
       console.log("📌 送出的請求:", method, url);
-  
+
       const res = await fetch(url, {
         method,
         headers: {
@@ -86,19 +86,19 @@ export default function FavoriteButton({ courseId }) {
         },
         body: method === "POST" ? JSON.stringify({ course_id: courseId }) : null, // ✅ DELETE 不需要 body
       });
-  
+
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(errorText);
       }
-  
+
       setIsFavorite((prev) => !prev);
-  
+
       toast.success(isFavorite ? "已取消收藏！" : "成功加入收藏！", {
         position: "top-right",
         autoClose: 2000,
       });
-  
+
     } catch (error) {
       console.error("收藏錯誤:", error);
       toast.error("操作失敗：" + (error.message || "發生錯誤，請稍後再試"), {

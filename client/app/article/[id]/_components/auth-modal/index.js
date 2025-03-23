@@ -17,17 +17,17 @@ export default function AuthModal({ show, onHide, onLoginSuccess }) {
   const getErrorMessage = (errMsg) => {
     // 先記錄收到的確切錯誤訊息，幫助偵錯
     console.log('收到的錯誤訊息:', errMsg);
-    
+
     // 使用更寬鬆的匹配條件
-    if (errMsg.toLowerCase().includes('invalid') || 
-        errMsg.toLowerCase().includes('password') ||
-        errMsg.toLowerCase().includes('密碼')) {
+    if (errMsg.toLowerCase().includes('invalid') ||
+      errMsg.toLowerCase().includes('password') ||
+      errMsg.toLowerCase().includes('密碼')) {
       return '帳號或密碼不正確，請重新確認';
-    } 
-    else if (errMsg.toLowerCase().includes('not found') || 
-             errMsg.toLowerCase().includes('找不到')) {
+    }
+    else if (errMsg.toLowerCase().includes('not found') ||
+      errMsg.toLowerCase().includes('找不到')) {
       return '找不到此帳號，請確認您的資料';
-    } 
+    }
     else if (errMsg.toLowerCase().includes('required')) {
       return '請輸入帳號和密碼';
     }
@@ -43,7 +43,7 @@ export default function AuthModal({ show, onHide, onLoginSuccess }) {
     setLoading(true)
     setError('')
 
-    const API = 'http://localhost:8000/api/users/login'
+    const API = 'https://lenstudio.onrender.com/api/users/login'
 
     try {
       const res = await fetch(API, {

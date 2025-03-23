@@ -43,7 +43,7 @@ export default function TeacherSidebar() {
     if (!token) return
 
     try {
-      const res = await fetch('http://localhost:8000/api/users/logout', {
+      const res = await fetch('https://lenstudio.onrender.com/api/users/logout', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -122,7 +122,7 @@ export default function TeacherSidebar() {
                   (pathname === '/teacher' ||
                     (pathname.startsWith('/teacher/course') &&
                       pathname !== '/teacher/course/course-add' &&
-                      pathname !== '/teacher/course/support')) 
+                      pathname !== '/teacher/course/support'))
                     ? styles.active
                     : ''
                 }

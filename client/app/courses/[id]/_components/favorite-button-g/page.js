@@ -27,7 +27,7 @@ export default function FavoriteButtonG({ courseId, className }) {
       const checkFavoriteStatus = async () => {
         try {
           const res = await fetch(
-            `http://localhost:8000/api/courses/collection/${courseId}`,
+            `https://lenstudio.onrender.com/api/courses/collection/${courseId}`,
             {
               method: 'GET',
               headers: {
@@ -36,9 +36,9 @@ export default function FavoriteButtonG({ courseId, className }) {
               },
             }
           )
-  
+
           if (!res.ok) throw new Error('無法取得收藏狀態')
-  
+
           const data = await res.json()
           // console.log('✅ API 回傳收藏狀態:', data)
           toggleFavorite(courseId, data.isFavorite)
@@ -46,11 +46,11 @@ export default function FavoriteButtonG({ courseId, className }) {
           // console.error('❌ 無法確認收藏狀態:', error)
         }
       }
-  
+
       checkFavoriteStatus()
     }
-  }, [courseId, token]) 
-  
+  }, [courseId, token])
+
 
   // 收藏或取消收藏
   const handleFavoriteClick = async (e) => {
@@ -67,10 +67,10 @@ export default function FavoriteButtonG({ courseId, className }) {
 
     try {
       const method = isFavorite ? 'DELETE' : 'POST'
-      let url = 'http://localhost:8000/api/courses/collection'
+      let url = 'https://lenstudio.onrender.com/api/courses/collection'
 
       if (method === 'DELETE') {
-        url = `http://localhost:8000/api/courses/collection/${courseId}`
+        url = `https://lenstudio.onrender.com/api/courses/collection/${courseId}`
       }
 
       // console.log('📌 送出的請求:', method, url)

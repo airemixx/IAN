@@ -231,7 +231,7 @@ function ReplyItem({
     const checkLikeStatus = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/likes/check?userId=${effectiveUserId}&commentId=${commentId}&type=comment`,
+          `https://lenstudio.onrender.com/api/likes/check?userId=${effectiveUserId}&commentId=${commentId}&type=comment`,
           {
             headers: {
               Authorization: `Bearer ${effectiveToken}`,
@@ -328,7 +328,7 @@ function ReplyItem({
         setTimeout(() => setIsClicked(false), 300);
       }
 
-      await fetch(`http://localhost:8000/api/likes`, {
+      await fetch(`https://lenstudio.onrender.com/api/likes`, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -424,7 +424,7 @@ function ReplyItem({
     setTimeout(() => setIsSent(false), 300);
 
     try {
-      const res = await fetch(`http://localhost:8000/api/comments/${commentId}`, {
+      const res = await fetch(`https://lenstudio.onrender.com/api/comments/${commentId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: editedText }),
@@ -485,7 +485,7 @@ function ReplyItem({
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+          const res = await fetch(`https://lenstudio.onrender.com/api/comments/${id}`, {
             method: 'DELETE',
             credentials: 'include',
           });
@@ -940,7 +940,7 @@ function NestedReplyItem({
         setTimeout(() => setIsClicked(false), 300);
       }
 
-      await fetch(`http://localhost:8000/api/likes`, {
+      await fetch(`https://lenstudio.onrender.com/api/likes`, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -969,7 +969,7 @@ function NestedReplyItem({
     const checkLikeStatus = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/likes/check?userId=${effectiveUserId}&commentId=${props.commentId}&type=comment`,
+          `https://lenstudio.onrender.com/api/likes/check?userId=${effectiveUserId}&commentId=${props.commentId}&type=comment`,
           {
             headers: {
               Authorization: `Bearer ${effectiveToken}`,
@@ -1013,7 +1013,7 @@ function NestedReplyItem({
     setTimeout(() => setIsSent(false), 300);
 
     try {
-      const res = await fetch(`http://localhost:8000/api/comments/${props.commentId}`, {
+      const res = await fetch(`https://lenstudio.onrender.com/api/comments/${props.commentId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: editedText }),
@@ -1096,7 +1096,7 @@ function NestedReplyItem({
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:8000/api/comments/${id}`, {
+          const res = await fetch(`https://lenstudio.onrender.com/api/comments/${id}`, {
             method: 'DELETE',
             credentials: 'include',
           });
@@ -1373,7 +1373,7 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
 
   useEffect(() => {
     if (!articleId) return
-    fetch(`http://localhost:8000/api/comments/count?articleId=${articleId}`)
+    fetch(`https://lenstudio.onrender.com/api/comments/count?articleId=${articleId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.count !== undefined) {
@@ -1389,7 +1389,7 @@ export default function CommentsArea({ articleId, refreshTrigger, isAuthenticate
     if (!isCollapsed && articleId) {
       const fetchComments = async () => {
         try {
-          const res = await fetch(`http://localhost:8000/api/article_comments?articleId=${articleId}`);
+          const res = await fetch(`https://lenstudio.onrender.com/api/article_comments?articleId=${articleId}`);
           if (!res.ok) {
             // 檢查回應是否為 JSON 格式
             const contentType = res.headers.get('content-type');

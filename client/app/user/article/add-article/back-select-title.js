@@ -15,7 +15,7 @@ export default function BackSelectTitle({ confirmClose }) {
       try {
         // 改成後端路由掛載後的 URL
         const response = await axios.get(
-          'http://localhost:8000/api/articles/categories'
+          'https://lenstudio.onrender.com/api/articles/categories'
         )
         if (response.data && response.data.data) {
           setCategories(response.data.data)

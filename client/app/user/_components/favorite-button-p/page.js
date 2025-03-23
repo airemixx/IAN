@@ -38,12 +38,12 @@ export default function FavoriteButtonG({ productId, courseId, articleId, rentId
   useEffect(() => {
     if (!token || !itemId || !itemType) return;
 
-    console.log("📌 發送 `GET` 收藏查詢:", `http://localhost:8000/api/collect/${itemType}/collection/${itemId}`);
+    console.log("📌 發送 `GET` 收藏查詢:", `https://lenstudio.onrender.com/api/collect/${itemType}/collection/${itemId}`);
 
     const checkFavoriteStatus = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/collect/${itemType}/collection/${itemId}`,
+          `https://lenstudio.onrender.com/api/collect/${itemType}/collection/${itemId}`,
           {
             method: "GET",
             headers: {
@@ -86,10 +86,10 @@ export default function FavoriteButtonG({ productId, courseId, articleId, rentId
 
     try {
       const method = isFavorite ? "DELETE" : "POST";
-      let url = `http://localhost:8000/api/collect/${itemType}/collection/${itemId}`; // ✅ 正確的路徑
+      let url = `https://lenstudio.onrender.com/api/collect/${itemType}/collection/${itemId}`; // ✅ 正確的路徑
 
       if (method === "POST") {
-        url = `http://localhost:8000/api/collect/${itemType}/collection/me`; // ✅ 正確的 POST 路徑
+        url = `https://lenstudio.onrender.com/api/collect/${itemType}/collection/me`; // ✅ 正確的 POST 路徑
       }
 
       console.log("📌 送出的請求:", method, url);

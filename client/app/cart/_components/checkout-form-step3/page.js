@@ -135,7 +135,7 @@ export default function CheckoutFormStep3() {
                 localStorage.removeItem('cartItems')
                 localStorage.removeItem('buyerData')
                 localStorage.removeItem('discountMoney')
-                
+
                 window.dispatchEvent(new Event('cartUpdated'))
                 Swal.fire({
                     title: "付款成功",
@@ -149,12 +149,12 @@ export default function CheckoutFormStep3() {
                         window.location.href = "/";
                     }
                 });
-               
+
             } else {
                 toast.error("付款失敗");
             }
 
-           
+
         } catch (error) {
             console.error("確認交易失敗:", error);
             toast.error("交易確認失敗");
@@ -163,14 +163,14 @@ export default function CheckoutFormStep3() {
     };
 
     async function LineInsertDB() {
-        
+
         try {
             let decodedToken;
             if (typeof window !== "undefined") {
                 const storedToken = localStorage.getItem("loginWithToken");
                 if (storedToken) {
                     decodedToken = jwtDecode(storedToken);
-                   
+
                 }
             }
             const orderData = {
@@ -180,10 +180,10 @@ export default function CheckoutFormStep3() {
                 userId: decodedToken.id,
                 disMoney: JSON.parse(localStorage.getItem("discountMoney")) || 0
             };
-            
+
             console.log("送出訂單資料:", orderData);
 
-            const response = await fetch('http://localhost:8000/api/orders', {
+            const response = await fetch('https://lenstudio.onrender.com/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData),

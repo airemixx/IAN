@@ -2,8 +2,8 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
-import authenticate from "../middlewares.js"; 
-import pool from "../db.js"; 
+import authenticate from "../middlewares.js";
+import pool from "../db.js";
 
 const router = express.Router();
 const uploadDir = path.join(process.cwd(), "/public/uploads/images/teacher");
@@ -40,7 +40,7 @@ router.post("/", authenticate, upload.single("upload"), async (req, res) => {
     return res.status(400).json({ error: "❌ 沒有選擇圖片" });
   }
 
-  const imageUrl = `http://localhost:8000/uploads/images/teacher/${req.file.filename}`;
+  const imageUrl = `https://lenstudio.onrender.com/uploads/images/teacher/${req.file.filename}`;
 
   try {
     // **更新講師資料**
