@@ -29,6 +29,10 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
+export const metadata = {
+  title: 'LENSTUDIO | 紀錄每刻光影',
+  description: '讓靈感自由成像，從一台好相機開始',
+}
 
 export default function RootLayout({ children }) {
   const [searchOpen, setSearchOpen] = useState(false)
