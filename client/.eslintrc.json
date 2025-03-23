@@ -33,13 +33,11 @@
     }
   },
   "extends": [
-    "next/babel","next/core-web-vitals",
+    "next/core-web-vitals",
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
-    "plugin:import/errors",
-    "next",
-    "next/core-web-vitals"
+    "plugin:import/errors"
   ],
   "plugins": ["jsx-a11y", "react"],
   "rules": {
