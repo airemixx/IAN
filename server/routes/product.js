@@ -3,6 +3,7 @@ import cors from "cors";
 import mysql from "mysql2/promise";
 import jwt from "jsonwebtoken"; // 確保用戶登入
 import dotenv from 'dotenv';
+import pool from '../db.js'
 
 dotenv.config();
 

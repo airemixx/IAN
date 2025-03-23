@@ -2,6 +2,7 @@ import { Router } from 'express'
 import cors from 'cors'
 import mysql from 'mysql2/promise'
 import checkToken from '../middlewares.js'
+import pool from '../db.js'
 
 // const pool = mysql.createPool({
 //   host: 'localhost',
