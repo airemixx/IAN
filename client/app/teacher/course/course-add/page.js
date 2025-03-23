@@ -28,7 +28,7 @@ const editorConfig = {
 
             const data = await response.json()
             // console.log('✅ 圖片上傳成功，URL:', data.url)
-            return { default: `http://localhost:8000${data.url}` }
+            return { default: `https://lenstudio.onrender.com${data.url}` }
           },
         }
       }
@@ -139,7 +139,7 @@ export default function CourseCreate() {
       }
 
       const data = await response.json()
-      const fullUrl = `http://localhost:8000${data.url}` // ✅ 修正 URL
+      const fullUrl = `https://lenstudio.onrender.com${data.url}` // ✅ 修正 URL
 
       // console.log('✅ 圖片上傳成功，URL:', fullUrl)
 

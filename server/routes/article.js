@@ -3,18 +3,18 @@ import cors from 'cors'
 import mysql from 'mysql2/promise'
 import checkToken from '../middlewares.js'
 
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'admin',
-  password: '12345',
-  database: 'lenstudio',
-})
+// const pool = mysql.createPool({
+//   host: 'localhost',
+//   user: 'admin',
+//   password: '12345',
+//   database: 'lenstudio',
+// })
 
-//cors設定
-const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5000'],
-  credentials: true,
-}
+// //cors設定
+// const corsOptions = {
+//   origin: ['http://localhost:3000', 'http://localhost:5000'],
+//   credentials: true,
+// }
 
 const router = Router()
 router.use(cors(corsOptions))

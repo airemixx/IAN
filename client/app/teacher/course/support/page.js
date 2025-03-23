@@ -218,7 +218,7 @@ export default function SupportChat() {
 
   useEffect(() => {
     // console.log("嘗試建立 socket 連線...");
-    const newSocket = io("http://localhost:8000");
+    const newSocket = io("https://lenstudio.onrender.com/");
     // console.log("建立 socket 成功:", newSocket.id);
 
     setSocket(newSocket);

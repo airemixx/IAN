@@ -27,7 +27,7 @@ const editorConfig = {
 
             const data = await response.json()
             // console.log('✅ 圖片上傳成功，URL:', data.url)
-            return { default: `http://localhost:8000${data.url}` }
+            return { default: `https://lenstudio.onrender.com${data.url}` }
           },
         }
       }
@@ -169,7 +169,7 @@ export default function CourseEdit() {
         throw new Error("❌ API 回傳無效的圖片 URL");
       }
 
-      const imageUrl = `http://localhost:8000${data.url}`;
+      const imageUrl = `https://lenstudio.onrender.com${data.url}`;
       // console.log("✅ 圖片上傳成功，URL:", imageUrl);
 
       // ✅ 更新圖片預覽

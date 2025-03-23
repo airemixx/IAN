@@ -4,11 +4,11 @@ import pool from '../db.js'
 
 const router = express.Router()
 
-const corsOptions = {
-    origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
-    credentials: true,
-    allowedHeaders: ["Authorization", "Content-Type"],
-};
+// const corsOptions = {
+//     origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
+//     credentials: true,
+//     allowedHeaders: ["Authorization", "Content-Type"],
+// };
 
 router.use(cors(corsOptions)); // 使用 cors 中間件
 

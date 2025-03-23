@@ -15,22 +15,22 @@ dotenv.config();
 
 const router = express.Router();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "admin",
-  password: process.env.DB_PASSWORD || "12345",
-  database: process.env.DB_DATABASE || "lenstudio",
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// const pool = mysql.createPool({
+//   host: process.env.DB_HOST || "localhost",
+//   user: process.env.DB_USER || "admin",
+//   password: process.env.DB_PASSWORD || "12345",
+//   database: process.env.DB_DATABASE || "lenstudio",
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   queueLimit: 0
+// });
 
-//cors設定
-const corsOptions = {
-  origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
-  credentials: true,
-  allowedHeaders: ["Authorization", "Content-Type"],
-};
+// //cors設定
+// const corsOptions = {
+//   origin: ['http://localhost:3000'], // 允許來自 http://localhost:3000 的請求
+//   credentials: true,
+//   allowedHeaders: ["Authorization", "Content-Type"],
+// };
 
 router.use(cors(corsOptions)); // 使用 cors 中間件
 
