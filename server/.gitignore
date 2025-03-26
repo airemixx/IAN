@@ -60,4 +60,4 @@ yarn.lock
 course-seed.js
 teacher-seed.js
 
-/sessions
+/sessions".env" 
