@@ -155,7 +155,7 @@ app.use('/api/forgot', forgot)
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://lenstudio.vercel.app",
     methods: ["GET", "POST"],
   },
 });

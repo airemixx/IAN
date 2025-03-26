@@ -217,15 +217,25 @@ export default function SupportChat() {
   }, [])
 
   useEffect(() => {
-    // console.log("嘗試建立 socket 連線...");
-    const newSocket = io("https://lenstudio.onrender.com/");
-    // console.log("建立 socket 成功:", newSocket.id);
+    // ✅ 明確設定 WebSocket 連線模式與 autoReconnect
+    const newSocket = io("https://lenstudio.onrender.com", {
+      transports: ["websocket"],         // 不使用 polling
+      reconnection: true,                // 自動重連
+      reconnectionAttempts: 5,           // 最多嘗試 5 次
+      reconnectionDelay: 2000,           // 每次間隔 2 秒
+    });
+
+    newSocket.on("connect", () => {
+      console.log("✅ Socket 連線成功！", newSocket.id);
+    });
+
+    newSocket.on("connect_error", (err) => {
+      console.warn("❌ Socket 連線錯誤：", err.message);
+    });
 
     setSocket(newSocket);
 
-    // 組件卸載時斷開連線
     return () => {
-      // console.log("斷開 socket 連線:", newSocket.id);
       newSocket.disconnect();
     };
   }, []);
