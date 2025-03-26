@@ -4,8 +4,11 @@ import authenticate from '../middlewares.js';
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs/promises'
+import { CloudinaryStorage } from 'multer-storage-cloudinary'
+import cloudinary from '../utils/cloudinary-config.js' 
 
 const router = express.Router();
+
 
 
 
@@ -125,38 +128,32 @@ router.get("/messages/:chatId", authenticate, async (req, res) => {
 
 
 // ✅ 設定圖片上傳目錄
-const uploadDir = path.join(process.cwd(), "/public/uploads/images/chat-messages");
-
-// ✅ 設定 Multer 存儲規則
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    try {
-      await fs.access(uploadDir);
-    } catch {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'chat-messages',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'avif', 'webp'],
+    transformation: [{ width: 1200, height: 1200, crop: 'limit' }],
   },
-  filename: (req, file, cb) => {
-    const timestamp = Date.now();
-    const fileExt = path.extname(file.originalname);
-    const originalName = path.basename(file.originalname, fileExt);
-    const filename = `${timestamp}-${originalName}${fileExt}`;
-    cb(null, filename);
-  },
-});
+})
 
-// ✅ 限制檔案類型
 const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif", "image/avif", "image/webp"];
+  const allowedMimeTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/avif',
+    'image/webp',
+  ]
   if (allowedMimeTypes.includes(file.mimetype)) {
-    cb(null, true);
+    cb(null, true)
   } else {
-    cb(new Error("❌ 只能上傳圖片格式 (JPG, PNG, GIF, AVIF, WEBP)"), false);
+    cb(new Error('❌ 只能上傳圖片格式 (JPG, PNG, GIF, AVIF, WEBP)'), false)
   }
-};
+}
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({ storage, fileFilter })
+
 
 router.post("/messages", authenticate, upload.single("upload"), async (req, res) => {
   try {
@@ -177,10 +174,8 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
 
     // ✅ 如果有圖片，則設定為圖片訊息，並產生完整 URL
     if (req.file) {
-      messageType = "image";
-      const filePath = `/uploads/images/chat-messages/${req.file.filename}`;
-      messageContent = `https://lenstudio.onrender.com${filePath}`; // 🔹 加上完整 URL
-      // console.log("📂 圖片已成功上傳:", messageContent);
+      messageType = 'image'
+      messageContent = req.file.path 
     }
 
     if (!messageContent && !req.file) {
