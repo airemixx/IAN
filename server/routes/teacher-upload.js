@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import authenticate from "../middlewares.js";
 import pool from "../db.js";
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
+import cloudinary from '../utils/cloudinary-config.js'
 
 
 const router = express.Router();
