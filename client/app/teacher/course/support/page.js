@@ -603,8 +603,8 @@ export default function SupportChat() {
                       <img
                         src={
                           msg.user_avatar
-                            ? `http://localhost:3000${msg.user_avatar}`
-                            : 'http://localhost:3000/uploads/1741674302756-lenstudio.jpg'
+                            ? `https://lenstudio.vercel.app${msg.user_avatar}`
+                            : 'https://lenstudio.vercel.app/uploads/1741674302756-lenstudio.jpg'
                         }
                         className={styles.avatar}
                         alt="User Avatar"
