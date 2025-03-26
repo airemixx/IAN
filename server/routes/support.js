@@ -5,7 +5,7 @@ import multer from 'multer'
 import path from 'path'
 import fs from 'fs/promises'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
-import cloudinary from '../utils/cloudinary-config.js' 
+import cloudinary from '../utils/cloudinary-config.js'
 
 const router = express.Router();
 
@@ -175,7 +175,7 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
     // ✅ 如果有圖片，則設定為圖片訊息，並產生完整 URL
     if (req.file) {
       messageType = 'image'
-      messageContent = req.file.path 
+      messageContent = req.file.path
     }
 
     if (!messageContent && !req.file) {
@@ -206,11 +206,11 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
 
     // ✅ 存入訊息
     // console.log("💾 插入訊息:", { chatId, senderId, messageType, messageContent });
-    await pool.query(
+    const [messageResult] = await pool.query(
       "INSERT INTO messages (chat_id, sender_id, text, type) VALUES (?, ?, ?, ?)",
       [chatId, senderId, messageContent, messageType]
     );
-
+    const messageId = messageResult.insertId;
     // ✅ 更新 conversations 的 `last_message`
     await pool.query("UPDATE conversations SET last_message = ?, updated_at = NOW() WHERE id = ?", [
       messageContent,
@@ -238,6 +238,7 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
     const io = req.app.get("io");
     if (io) {
       io.emit("newMessage", {
+        id: messageId,
         chatId,
         sender_id: senderId,
         text: messageContent,
@@ -261,6 +262,7 @@ router.post("/messages", authenticate, upload.single("upload"), async (req, res)
     res.status(201).json({
       message: "訊息已發送",
       chatId,
+      id: messageId,
       type: messageType,
       content: messageContent
     });

@@ -242,20 +242,21 @@ export default function SupportChat() {
 
   // 🔹 監聽 WebSocket 訊息
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !selectedChat?.id) return;
 
     const handleNewMessage = (message) => {
-      // 僅當收到的訊息屬於目前選中的聊天室時才更新對話視窗
-      if (selectedChat?.id === message.chatId) {
-        setMessages((prevMessages) => [...prevMessages, message]);
-      }
+      if (message.chatId !== selectedChat.id) return;
+
+      setMessages((prev) => {
+        const exists = prev.some((msg) => msg.id === message.id);
+        return exists ? prev : [...prev, message];
+      });
     };
 
     socket.on("newMessage", handleNewMessage);
-    return () => {
-      socket.off("newMessage", handleNewMessage);
-    };
-  }, [socket, selectedChat]);
+    return () => socket.off("newMessage", handleNewMessage);
+  }, [socket, selectedChat?.id]);
+
 
 
   useEffect(() => {
