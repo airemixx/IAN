@@ -27,7 +27,7 @@ const editorConfig = {
 
             const data = await response.json()
             // console.log('✅ 圖片上傳成功，URL:', data.url)
-            return { default: `https://lenstudio.onrender.com${data.url}` }
+            return { default: data.url }
           },
         }
       }
