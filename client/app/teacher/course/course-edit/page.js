@@ -157,29 +157,26 @@ export default function CourseEdit() {
         }
       );
 
-      // 🔹 確保 `Content-Type` 是 `application/json`
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         throw new Error("❌ API 沒回傳 JSON，可能是 404/500 錯誤");
       }
 
-      // ✅ 解析 JSON
       const data = await response.json();
       if (!data.url) {
         throw new Error("❌ API 回傳無效的圖片 URL");
       }
 
-      const imageUrl = `https://lenstudio.onrender.com${data.url}`;
-      // console.log("✅ 圖片上傳成功，URL:", imageUrl);
+      const imageUrl = data.url; // ✅ 正確：直接用 Cloudinary 回傳網址
 
-      // ✅ 更新圖片預覽
       setPreviewImg(imageUrl);
       setCourse((prev) => ({ ...prev, image_url: imageUrl }));
     } catch (error) {
       console.error("❌ 圖片上傳錯誤:", error);
-      alert(error.message); // 🔴 顯示錯誤訊息
+      alert(error.message);
     }
   };
+
 
 
   const handleInputChange = (e) => {

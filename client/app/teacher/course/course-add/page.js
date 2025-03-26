@@ -116,22 +116,16 @@ export default function CourseCreate() {
   // **處理圖片上傳**
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
-    if (!file) {
-      // console.log('❌ 沒有選擇任何檔案')
-      return
-    }
+    if (!file) return
 
     const formData = new FormData()
     formData.append('upload', file)
 
     try {
-      const response = await fetch(
-        'https://lenstudio.onrender.com/api/course-cv-upload',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      )
+      const response = await fetch('https://lenstudio.onrender.com/api/course-cv-upload', {
+        method: 'POST',
+        body: formData,
+      })
 
       const contentType = response.headers.get('content-type')
       if (!contentType || !contentType.includes('application/json')) {
@@ -139,17 +133,16 @@ export default function CourseCreate() {
       }
 
       const data = await response.json()
-      const fullUrl = `https://lenstudio.onrender.com${data.url}` // ✅ 修正 URL
+      const imageUrl = data.url 
 
-      // console.log('✅ 圖片上傳成功，URL:', fullUrl)
-
-      // **即時更新圖片預覽**
-      setCourse((prev) => ({ ...prev, image_url: fullUrl }))
-      setPreviewImg(fullUrl)
+      // 即時更新
+      setCourse((prev) => ({ ...prev, image_url: imageUrl }))
+      setPreviewImg(imageUrl)
     } catch (error) {
       console.error('❌ 圖片上傳失敗:', error)
     }
   }
+
 
   // **提交表單**
   const handleSubmit = async (e, status) => {
