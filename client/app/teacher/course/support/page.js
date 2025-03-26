@@ -540,8 +540,8 @@ export default function SupportChat() {
                       <img
                         src={
                           chat.user_avatar
-                            ? `http://localhost:3000${chat.user_avatar}`
-                            : 'http://localhost:3000/uploads/1741674302756-lenstudio.jpg'
+                            ? `https://lenstudio.onrender.com/${chat.user_avatar}`
+                            : 'https://lenstudio.onrender.com/uploads/1741674302756-lenstudio.jpg'
                         }
                         className={styles.infoAvatar}
                         alt="User Avatar"
