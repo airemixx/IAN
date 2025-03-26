@@ -540,12 +540,13 @@ export default function SupportChat() {
                       <img
                         src={
                           chat.user_avatar
-                            ? `https://lenstudio.onrender.com/${chat.user_avatar}`
-                            : 'https://lenstudio.onrender.com/uploads/1741674302756-lenstudio.jpg'
+                            ? `https://lenstudio.vercel.app${chat.user_avatar}`
+                            : 'https://lenstudio.vercel.app/uploads/1741674302756-lenstudio.jpg'
                         }
                         className={styles.infoAvatar}
                         alt="User Avatar"
                       />
+
                       <div className={styles.chatInfoText}>
                         <h4 className={styles.chatName}>
                           {chat.user_name || `訪客 #${chat.id}`}
